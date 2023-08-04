@@ -1,5 +1,5 @@
 # MSF2CSV
-Converts Marvel Strike Force roster files from MHTML into a CSV file with player/character stats
+Converts Marvel Strike Force roster files from MHTML into a HTML table with a heat map for player/character stats
 
 # History: 
 MSF.gg used to have a CSV download option which made it easy to load up full roster stats for everyone in the alliance. 
@@ -18,10 +18,10 @@ Feel free to provide feedback, questions, comments, etc. My username is "fatcat4
 4. Double click on the mht2csv.py file. 
 
 # Output:
-Currently, the script generates several formats.
-1. The CSV file which previously was downloadable from MSF.gg
-2. A table showing Power, Gear Tier and ISO. One section per Origin, filtered to only heroes with at least one at ISO 2-4 and Gear Tier 16.
-3. A table with just the meta heroes for each section of Incursion.
+This project originally produced the CSV file MSF.gg used to give us. I have since abandoned this. 
+Instead, I am focusing on producing immediately usable tables that I used to create manually. Currently, this includes:
+1. A table showing Power, Gear Tier and ISO. One section per Origin, filtered to only heroes with at least one at ISO 2-4 and Gear Tier 16.
+2. A table with just the meta heroes for each section of Incursion.
 Another format is planned for Gamma 4.5 planning purposes.  
 
 # Issues
