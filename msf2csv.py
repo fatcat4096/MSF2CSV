@@ -55,17 +55,21 @@ def output_files(char_stats,processed_players):
 	mystic	=	['Beta Ray Bill','Loki','Loki (Teen)','Sylvie','Vahl']
 	tech	=	['Kang the Conqueror','Doctor Doom','Hulkbuster','Kestrel','Viv Vision','Vision']
 
+	strike_teams = [['FatCat','Joey','Daner','Jutch','sjhughes','DrFett','Evil Dead Rise'],
+					['Shammy','HeadHunter2838','keithchyiu','mgmf','BigDiesel','Luthher','RadicalEvil','FabiooBessa'],
+					['Zen Master','Incredibad','Kal-El','Snicky','Zairyuu','Flashie','Unclad']]
+
 	# Tables with just Incursion Meta. 
-	html_file = create_pivot_table(processed_players, char_stats, char_list = mutant+bio+skill+mystic+tech)
+	html_file = create_pivot_table(processed_players, char_stats, char_list = mutant+bio+skill+mystic+tech, strike_teams=strike_teams)
 	open(filename+"pivot-incursion.html", 'w').write(html_file)
 
 	# Tables for all characters, broken down by Origin. 
 	# Filtering with minimum ISO and Gear Tier just to reduce noise from Minions, old heroes, etc.
-	html_file = create_pivot_table(processed_players, char_stats, min_iso=9, min_tier=16,)
+	html_file = create_pivot_table(processed_players, char_stats, min_iso=9, min_tier=16, strike_teams=strike_teams)
 	open(filename+"pivot-all.html", 'w').write(html_file)
 
 
-def create_pivot_table(processed_players, char_stats, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], section_traits = [['Mutant'],['Bio'],['Skill'],['Mystic'],['Tech']]):
+def create_pivot_table(processed_players, char_stats, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], section_traits = [['Mutant'],['Bio'],['Skill'],['Mystic'],['Tech']],strike_teams=[]):
 
 	# If no char_list is specified, pull the list of all characters from char_stats
 	if not char_list:
@@ -80,7 +84,7 @@ def create_pivot_table(processed_players, char_stats, keys=['power','tier','iso'
 	for traits in section_traits:
 
 		# Write the top lines - char list and then value descriptors
-		html_file += '<table border="1" style="background-color:cornflower; font-family:verdana; font-size: 12">\n'
+		html_file += '<table border="1" style="background-color:cornflower; font-family:verdana;">\n'
 		html_file += '  <thead>\n'
 
 		# Start with the entire character list.
@@ -104,49 +108,66 @@ def create_pivot_table(processed_players, char_stats, keys=['power','tier','iso'
 				# Did we find this char in any of the traits?
 				if char not in chars_from_trait[trait]:
 					active_chars.remove(char)
+		'''
+		lgt_color = "Gainsboro"
+		med_color = "Silver"
+		drk_color = "Black"
+		img_color = "Black"
+		'''
+		lgt_color = "PowderBlue"
+		med_color = "SkyBlue"
+		drk_color = "MidnightBlue"
+		img_color = "Black"
+		
 		
 		# Write the images row. 
-		html_file += '    <tr style="background-color:LightBlue; text-align: center;">\n'
-		html_file += '      <th>'+', '.join(traits).upper()+'</th>\n'
+		html_file += '    <tr style="background-color:'+lgt_color+'; text-align: center;">\n'
+		html_file += '      <th style="font-size: 20pt;">'+', '.join(traits).upper()+'</th>\n'
 
 		for char in active_chars:
-			html_file += '      <th style="background-color:Black;" colspan="'+str(len(keys))+'"><img src="'+char_stats[char]['portrait']+'" alt="" width="100"></th>\n'
+			html_file += '      <th style="background-color:'+img_color+';" colspan="'+str(len(keys))+'"><img src="'+char_stats[char]['portrait']+'" alt="" width="100"></th>\n'
 		
 		html_file += '    </tr>\n'
 
 		# Write the character names row. 
-		html_file += '    <tr style="background-color:LightBlue; text-align: center;">\n'
-		html_file += '      <th nowrap width="150">'+['Alliance Member',''][len(keys)>1]+'</th>\n'
+		html_file += '    <tr style="background-color:'+med_color+'; text-align: center;  font-size: 12;">\n'
+		html_file += '      <th nowrap width="150">'+['Alliance Member',''][len(keys)>1 and not strike_teams]+'</th>\n'
 
 		for char in active_chars:
 			html_file += '      <th colspan="'+str(len(keys))+'" width="100">'+char+'</th>\n'
 		
 		html_file += '    </tr>\n'
 
-		# Add a line with value descriptors only if more than one item requested.
-		if len(keys)>1:
-			html_file += '    <tr style="background-color:MidnightBlue; color:White;">\n'
-			html_file += '      <th>Alliance Member</th>\n'
-			for char in active_chars:
-				for key in keys:
-					html_file += '      <th>'+key.title()+'</th>\n'
-		
-			html_file += '    </tr>\n'
+		if not strike_teams:
+			strike_teams = [active_chars]
 
-		html_file += '  </thead>\n'
-		html_file += '  <tbody style="background-color:LightBlue; style="text-align: center; font-size: 12">\n'
+		for team in strike_teams:
 
-		# Finally, write the data for each row. Player name then relevant stats for each character.
-		for player_name in player_list:
-			processed_chars = processed_players[player_name]
-			html_file += '    <tr">\n'
-			html_file += '      <th style="text-align: left; font-size: 12">'+player_name+'</th>\n'
+			# Add a line with value descriptors only if more than one item requested.
+			if len(keys)>1 or len(strike_teams)>1:
+				html_file += '    <tr style="background-color:'+drk_color+'; color:White; font-size: 12;">\n'
+				html_file += '      <th>'+['Alliance Member','STRIKE TEAM '+str(strike_teams.index(team)+1)][len(strike_teams)>1]+'</th>\n'
+				for char in active_chars:
+					for key in keys:
+						html_file += '      <th>'+key.title()+'</th>\n'
+			
+				html_file += '    </tr>\n'
 
-			for char_name in active_chars:
-				for key in keys:
-					html_file += '      <td style="text-align: center; font-size: 12; background-color:'+get_value_color(char_stats,char_name,key,processed_chars[char_name][key])+';">'+processed_chars[char_name][key]+'</td>\n'
-		
-			html_file += '    </tr>\n'
+			html_file += '  </thead>\n'
+			html_file += '  <tbody style="background-color:'+lgt_color+'; style="text-align: center; font-size: 12">\n'
+
+			# Finally, write the data for each row. Player name then relevant stats for each character.
+			for player_name in player_list:
+				if player_name in team:
+					processed_chars = processed_players[player_name]
+					html_file += '    <tr">\n'
+					html_file += '      <th style="background-color:'+lgt_color+'; text-align: left; font-size: 12">'+player_name+'</th>\n'
+
+					for char_name in active_chars:
+						for key in keys:
+							html_file += '      <td style="text-align: center; font-size: 12; background-color:'+get_value_color(char_stats,char_name,key,processed_chars[char_name][key])+';">'+processed_chars[char_name][key]+'</td>\n'
+				
+					html_file += '    </tr>\n'
 
 		# Close the HTML table at the end of the doc.
 		html_file += '  </tbody>\n'
@@ -177,7 +198,9 @@ def get_value_color(char_stats,char_name,stat,value):
 	# Use the min/max in 'all' for calculating heat maps.
 	min = char_stats['all'][stat]['min']
 	max = char_stats['all'][stat]['max']
-
+	min = char_stats[char_name][stat]['min']
+	max = char_stats[char_name][stat]['max']
+	
 	#Tweak gradients for Tier and ISO
 	if stat=='iso':
 		return color_scale[int( ((value**3)/10**3) *max_colors)]
@@ -209,4 +232,3 @@ def get_char_list(char_stats):
 
 if __name__ == "__main__":
 	main() # Just run myself
-
