@@ -14,7 +14,17 @@ from gradients import *				# Routines to create color gradient for heat map
 from extract_traits import *		# Pull trait info from MSF.gg
 
 # Initialize a few globals.
-alliance_name = 'Sample Pivot'
+alliance_name = 'SIGMA_Infamously_Strange'
+
+strike_teams = [['FatCat','Joey','Daner','Jutch','sjhughes','Ramalama','DrFett','Evil Dead Rise'],
+				['Shammy','HeadHunter2838','keithchyiu','mgmf','BigDiesel','Luthher','EXfieldy','FabiooBessa'],
+				['Zen Master','Incredibad','Kal-El','Snicky','Zairyuu','Flashie','Unclad','RadicalEvil']]
+
+# Fiddling with display size. 
+text_size   = '9pt'
+title_large = '14pt'
+title_small = '2'  		# <font> tag uses a different scale
+cell_width  = '100'
 
 # We will be working in the same directory as this file.
 try:
@@ -48,66 +58,57 @@ def output_files(char_stats,processed_players):
 	filename = path+alliance_name+datetime.datetime.now().strftime("-%Y%m%d-")
 
 	# Meta Heroes for use in Incursion
-	incur_mutant	=	['Archangel','Nemesis','Dark Beast','Psylocke','Magneto']
-	incur_bio		=	['Captain America','Captain Carter','Agent Venom','Winter Soldier','U.S. Agent']
-	incur_skill		=	['Nick Fury','Captain America (WWII)','Iron Fist (WWII)','Bucky Barnes','Union Jack']
-	incur_mystic	=	['Beta Ray Bill','Loki','Loki (Teen)','Sylvie','Vahl']
-	incur_tech		=	['Kang the Conqueror','Doctor Doom','Hulkbuster','Kestrel','Viv Vision','Vision']
+	incur_lanes =	[[{'traits': ['Mutant'], 'meta': ['Archangel','Nemesis','Dark Beast','Psylocke','Magneto']},
+					  {'traits': ['Bio'],    'meta': ['Captain America','Captain Carter','Agent Venom','Winter Soldier','U.S. Agent']},
+					  {'traits': ['Skill'],  'meta': ['Nick Fury','Captain America (WWII)','Iron Fist (WWII)','Bucky Barnes','Union Jack']},
+					  {'traits': ['Mystic'], 'meta': ['Beta Ray Bill','Loki','Loki (Teen)','Sylvie','Vahl']},
+					  {'traits': ['Tech'],   'meta': ['Kang the Conqueror','Doctor Doom','Hulkbuster','Viv Vision','Vision']}]]
+								 
+	# Meta Heroes for use in Gamma 
+					 # Lane 1    
+	gamma_lanes =	[[{'traits': ['Avenger','GotG'],								'meta': ['Viv Vision','Vision','Deathlok','Hulkbuster','Iron Man']},
+					  {'traits': ['PymTech','Kree'],								'meta': ['Ghost','Yellowjacket','Minn-Erva','Captain Marvel','Phyla-Vell']},
+					  {'traits': ['Brotherhood','Mercenary','Xmen'],				'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+					  {'traits': ['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
+					 # Lane 2	 		
+					 [{'traits': ['Avenger','SpiderVerse'],							'meta': ['Viv Vision','Vision','Deathlok','Hulkbuster','Iron Man']},
+					  {'traits': ['PymTech','Wakanda'],								'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
+					  {'traits': ['Brotherhood','Mercenary','Xmen'],				'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+					  {'traits': ['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
+					 # Lane 3    
+					 [{'traits': ['Shield','Brotherhood'],							'meta': ['Black Widow','Captain America','Nick Fury','Maria Hill','Magneto']},
+					  {'traits': ['Defender','Mercenary','HeroesForHire'],			'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
+					  {'traits': ['GotG','Xmen','Mercenary'],						'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+					  {'traits': ['Brotherhood','Mercenary','Xmen'],				'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+					  {'traits': ['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
+					 # Lane 4    
+					 [{'traits': ['Shield','Aim'],									'meta': ['Black Widow','Captain America','Nick Fury','Maria Hill','Hawkeye']},
+					  {'traits': ['Defender','Hydra','HeroesForHire'],				'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
+					  {'traits': ['Shield','Wakanda','Defender','HeroesForHire'],	'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
+					  {'traits': ['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}]]
 
-	incur_lanes =	[[{'traits':	['Mutant'],	'meta': ['Archangel','Nemesis','Dark Beast','Psylocke','Magneto']},
-					  {'traits':	['Bio'],	'meta': ['Captain America','Captain Carter','Agent Venom','Winter Soldier','U.S. Agent']},
-					  {'traits':	['Skill'],	'meta': ['Nick Fury','Captain America (WWII)','Iron Fist (WWII)','Bucky Barnes','Union Jack']},
-					  {'traits':	['Mystic'],	'meta': ['Beta Ray Bill','Loki','Loki (Teen)','Sylvie','Vahl']},
-					  {'traits':	['Tech'],	'meta': ['Kang the Conqueror','Doctor Doom','Hulkbuster','Viv Vision','Vision']}]]
-
-					 # Lane 1
-	gamma_lanes =	[[{'traits':	['Avenger','GotG'],									'meta': ['Viv Vision','Vision','Deathlok','Hulkbuster','Iron Man']},
-					  {'traits':	['PymTech','Kree'],									'meta': ['Ghost','Yellowjacket','Minn-Erva','Captain Marvel','Phyla-Vell']},
-					  {'traits':	['Brotherhood','Mercenary','Xmen'],					'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-					  {'traits':	['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
-					 # Lane 2				
-					 [{'traits':	['Avenger','SpiderVerse'],							'meta': ['Viv Vision','Vision','Deathlok','Hulkbuster','Iron Man']},
-					  {'traits':	['PymTech','Wakanda'],								'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
-					  {'traits':	['Brotherhood','Mercenary','Xmen'],					'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-					  {'traits':	['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
-					 # Lane 3
-					 [{'traits':	['Shield','Brotherhood'],							'meta': ['Black Widow','Captain America','Nick Fury','Maria Hill','Magneto']},
-					  {'traits':	['Defender','Mercenary','HeroesForHire'],			'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
-					  {'traits':	['GotG','Xmen','Mercenary'],						'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-					  {'traits':	['Brotherhood','Mercenary','Xmen'],					'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-					  {'traits':	['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
-					 # Lane 4
-					 [{'traits':	['Shield','Aim'],									'meta': ['Black Widow','Captain America','Nick Fury','Maria Hill','Hawkeye']},
-					  {'traits':	['Defender','Hydra','HeroesForHire'],				'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
-					  {'traits':	['Shield','Wakanda','Defender','HeroesForHire'],	'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
-					  {'traits':	['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}]]
-
-	strike_teams = [['FatCat','Joey','Daner','Jutch','sjhughes','Ramalama','DrFett','Evil Dead Rise'],
-					['Shammy','HeadHunter2838','keithchyiu','mgmf','BigDiesel','Luthher','EXfieldy','FabiooBessa'],
-					['Zen Master','Incredibad','Kal-El','Snicky','Zairyuu','Flashie','Unclad','RadicalEvil']]
-
-	# Tables with just Incursion Meta. 
-	html_file = generate_html(processed_players, char_stats, min_iso=9, min_tier=16, lanes=incur_lanes, strike_teams=strike_teams)
-	open(filename+"incursion.html", 'w').write(html_file)
-
-	# Tables with just Gamma Lanes. 
-	html_file = generate_html(processed_players, char_stats, min_tier=16, lanes=gamma_lanes, strike_teams=strike_teams)
+	# Tables with just Incursion 1.4 Meta. Requires ISO 2-4 and Gear Tier 16.
+	html_file = generate_html(processed_players, char_stats, strike_teams, incur_lanes, min_iso=9, min_tier=16)
+	open(filename+"incursion.html", 'w').write(html_file)    
+                                                             
+	# Tables with just Gamma Lanes. Only limit is Gear Tier 16.
+	html_file = generate_html(processed_players, char_stats, strike_teams, gamma_lanes, min_tier=16)
 	open(filename+"gamma.html", 'w').write(html_file)
 
 	# Tables for all characters, broken down by Origin. 
 	# Filtering with minimum ISO and Gear Tier just to reduce noise from Minions, old heroes, etc.
-	html_file = generate_html(processed_players, char_stats, min_iso=9, min_tier=16, strike_teams=strike_teams)
+	html_file = generate_html(processed_players, char_stats, strike_teams, min_iso=9, min_tier=16)
 	open(filename+"all.html", 'w').write(html_file)
 
 
-lane_default = [[{'traits': ['Mutant'],	'meta': []},
-				 {'traits': ['Bio'],	'meta': []},
-				 {'traits': ['Skill'],	'meta': []},
-				 {'traits': ['Mystic'],	'meta': []},
-				 {'traits': ['Tech'],	'meta': []}]]
+default_lanes = [[{'traits': ['Mutant'], 'meta': []},
+				  {'traits': ['Bio'],    'meta': []},
+				  {'traits': ['Skill'],  'meta': []},
+				  {'traits': ['Mystic'], 'meta': []},
+				  {'traits': ['Tech'],   'meta': []}]]
 
 
-def generate_html(processed_players, char_stats, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], lanes = lane_default, strike_teams=[]):
+def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[],):
 
 	# If no char_list is specified, pull the list of all characters from char_stats
 	if not char_list:
@@ -117,15 +118,43 @@ def generate_html(processed_players, char_stats, keys=['power','tier','iso'], mi
 	player_list = list(processed_players.keys())
 	player_list.sort(key=str.lower)
 
-	html_file = '<!doctype html>\n<html>\n'
+	html_file = '<!doctype html>\n<html lang="en">\n'
+	
+	# If we have multiple lanes, add a quick hack of a header to give us a tabbed interface.
+	if len(lanes)>1:
+		num_lanes = len(lanes)
+		html_file += '''<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+/* Style tab links */
+.tablink {
+  background-color: #666;
+  color: black;
+  float: left;
+  border: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  font-size: 20px;
+  font-weight: bold;
+  width: '''+str(int(100/num_lanes)) +'''%; 								# THIS HAS TO BE CALCULATED BASED ON THE NUMBER OF LANES.
+}
+.tablink:hover { background-color: #888; }
+.tabcontent { padding: 70px 20px; }
+</style>
+</head>
+<body>
+ '''
+		for num in range(num_lanes):
+			html_file += '''<button class="tablink" onclick="openPage('Lane%i', this)" id="defaultOpen">LANE %i</button>''' % (num+1,num+1)
 
 	# Iterate through all the lanes. Showing tables for each section. 
-
 	for lane in lanes:
 		
-		lane_lbl = ''
+		# If we have more than one Lane, display each in a separate tab.
 		if len(lanes)>1:
-			lane_lbl = '<font size="4">Lane %i:</font><br>' % (lanes.index(lane)+1)
+			lane_num = lanes.index(lane)+1
+			html_file += '<div id="Lane%i" class="tabcontent">\n' % lane_num
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
@@ -194,22 +223,20 @@ def generate_html(processed_players, char_stats, keys=['power','tier','iso'], mi
 				strike_teams = [player_list]
 
 			# Start with the Basic Table Lable and Colors.
-			table_lbl = '<br>'.join([trans_name(trait) for trait in traits]).upper()
-			if lane_lbl:
-				table_lbl = lane_lbl+table_lbl
+			table_lbl = '<br>'.join([translate_name(trait) for trait in traits]).upper()
 
 			color_theme = {}
 			
 			# Only calling it twice if we have meta_chars defined.
 			if meta_chars:
-				meta_lbl = table_lbl+'<br><font size="4">META</font>'
+				meta_lbl = table_lbl+'<br><font size="%s">META</font>' % title_small
 
 				html_file += '<table>\n <tr>\n  <td>\n'
 				html_file += generate_table(processed_players, char_stats, keys, meta_chars, strike_teams, meta_lbl, color_theme, team_pwr_lbl='Team<br>Power', all_team_pwr=meta_team_pwr)
 				html_file += '  </td>\n  <td>\n   <br>\n  </td>\n  <td>\n'
 
 				# Differentiate Others Section from Meta Section
-				table_lbl += '<br><font size="4">OTHERS</font>'
+				table_lbl += '<br><font size="%s">OTHERS</font>' % title_small
 				color_theme = { 'lgt_color': "Gainsboro",
 								'med_color': "Silver",
 								'drk_color': "Black",
@@ -227,6 +254,35 @@ def generate_html(processed_players, char_stats, keys=['power','tier','iso'], mi
 			# If not the final section, add a divider row. 
 			if lane.index(section) != len(lane)-1:
 				html_file += '    <p></p>\n'
+
+		# After Lane content is done, close the div for the Tab implementation.
+		if len(lanes)>1:
+			html_file += '</div>\n'
+
+	# After all Lanes are done, add the Javascript to control lane tabs.
+	if len(lanes)>1:
+		html_file += '''
+			
+<script>
+function openPage(pageName,elmnt) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].style.backgroundColor = "";
+  }
+  document.getElementById(pageName).style.display = "block";
+  elmnt.style.backgroundColor = "white";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+</body>
+'''
 
 	# All done with All Lanes. Close the file.
 	html_file += '</html>'
@@ -255,15 +311,15 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 		pwr_color= "Maroon"
 
 	# Let's get this party started!
-	html_file += '   <table border="1" style="font-family:verdana; text-align: center;  font-size: 12;">\n'
+	html_file += '   <table border="1" style="font-family:verdana; text-align: center;  font-size: %s;">\n' % text_size
 
 	# WRITE THE IMAGES ROW. 
 	html_file += '    <tr style="background-color:%s;">\n' % lgt_color
-	html_file += '     <th style="font-size: 18pt;">%s</th>\n' % table_lbl
+	html_file += '     <th style="font-size: %s;">%s</th>\n' % (title_large, table_lbl)
 
 	# Include Images for each of the Characters.
 	for char in char_list:
-		html_file += '     <th style="background-color:%s;" colspan="%i"><img src="%s" alt="" width="100"></th>\n' % (img_color, len(keys), char_stats[char]['portrait'])
+		html_file += '     <th style="background-color:%s;" colspan="%i"><img src="%s" alt="" width="%s"></th>\n' % (img_color, len(keys), char_stats[char]['portrait'], cell_width)
 
 	# If we have all_team_pwr info, need a Team Power column.
 	if all_team_pwr:
@@ -277,13 +333,13 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 	html_file += '    <tr style="background-color:%s;">\n' % med_color
 	
 	if len(keys)>1 and len(strike_teams)>1:
-		html_file += '     <th nowrap width="150">Alliance<br>Member</th>\n'
+		html_file += '     <th width="%s">Alliance<br>Member</th>\n'
 	else:
-		html_file += '     <th nowrap width="150"></th>\n'
+		html_file += '     <th width="%s"></th>\n'
 
 	# Include information for the Meta Characters.
 	for char in char_list:
-		html_file += '     <th colspan="%i" width="100">%s</th>\n' % (len(keys), trans_name(char))
+		html_file += '     <th colspan="%i" width="%s">%s</th>\n' % (len(keys), cell_width, translate_name(char))
 
 	# If we have all_team_pwr info, need a Team Power column.
 	if all_team_pwr:
@@ -356,7 +412,7 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 		# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM
 
 	# Close the Table, we are done with this chunk.
-	html_file += '   </table >\n'
+	html_file += '   </table>\n'
 
 	return html_file
 																				
@@ -405,7 +461,7 @@ def get_char_list(char_stats):
 
 
 # Quick and dirty translation to shorter or better names.
-def trans_name(value):
+def translate_name(value):
 
 	tlist = {	"Avenger": "Avengers",
 				"Brotherhood": "B'Hood",
