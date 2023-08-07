@@ -118,7 +118,7 @@ def process_mhtml(path=path):
 						iso_info = str(char.find('div',attrs={'class','iso-wrapper'}))
 						iso = 0
 						if iso_info.find('-pips-') != -1:
-							iso = int(iso_info.split('-pips-')[1][0])
+							iso = int(iso_info.split('-pips-')[1].split('"')[0])
 						if iso_info.find('blue') != -1:
 							iso += 5
 						iso = str(iso)
@@ -150,14 +150,4 @@ def set_min_max(char_stats,char_name,stat,value):
 
 	if value>char_stats[char_name][stat]['max']:
 		char_stats[char_name][stat]['max'] = value
-
-	# Do the same bookkeeping across all toons.
-	char_stats.setdefault('all',{})
-
-	char_stats['all'].setdefault(stat,{'min':[value-1,0][stat=='iso'],'max':value})
-
-	if value<char_stats['all'][stat]['min']:
-		char_stats['all'][stat]['min'] = value
-	if value>char_stats['all'][stat]['max']:
-		char_stats['all'][stat]['max'] = value
 

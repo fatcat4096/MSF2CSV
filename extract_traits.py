@@ -29,6 +29,22 @@ def extract_traits():
 			chars_from_trait.setdefault(trait,{})
 			chars_from_trait[trait][char]=1
 
+	# Final edits. Certain tags are not complete
+	# e.g. Avengers and Xmen actually encompass more tags.
+
+	avengers = chars_from_trait['Avenger']
+	avengers.update(chars_from_trait['BionicAvenger'])
+	avengers.update(chars_from_trait['SecretAvenger'])
+	avengers.update(chars_from_trait['Wave1Avenger'])
+
+	xmen = chars_from_trait['Xmen']
+	xmen.update(chars_from_trait['Astonishing'])
+	xmen.update(chars_from_trait['Uncanny'])
+	xmen.update(chars_from_trait['Unlimited'])
+
+	defender = chars_from_trait['Defender']
+	#defender.update(chars_from_trait['SecretDefender'])
+
 	return chars_from_trait
 
 
