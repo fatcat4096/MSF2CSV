@@ -12,6 +12,7 @@ See: https://github.com/Modified/MHTifier
 # Standard library modules do the heavy lifting. Ours is all simple stuff.
 import email, email.message
 import os
+import pickle
 from bs4 import BeautifulSoup
 
 
@@ -23,17 +24,40 @@ except:
 	path = '.'+os.sep
 
 
-def process_mhtml(path=path):
+ 
+def process_mhtml(path=path, ):
 
-	processed_players = {}
-	char_stats = {}
-	traits_from_char = {}
+	processed_players = {}	# roster stats for each player
+	char_stats = {}			# min/max stats and portrait path for individual heroes
+	file_dates = {}			# (successfully) processed files and their last modification dates
 	
+	# Start by loading any previously cached_data
+	try:
+		[char_stats,processed_players,file_dates] = pickle.load(open('cached_data','rb'))
+	except:
+		pass
+
+	# Start by looking at the Modification date of process_mhtml.py
+	# If newer than in file_dates, wipe all three and start anew.
+	file = 'process_mhtml.py'
+	mtime = os.path.getmtime(path+file)
+	if file not in file_dates or mtime > file_dates[file]:
+		processed_players = {}
+		char_stats        = {}
+		file_dates        = {file:mtime}
+
+
+	# Iterate through the directory looking for MHTML files.
 	for file in os.listdir(path):
+
 		# Skip if not MHTML
 		if file[-5:] != "mhtml":
 			continue
-		
+
+		# If file hasn't been seen before or updated, need to process it again.
+		mtime = os.path.getmtime(path+file)
+		if file in file_dates and mtime <= file_dates[file]:
+			continue
 		# Open the .mhtml file for reading. 
 		mht = open(path+file, "rb")
 		print("Unpacking "+file+"...")
@@ -58,10 +82,6 @@ def process_mhtml(path=path):
 				soup = BeautifulSoup(part.get_payload(decode=True), 'html.parser')
 
 				player_name = soup.find('div', attrs = {'class':'player-name is-italic'}).text.strip()
-
-				#Skip file if player info already processed.
-				if player_name in processed_players:
-					continue
 
 				print("Parsing %s to %s, %d bytes...found %s" % (content_type, file_path, len(part.get_payload()), player_name))
 
@@ -134,6 +154,12 @@ def process_mhtml(path=path):
 					# Add these chars to our list of processed players.
 					processed_players[player_name] = processed_chars
 
+		# Updated file_dates file after successfully processing.
+		file_dates[file] = mtime
+
+	# cache the updated dict info to disk.
+	pickle.dump([char_stats,processed_players,file_dates],open('cached_data','wb'))
+	
 	return char_stats,processed_players
 
 

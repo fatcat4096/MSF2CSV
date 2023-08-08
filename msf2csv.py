@@ -7,13 +7,13 @@ Transform stats from MSF.gg into readable tables with heatmaps.
 # Standard library modules do the heavy lifting. Ours is all simple stuff.
 import os
 import datetime
-import pickle
 
 from process_mhtml import *			# Routines to scrap MHTML web pages.
 from gradients import *				# Routines to create color gradient for heat map
 from extract_traits import *		# Pull trait info from MSF.gg
 
 # Initialize a few globals.
+# These are all things you should feel free to edit.
 alliance_name = 'SIGMA_Infamously_Strange'
 
 strike_teams = [['FatCat','Joey','Daner','Jutch','sjhughes','Ramalama','DrFett','Evil Dead Rise'],
@@ -38,22 +38,9 @@ chars_from_trait = extract_traits()
 
 # Just do it.
 def main():
-	try:
-		# load sample data from cached file instead
-		[char_stats,processed_players] = pickle.load(open('cached_data','rb'))
 
-	except:
-		# Extract all the relevant info from MTHML roster files in this directory
-		char_stats,processed_players = process_mhtml(path)
-
-		# cache char_stats,processed_players to disk.
-		pickle.dump([char_stats,processed_players],open('cached_data','wb'))
-	
-	# Output selected tables built from the parsed information
-	output_files(char_stats, processed_players)
-
-
-def output_files(char_stats,processed_players):
+	# Load info from the MHTML files present.
+	char_stats,processed_players = process_mhtml(path)
 
 	filename = path+alliance_name+datetime.datetime.now().strftime("-%Y%m%d-")
 
@@ -115,38 +102,38 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 		char_list = get_char_list (char_stats)
 	
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = list(processed_players.keys())
-	player_list.sort(key=str.lower)
-
+	player_list = get_player_list (processed_players)
+	
 	html_file = '<!doctype html>\n<html lang="en">\n'
 	
 	# If we have multiple lanes, add a quick hack of a header to give us a tabbed interface.
 	if len(lanes)>1:
 		num_lanes = len(lanes)
-		html_file += '''<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
 
-/* Style tab links */
-.tablink {
-  background-color: #666;
-  color: black;
-  float: left;
-  border: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  font-size: 20px;
-  font-weight: bold;
-  width: '''+str(int(100/num_lanes)) +'''%; 								# THIS HAS TO BE CALCULATED BASED ON THE NUMBER OF LANES.
-}
-.tablink:hover { background-color: #888; }
-.tabcontent { padding: 70px 20px; }
-</style>
-</head>
-<body>
- '''
+		html_file += '<head>\n'
+		html_file += '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+		html_file += '<style>\n'
+		html_file += '\n'
+		html_file += '/* Style tab links */\n'
+		html_file += '.tablink {\n'
+		html_file += '  background-color: #666;\n'
+		html_file += '  color: black;\n'
+		html_file += '  float: left;\n'
+		html_file += '  border: none;\n'
+		html_file += '  cursor: pointer;\n'
+		html_file += '  padding: 14px 16px;\n'
+		html_file += '  font-size: 20px;\n'
+		html_file += '  font-weight: bold;\n'
+		html_file += '  width: '+str(int(100/num_lanes)) +'%;\n' 								
+		html_file += '}\n'
+		html_file += '.tablink:hover { background-color: #888; }\n'
+		html_file += '.tabcontent { padding: 70px 20px; }\n'
+		html_file += '</style>\n'
+		html_file += '</head>\n'
+		html_file += '<body>\n'
+
 		for num in range(num_lanes):
-			html_file += '''<button class="tablink" onclick="openPage('Lane%i', this)" id="defaultOpen">LANE %i</button>''' % (num+1,num+1)
+			html_file += '''<button class="tablink" onclick="openPage('Lane%i', this)" id="defaultOpen">LANE %i</button>''' % (num+1,num+1) + '\n'
 
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
@@ -183,11 +170,6 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 					# Did we find this char in any of the traits?
 					if char not in chars_from_trait[trait]:
 						active_chars.remove(char)
-
-			# Define Min/max range just using the qualifying heroes in this section.
-			#active_stats = {}
-			#for char in active_chars:
-			#	active_min_max(active_stats,stat
 
 			# Split active_chars into meta_chars and other_chars
 			meta_chars  = [char for char in active_chars if char in meta]
@@ -261,31 +243,28 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 
 	# After all Lanes are done, add the Javascript to control lane tabs.
 	if len(lanes)>1:
-		html_file += '''
+		html_file += '<script>\n'
+		html_file += 'function openPage(pageName,elmnt) {\n'
+		html_file += '  var i, tabcontent, tablinks;\n'
+		html_file += '  tabcontent = document.getElementsByClassName("tabcontent");\n'
+		html_file += '  for (i = 0; i < tabcontent.length; i++) {\n'
+		html_file += '    tabcontent[i].style.display = "none";\n'
+		html_file += '  }\n'
+		html_file += '  tablinks = document.getElementsByClassName("tablink");\n'
+		html_file += '  for (i = 0; i < tablinks.length; i++) {\n'
+		html_file += '    tablinks[i].style.backgroundColor = "";\n'
+		html_file += '  }\n'
+		html_file += '  document.getElementById(pageName).style.display = "block";\n'
+		html_file += '  elmnt.style.backgroundColor = "white";\n'
+		html_file += '}\n'
+		html_file += '\n'
+		html_file += '// Get the element with id="defaultOpen" and click on it\n'
+		html_file += 'document.getElementById("defaultOpen").click();\n'
+		html_file += '</script>\n'
+		html_file += '</body>\n'
 			
-<script>
-function openPage(pageName,elmnt) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].style.backgroundColor = "";
-  }
-  document.getElementById(pageName).style.display = "block";
-  elmnt.style.backgroundColor = "white";
-}
-
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-</script>
-</body>
-'''
-
 	# All done with All Lanes. Close the file.
-	html_file += '</html>'
+	html_file += '</html>\n'
 
 	return html_file
 
@@ -293,8 +272,7 @@ document.getElementById("defaultOpen").click();
 def generate_table(processed_players, char_stats, keys=['power','tier','iso'], char_list=[], strike_teams = [], table_lbl='', color_theme= {}, team_pwr_lbl='', all_team_pwr={}, html_file = ''):
 
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = list(processed_players.keys())
-	player_list.sort(key=str.lower)
+	player_list = get_player_list (processed_players)
 
 	# If different theme passed in, use those instead. 
 	if color_theme:
@@ -328,7 +306,6 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 	html_file += '    </tr>\n'
 	# DONE WITH THE IMAGES ROW. 
 
-
 	# WRITE THE CHARACTER NAMES ROW. 
 	html_file += '    <tr style="background-color:%s;">\n' % med_color
 	
@@ -347,7 +324,6 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 	
 	html_file += '    </tr>\n'
 	# DONE WITH THE CHARACTER NAMES ROW. 
-
 
 	# Iterate through each Strike Team.
 	for team in strike_teams:
@@ -384,7 +360,6 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 	
 			html_file += '    </tr>\n'
 		# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM
-
 
 		# FINALLY, WRITE THE DATA FOR EACH ROW. Player Name, then relevant stats for each character.
 		for player_name in player_list:
@@ -458,6 +433,15 @@ def get_char_list(char_stats):
 	char_list.sort()
 
 	return char_list
+
+
+# Bring back a sorted list of players from our processed_players data
+def get_player_list(processed_players):
+	player_list = list(processed_players.keys())
+	
+	player_list.sort(key=str.lower)
+	
+	return player_list
 
 
 # Quick and dirty translation to shorter or better names.
