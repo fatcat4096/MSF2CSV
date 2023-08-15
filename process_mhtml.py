@@ -10,10 +10,10 @@ See: https://github.com/Modified/MHTifier
 """
 
 # Standard library modules do the heavy lifting. Ours is all simple stuff.
+from parse_contents import *
+
 import email, email.message
 import os
-import pickle
-from bs4 import BeautifulSoup
 
 
 # We will look for MHTML in the same directory as this file.
@@ -23,30 +23,12 @@ try:
 except:
 	path = '.'+os.sep
 
-
  
-def process_mhtml(path=path, ):
+def process_mhtml(path=path):
 
 	processed_players = {}	# roster stats for each player
 	char_stats = {}			# min/max stats and portrait path for individual heroes
-	file_dates = {}			# (successfully) processed files and their last modification dates
 	
-	# Start by loading any previously cached_data
-	try:
-		[char_stats,processed_players,file_dates] = pickle.load(open('cached_data','rb'))
-	except:
-		pass
-
-	# Start by looking at the Modification date of process_mhtml.py
-	# If newer than in file_dates, wipe all three and start anew.
-	file = 'process_mhtml.py'
-	mtime = os.path.getmtime(path+file)
-	if file not in file_dates or mtime > file_dates[file]:
-		processed_players = {}
-		char_stats        = {}
-		file_dates        = {file:mtime}
-
-
 	# Iterate through the directory looking for MHTML files.
 	for file in os.listdir(path):
 
@@ -55,11 +37,11 @@ def process_mhtml(path=path, ):
 			continue
 
 		# If file hasn't been seen before or updated, need to process it again.
-		mtime = os.path.getmtime(path+file)
+		mtime = os.path.getmtime(os.path.join(path,file))
 		if file in file_dates and mtime <= file_dates[file]:
 			continue
 		# Open the .mhtml file for reading. 
-		mht = open(path+file, "rb")
+		mht = open(os.path.join(path,file), "rb")
 		print("Unpacking "+file+"...")
 
 		# Read entire MHT archive -- it's a multipart(/related) message.
@@ -79,101 +61,11 @@ def process_mhtml(path=path, ):
 
 			# Only the characters.html file has relevant data.
 			if decoded_file == 'characters':
-				soup = BeautifulSoup(part.get_payload(decode=True), 'html.parser')
-
-				player_name = soup.find('div', attrs = {'class':'player-name is-italic'}).text.strip()
-
-				print("Parsing %s to %s, %d bytes...found %s" % (content_type, file_path, len(part.get_payload()), player_name))
-
-				processed_chars  = {}
-				
-				chars  = soup.findAll('li', attrs = {'class':'character'})
-
-				for char in chars:
-					
-					# If no char_name defined, last entry on page. Skip.
-					char_name = char.find('h4').text.strip()
-					if not char_name:
-						pass
-
-					# Keep the path to the image for each character.
-					char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src')
-
-					char_stats.setdefault(char_name,{})
-					char_stats[char_name].setdefault('portrait',char_portrait)
-					
-					# Stats available only if character is recruited.
-					toon_stats = char.find('div', attrs = {'id':'toon-stats'})
-
-					if toon_stats:
-						# Decode Level and Power
-						stats = toon_stats.findAll('div', attrs = {'class':''})
-						level = stats[0].text.strip().split()[1]
-						power = ''.join(stats[1].text.strip().split(','))
-
-						set_min_max(char_stats,char_name,'level',level)
-						set_min_max(char_stats,char_name,'power',power)
-						
-						# Decode Yellow and Red Stars
-						stars = str(toon_stats.find('span'))
-						redStars = str(stars.count('red'))
-						yelStars = str(stars.count('red') + stars.count('orange'))
-						
-						# Decode Abilities
-						abilities = toon_stats.findAll('div', attrs = {'class':'ability-level'})
-						basic   = str(abilities[0]).split('-')[3][1]
-						special = str(abilities[1]).split('-')[3][1]
-						ult = '0'
-						if len(abilities)==4:
-							ult = str(abilities[-2]).split('-')[3][1]
-						passive = str(abilities[-1]).split('-')[3][1]
-						
-						# Decode Gear Tier
-						gear = char.find('div',attrs={'class':'gear-tier-ring'})
-						tier = str(gear).split('"g')[2].split('"')[0]
-
-						set_min_max(char_stats,char_name,'tier',tier)
-					
-						# Decode ISO Level
-						iso_info = str(char.find('div',attrs={'class','iso-wrapper'}))
-						iso = 0
-						if iso_info.find('-pips-') != -1:
-							iso = int(iso_info.split('-pips-')[1].split('"')[0])
-						if iso_info.find('blue') != -1:
-							iso += 5
-						iso = str(iso)
-
-						set_min_max(char_stats,char_name,'iso',iso)
-
-						processed_chars[char_name] = {'level':level,'power':power,'tier':tier,'iso':iso, 'yelStars':yelStars, 'redStars':redStars, 'basic':basic, 'special':special, 'ult':ult, 'passive':passive}
-
-					# Entries for Heroes not yet collected, no name on final entry for page.
-					elif char_name:
-						processed_chars[char_name] = {'level':'0','power':'0','tier':'0','iso':'0', 'yelStars':'0', 'redStars':'0', 'basic':'0', 'special':'0', 'ult':'0', 'passive':'0'}
-
-					# Add these chars to our list of processed players.
-					processed_players[player_name] = processed_chars
+				parse_roster(part.get_payload(decode=True), char_stats, processed_players, path)
 
 		# Updated file_dates file after successfully processing.
 		file_dates[file] = mtime
 
-	# cache the updated dict info to disk.
-	pickle.dump([char_stats,processed_players,file_dates],open('cached_data','wb'))
-	
 	return char_stats,processed_players
 
-
-# Keep track of min/max for each stat, for each hero individually and collectively, across all of the players found
-
-def set_min_max(char_stats,char_name,stat,value):
-	value = int(value)
-
-	# Find min/max stats for this specific toon.
-	char_stats[char_name].setdefault(stat,{'min':[value-1,0][stat=='iso'],'max':value})
-
-	if value<char_stats[char_name][stat]['min']:
-		char_stats[char_name][stat]['min'] = value
-
-	if value>char_stats[char_name][stat]['max']:
-		char_stats[char_name][stat]['max'] = value
 
