@@ -10,26 +10,26 @@
 
 /* Style tab links */
 .tablink {
-  background-color: #888;
-  color           : white;
-  float           : left;
-  border          : none;
-  outline         : none;
-  cursor          : pointer;
-  padding         : 14px 16px;
-  font-size       : 24px;
-  font-family     : 'Fira Sans Condensed';
-  font-weight     : 900;
-  width           : 20%;	# Adding 1 for Alliance Info tab
+  background-color : #888;
+  color            : white;
+  float            : left;
+  border           : none;
+  outline          : none;
+  cursor           : pointer;
+  padding          : 14px 16px;
+  font-size        : 24px;
+  font-family      : 'Fira Sans Condensed';
+  font-weight      : 900;
+  width            : 20%;	# Adding 1 for Alliance Info tab
 }
 .tablink:hover {
-  background-color: #555;
+  background-color : #555;
 }
 .tabcontent {
-  color  : white;
-  display: none;
-  padding: 70px 20px;
-  height : 100%;
+  background-color : #343734;
+  display          : none;
+  padding          : 70px 20px;
+  height           : 100%;
 }
 
 /* Styles for table cells */
@@ -43,12 +43,12 @@
 }
 .title_cell_blue {
   font-weight      : 700;
-  font-size        : 14;
+  font-size        : 14pt;
   background-color : PowderBlue;
 }
 .title_cell_gray {
   font-weight      : 700;
-  font-size        : 14;
+  font-size        : 14pt;
   background-color : Gainsboro;
 }
 .table_header_blue {
@@ -85,6 +85,10 @@
   font-weight      : 700;
   background-color : DarkGray;
 }
+.table_subtitle {
+  font-size        : 12pt;
+  font-weight      : normal;
+}
 .image_cell {
   background-color : Black;
 }
@@ -100,19 +104,19 @@
 #AllianceInfo {background-color: #343734;}
 </style>
 </head>
-<body style="background-color: #343734; font-family: 'Fira Sans Condensed', sans-serif;">
+<body style="background-color: #343734; font-family: 'Fira Sans Condensed', sans-serif; text-align:center;">
 <button class="tablink" onclick="openPage('Lane1', this)" id="defaultOpen">LANE 1</button>
 <button class="tablink" onclick="openPage('Lane2', this)" >LANE 2</button>
 <button class="tablink" onclick="openPage('Lane3', this)" >LANE 3</button>
 <button class="tablink" onclick="openPage('Lane4', this)" >LANE 4</button>
 <button class="tablink" onclick="openPage('AllianceInfo', this)">ALLIANCE INFO</button>
-<div id="Lane1" class="tabcontent" style="background-color:#343734; color:black;">
+<div id="Lane1" class="tabcontent"">
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>AVENGERS<BR>GOTG<br><font size="2">META</font></td>
+     <td>AVENGERS<BR>GOTG<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Deathlok_f44f9ffd.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Hulkbuster_8235ee50.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_IronMan_55dadf73.png" alt="" width="100"></th>
@@ -466,10 +470,10 @@
      <td style="background-color:#fbb66f;">231132</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#fe886f;">209108</td>
+     <td style="background-color:#fbae6f;">231687</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fe916f;">1097709</td>
+     <td class="bold_text" style="background-color:#fd9b6f;">1120288</td>
     </tr>
     <tr class="table_header_blue">
      <td>STRIKE TEAM 3</td>
@@ -648,9 +652,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>AVENGERS<BR>GOTG<br><font size="2">OTHERS</font></td>
+     <td>AVENGERS<BR>GOTG<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntMan_aaf2d3ad.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackPanther_b7d2b102.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackWidow_ad4f751d.png" alt="" width="100"></th>
@@ -762,7 +766,7 @@
      <td style="background-color:#f9ce6f;">163989</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#d9ff70;">302713</td>
+     <td style="background-color:#9eff72;">340910</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fca26f;">232432</td>
@@ -807,7 +811,7 @@
      <td style="background-color:#f7f06f;">154910</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#d3ff70;">1513922</td>
+     <td class="bold_text" style="background-color:#b8ff71;">1552119</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -826,9 +830,9 @@
      <td style="background-color:#f9d66f;">256216</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#f6fa6f;">167347</td>
+     <td style="background-color:#d8ff70;">194119</td>
      <td style="background-color:#cdff70;">16</td>
-     <td style="background-color:#f8d86f;">7</td>
+     <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#ff866f;">148741</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#fca46f;">5</td>
@@ -862,7 +866,7 @@
      <td style="background-color:#fe8b6f;">174679</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f0ff6f;">173375</td>
+     <td style="background-color:#cfff70;">202913</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td class="bold_text" style="background-color:#6fff74;">1656814</td>
@@ -1174,8 +1178,8 @@
      <td style="background-color:#fe926f;">224908</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#ff866f;">67135</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd936f;">79213</td>
+     <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#fcab6f;">172729</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -1204,13 +1208,13 @@
      <td style="background-color:#fbb06f;">117069</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fe8e6f;">66601</td>
+     <td style="background-color:#fe906f;">68325</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#edff6f;">210804</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd966f;">67060</td>
+     <td style="background-color:#fd986f;">68796</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td class="bold_text" style="background-color:#7eff73;">1634087</td>
@@ -1290,9 +1294,9 @@
      <td style="background-color:#f7e76f;">264276</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe916f;">77504</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fcae6f;">101836</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f9d66f;">200029</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -1320,15 +1324,15 @@
      <td style="background-color:#f8db6f;">130633</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd9b6f;">79222</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb36f;">102280</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f0ff6f;">210082</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd986f;">69088</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb16f;">93644</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td class="bold_text" style="background-color:#a8ff71;">1631447</td>
     </tr>
     <tr style="text-align: center;">
@@ -1619,7 +1623,7 @@
      <td style="background-color:#dbff6f;">191873</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#f1ff6f;">1502604</td>
+     <td class="bold_text" style="background-color:#f2ff6f;">1502604</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">EXfieldy</th>
@@ -1681,14 +1685,14 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fd966f;">65025</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fca36f;">82498</td>
+     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#fcac6f;">206855</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe8e6f;">88770</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fca46f;">114151</td>
+     <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#c3ff70;">316513</td>
      <td style="background-color:#8eff72;">18</td>
@@ -1735,7 +1739,7 @@
      <td style="background-color:#f6f66f;">160226</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#ff866f;">1258567</td>
+     <td class="bold_text" style="background-color:#ff866f;">1259122</td>
     </tr>
     <tr class="table_header_gray">
      <td>STRIKE TEAM 3</td>
@@ -1977,7 +1981,7 @@
      <td style="background-color:#f6f46f;">252076</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#f8d66f;">174277</td>
+     <td style="background-color:#f8de6f;">182948</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#e8ff6f;">293285</td>
@@ -2016,13 +2020,13 @@
      <td style="background-color:#f7ec6f;">135833</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f9cf6f;">130073</td>
-     <td style="background-color:#f6ff6f;">15</td>
+     <td style="background-color:#f8de6f;">145303</td>
+     <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f6fc6f;">207811</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#d7ff70;">195322</td>
+     <td style="background-color:#b0ff71;">229492</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td class="bold_text" style="background-color:#71ff73;">1646431</td>
@@ -2267,9 +2271,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>PYM TECH<BR>KREE<br><font size="2">META</font></td>
+     <td>PYM TECH<BR>KREE<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainMarvel_50f06658.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Ghost_d99d64f7.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Minerva_e20c3a80.png" alt="" width="100"></th>
@@ -2493,7 +2497,7 @@
      <td style="background-color:#f0ff6f;">182739</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#dcff6f;">976138</td>
+     <td class="bold_text" style="background-color:#ddff6f;">976138</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">HeadHunter2838</th>
@@ -2512,7 +2516,7 @@
      <td style="background-color:#f9d66f;">132569</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fbb56f;">764036</td>
+     <td class="bold_text" style="background-color:#fbb46f;">764036</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">keithchyiu</th>
@@ -2531,7 +2535,7 @@
      <td style="background-color:#c2ff70;">228037</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#dcff6f;">976208</td>
+     <td class="bold_text" style="background-color:#ddff6f;">976208</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">mgmf</th>
@@ -2588,7 +2592,7 @@
      <td style="background-color:#fca36f;">75661</td>
      <td style="background-color:#fac66f;">11</td>
      <td style="background-color:#fca46f;">5</td>
-     <td class="bold_text" style="background-color:#fe876f;">662156</td>
+     <td class="bold_text" style="background-color:#ff866f;">662156</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">EXfieldy</th>
@@ -2623,10 +2627,10 @@
      <td style="background-color:#fabd6f;">181715</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd9e6f;">70829</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#fe8c6f;">3</td>
-     <td class="bold_text" style="background-color:#ff866f;">659185</td>
+     <td style="background-color:#fbaf6f;">89403</td>
+     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd956f;">4</td>
+     <td class="bold_text" style="background-color:#fe8d6f;">677759</td>
     </tr>
     <tr class="table_header_blue">
      <td>STRIKE TEAM 3</td>
@@ -2805,9 +2809,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>PYM TECH<BR>KREE<br><font size="2">OTHERS</font></td>
+     <td>PYM TECH<BR>KREE<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntMan_aaf2d3ad.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Ronan_7c8c912e.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Stature_ab8c7465.png" alt="" width="100"></th>
@@ -3031,7 +3035,7 @@
      <td style="background-color:#f4ff6f;">123945</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#e8ff6f;">979913</td>
+     <td class="bold_text" style="background-color:#e9ff6f;">979913</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">HeadHunter2838</th>
@@ -3050,7 +3054,7 @@
      <td style="background-color:#fbb56f;">70308</td>
      <td style="background-color:#f9d36f;">12</td>
      <td style="background-color:#fe876f;">2</td>
-     <td class="bold_text" style="background-color:#fbb16f;">764036</td>
+     <td class="bold_text" style="background-color:#fbb06f;">764036</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">keithchyiu</th>
@@ -3126,7 +3130,7 @@
      <td style="background-color:#fda06f;">55496</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#fe876f;">2</td>
-     <td class="bold_text" style="background-color:#fe876f;">662156</td>
+     <td class="bold_text" style="background-color:#ff866f;">662156</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">EXfieldy</th>
@@ -3149,9 +3153,9 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fd966f;">65025</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fca36f;">82498</td>
+     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#fabe6f;">61110</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#ff866f;">1</td>
@@ -3164,7 +3168,7 @@
      <td style="background-color:#fca96f;">62050</td>
      <td style="background-color:#fac66f;">11</td>
      <td style="background-color:#fe8c6f;">3</td>
-     <td class="bold_text" style="background-color:#ff866f;">659185</td>
+     <td class="bold_text" style="background-color:#fe8c6f;">677759</td>
     </tr>
     <tr class="table_header_gray">
      <td>STRIKE TEAM 3</td>
@@ -3345,9 +3349,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><font size="2">META</font></td>
+     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Dazzler_21ea8d60.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Fantomex_d972f605.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Gambit_27e36668.png" alt="" width="100"></th>
@@ -3883,9 +3887,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><font size="2">OTHERS</font></td>
+     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Beast_ce022c35.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Bishop_43998bed.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Blob_d406a3cf.png" alt="" width="100"></th>
@@ -4020,7 +4024,7 @@
      <td style="background-color:#bcff71;">168919</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe8b6f;">241102</td>
+     <td style="background-color:#fac06f;">267906</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#edff6f;">98442</td>
@@ -4035,7 +4039,7 @@
      <td style="background-color:#fcad6f;">141674</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fabc6f;">237849</td>
+     <td style="background-color:#fac86f;">243930</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#b0ff71;">219429</td>
@@ -4050,7 +4054,7 @@
      <td style="background-color:#f4ff6f;">162861</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fcaa6f;">1366871</td>
+     <td class="bold_text" style="background-color:#fabb6f;">1399756</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -4569,7 +4573,7 @@
      <td style="background-color:#fbb56f;">46671</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#fe8c6f;">3</td>
-     <td style="background-color:#fca26f;">252733</td>
+     <td style="background-color:#efff6f;">302585</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#eeff6f;">97373</td>
@@ -4599,7 +4603,7 @@
      <td style="background-color:#cbff70;">185531</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fac86f;">1427612</td>
+     <td class="bold_text" style="background-color:#f7e56f;">1477464</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">HeadHunter2838</th>
@@ -5585,9 +5589,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">META</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_GhostSpider_f7a4fac2.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_ScarletSpider_0689d8fc.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderMan_4fdcec3d.png" alt="" width="100"></th>
@@ -6123,9 +6127,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">OTHERS</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AgentVenom_866cc7bd.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntiVenom_99b51f89.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainMarvel_50f06658.png" alt="" width="100"></th>
@@ -6253,7 +6257,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FatCat</th>
-     <td style="background-color:#f6f96f;">244583</td>
+     <td style="background-color:#f1ff6f;">250421</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#adff71;">184219</td>
@@ -6322,7 +6326,7 @@
      <td style="background-color:#f5ff6f;">118446</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#b5ff71;">1327712</td>
+     <td class="bold_text" style="background-color:#adff71;">1333550</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -6335,9 +6339,9 @@
      <td style="background-color:#b5ff71;">235619</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f6fa6f;">167347</td>
+     <td style="background-color:#d8ff70;">194119</td>
      <td style="background-color:#cdff70;">16</td>
-     <td style="background-color:#f8d86f;">7</td>
+     <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fabe6f;">170779</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f8d86f;">7</td>
@@ -6773,8 +6777,8 @@
      <td style="background-color:#fda06f;">120942</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#ff866f;">67135</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd936f;">79213</td>
+     <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -6824,7 +6828,7 @@
      <td style="background-color:#fbb06f;">117069</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fe8e6f;">66601</td>
+     <td style="background-color:#fe906f;">68325</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#6fff74;">335167</td>
@@ -6919,9 +6923,9 @@
      <td style="background-color:#eaff6f;">199966</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe916f;">77504</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fcae6f;">101836</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -6970,9 +6974,9 @@
      <td style="background-color:#f8db6f;">130633</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd9b6f;">79222</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb36f;">102280</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#edff6f;">179853</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -7421,8 +7425,8 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fca96f;">195568</td>
-     <td style="background-color:#cdff70;">16</td>
+     <td style="background-color:#f9cf6f;">219004</td>
+     <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#e8ff6f;">152239</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -7463,9 +7467,9 @@
      <td style="background-color:#fabe6f;">61110</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fca76f;">34181</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#ff866f;">1</td>
+     <td style="background-color:#fac46f;">63932</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#f6fe6f;">110767</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -7484,13 +7488,13 @@
      <td style="background-color:#f7ed6f;">159570</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fbb96f;">73923</td>
+     <td style="background-color:#fabe6f;">81150</td>
      <td style="background-color:#f9d36f;">12</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#fbb66f;">47942</td>
      <td style="background-color:#fbb16f;">9</td>
      <td style="background-color:#ff866f;">1</td>
-     <td class="bold_text" style="background-color:#fca86f;">1226340</td>
+     <td class="bold_text" style="background-color:#fbae6f;">1233686</td>
     </tr>
     <tr class="table_header_gray">
      <td>STRIKE TEAM 3</td>
@@ -7846,8 +7850,8 @@
      <td style="background-color:#f7ec6f;">135833</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f9cf6f;">130073</td>
-     <td style="background-color:#f6ff6f;">15</td>
+     <td style="background-color:#f8de6f;">145303</td>
+     <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#fabc6f;">78461</td>
      <td style="background-color:#f9d36f;">12</td>
@@ -8154,13 +8158,13 @@
  </tr>
 </table>
 </div>
-<div id="Lane2" class="tabcontent" style="background-color:#343734; color:black;">
+<div id="Lane2" class="tabcontent"">
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>AVENGERS<BR>SPIDERS<br><font size="2">META</font></td>
+     <td>AVENGERS<BR>SPIDERS<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Deathlok_f44f9ffd.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Hulkbuster_8235ee50.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_IronMan_55dadf73.png" alt="" width="100"></th>
@@ -8514,10 +8518,10 @@
      <td style="background-color:#fbb66f;">231132</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#fe886f;">209108</td>
+     <td style="background-color:#fbae6f;">231687</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fe916f;">1097709</td>
+     <td class="bold_text" style="background-color:#fd9b6f;">1120288</td>
     </tr>
     <tr class="table_header_blue">
      <td>STRIKE TEAM 3</td>
@@ -8696,9 +8700,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>AVENGERS<BR>SPIDERS<br><font size="2">OTHERS</font></td>
+     <td>AVENGERS<BR>SPIDERS<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AgentVenom_866cc7bd.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntMan_aaf2d3ad.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntiVenom_99b51f89.png" alt="" width="100"></th>
@@ -8866,7 +8870,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FatCat</th>
-     <td style="background-color:#f6f96f;">244583</td>
+     <td style="background-color:#f1ff6f;">250421</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fac06f;">123493</td>
@@ -8881,7 +8885,7 @@
      <td style="background-color:#f9ce6f;">163989</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#d9ff70;">302713</td>
+     <td style="background-color:#9eff72;">340910</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fca26f;">232432</td>
@@ -8959,7 +8963,7 @@
      <td style="background-color:#f7f06f;">154910</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#a6ff71;">1647460</td>
+     <td class="bold_text" style="background-color:#8dff72;">1685657</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -9053,7 +9057,7 @@
      <td style="background-color:#fe8b6f;">174679</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f0ff6f;">173375</td>
+     <td style="background-color:#cfff70;">202913</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td class="bold_text" style="background-color:#6fff74;">1730844</td>
@@ -9635,7 +9639,7 @@
      <td style="background-color:#edff6f;">210804</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd966f;">67060</td>
+     <td style="background-color:#fd986f;">68796</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td class="bold_text" style="background-color:#90ff72;">1680144</td>
@@ -9829,9 +9833,9 @@
      <td style="background-color:#f0ff6f;">210082</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd986f;">69088</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb16f;">93644</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td class="bold_text" style="background-color:#b0ff71;">1666753</td>
     </tr>
     <tr style="text-align: center;">
@@ -10418,20 +10422,20 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fca96f;">195568</td>
-     <td style="background-color:#cdff70;">16</td>
+     <td style="background-color:#f9cf6f;">219004</td>
+     <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#fd966f;">65025</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fca36f;">82498</td>
+     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#e8ff6f;">152239</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#fcac6f;">206855</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe8e6f;">88770</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fca46f;">114151</td>
+     <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#c3ff70;">316513</td>
      <td style="background-color:#8eff72;">18</td>
@@ -10481,9 +10485,9 @@
      <td style="background-color:#e0ff6f;">203835</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fca76f;">34181</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#ff866f;">1</td>
+     <td style="background-color:#fac46f;">63932</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#caff70;">211658</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -10502,16 +10506,16 @@
      <td style="background-color:#ebff6f;">357839</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
-     <td style="background-color:#fbb96f;">73923</td>
+     <td style="background-color:#fabe6f;">81150</td>
      <td style="background-color:#f9d36f;">12</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#fca86f;">183111</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f6f66f;">160226</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fd966f;">1385274</td>
+     <td class="bold_text" style="background-color:#fd966f;">1385323</td>
     </tr>
     <tr class="table_header_gray">
      <td>STRIKE TEAM 3</td>
@@ -10915,7 +10919,7 @@
      <td style="background-color:#f6f46f;">252076</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#f8d66f;">174277</td>
+     <td style="background-color:#f8de6f;">182948</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#e8ff6f;">293285</td>
@@ -10993,7 +10997,7 @@
      <td style="background-color:#f6fc6f;">207811</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#d7ff70;">195322</td>
+     <td style="background-color:#b0ff71;">229492</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td class="bold_text" style="background-color:#6fff74;">1727355</td>
@@ -11394,9 +11398,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>PYM TECH<BR>WAKANDA<br><font size="2">META</font></td>
+     <td>PYM TECH<BR>WAKANDA<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackPanther_b7d2b102.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackPantherBC_9d0ee3c6.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Nakia_8e95fbdc.png" alt="" width="100"></th>
@@ -11932,9 +11936,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>PYM TECH<BR>WAKANDA<br><font size="2">OTHERS</font></td>
+     <td>PYM TECH<BR>WAKANDA<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntMan_aaf2d3ad.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Ghost_d99d64f7.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Killmonger_fa09de4d.png" alt="" width="100"></th>
@@ -12329,9 +12333,9 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fd966f;">65025</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fca36f;">82498</td>
+     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#f7ea6f;">138005</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -12344,9 +12348,9 @@
      <td style="background-color:#fca96f;">62050</td>
      <td style="background-color:#fac66f;">11</td>
      <td style="background-color:#fe8c6f;">3</td>
-     <td style="background-color:#fd9e6f;">70829</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fbaf6f;">89403</td>
+     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd956f;">4</td>
      <td class="bold_text" style="background-color:#ff866f;">947275</td>
     </tr>
     <tr class="table_header_gray">
@@ -12555,9 +12559,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><font size="2">META</font></td>
+     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Dazzler_21ea8d60.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Fantomex_d972f605.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Gambit_27e36668.png" alt="" width="100"></th>
@@ -13093,9 +13097,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><font size="2">OTHERS</font></td>
+     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Beast_ce022c35.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Bishop_43998bed.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Blob_d406a3cf.png" alt="" width="100"></th>
@@ -13230,7 +13234,7 @@
      <td style="background-color:#bcff71;">168919</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe8b6f;">241102</td>
+     <td style="background-color:#fac06f;">267906</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#edff6f;">98442</td>
@@ -13245,7 +13249,7 @@
      <td style="background-color:#fcad6f;">141674</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fabc6f;">237849</td>
+     <td style="background-color:#fac86f;">243930</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#b0ff71;">219429</td>
@@ -13260,7 +13264,7 @@
      <td style="background-color:#f4ff6f;">162861</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fcaa6f;">1366871</td>
+     <td class="bold_text" style="background-color:#fabb6f;">1399756</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -13779,7 +13783,7 @@
      <td style="background-color:#fbb56f;">46671</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#fe8c6f;">3</td>
-     <td style="background-color:#fca26f;">252733</td>
+     <td style="background-color:#efff6f;">302585</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#eeff6f;">97373</td>
@@ -13809,7 +13813,7 @@
      <td style="background-color:#cbff70;">185531</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fac86f;">1427612</td>
+     <td class="bold_text" style="background-color:#f7e56f;">1477464</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">HeadHunter2838</th>
@@ -14795,9 +14799,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">META</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_GhostSpider_f7a4fac2.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_ScarletSpider_0689d8fc.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderMan_4fdcec3d.png" alt="" width="100"></th>
@@ -15333,9 +15337,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">OTHERS</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AgentVenom_866cc7bd.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntiVenom_99b51f89.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainMarvel_50f06658.png" alt="" width="100"></th>
@@ -15463,7 +15467,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FatCat</th>
-     <td style="background-color:#f6f96f;">244583</td>
+     <td style="background-color:#f1ff6f;">250421</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#adff71;">184219</td>
@@ -15532,7 +15536,7 @@
      <td style="background-color:#f5ff6f;">118446</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#b5ff71;">1327712</td>
+     <td class="bold_text" style="background-color:#adff71;">1333550</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -15545,9 +15549,9 @@
      <td style="background-color:#b5ff71;">235619</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f6fa6f;">167347</td>
+     <td style="background-color:#d8ff70;">194119</td>
      <td style="background-color:#cdff70;">16</td>
-     <td style="background-color:#f8d86f;">7</td>
+     <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fabe6f;">170779</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f8d86f;">7</td>
@@ -15983,8 +15987,8 @@
      <td style="background-color:#fda06f;">120942</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#ff866f;">67135</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd936f;">79213</td>
+     <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -16034,7 +16038,7 @@
      <td style="background-color:#fbb06f;">117069</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fe8e6f;">66601</td>
+     <td style="background-color:#fe906f;">68325</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#6fff74;">335167</td>
@@ -16129,9 +16133,9 @@
      <td style="background-color:#eaff6f;">199966</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe916f;">77504</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fcae6f;">101836</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -16180,9 +16184,9 @@
      <td style="background-color:#f8db6f;">130633</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd9b6f;">79222</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb36f;">102280</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#edff6f;">179853</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -16631,8 +16635,8 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fca96f;">195568</td>
-     <td style="background-color:#cdff70;">16</td>
+     <td style="background-color:#f9cf6f;">219004</td>
+     <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#e8ff6f;">152239</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -16673,9 +16677,9 @@
      <td style="background-color:#fabe6f;">61110</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fca76f;">34181</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#ff866f;">1</td>
+     <td style="background-color:#fac46f;">63932</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#f6fe6f;">110767</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -16694,13 +16698,13 @@
      <td style="background-color:#f7ed6f;">159570</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fbb96f;">73923</td>
+     <td style="background-color:#fabe6f;">81150</td>
      <td style="background-color:#f9d36f;">12</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#fbb66f;">47942</td>
      <td style="background-color:#fbb16f;">9</td>
      <td style="background-color:#ff866f;">1</td>
-     <td class="bold_text" style="background-color:#fca86f;">1226340</td>
+     <td class="bold_text" style="background-color:#fbae6f;">1233686</td>
     </tr>
     <tr class="table_header_gray">
      <td>STRIKE TEAM 3</td>
@@ -17056,8 +17060,8 @@
      <td style="background-color:#f7ec6f;">135833</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f9cf6f;">130073</td>
-     <td style="background-color:#f6ff6f;">15</td>
+     <td style="background-color:#f8de6f;">145303</td>
+     <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#fabc6f;">78461</td>
      <td style="background-color:#f9d36f;">12</td>
@@ -17364,13 +17368,13 @@
  </tr>
 </table>
 </div>
-<div id="Lane3" class="tabcontent" style="background-color:#343734; color:black;">
+<div id="Lane3" class="tabcontent"">
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>SHIELD<BR>B'HOOD<br><font size="2">META</font></td>
+     <td>SHIELD<BR>B'HOOD<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackWidow_ad4f751d.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Magneto_e7d4c5dc.png" alt="" width="100"></th>
@@ -17411,10 +17415,10 @@
      <td style="background-color:#f9ce6f;">163989</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#d9ff70;">302713</td>
+     <td style="background-color:#9eff72;">340910</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#fe8b6f;">241102</td>
+     <td style="background-color:#fac06f;">267906</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#f6f76f;">215979</td>
@@ -17423,7 +17427,7 @@
      <td style="background-color:#f8df6f;">251511</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fcae6f;">1175294</td>
+     <td class="bold_text" style="background-color:#f9d36f;">1240295</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Joey</th>
@@ -17585,7 +17589,7 @@
      <td style="background-color:#b9ff71;">323173</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#fca26f;">252733</td>
+     <td style="background-color:#efff6f;">302585</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#f7ee6f;">213190</td>
@@ -17594,7 +17598,7 @@
      <td style="background-color:#afff71;">303304</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#f0ff6f;">1302316</td>
+     <td class="bold_text" style="background-color:#d8ff70;">1352168</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">HeadHunter2838</th>
@@ -17613,7 +17617,7 @@
      <td style="background-color:#e3ff6f;">277911</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fac56f;">1185898</td>
+     <td class="bold_text" style="background-color:#fbba6f;">1185898</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">keithchyiu</th>
@@ -17632,7 +17636,7 @@
      <td style="background-color:#fac76f;">238514</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fca46f;">1124422</td>
+     <td class="bold_text" style="background-color:#fd976f;">1124422</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">mgmf</th>
@@ -17651,7 +17655,7 @@
      <td style="background-color:#fcaa6f;">222440</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fac26f;">1180345</td>
+     <td class="bold_text" style="background-color:#fbb76f;">1180345</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">BigDiesel</th>
@@ -17670,7 +17674,7 @@
      <td style="background-color:#94ff72;">316707</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#beff71;">1384298</td>
+     <td class="bold_text" style="background-color:#c3ff70;">1384298</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Luthher</th>
@@ -17689,7 +17693,7 @@
      <td style="background-color:#b5ff71;">300336</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fac66f;">1186799</td>
+     <td class="bold_text" style="background-color:#fbbb6f;">1186799</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">EXfieldy</th>
@@ -17712,8 +17716,8 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">FabiooBessa</th>
-     <td style="background-color:#fe8e6f;">88770</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fca46f;">114151</td>
+     <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#c3ff70;">316513</td>
      <td style="background-color:#8eff72;">18</td>
@@ -17727,7 +17731,7 @@
      <td style="background-color:#ff866f;">202646</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#ff866f;">1067734</td>
+     <td class="bold_text" style="background-color:#ff866f;">1093115</td>
     </tr>
     <tr class="table_header_blue">
      <td>STRIKE TEAM 3</td>
@@ -17807,7 +17811,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Snicky</th>
-     <td style="background-color:#f8d66f;">174277</td>
+     <td style="background-color:#f8de6f;">182948</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#e8ff6f;">293285</td>
@@ -17822,7 +17826,7 @@
      <td style="background-color:#8fff72;">318933</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#d1ff70;">1279311</td>
+     <td class="bold_text" style="background-color:#cbff70;">1287982</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Zairyuu</th>
@@ -17906,9 +17910,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>SHIELD<BR>B'HOOD<br><font size="2">OTHERS</font></td>
+     <td>SHIELD<BR>B'HOOD<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Blob_d406a3cf.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Hawkeye_4f015df2.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Mystique_e90e0064.png" alt="" width="100"></th>
@@ -17961,7 +17965,7 @@
      <td style="background-color:#e7ff6f;">142854</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fbb76f;">1230734</td>
+     <td class="bold_text" style="background-color:#f8e16f;">1295735</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -18132,7 +18136,7 @@
      <td style="background-color:#f0ff6f;">138235</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#f7e56f;">1302316</td>
+     <td class="bold_text" style="background-color:#f1ff6f;">1352168</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">HeadHunter2838</th>
@@ -18446,9 +18450,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>DEFENDER<BR>MERCS<BR>H4H<br><font size="2">META</font></td>
+     <td>DEFENDER<BR>MERCS<BR>H4H<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_ColleenWing_55112caa.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_IronFist_723e9bed.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_LukeCage_260d482f.png" alt="" width="100"></th>
@@ -18984,9 +18988,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>DEFENDER<BR>MERCS<BR>H4H<br><font size="2">OTHERS</font></td>
+     <td>DEFENDER<BR>MERCS<BR>H4H<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Daredevil_7e951c75.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Deadpool_445c42aa.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_JessicaJones_21457e3d.png" alt="" width="100"></th>
@@ -19690,9 +19694,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>GOTG<BR>X-MEN<BR>MERCS<br><font size="2">META</font></td>
+     <td>GOTG<BR>X-MEN<BR>MERCS<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Dazzler_21ea8d60.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Fantomex_d972f605.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Gambit_27e36668.png" alt="" width="100"></th>
@@ -20228,9 +20232,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>GOTG<BR>X-MEN<BR>MERCS<br><font size="2">OTHERS</font></td>
+     <td>GOTG<BR>X-MEN<BR>MERCS<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Beast_ce022c35.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Bishop_43998bed.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Cosmo_b4fdf024.png" alt="" width="100"></th>
@@ -20385,7 +20389,7 @@
      <td style="background-color:#fcad6f;">141674</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fabc6f;">237849</td>
+     <td style="background-color:#fac86f;">243930</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#f8db6f;">130633</td>
@@ -20403,7 +20407,7 @@
      <td style="background-color:#f4ff6f;">162861</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fac26f;">1361890</td>
+     <td class="bold_text" style="background-color:#fac56f;">1367971</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -20413,9 +20417,9 @@
      <td style="background-color:#ff866f;">116946</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#fbba6f;">6</td>
-     <td style="background-color:#f6fa6f;">167347</td>
+     <td style="background-color:#d8ff70;">194119</td>
      <td style="background-color:#cdff70;">16</td>
-     <td style="background-color:#f8d86f;">7</td>
+     <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fd9e6f;">74325</td>
      <td style="background-color:#f9d36f;">12</td>
      <td style="background-color:#fd956f;">4</td>
@@ -20797,8 +20801,8 @@
      <td style="background-color:#aaff71;">218711</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#ff866f;">67135</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd936f;">79213</td>
+     <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#c0ff70;">156847</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -20839,7 +20843,7 @@
      <td style="background-color:#fbb06f;">117069</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fe8e6f;">66601</td>
+     <td style="background-color:#fe906f;">68325</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#fbbb6f;">95436</td>
@@ -20925,9 +20929,9 @@
      <td style="background-color:#6fff74;">247557</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td style="background-color:#fe916f;">77504</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fcae6f;">101836</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#fbae6f;">83449</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fe8c6f;">3</td>
@@ -20967,9 +20971,9 @@
      <td style="background-color:#f8db6f;">130633</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd9b6f;">79222</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb36f;">102280</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#fbb36f;">90611</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fe8c6f;">3</td>
@@ -21735,8 +21739,8 @@
      <td style="background-color:#f7ec6f;">135833</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f9cf6f;">130073</td>
-     <td style="background-color:#f6ff6f;">15</td>
+     <td style="background-color:#f8de6f;">145303</td>
+     <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#9fff72;">184282</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -22013,9 +22017,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><font size="2">META</font></td>
+     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Dazzler_21ea8d60.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Fantomex_d972f605.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Gambit_27e36668.png" alt="" width="100"></th>
@@ -22551,9 +22555,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><font size="2">OTHERS</font></td>
+     <td>B'HOOD<BR>MERCS<BR>X-MEN<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Beast_ce022c35.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Bishop_43998bed.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Blob_d406a3cf.png" alt="" width="100"></th>
@@ -22688,7 +22692,7 @@
      <td style="background-color:#bcff71;">168919</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe8b6f;">241102</td>
+     <td style="background-color:#fac06f;">267906</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#edff6f;">98442</td>
@@ -22703,7 +22707,7 @@
      <td style="background-color:#fcad6f;">141674</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fabc6f;">237849</td>
+     <td style="background-color:#fac86f;">243930</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#6fff74;">10</td>
      <td style="background-color:#b0ff71;">219429</td>
@@ -22718,7 +22722,7 @@
      <td style="background-color:#f4ff6f;">162861</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fcaa6f;">1366871</td>
+     <td class="bold_text" style="background-color:#fabb6f;">1399756</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -23237,7 +23241,7 @@
      <td style="background-color:#fbb56f;">46671</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#fe8c6f;">3</td>
-     <td style="background-color:#fca26f;">252733</td>
+     <td style="background-color:#efff6f;">302585</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#eeff6f;">97373</td>
@@ -23267,7 +23271,7 @@
      <td style="background-color:#cbff70;">185531</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#fac86f;">1427612</td>
+     <td class="bold_text" style="background-color:#f7e56f;">1477464</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">HeadHunter2838</th>
@@ -24253,9 +24257,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">META</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_GhostSpider_f7a4fac2.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_ScarletSpider_0689d8fc.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderMan_4fdcec3d.png" alt="" width="100"></th>
@@ -24791,9 +24795,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">OTHERS</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AgentVenom_866cc7bd.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntiVenom_99b51f89.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainMarvel_50f06658.png" alt="" width="100"></th>
@@ -24921,7 +24925,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FatCat</th>
-     <td style="background-color:#f6f96f;">244583</td>
+     <td style="background-color:#f1ff6f;">250421</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#adff71;">184219</td>
@@ -24990,7 +24994,7 @@
      <td style="background-color:#f5ff6f;">118446</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#b5ff71;">1327712</td>
+     <td class="bold_text" style="background-color:#adff71;">1333550</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -25003,9 +25007,9 @@
      <td style="background-color:#b5ff71;">235619</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f6fa6f;">167347</td>
+     <td style="background-color:#d8ff70;">194119</td>
      <td style="background-color:#cdff70;">16</td>
-     <td style="background-color:#f8d86f;">7</td>
+     <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fabe6f;">170779</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f8d86f;">7</td>
@@ -25441,8 +25445,8 @@
      <td style="background-color:#fda06f;">120942</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#ff866f;">67135</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd936f;">79213</td>
+     <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -25492,7 +25496,7 @@
      <td style="background-color:#fbb06f;">117069</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fe8e6f;">66601</td>
+     <td style="background-color:#fe906f;">68325</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#6fff74;">335167</td>
@@ -25587,9 +25591,9 @@
      <td style="background-color:#eaff6f;">199966</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe916f;">77504</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fcae6f;">101836</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -25638,9 +25642,9 @@
      <td style="background-color:#f8db6f;">130633</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd9b6f;">79222</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb36f;">102280</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#edff6f;">179853</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -26089,8 +26093,8 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fca96f;">195568</td>
-     <td style="background-color:#cdff70;">16</td>
+     <td style="background-color:#f9cf6f;">219004</td>
+     <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#e8ff6f;">152239</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -26131,9 +26135,9 @@
      <td style="background-color:#fabe6f;">61110</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fca76f;">34181</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#ff866f;">1</td>
+     <td style="background-color:#fac46f;">63932</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#f6fe6f;">110767</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -26152,13 +26156,13 @@
      <td style="background-color:#f7ed6f;">159570</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fbb96f;">73923</td>
+     <td style="background-color:#fabe6f;">81150</td>
      <td style="background-color:#f9d36f;">12</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#fbb66f;">47942</td>
      <td style="background-color:#fbb16f;">9</td>
      <td style="background-color:#ff866f;">1</td>
-     <td class="bold_text" style="background-color:#fca86f;">1226340</td>
+     <td class="bold_text" style="background-color:#fbae6f;">1233686</td>
     </tr>
     <tr class="table_header_gray">
      <td>STRIKE TEAM 3</td>
@@ -26514,8 +26518,8 @@
      <td style="background-color:#f7ec6f;">135833</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f9cf6f;">130073</td>
-     <td style="background-color:#f6ff6f;">15</td>
+     <td style="background-color:#f8de6f;">145303</td>
+     <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#fabc6f;">78461</td>
      <td style="background-color:#f9d36f;">12</td>
@@ -26822,13 +26826,13 @@
  </tr>
 </table>
 </div>
-<div id="Lane4" class="tabcontent" style="background-color:#343734; color:black;">
+<div id="Lane4" class="tabcontent"">
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>SHIELD<BR>AIM<br><font size="2">META</font></td>
+     <td>SHIELD<BR>AIM<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackWidow_ad4f751d.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Hawkeye_4f015df2.png" alt="" width="100"></th>
@@ -26869,7 +26873,7 @@
      <td style="background-color:#f9ce6f;">163989</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#d9ff70;">302713</td>
+     <td style="background-color:#9eff72;">340910</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#a6ff71;">189993</td>
@@ -26881,7 +26885,7 @@
      <td style="background-color:#f8df6f;">251511</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#e3ff6f;">1124185</td>
+     <td class="bold_text" style="background-color:#c5ff70;">1162382</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Joey</th>
@@ -27052,7 +27056,7 @@
      <td style="background-color:#afff71;">303304</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#d8ff70;">1209782</td>
+     <td class="bold_text" style="background-color:#dfff6f;">1209782</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">HeadHunter2838</th>
@@ -27071,7 +27075,7 @@
      <td style="background-color:#e3ff6f;">277911</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#f8df6f;">1102377</td>
+     <td class="bold_text" style="background-color:#f9d66f;">1102377</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">keithchyiu</th>
@@ -27090,7 +27094,7 @@
      <td style="background-color:#fac76f;">238514</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fac26f;">1048417</td>
+     <td class="bold_text" style="background-color:#fbb76f;">1048417</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">mgmf</th>
@@ -27109,7 +27113,7 @@
      <td style="background-color:#fcaa6f;">222440</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fac16f;">1047398</td>
+     <td class="bold_text" style="background-color:#fbb66f;">1047398</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">BigDiesel</th>
@@ -27128,7 +27132,7 @@
      <td style="background-color:#94ff72;">316707</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#b2ff71;">1273905</td>
+     <td class="bold_text" style="background-color:#b6ff71;">1273905</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Luthher</th>
@@ -27147,7 +27151,7 @@
      <td style="background-color:#b5ff71;">300336</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#fd9b6f;">976047</td>
+     <td class="bold_text" style="background-color:#fe8e6f;">976047</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">EXfieldy</th>
@@ -27170,8 +27174,8 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">FabiooBessa</th>
-     <td style="background-color:#fe8e6f;">88770</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fca46f;">114151</td>
+     <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#c3ff70;">316513</td>
      <td style="background-color:#8eff72;">18</td>
@@ -27185,7 +27189,7 @@
      <td style="background-color:#ff866f;">202646</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#ff866f;">936196</td>
+     <td class="bold_text" style="background-color:#ff866f;">961577</td>
     </tr>
     <tr class="table_header_blue">
      <td>STRIKE TEAM 3</td>
@@ -27265,7 +27269,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Snicky</th>
-     <td style="background-color:#f8d66f;">174277</td>
+     <td style="background-color:#f8de6f;">182948</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#e8ff6f;">293285</td>
@@ -27280,7 +27284,7 @@
      <td style="background-color:#8fff72;">318933</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#c6ff70;">1107593</td>
+     <td class="bold_text" style="background-color:#c0ff70;">1116264</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_blue">Zairyuu</th>
@@ -27364,9 +27368,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>SHIELD<BR>AIM<br><font size="2">OTHERS</font></td>
+     <td>SHIELD<BR>AIM<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_YoYo_ed8624b3.png" alt="" width="100"></th>
      <td></td>
     </tr>
@@ -27387,7 +27391,7 @@
      <td style="background-color:#e7ff6f;">142854</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#f6ff6f;">1124185</td>
+     <td class="bold_text" style="background-color:#d3ff70;">1162382</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -27534,7 +27538,7 @@
      <td style="background-color:#b9ff71;">168612</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#bfff71;">1166409</td>
+     <td class="bold_text" style="background-color:#b8ff71;">1175080</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Zairyuu</th>
@@ -27572,9 +27576,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>DEFENDER<BR>HYDRA<BR>H4H<br><font size="2">META</font></td>
+     <td>DEFENDER<BR>HYDRA<BR>H4H<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_ColleenWing_55112caa.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_IronFist_723e9bed.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_LukeCage_260d482f.png" alt="" width="100"></th>
@@ -28110,9 +28114,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>DEFENDER<BR>HYDRA<BR>H4H<br><font size="2">OTHERS</font></td>
+     <td>DEFENDER<BR>HYDRA<BR>H4H<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Zemo_9f5eab07.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Daredevil_7e951c75.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_JessicaJones_21457e3d.png" alt="" width="100"></th>
@@ -28162,10 +28166,10 @@
      <td style="background-color:#f6f46f;">115553</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fac26f;">215430</td>
+     <td style="background-color:#f9d46f;">225732</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#b8ff71;">9</td>
-     <td class="bold_text" style="background-color:#d0ff70;">991955</td>
+     <td class="bold_text" style="background-color:#c2ff70;">1002257</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -28650,9 +28654,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>SHIELD<BR>WAKANDA<BR>DEFENDER<BR>H4H<br><font size="2">META</font></td>
+     <td>SHIELD<BR>WAKANDA<BR>DEFENDER<BR>H4H<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackPanther_b7d2b102.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackPantherBC_9d0ee3c6.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_Nakia_8e95fbdc.png" alt="" width="100"></th>
@@ -29188,9 +29192,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>SHIELD<BR>WAKANDA<BR>DEFENDER<BR>H4H<br><font size="2">OTHERS</font></td>
+     <td>SHIELD<BR>WAKANDA<BR>DEFENDER<BR>H4H<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_BlackWidow_ad4f751d.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_ColleenWing_55112caa.png" alt="" width="100"></th>
@@ -29276,7 +29280,7 @@
      <td style="background-color:#f9ce6f;">163989</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#d9ff70;">302713</td>
+     <td style="background-color:#9eff72;">340910</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#9eff72;">189068</td>
@@ -29315,7 +29319,7 @@
      <td style="background-color:#e7ff6f;">142854</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#f8d86f;">1259595</td>
+     <td class="bold_text" style="background-color:#f7f06f;">1297792</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -30009,8 +30013,8 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fe8e6f;">88770</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fca46f;">114151</td>
+     <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#c3ff70;">316513</td>
      <td style="background-color:#8eff72;">18</td>
@@ -30239,7 +30243,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Snicky</th>
-     <td style="background-color:#f8d66f;">174277</td>
+     <td style="background-color:#f8de6f;">182948</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#e8ff6f;">293285</td>
@@ -30475,9 +30479,9 @@
 <table>
  <tr>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_blue">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">META</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">META</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_GhostSpider_f7a4fac2.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_ScarletSpider_0689d8fc.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderMan_4fdcec3d.png" alt="" width="100"></th>
@@ -31013,9 +31017,9 @@
    <br>
   </td>
   <td>
-   <table border="1" style="font-family: 'Fira Sans Condensed', sans-serif; font-weight: 400; text-align: center;  font-size: 10pt;">
+   <table border="0" font-weight:400; font-size:10pt;">
     <tr class="title_cell_gray">
-     <td>KREE<BR>SPIDERS<BR>GOTG<br><font size="2">OTHERS</font></td>
+     <td>KREE<BR>SPIDERS<BR>GOTG<br><span class="table_subtitle">OTHERS</span></td>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AgentVenom_866cc7bd.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_AntiVenom_99b51f89.png" alt="" width="100"></th>
      <th class="image_cell" colspan="3"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainMarvel_50f06658.png" alt="" width="100"></th>
@@ -31143,7 +31147,7 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FatCat</th>
-     <td style="background-color:#f6f96f;">244583</td>
+     <td style="background-color:#f1ff6f;">250421</td>
      <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#adff71;">184219</td>
@@ -31212,7 +31216,7 @@
      <td style="background-color:#f5ff6f;">118446</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td class="bold_text" style="background-color:#b5ff71;">1327712</td>
+     <td class="bold_text" style="background-color:#adff71;">1333550</td>
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">Joey</th>
@@ -31225,9 +31229,9 @@
      <td style="background-color:#b5ff71;">235619</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f6fa6f;">167347</td>
+     <td style="background-color:#d8ff70;">194119</td>
      <td style="background-color:#cdff70;">16</td>
-     <td style="background-color:#f8d86f;">7</td>
+     <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#fabe6f;">170779</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f8d86f;">7</td>
@@ -31663,8 +31667,8 @@
      <td style="background-color:#fda06f;">120942</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#ff866f;">67135</td>
-     <td style="background-color:#f9d36f;">12</td>
+     <td style="background-color:#fd936f;">79213</td>
+     <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -31714,7 +31718,7 @@
      <td style="background-color:#fbb06f;">117069</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fe8e6f;">66601</td>
+     <td style="background-color:#fe906f;">68325</td>
      <td style="background-color:#f8e06f;">13</td>
      <td style="background-color:#fca46f;">5</td>
      <td style="background-color:#6fff74;">335167</td>
@@ -31809,9 +31813,9 @@
      <td style="background-color:#eaff6f;">199966</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fe916f;">77504</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fcae6f;">101836</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#f6fd6f;">190445</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -31860,9 +31864,9 @@
      <td style="background-color:#f8db6f;">130633</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fd9b6f;">79222</td>
-     <td style="background-color:#f8e06f;">13</td>
-     <td style="background-color:#fca46f;">5</td>
+     <td style="background-color:#fbb36f;">102280</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#edff6f;">179853</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -32311,8 +32315,8 @@
     </tr>
     <tr style="text-align: center;">
      <th class="name_cell_gray">FabiooBessa</th>
-     <td style="background-color:#fca96f;">195568</td>
-     <td style="background-color:#cdff70;">16</td>
+     <td style="background-color:#f9cf6f;">219004</td>
+     <td style="background-color:#aeff71;">17</td>
      <td style="background-color:#b8ff71;">9</td>
      <td style="background-color:#e8ff6f;">152239</td>
      <td style="background-color:#f6ff6f;">15</td>
@@ -32353,9 +32357,9 @@
      <td style="background-color:#fabe6f;">61110</td>
      <td style="background-color:#fbbb6f;">10</td>
      <td style="background-color:#ff866f;">1</td>
-     <td style="background-color:#fca76f;">34181</td>
-     <td style="background-color:#fac66f;">11</td>
-     <td style="background-color:#ff866f;">1</td>
+     <td style="background-color:#fac46f;">63932</td>
+     <td style="background-color:#f7ef6f;">14</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#f6fe6f;">110767</td>
      <td style="background-color:#f7ef6f;">14</td>
      <td style="background-color:#f3ff6f;">8</td>
@@ -32374,13 +32378,13 @@
      <td style="background-color:#f7ed6f;">159570</td>
      <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#fbb96f;">73923</td>
+     <td style="background-color:#fabe6f;">81150</td>
      <td style="background-color:#f9d36f;">12</td>
-     <td style="background-color:#fe8c6f;">3</td>
+     <td style="background-color:#fd956f;">4</td>
      <td style="background-color:#fbb66f;">47942</td>
      <td style="background-color:#fbb16f;">9</td>
      <td style="background-color:#ff866f;">1</td>
-     <td class="bold_text" style="background-color:#fca86f;">1226340</td>
+     <td class="bold_text" style="background-color:#fbae6f;">1233686</td>
     </tr>
     <tr class="table_header_gray">
      <td>STRIKE TEAM 3</td>
@@ -32736,8 +32740,8 @@
      <td style="background-color:#f7ec6f;">135833</td>
      <td style="background-color:#f6ff6f;">15</td>
      <td style="background-color:#f3ff6f;">8</td>
-     <td style="background-color:#f9cf6f;">130073</td>
-     <td style="background-color:#f6ff6f;">15</td>
+     <td style="background-color:#f8de6f;">145303</td>
+     <td style="background-color:#cdff70;">16</td>
      <td style="background-color:#f3ff6f;">8</td>
      <td style="background-color:#fabc6f;">78461</td>
      <td style="background-color:#f9d36f;">12</td>
@@ -33044,20 +33048,20 @@
  </tr>
 </table>
 </div>
-<div id="AllianceInfo" class="tabcontent" style="background-color:#343734; font-size:14pt; color:black;">
-<table border="1" style="font-family:Fira Sans Condensed; font-weight: 400; ; text-align:center;  font-size:18pt">
+<div id="AllianceInfo" class="tabcontent">
+<table border="0">
 <tr>
  <td colspan="9" class="alliance_name">SIGMA INFAMOUSLY STRANGE</td></tr>
 <tr>
  <td colspan="2" rowspan="2"><img width="150" src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_6_14_45fde913.png"/></font></td>
  <td colspan="2"><span style="font-size:18px;">Members</span><br><span style="font-size:24px;"><b>24/24</b></span></td>
  <td><span style="font-size:18px;">Level</span><br><span style="font-size:24px;"><b>80</b></span></td>
- <td><span style="font-size:18px;">Trophies</span><br><span style="font-size:24px;"><b>1657</b></span></td>
+ <td><span style="font-size:18px;">Trophies</span><br><span style="font-size:24px;"><b>1671</b></span></td>
  <td colspan="2"><span style="font-size:18px;">Type</span><br><span style="font-size:24px;"><b>PRIVATE</b></span></td>
- <td colspan="2" rowspan="2"><span class="bold_text">Alliance Message:</span><br><span style="font-size:18px; text-align:left;">Strange. Infamous. Infamously Strange. And still 130% Unclad’s fault.</span></td></tr>
+ <td colspan="2" rowspan="2"><span class="bold_text" style="font-size:24px">Alliance Message:</span><br><span style="font-size:18px;">Strange. Infamous. Infamously Strange. And still 130% Unclad’s fault.</span></td></tr>
 <tr>
- <td colspan="3"><span style="font-size:18px;">Total Power</span><br><span style="font-size:24px;"><b>972,862,238<b/24</span></td>
- <td colspan="3"><span style="font-size:18px;">Average Collection Power</span><br><span style="font-size:24px;"><b>40,535,927<b></span></td>
+ <td colspan="3"><span style="font-size:18px;">Total Power</span><br><span style="font-size:24px;"><b>974,364,547<b/24</span></td>
+ <td colspan="3"><span style="font-size:18px;">Average Collection Power</span><br><span style="font-size:24px;"><b>40,598,523<b></span></td>
 </tr>
 <tr class="table_header_blue" height="40" style="font-size:14pt;">
  <td width="50" ></td>
@@ -33071,97 +33075,97 @@
  <td width="300">Last Updated:</td>
 </tr>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_ScarletWitch_386ef0d7.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_ScarletWitch_386ef0d7.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Shammy</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Leader</td>
-  <td style="background-color:#f8d86f;">40,917,599</td>
+  <td style="background-color:#f8d96f;">41,121,872</td>
   <td style="background-color:#f6f46f;">1,782,544</td>
   <td style="background-color:#fd9b6f;">26</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:10:00 ago</td>
+  <td style="background-color:#77ff73;">Tuesday, August 15,<br>3:02:21 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Nova_22eaa4a3.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Nova_22eaa4a3.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">Zen Master</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#cfff70;">47,888,687</td>
+  <td style="background-color:#ceff70;">47,973,286</td>
   <td style="background-color:#9fff72;">1,988,509</td>
   <td style="background-color:#f8de6f;">108</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:10:22 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:07:19 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">BigDiesel</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#d7ff70;">47,158,078</td>
-  <td style="background-color:#e3ff6f;">1,847,174</td>
+  <td style="background-color:#d5ff70;">47,346,337</td>
+  <td style="background-color:#e1ff6f;">1,851,121</td>
   <td style="background-color:#fe8e6f;">10</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:10:15 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:07:13 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderManBigTime_22bf8cc3.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderManBigTime_22bf8cc3.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">FatCat</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#f7e86f;">42,440,325</td>
+  <td style="background-color:#f7e96f;">42,551,278</td>
   <td style="background-color:#e6ff6f;">1,840,355</td>
   <td style="background-color:#fcaa6f;">45</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:10:12 ago</td>
+  <td style="background-color:#77ff73;">Tuesday, August 15,<br>2:53:54 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Hulk_71f97638.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Hulk_71f97638.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">Unclad</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#f8e06f;">41,680,611</td>
+  <td style="background-color:#f8df6f;">41,680,611</td>
   <td style="background-color:#9cff72;">1,995,604</td>
   <td style="background-color:#fd9c6f;">27</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:10:06 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:07:04 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_IronFistOrson_e312d26b.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_IronFistOrson_e312d26b.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">keithchyiu</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#f9d66f;">40,727,085</td>
+  <td style="background-color:#f9d66f;">40,764,082</td>
   <td style="background-color:#f6f26f;">1,778,832</td>
   <td style="background-color:#fd956f;">19</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:15:46 ago</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:12:44 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Ikaris_b003de65.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Ikaris_b003de65.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">Luthher</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#fbba6f;">38,051,794</td>
+  <td style="background-color:#fbb96f;">38,073,462</td>
   <td style="background-color:#dfff6f;">1,855,460</td>
   <td style="background-color:#6fff74;">294</td>
-  <td style="background-color:#dbff6f;">248</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:15:26 ago</td>
+  <td style="background-color:#a5ff71;">249</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:12:24 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_HandDmg_Unbuff_49fea895.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_HandDmg_Unbuff_49fea895.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">RadicalEvil</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#fbb36f;">37,365,690</td>
+  <td style="background-color:#fbb26f;">37,367,155</td>
   <td style="background-color:#ff866f;">1,525,880</td>
   <td style="background-color:#fda06f;">32</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:09:20 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:06:18 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:DeepSkyBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Cosmo_b4fdf024.png"/></td>
+  <td style="padding: 0px; background-color:DeepSkyBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Cosmo_b4fdf024.png"/></td>
   <td class="bold_text" style="background-color:DeepSkyBlue;">Flashie</td>
   <td style="background-color:DeepSkyBlue;">95</td>
   <td style="background-color:DeepSkyBlue;">Captain</td>
-  <td style="background-color:#ff866f;">33,070,359</td>
+  <td style="background-color:#ff866f;">33,182,706</td>
   <td style="background-color:#e4ff6f;">1,845,012</td>
   <td style="background-color:Beige;">0</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:14:53 ago</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:11:51 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">EXfieldy</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
@@ -33169,147 +33173,147 @@
   <td style="background-color:#acff71;">1,960,381</td>
   <td style="background-color:#fd9d6f;">28</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:16:16 ago</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:13:13 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_RedHulk_f6d56863.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_RedHulk_f6d56863.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Kal-El</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#cfff70;">47,801,699</td>
-  <td style="background-color:#bcff71;">1,927,296</td>
+  <td style="background-color:#cfff70;">47,855,725</td>
+  <td style="background-color:#bcff71;">1,928,176</td>
   <td style="background-color:#f7e46f;">115</td>
-  <td style="background-color:#dbff6f;">248</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:16:09 ago</td>
+  <td style="background-color:#a5ff71;">249</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:13:07 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Quicksilver_dc53a7c7.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Quicksilver_dc53a7c7.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">DrFett</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#f8e16f;">41,804,882</td>
+  <td style="background-color:#f8e16f;">41,873,547</td>
   <td style="background-color:#deff6f;">1,856,794</td>
   <td style="background-color:#f6fd6f;">145</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:10:09 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:07:07 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Ultron_6e1fbd4f.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Ultron_6e1fbd4f.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">sjhughes</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#f8de6f;">41,447,330</td>
+  <td style="background-color:#f8dd6f;">41,447,330</td>
   <td style="background-color:#6fff74;">2,089,758</td>
   <td style="background-color:#fe916f;">14</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:10:03 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:07:00 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderMan_4fdcec3d.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderMan_4fdcec3d.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Snicky</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#f8d86f;">40,928,200</td>
+  <td style="background-color:#f8d86f;">40,982,349</td>
   <td style="background-color:#b8ff71;">1,936,888</td>
   <td style="background-color:#fe8f6f;">12</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:09:57 ago</td>
+  <td style="background-color:#77ff73;">Tuesday, August 15,<br>3:02:18 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Vahl_f3b025f1.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Vahl_f3b025f1.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Jutch</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#f9d66f;">40,699,549</td>
+  <td style="background-color:#f9d56f;">40,699,549</td>
   <td style="background-color:#b8ff71;">1,936,646</td>
   <td style="background-color:#fe896f;">5</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:15:42 ago</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:12:40 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Archangel_99737b98.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Archangel_99737b98.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Daner</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fac76f;">39,322,382</td>
+  <td style="background-color:#fac76f;">39,388,763</td>
   <td style="background-color:#acff71;">1,962,485</td>
   <td style="background-color:#fd9f6f;">31</td>
-  <td style="background-color:#dbff6f;">248</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:09:45 ago</td>
+  <td style="background-color:#a5ff71;">249</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:06:43 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Venom_1476f6dd.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Venom_1476f6dd.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Venom 4 Life</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fac76f;">39,265,244</td>
+  <td style="background-color:#fac66f;">39,285,130</td>
   <td style="background-color:#f4ff6f;">1,810,194</td>
   <td style="background-color:#fac16f;">72</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:09:41 ago</td>
+  <td style="background-color:#77ff73;">Tuesday, August 15,<br>3:02:02 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Punisher_c270e1bc.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Punisher_c270e1bc.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Incredibad</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fac46f;">38,981,211</td>
+  <td style="background-color:#fac56f;">39,156,060</td>
   <td style="background-color:#f3ff6f;">1,813,694</td>
   <td style="background-color:#fe906f;">13</td>
   <td style="background-color:#dbff6f;">248</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:09:37 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:06:35 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_HandTank_Stealth_c6b75972.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_HandTank_Stealth_c6b75972.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">mgmf</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fbb86f;">37,871,754</td>
+  <td style="background-color:#fbb76f;">37,919,865</td>
   <td style="background-color:#b3ff71;">1,945,973</td>
   <td style="background-color:#fbb36f;">55</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#6fff74;">Tuesday, August 15,<br>0:00:27 ago</td>
+  <td style="background-color:#a9ff71;">Tuesday, August 15,<br>20:57:25 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_BuckyBarnes_a7c742c4.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_BuckyBarnes_a7c742c4.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Joey</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fbb66f;">37,680,226</td>
-  <td style="background-color:#d6ff70;">1,873,424</td>
+  <td style="background-color:#fbb66f;">37,779,382</td>
+  <td style="background-color:#b5ff71;">1,943,056</td>
   <td style="background-color:#fca16f;">34</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:09:24 ago</td>
+  <td style="background-color:#76ff73;">Tuesday, August 15,<br>2:25:31 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_KangTheConqueror_411ede1a.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_KangTheConqueror_411ede1a.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">HeadHunter2838</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fca76f;">36,305,107</td>
+  <td style="background-color:#fca76f;">36,331,019</td>
   <td style="background-color:#f7e66f;">1,750,231</td>
   <td style="background-color:#fe876f;">2</td>
   <td style="background-color:#dbff6f;">248</td>
-  <td style="background-color:#6fff74;">Monday, August 14,<br>5:09:16 ago</td>
+  <td style="background-color:#b8ff71;">Monday, August 14,<br>1 day, 2:06:14 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Cosmo_b4fdf024.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Cosmo_b4fdf024.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Ramalama</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fca66f;">36,172,385</td>
+  <td style="background-color:#fca66f;">36,237,046</td>
   <td style="background-color:#f7ed6f;">1,766,567</td>
-  <td style="background-color:#fe8f6f;">12</td>
+  <td style="background-color:#fe906f;">13</td>
   <td style="background-color:#6fff74;">250</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:15:05 ago</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:12:03 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Gamora_1d02692f.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Gamora_1d02692f.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">FabiooBessa</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fd9d6f;">35,292,594</td>
+  <td style="background-color:#fd9c6f;">35,358,546</td>
   <td style="background-color:#d2ff70;">1,881,292</td>
   <td style="background-color:#fe8e6f;">11</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:15:01 ago</td>
+  <td style="background-color:#77ff73;">Tuesday, August 15,<br>3:01:30 ago</td>
  <tr style="font-size:12pt;">
-  <td style="background-color:PowderBlue;"><img height="40" src="https://assets.marvelstrikeforce.com/imgs/Portrait_NickFury_81bd76be.png"/></td>
+  <td style="padding: 0px; background-color:PowderBlue;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_Loki_896c64c2.png"/></td>
   <td class="bold_text" style="background-color:PowderBlue;">Zairyuu</td>
   <td style="background-color:PowderBlue;">95</td>
   <td style="background-color:PowderBlue;">Member</td>
-  <td style="background-color:#fe8f6f;">33,948,832</td>
+  <td style="background-color:#fe8e6f;">33,948,832</td>
   <td style="background-color:#fabd6f;">1,656,372</td>
   <td style="background-color:#fe8b6f;">7</td>
   <td style="background-color:#a5ff71;">249</td>
-  <td style="background-color:#f9d66f;">Saturday, August 12,<br>2 days, 3:14:57 ago</td>
+  <td style="background-color:#fac16f;">Saturday, August 12,<br>3 days, 0:11:55 ago</td>
 </table>
 </div>
 <script>

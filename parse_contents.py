@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
 # Encoding: UTF-8
-"""msf2csv.py
-Unpacks all MHTML files in the local directory. Searches the MHTML tree to find the character file from MSF.GG. 
-Scrapes this file for Roster info (player name, character stats, etc.) and adds everything into a single CSV for the Alliance.
-Use pivot tables in a Spreadsheet app to format table with the information relevant to your purpose -- power, gear tier, or ISO 
+"""parse_contents.py
+Scrapes the alliance.html (Alliance display page) and characters.html file (Roster display page) from MSF.gg.  
 
-Derived from mhtifier.py code by Ilan Irad
-See: https://github.com/Modified/MHTifier
+Returns in easy to use dicts for inclusion in tables.
 """
 
 from bs4 import BeautifulSoup
@@ -165,21 +162,17 @@ def parse_characters(contents, char_stats, processed_players):
 	processed_chars['tot_power'] = tot_power
 	processed_chars['last_update'] = datetime.datetime.now()
 	
-	# Only keep this info if we don't have this player defined
-	# or if tot_power is greater than the old tot_power definition.
+	# Only keep if we have no roster, or this roster's TCP is higher.
 	if player_name not in processed_players or tot_power > processed_players[player_name]['tot_power']:
+
 		# Add this parsed data to our list of processed players.
 		processed_players[player_name] = processed_chars
 		
-	# Instead of saving a copy of the roster, will save data in a pickled file and
-	# then update that data if updated information is presented via file or website 
-
 	# After successfully parsing, cache the character.html file to disk for future use.
 	# open('roster.%s.html' % player_name, 'wb').write(soup.prettify().encode('utf8'))
 
 
-# Keep track of min/max for each stat, for each hero individually and collectively, across all of the players found
-
+# Keep track of min/max for each stat for each hero
 def set_min_max(char_stats,char_name,stat,value):
 	value = int(value)
 

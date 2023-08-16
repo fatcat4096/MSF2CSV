@@ -1,16 +1,15 @@
 
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+
 from parse_contents import *
 from user_and_pass import *
-
-processed_players = {}	# roster stats for each player
-char_stats = {}			# min/max stats and portrait path for individual heroes
 
 import datetime
 import time
 
+processed_players = {}	# roster stats for each player
+char_stats = {}			# min/max stats and portrait path for individual heroes
 
 def process_website(char_stats={}, processed_players={}):
 

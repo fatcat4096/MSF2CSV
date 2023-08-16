@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # Encoding: UTF-8
 """msf2csv.py
-Unpacks all MHTML files in the local directory. Searches the MHTML tree to find the character file from MSF.GG. 
-Scrapes this file for Roster info (player name, character stats, etc.) and adds everything into a single CSV for the Alliance.
-Use pivot tables in a Spreadsheet app to format table with the information relevant to your purpose -- power, gear tier, or ISO 
+Unpacks all MHTML files in the local directory to find the character file from MSF.GG. 
+Passes this HTMl to the parse_contents() routines to scrape and pass back to the top level.
+
+This routine is largely obsolete now. Way easier to download the roster info directly from msf.gg
 
 Derived from mhtifier.py code by Ilan Irad
 See: https://github.com/Modified/MHTifier
@@ -61,10 +62,7 @@ def process_mhtml(path=path):
 
 			# Only the characters.html file has relevant data.
 			if decoded_file == 'characters':
-				parse_roster(part.get_payload(decode=True), char_stats, processed_players, path)
-
-		# Updated file_dates file after successfully processing.
-		file_dates[file] = mtime
+				parse_characters(part.get_payload(decode=True), char_stats, processed_players, path)
 
 	return char_stats,processed_players
 
