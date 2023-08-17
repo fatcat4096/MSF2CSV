@@ -19,7 +19,7 @@ default_lanes = [[{'traits': ['Mutant'], 'meta': []},
 				  {'traits': ['Tech'],   'meta': []}]]
 
 
-def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[],):
+def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], raid_name=''):
 
 	# If no char_list is specified, pull the list of all characters from char_stats
 	if not char_list:
@@ -32,7 +32,7 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 	
 	# If we have multiple lanes, add a quick hack of a header to give us a tabbed interface.
 	num_lanes = len(lanes)
-	html_file += add_tabbed_header(num_lanes)
+	html_file += add_tabbed_header(num_lanes,raid_name)
 	
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
@@ -275,7 +275,7 @@ def generate_alliance_tab(processed_players, html_file=''):
 	alliance_info = processed_players['alliance_info']
 
 	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
-	html_file += '<table border="0">\n'
+	html_file += '<table style="background-color:SteelBlue;" border="0">\n'
 
 	html_file += '<tr>\n'
 	html_file += ' <td colspan="9" class="alliance_name">%s</td>' % (alliance_info['name'].upper())
@@ -453,7 +453,8 @@ def translate_name(value):
 
 
 # Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
-def add_tabbed_header(num_lanes, html_file = ''):
+def add_tabbed_header(num_lanes, raid_name = '', html_file = ''):
+
 		html_file += '''
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -564,6 +565,10 @@ def add_tabbed_header(num_lanes, html_file = ''):
 
 		for num in range(num_lanes):
 			tab_name = ['ROSTER INFO', 'LANE %i' % (num+1)][num_lanes>1]
+
+			if raid_name:
+				tab_name = '%s RAID %s' % (raid_name.upper(), tab_name)
+
 			html_file += '''<button class="tablink" onclick="openPage('Lane%i', this)" %s>%s</button>''' % (num+1,['','id="defaultOpen"'][not num],tab_name) + '\n'
 
 		# And a tab for Alliance Info

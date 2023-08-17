@@ -26,6 +26,7 @@ strike_teams = [['FatCat', 'Joey', 'Daner', 'Jutch', 'sjhughes', 'Ramalama', 'Dr
 				['Shammy', 'HeadHunter2838', 'keithchyiu', 'mgmf', 'BigDiesel', 'Luthher', 'EXfieldy', 'FabiooBessa'],
 				['Zen Master', 'Incredibad', 'Kal-El', 'Snicky', 'Zairyuu', 'Flashie', 'Unclad', 'RadicalEvil']]
 
+
 # We will be working in the same directory as this file.
 try:
 	path = os.path.dirname(__file__)+os.sep
@@ -91,11 +92,11 @@ def main():
 	print ("Writing pivot tables to:",path)
 
 	# Tables with just Incursion 1.4 Meta. Requires ISO 2-4 and Gear Tier 16.
-	html_file = generate_html(processed_players, char_stats, incur_strike_teams, incur_lanes, min_iso=9, min_tier=16)
+	html_file = generate_html(processed_players, char_stats, incur_strike_teams, incur_lanes, min_iso=9, min_tier=16, raid_name='Incursion')
 	open(filename+"incursion.html", 'w').write(html_file)    
                                                              
 	# Tables with just Gamma Lanes. Only limit is Gear Tier 16.
-	html_file = generate_html(processed_players, char_stats, strike_teams, gamma_lanes, min_tier=16)
+	html_file = generate_html(processed_players, char_stats, strike_teams, gamma_lanes, min_tier=16, raid_name='Gamma')
 	open(filename+"gamma.html", 'w').write(html_file)
 
 	# Tables for all characters, broken down by Origin. 
