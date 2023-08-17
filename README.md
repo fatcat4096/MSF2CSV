@@ -12,7 +12,7 @@ Feel free to provide feedback, questions, comments, etc. My username is "fatcat4
 2. Install Beautiful Soup 4 -- 'pip install beautifulsoup4'
 3. Install Selenium -- 'pip install selenium'
 
-# Configuration
+# Configuration:
 * Add your own login / pass to user_and_pass.py if you want the script to run headless and download alliance/roster data without intervention
 * In msf2csv.py, uncomment the call to 'process_website' in order to allow it to pull data from msf.gg. Currently configured to use cached data for dev.
 * In msf2csv.py, define your own strike teams at the top of the file. Use of '----' is optional but will define lanes between groups of players.
