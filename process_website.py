@@ -2,11 +2,18 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+from selenium.webdriver.chrome.options import Options
+
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+
 from parse_contents import *
 from user_and_pass import *
 
+from time import sleep
+
 import datetime
-import time
 
 processed_players = {}	# roster stats for each player
 char_stats = {}			# min/max stats and portrait path for individual heroes
@@ -26,94 +33,20 @@ def process_website(char_stats={}, processed_players={}):
 	
 	driver = webdriver.Chrome(options=options)
 	driver.get(alliance_path)
+	# Default to Scopely Login, does not require 2FA.
+	if scopely_user and scopely_pass:
+		scopely_login(driver, scopely_user, scopely_pass)
 
-	# Authentication Page
-	if driver.title == 'MARVEL Strike Force':
-
-		# Bypass, Scopely authentication not working yet.
-		if scopely_user and scopely_pass:
+	# If Scopely login not defined, use Facebook login instead.
+	elif facebook_user and facebook_pass:
+		facebook_login(driver, facebook_user, facebook_pass)
 		
-			successful = 0
-			while not successful:
-				try:
-					login = driver.find_element(By.ID, 'scopely-login')
-					print (login)
-					login.click()
-					successful=1
-					time.sleep(1)
-				except:
-					continue
-
-			successful = 0
-			while not successful:
-				try:
-					login_field = driver.find_element(By.CLASS_NAME, 'ant-input')
-					login_field.send_keys(scopely_user)
-					successful=1
-				except:
-					continue
-					
-			successful = 0
-			while not successful:
-				try:
-					login_button = driver.find_element(By.CLASS_NAME, 'submitButton')
-					login_button.click()
-					time.sleep(2)
-					successful=1
-				except:
-					continue
-				
-			successful = 0
-			while not successful:
-				try:
-					use_password = driver.find_element(By.CLASS_NAME, 'link')
-					use_password.click()
-					time.sleep(1)
-					successful=1
-				except:
-					continue
-					
-			successful = 0
-			while not successful:
-				try:
-					pass_field = driver.find_element(By.CLASS_NAME, 'password-with-toggle')
-					pass_field.send_keys(scopely_pass)
-					successful = 1
-				except:
-					continue
-
-			successful = 0
-			while not successful:
-				try:
-					login_button = driver.find_element(By.CLASS_NAME, 'button')
-					login_button.click()
-					successful = 1
-				except:
-					continue
-		
-		# Defaulting to Facebook login.
-		elif facebook_user or facebook_pass:
-			login = driver.find_element(By.ID, 'facebook-login')
-			login.click()
-			time.sleep(1)
-
-			#login = driver.find_element(By.ID, 'scopely-login')	# Not yet implemented.
-
-			login_field = driver.find_element(By.ID,'email')
-			login_field.send_keys(facebook_user)
-
-			password_field = driver.find_element(By.ID,'pass')
-			password_field.send_keys(facebook_pass)
-
-			login_button = driver.find_element(By.ID,'loginbutton')
-			login_button.click()
-
-		# Waiting while you login or approve login via 2FA.
-		while driver.title != alliance_title:
-			time.sleep(1)
+	# Waiting while you login or approve login via 2FA.
+	while driver.title != alliance_title:
+		sleep(1)
 
 	# We are in, wait a second before starting.
-	time.sleep(2)
+	sleep(2)
 
 	#alliance_info = extract_alliance_info(driver.find_element(By.ID,"app").text) 
 	alliance_info = parse_alliance(driver.page_source) 
@@ -122,10 +55,10 @@ def process_website(char_stats={}, processed_players={}):
 	for member in processed_players.keys():
 		if member != 'alliance_info' and member not in alliance_info['members']:
 			print ('%s is no longer in this alliance. Removing from the output.' % member)
-			processed_players.pop[member]
+			del processed_players[member]
 
 	# We are in, wait a second before starting.
-	time.sleep(2)
+	sleep(2)
 
 	buttons = driver.find_elements(By.CLASS_NAME, 'button')
 	
@@ -165,29 +98,33 @@ def process_website(char_stats={}, processed_players={}):
 						continue
 
 				button.click()
+				
 				while len(driver.page_source)<1000000:
 					# Still loading
-					time.sleep(1)
+					sleep(1)
 				
 				# Pass the contents to our scraping routines for stat extraction.
 				parse_characters(driver.page_source, char_stats, processed_players)
 				
 				driver.back()
-				time.sleep(1)
+				sleep(1)
 				while driver.title != alliance_title:
-					time.sleep(1)
+					sleep(1)
 
 				# Need to refresh the buttons definition.
 				buttons = driver.find_elements(By.CLASS_NAME, 'button')
 		except:
+			# Exception thrown when button->click() called while button is offscreen
+			#print ("TRIPPED!")
+
 			# Accidentally made it to Roster page, need to go back.
 			if driver.title != alliance_title:
 				driver.back()
-				time.sleep(1)
+				sleep(1)
 
 			# Wait until we actually get back.
 			while driver.title != alliance_title:
-				time.sleep(1)
+				sleep(1)
 
 			# Refresh our button list, might have been clicking on a stale object.
 			buttons = driver.find_elements(By.CLASS_NAME, 'button')
@@ -195,5 +132,61 @@ def process_website(char_stats={}, processed_players={}):
 	# After everything, update processed_players with the current alliance_info.
 	processed_players['alliance_info'] = alliance_info
 
+	driver.close()
+
 	return char_stats,processed_players
 
+
+def scopely_login(driver, scopely_user, scopely_pass):
+
+	try:
+		wait = WebDriverWait(driver, 10)
+	
+		# Click on the Scopely Login button.
+		login = wait.until(EC.element_to_be_clickable((By.ID, 'scopely-login')))
+		login.click()
+
+		# Find and enter Scopely ID for login.
+		login_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'ant-input')))
+		login_field.send_keys(scopely_user)
+				
+		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'submitButton')))
+		login_button.click()
+
+		# Enter password instead of using e-mailed link.
+		use_password = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'link')))
+		use_password.click()
+				
+		# Find login field and enter password to complete login process.
+		pass_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'password-with-toggle')))
+		pass_field.send_keys(scopely_pass)
+
+		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'button')))
+		login_button.click()
+
+	except TimeoutException:
+		print("Timed out. Unable to complete login.")
+
+
+def facebook_login(driver, facebook_user, facebook_pass):
+
+	try:
+		wait = WebDriverWait(driver, 10)
+	
+		# Click on the Facebook Login button.
+		login = wait.until(EC.element_to_be_clickable((By.ID, 'facebook-login')))
+		login.click()
+
+		# Fill in username and password.
+		login_field = wait.until(EC.presence_of_element_located((By.ID,'email')))
+		login_field.send_keys(facebook_user)
+
+		pass_field = wait.until(EC.presence_of_element_located((By.ID,'pass')))
+		pass_field.send_keys(facebook_pass)
+
+		# Click the login button to generate 2FA challenge.
+		login_button = wait.until(EC.element_to_be_clickable((By.ID, 'loginbutton')))
+		login_button.click()
+
+	except TimeoutException:
+		print("Timed out. Unable to complete login.")

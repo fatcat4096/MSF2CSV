@@ -12,19 +12,7 @@ import pickle
 from process_mhtml import *         # Routines to get Roster data from MHTML.
 from process_website import *       # Routines to get Roster data from website
 from generate_html import *         # Routines to generate the finished tables.		
-
-
-# You'll want to edit this. 
-incur_strike_teams = [ ['Joey', 'FatCat', 'Venom 4 Life', 'Ramalama', '----',
-						'Jutch', 'sjhughes', 'Daner', 'DrFett'],
-						['Shammy', 'BigDiesel', 'EXfieldy', 'mgmf', '----',
-						'HeadHunter2838', 'Luthher', 'keithchyiu', 'FabiooBessa'],
-						['Zen Master', 'RadicalEvil', 'Kal-El', 'Snicky', '----',
-						'Zairyuu', 'Unclad', 'Incredibad', 'Flashie']]
-
-strike_teams = [['FatCat', 'Joey', 'Daner', 'Jutch', 'sjhughes', 'Ramalama', 'DrFett', 'Venom 4 Life'],
-				['Shammy', 'HeadHunter2838', 'keithchyiu', 'mgmf', 'BigDiesel', 'Luthher', 'EXfieldy', 'FabiooBessa'],
-				['Zen Master', 'Incredibad', 'Kal-El', 'Snicky', 'Zairyuu', 'Flashie', 'Unclad', 'RadicalEvil']]
+from generate_strike_teams import *	# In case we need to make these again.
 
 
 # We will be working in the same directory as this file.
@@ -33,6 +21,13 @@ try:
 # Sourcing locally, no __file__ object.
 except:
 	path = '.'+os.sep
+
+
+# If file has been deleted, it will be regenerated after alliance_members are known.
+try:
+	from strike_teams import *
+except:
+	pass
 
 
 # Just do it.
@@ -47,17 +42,21 @@ def main():
 	except:
 		pass
 	
-	# Load roster info from the MHTML files present.
+	# Load roster info from the MHTML files present -- OBSOLETE
 	#char_stats,processed_players = process_mhtml(path)
 
 	# Load roster info directly from the website.
-	#process_website(char_stats,processed_players)
+	process_website(char_stats,processed_players)
 
 	# cache the updated roster info to disk.
 	pickle.dump([char_stats,processed_players],open('cached_data','wb'))
-	
-	alliance_name = processed_players['alliance_info']['name']
-	filename = path+alliance_name+datetime.datetime.now().strftime("-%Y%m%d-")
+
+	# Generate the strike_teams.py file if it didn't exist previously.
+	try:
+		if incur_strike_teams:
+			pass
+	except:
+		incur_strike_teams, other_strike_teams = generate_strike_teams(path, get_player_list(processed_players))
 
 	# Meta Heroes for use in Incursion
 	incur_lanes =	[[{'traits': ['Mutant'], 'meta': ['Archangel','Nemesis','Dark Beast','Psylocke','Magneto']},
@@ -91,18 +90,25 @@ def main():
 
 	print ("Writing pivot tables to:",path)
 
+	alliance_name = processed_players['alliance_info']['name']
+	filename = path+alliance_name+datetime.datetime.now().strftime("-%Y%m%d-")
+
 	# Tables with just Incursion 1.4 Meta. Requires ISO 2-4 and Gear Tier 16.
 	html_file = generate_html(processed_players, char_stats, incur_strike_teams, incur_lanes, min_iso=9, min_tier=16, raid_name='Incursion')
 	open(filename+"incursion.html", 'w').write(html_file)    
                                                              
 	# Tables with just Gamma Lanes. Only limit is Gear Tier 16.
-	html_file = generate_html(processed_players, char_stats, strike_teams, gamma_lanes, min_tier=16, raid_name='Gamma')
+	html_file = generate_html(processed_players, char_stats, other_strike_teams, gamma_lanes, min_tier=16, raid_name='Gamma')
 	open(filename+"gamma.html", 'w').write(html_file)
 
 	# Tables for all characters, broken down by Origin. 
 	# Filtering with minimum ISO and Gear Tier just to reduce noise from Minions, old heroes, etc.
-	html_file = generate_html(processed_players, char_stats, strike_teams, min_iso=9, min_tier=16)
+	html_file = generate_html(processed_players, char_stats, other_strike_teams, keys=['power','tier','iso'], min_iso=9, min_tier=16)
 	open(filename+"all.html", 'w').write(html_file)
+
+	# Original file format. Requested for input to projects using old CSV format.
+	csv_file = generate_csv(processed_players, char_stats)
+	open(filename+".csv", 'w').write(csv_file)
 
 
 if __name__ == "__main__":

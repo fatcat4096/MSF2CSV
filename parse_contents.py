@@ -8,7 +8,9 @@ Returns in easy to use dicts for inclusion in tables.
 
 from bs4 import BeautifulSoup
 import datetime
+import re
 
+TAG_RE = re.compile(r'<[^>]+>')
 
 # Parse the alliance information directly from the website.
 def parse_alliance(contents):
@@ -17,7 +19,7 @@ def parse_alliance(contents):
 	alliance = {}
 
 	# Parse the basic alliance info
-	alliance['name']      = soup.find('span', attrs = {'class':'alliance-name'}).text
+	alliance['name']      = remove_tags(soup.find('span', attrs = {'class':'alliance-name'}).text)
 	alliance['desc']      = soup.find('div',  attrs = {'class':'editable-msg'}).text
 	alliance['trophies']  = soup.find('div',  attrs = {'class':'war-trophies'}).text.strip()
 	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src')
@@ -42,7 +44,7 @@ def parse_alliance(contents):
 	for member_row in members_table:
 		member = {}
 
-		member_name = member_row.find('td', attrs={'data-label':'Name'}).text
+		member_name = remove_tags(member_row.find('td', attrs={'data-label':'Name'}).text)
 
 		# It's ME, hi, I'm the problem it's ME.
 		if member_name.find('[ME]') != -1:
@@ -80,7 +82,7 @@ def parse_alliance(contents):
 def parse_characters(contents, char_stats, processed_players):
 	soup = BeautifulSoup(contents, 'html.parser')
 
-	player_name = soup.find('div', attrs = {'class':'player-name is-italic'}).text.strip()
+	player_name = remove_tags(soup.find('div', attrs = {'class':'player-name is-italic'}).text.strip())
 
 	print("Parsing %i bytes...found Alliance Member named: %s" % (len(contents), player_name))
 
@@ -109,6 +111,9 @@ def parse_characters(contents, char_stats, processed_players):
 		toon_stats = char.find('div', attrs = {'id':'toon-stats'})
 
 		if toon_stats:
+			# Is this character a favorite? Using this format for the csv. 
+			favorite = ['true','false'][char.find('i', attrs = {'class':'is-favorite'}) == None]
+
 			# Decode Level and Power
 			stats = toon_stats.findAll('div', attrs = {'class':''})
 			level = stats[0].text.strip().split()[1]
@@ -150,13 +155,25 @@ def parse_characters(contents, char_stats, processed_players):
 				iso += 5
 			iso = str(iso)
 
+			iso_class = ''
+			if iso_info.find('gambler') != -1:
+				iso_class = 'Raider'
+			elif iso_info.find('assassin') != -1:
+				iso_class = 'Striker'
+			elif iso_info.find('fortify') != -1:
+				iso_class = 'Fortifier'
+			elif iso_info.find('skirmish') != -1:
+				iso_class = 'Skirmisher'
+			elif iso_info.find('restoration') != -1:
+				iso_class = 'Healer'
+
 			set_min_max(char_stats,char_name,'iso',iso)
 			
-			processed_chars[char_name] = {'level':level,'power':power,'tier':tier,'iso':iso, 'yelStars':yelStars, 'redStars':redStars, 'basic':basic, 'special':special, 'ult':ult, 'passive':passive}
+			processed_chars[char_name] = {'favorite':favorite, 'level':level, 'power':power, 'tier':tier, 'iso':iso, 'iso_class':iso_class, 'yelStars':yelStars, 'redStars':redStars, 'basic':basic, 'special':special, 'ult':ult, 'passive':passive}
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
-			processed_chars[char_name] = {'level':'0','power':'0','tier':'0','iso':'0', 'yelStars':'0', 'redStars':'0', 'basic':'0', 'special':'0', 'ult':'0', 'passive':'0'}
+			processed_chars[char_name] = {'favorite':'', 'level':'0', 'power':'0', 'tier':'0', 'iso':'0', 'iso_class':'', 'yelStars':'0', 'redStars':'0', 'basic':'0', 'special':'0', 'ult':'0', 'passive':'0'}
 
 	# Finally, store total roster power and now as last_update.
 	processed_chars['tot_power'] = tot_power
@@ -185,3 +202,7 @@ def set_min_max(char_stats,char_name,stat,value):
 	if value>char_stats[char_name][stat]['max']:
 		char_stats[char_name][stat]['max'] = value
 
+
+# Sanitize Alliance Names and player names of any HTML tags.
+def remove_tags(text):
+    return TAG_RE.sub('', text)

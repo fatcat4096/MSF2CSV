@@ -353,6 +353,29 @@ def generate_alliance_tab(processed_players, html_file=''):
 	return html_file
 
 
+# Including this here for expedience.
+def generate_csv(processed_players, char_stats):
+	# Write the basic output to a CSV in the local directory.
+	keys = ['favorite','level','power','yelStars','redStars','tier','basic','special','ult','passive','iso_class','iso','iso','iso','iso','iso','iso']
+	
+	csv_file = ['Name,AllianceName,CharacterId,Favorite,Level,Power,Stars,RedStar,GearLevel,Basic,Special,Ultimate,Passive,ISO Class,ISO Level,ISO Armor,ISO Damage,ISO Focus,ISO Health,ISO Resist']
+	
+	player_list = get_player_list(processed_players)
+	char_list   = get_char_list (char_stats)
+		
+	alliance_name = processed_players['alliance_info']['name']
+			
+	for player_name in player_list:
+		processed_chars = processed_players[player_name]
+
+		# Only include entries for recruited characters.
+		for char_name in char_list:
+			if processed_chars[char_name]['level'] != '0':
+				csv_file.append(','.join([player_name, alliance_name, char_name] + [processed_chars[char_name][key] for key in keys]))
+
+	return '\n'.join(csv_file)
+
+
 # Linear gradient from red, to yellow, to green. 
 # Costly to calculate, so only doing it once.
 color_scale = polylinear_gradient(['#FF866F','#F6FF6F','#6FFF74'],1000)['hex']
