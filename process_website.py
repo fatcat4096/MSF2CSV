@@ -14,6 +14,7 @@ from user_and_pass import *
 from time import sleep
 
 import datetime
+import traceback
 
 processed_players = {}	# roster stats for each player
 char_stats = {}			# min/max stats and portrait path for individual heroes
@@ -28,8 +29,8 @@ def process_website(char_stats={}, processed_players={}):
 
 	# If login/password are provided, run this as a headless server.
 	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
-	if (scopely_user and scopely_pass) or (facebook_user and facebook_pass):
-		options.add_argument('--headless=new')
+	#if (scopely_user and scopely_pass) or (facebook_user and facebook_pass):
+	#	options.add_argument('--headless=new')
 	
 	driver = webdriver.Chrome(options=options)
 	driver.get(alliance_path)
@@ -98,14 +99,25 @@ def process_website(char_stats={}, processed_players={}):
 						continue
 
 				button.click()
-				
+
+				timer = 0
 				while len(driver.page_source)<1000000:
 					# Still loading
 					sleep(1)
+					timer += 1
+					
+					# Call refresh if load failed to complete after 5 seconds.
+					if timer == 5:
+						driver.refresh()
+					# Just give up after 10 seconds.
+					elif timer == 10:
+						break
+
+				# If page loaded, pass  contents to  scraping routines for stat extraction.
+				if len(driver.page_source)>1000000:
+					parse_characters(driver.page_source, char_stats, processed_players)
 				
-				# Pass the contents to our scraping routines for stat extraction.
-				parse_characters(driver.page_source, char_stats, processed_players)
-				
+				# Back up and move on to the next roster on the page.
 				driver.back()
 				sleep(1)
 				while driver.title != alliance_title:
@@ -115,8 +127,8 @@ def process_website(char_stats={}, processed_players={}):
 				buttons = driver.find_elements(By.CLASS_NAME, 'button')
 		except:
 			# Exception thrown when button->click() called while button is offscreen
-			#print ("TRIPPED!")
-
+			#traceback.print_exc()
+			
 			# Accidentally made it to Roster page, need to go back.
 			if driver.title != alliance_title:
 				driver.back()
