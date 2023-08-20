@@ -1,6 +1,13 @@
-
+# If file has been deleted, generate a default format instead.
+try:
+	from strike_teams import *
+except:
+	print ("Missing strike_teams.py...will be regenerated after alliance_members are known.")
+	pass
+	
+	
 def generate_strike_teams(path, alliance_members):
-
+	
 	incur_strike_teams = []
 	other_strike_teams = []
 
@@ -16,8 +23,6 @@ def generate_strike_teams(path, alliance_members):
 
 	other_def  = '\n\n# Used for Gamma Raids and other output.\n'
 	other_def += 'other_strike_teams = [\n'
-
-	print("Alliance members:",alliance_members)
 
 	for num_entry in range(len(alliance_members)):
 

@@ -14,33 +14,25 @@ from process_website import *       # Routines to get Roster data from website
 from generate_html import *         # Routines to generate the finished tables.		
 from generate_strike_teams import *	# In case we need to make these again.
 
+import sys
+import traceback
 
 # We will be working in the same directory as this file.
-try:
+if '__file__' in globals():
 	path = os.path.dirname(__file__)+os.sep
 # Sourcing locally, no __file__ object.
-except:
+else:
 	path = '.'+os.sep
 
-
-# If file has been deleted, it will be regenerated after alliance_members are known.
-try:
-	from strike_teams import *
-except:
-	pass
-
-
-# Just do it.
+# Just do it. 
 def main():
 
 	processed_players = {}	# roster stats for each player
 	char_stats = {}			# min/max stats and portrait path for individual heroes
 
-	try:
-		# Load roster info from pickled data, this is possibly stale, but we will attempt to refresh.
+	# Load roster info from pickled data, this is possibly stale, but we will attempt to refresh.
+	if os.path.exists('cached_data'):
 		[char_stats,processed_players] = pickle.load(open('cached_data','rb'))
-	except:
-		pass
 	
 	# Load roster info from the MHTML files present -- OBSOLETE
 	#char_stats,processed_players = process_mhtml(path)
@@ -51,12 +43,11 @@ def main():
 	# cache the updated roster info to disk.
 	pickle.dump([char_stats,processed_players],open('cached_data','wb'))
 
-	# Generate the strike_teams.py file if it didn't exist previously.
-	try:
-		if incur_strike_teams:
-			pass
-	except:
-		incur_strike_teams, other_strike_teams = generate_strike_teams(path, get_player_list(processed_players))
+	# If strike_teams.py doesn't exist, generate it and mimic import.
+	if 'strike_teams' not in sys.modules:
+		global incur_strike_teams
+		global other_strike_teams
+		incur_strike_teams,other_strike_teams = generate_strike_teams(path, get_player_list(processed_players))
 
 	# Meta Heroes for use in Incursion
 	incur_lanes =	[[{'traits': ['Mutant'], 'meta': ['Archangel','Nemesis','Dark Beast','Psylocke','Magneto']},

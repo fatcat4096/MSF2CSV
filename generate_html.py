@@ -370,7 +370,7 @@ def generate_csv(processed_players, char_stats):
 
 		# Only include entries for recruited characters.
 		for char_name in char_list:
-			if processed_chars[char_name]['level'] != '0':
+			if processed_chars[char_name]['level'] != '0' and 'favorite' in processed_chars[char_name]:									# and 'favorite' is a temp fix for data in cached_data. Remove in a week.
 				csv_file.append(','.join([player_name, alliance_name, char_name] + [processed_chars[char_name][key] for key in keys]))
 
 	return '\n'.join(csv_file)
