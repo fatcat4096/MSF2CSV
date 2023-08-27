@@ -4,18 +4,14 @@
 Transform stats from MSF.gg into readable tables with heatmaps.
 """
 
-# Standard library modules do the heavy lifting. Ours is all simple stuff.
 import os
 import datetime
-import pickle
+import sys
 
 from process_mhtml import *         # Routines to get Roster data from MHTML.
 from process_website import *       # Routines to get Roster data from website
 from generate_html import *         # Routines to generate the finished tables.		
 from generate_strike_teams import *	# In case we need to make these again.
-
-import sys
-import traceback
 
 # We will be working in the same directory as this file.
 if '__file__' in globals():
@@ -24,24 +20,23 @@ if '__file__' in globals():
 else:
 	path = '.'+os.sep
 
+alliance_name = 'SIGMA Infamously Strange'
+
 # Just do it. 
-def main():
+def main(alliance_name=alliance_name):
 
 	processed_players = {}	# roster stats for each player
 	char_stats = {}			# min/max stats and portrait path for individual heroes
 
 	# Load roster info from pickled data, this is possibly stale, but we will attempt to refresh.
-	if os.path.exists('cached_data'):
-		[char_stats,processed_players] = pickle.load(open('cached_data','rb'))
-	
+	if os.path.exists('cached_data-'+alliance_name):
+		[char_stats,processed_players] = pickle.load(open('cached_data-'+alliance_name,'rb'))
+
 	# Load roster info from the MHTML files present -- OBSOLETE
 	#char_stats,processed_players = process_mhtml(path)
 
 	# Load roster info directly from the website.
-	process_website(char_stats,processed_players)
-
-	# cache the updated roster info to disk.
-	pickle.dump([char_stats,processed_players],open('cached_data','wb'))
+	process_website(alliance_name, char_stats, processed_players)
 
 	# If strike_teams.py doesn't exist, generate it and mimic import.
 	if 'strike_teams' not in sys.modules:
@@ -82,7 +77,7 @@ def main():
 	print ("Writing pivot tables to:",path)
 
 	alliance_name = processed_players['alliance_info']['name']
-	filename = path+alliance_name+datetime.datetime.now().strftime("-%Y%m%d-")
+	filename = path + alliance_name + datetime.datetime.now().strftime("-%Y%m%d-")
 
 	# Tables with just Incursion 1.4 Meta. Requires ISO 2-4 and Gear Tier 16.
 	html_file = generate_html(processed_players, char_stats, incur_strike_teams, incur_lanes, min_iso=9, min_tier=16, raid_name='Incursion')
@@ -94,12 +89,12 @@ def main():
 
 	# Tables for all characters, broken down by Origin. 
 	# Filtering with minimum ISO and Gear Tier just to reduce noise from Minions, old heroes, etc.
-	html_file = generate_html(processed_players, char_stats, other_strike_teams, keys=['power','tier','iso'], min_iso=9, min_tier=16)
-	open(filename+"all.html", 'w').write(html_file)
+	#html_file = generate_html(processed_players, char_stats, other_strike_teams, keys=['power','tier','iso'], min_iso=9, min_tier=16)
+	#open(filename+"all.html", 'w').write(html_file)
 
 	# Original file format. Requested for input to projects using old CSV format.
-	csv_file = generate_csv(processed_players, char_stats)
-	open(filename+".csv", 'w').write(csv_file)
+	#csv_file = generate_csv(processed_players, char_stats)
+	#open(filename+".csv", 'w').write(csv_file)
 
 
 if __name__ == "__main__":
