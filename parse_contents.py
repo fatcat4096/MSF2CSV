@@ -189,6 +189,20 @@ def parse_characters(contents, char_stats, processed_players):
 	# open('roster.%s.html' % player_name, 'wb').write(soup.prettify().encode('utf8'))
 
 
+def parse_teams(contents):
+	soup = BeautifulSoup(contents, 'html.parser')
+
+	team_members = []
+
+	members = soup.findAll('div', attrs = {'class':'alliance-user'})
+	for member in members:
+		member_name = member.findAll('span')[-1].text
+		if member_name:
+			team_members.append(member_name)
+
+	return team_members
+
+
 # Keep track of min/max for each stat for each hero
 def set_min_max(char_stats,char_name,stat,value):
 	value = int(value)

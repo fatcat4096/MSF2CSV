@@ -7,15 +7,15 @@ Quick hack to pull live trait data from MSF.gg
 import urllib.request
 
 def extract_traits():
-	page = urllib.request.urlopen('https://marvelstrikeforce.com/static/js/2.8f35720e0540d0dc8fb8.js')
+	page = urllib.request.urlopen('https://marvelstrikeforce.com/static/js/0.19bd4b35babaa9fe5388.js')
 	buffer = str(page.read())
 
 	chars_from_trait = {}
 
 	start_idx = 0
-	while buffer.find('Playable',start_idx+1) != -1:
+	while buffer.find('Playable:',start_idx+1) != -1:
 		# Find first character
-		start_idx = buffer.find('Playable',start_idx+1)
+		start_idx = buffer.find('Playable:',start_idx+1)
 		# Look backward to find the name.
 		char_idx = buffer.rfind('Name:"',0,start_idx)+6
 		char_end = buffer.find('"',char_idx)
@@ -36,6 +36,8 @@ def extract_traits():
 	avengers.update(chars_from_trait['BionicAvenger'])
 	avengers.update(chars_from_trait['SecretAvenger'])
 	avengers.update(chars_from_trait['Wave1Avenger'])
+	avengers.update(chars_from_trait['NewAvenger'])
+	avengers.update(chars_from_trait['YoungAvenger'])
 
 	xmen = chars_from_trait['Xmen']
 	xmen.update(chars_from_trait['Astonishing'])
@@ -43,7 +45,7 @@ def extract_traits():
 	xmen.update(chars_from_trait['Unlimited'])
 
 	defender = chars_from_trait['Defender']
-	#defender.update(chars_from_trait['SecretDefender'])
+	defender.update(chars_from_trait['SecretDefender'])
 
 	return chars_from_trait
 
