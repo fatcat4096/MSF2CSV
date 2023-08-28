@@ -12,14 +12,14 @@ import datetime
 chars_from_trait = extract_traits()
 
 
-default_lanes = [[{'traits': ['Mutant'], 'meta': []},
-				  {'traits': ['Bio'],    'meta': []},
-				  {'traits': ['Skill'],  'meta': []},
-				  {'traits': ['Mystic'], 'meta': []},
-				  {'traits': ['Tech'],   'meta': []}]]
+default_lanes = [[{'traits': ['Mutant']},
+				  {'traits': ['Bio']},
+				  {'traits': ['Skill']},
+				  {'traits': ['Mystic']},
+				  {'traits': ['Tech']}]]
 
 
-def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], raid_name=''):
+def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], table_name=''):
 
 	# If no char_list is specified, pull the list of all characters from char_stats
 	if not char_list:
@@ -32,7 +32,7 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 	
 	# If we have multiple lanes, add a quick hack of a header to give us a tabbed interface.
 	num_lanes = len(lanes)
-	html_file += add_tabbed_header(num_lanes,raid_name)
+	html_file += add_tabbed_header(num_lanes,table_name)
 	
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
@@ -44,7 +44,10 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
 			traits	= section['traits']
-			meta	= section['meta']
+
+			meta    = []
+			if 'meta' in section:
+				meta = section['meta']
 
 			# Start with the entire character list.
 			# We will filter it down before doing anything.
@@ -72,6 +75,13 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 			# Split active_chars into meta_chars and other_chars
 			meta_chars  = [char for char in active_chars if char in meta]
 			other_chars = [char for char in active_chars if not char in meta]
+
+			# If table provided specifies 
+			if meta_chars and not other_chars:
+				other_chars,meta_chars = meta_chars,other_chars
+
+			print ('meta_chars:',meta_chars,'\nother_chars:',other_chars)
+
 
 			# Use the full Player List if explicit Strike Teams haven't been defined.
 			if not strike_teams:
@@ -476,7 +486,7 @@ def translate_name(value):
 
 
 # Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
-def add_tabbed_header(num_lanes, raid_name = '', html_file = ''):
+def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
 
 		html_file += '''
 <head>
@@ -589,8 +599,8 @@ def add_tabbed_header(num_lanes, raid_name = '', html_file = ''):
 		for num in range(num_lanes):
 			tab_name = ['ROSTER INFO', 'LANE %i' % (num+1)][num_lanes>1]
 
-			if raid_name:
-				tab_name = '%s RAID %s' % (raid_name.upper(), tab_name)
+			if table_name:
+				tab_name = '%s %s' % (table_name.upper(), tab_name)
 
 			html_file += '''<button class="tablink" onclick="openPage('Lane%i', this)" %s>%s</button>''' % (num+1,['','id="defaultOpen"'][not num],tab_name) + '\n'
 

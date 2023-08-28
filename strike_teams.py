@@ -14,7 +14,7 @@ incur_strike_teams = [
 	"sjhughes",
 	"Ramalama",
 	"----",
-	"Venom 4 Life",
+	"lanceb22",
 	"Daner",
 	"DrFett",
 ],

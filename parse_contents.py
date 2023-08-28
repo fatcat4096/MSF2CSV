@@ -188,6 +188,8 @@ def parse_characters(contents, char_stats, processed_players):
 	# After successfully parsing, cache the character.html file to disk for future use.
 	# open('roster.%s.html' % player_name, 'wb').write(soup.prettify().encode('utf8'))
 
+	return char_stats, processed_players
+
 
 def parse_teams(contents):
 	soup = BeautifulSoup(contents, 'html.parser')
