@@ -8,9 +8,6 @@ from gradients import *				# Routines to create color gradient for heat map
 from extract_traits import *		# Pull trait info from MSF.gg
 import datetime
 
-# Pull trait info from msf.gg
-chars_from_trait = extract_traits()
-
 
 default_lanes = [[{'traits': ['Mutant']},
 				  {'traits': ['Bio']},
@@ -28,6 +25,9 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (processed_players)
 	
+	# Get extracted_traits from char_stats
+	extracted_traits = char_stats['extracted_traits']
+	
 	html_file = '<!doctype html>\n<html lang="en">\n'
 	
 	# If we have multiple lanes, add a quick hack of a header to give us a tabbed interface.
@@ -43,45 +43,37 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
-			traits	= section['traits']
+			traits	   = section['traits']
+			meta_chars = section.get('meta',[])
 
-			meta    = []
-			if 'meta' in section:
-				meta = section['meta']
+			# Meta Chars not subject to min requirements. Filter out only uncollected heroes.
+			meta_chars.sort()
+			meta_chars = [char for char in char_list if char in meta_chars]
 
-			# Start with the entire character list.
-			# We will filter it down before doing anything.
-			active_chars = char_list[:]
-			
+			# Other is everything left over. 
+			other_chars = [char for char in char_list if not char in meta_chars]
+
 			# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
-
 			if min_iso:
-				active_chars = [char for char in active_chars if char_stats[char]['iso']['max'] >= min_iso]
+				other_chars = [char for char in other_chars if char_stats[char]['iso']['max'] >= min_iso]
 
 			if min_tier:
-				active_chars = [char for char in active_chars if char_stats[char]['tier']['max'] >= min_tier]
+				other_chars = [char for char in other_chars if char_stats[char]['tier']['max'] >= min_tier]
 			
 			# Trait filters are additive.
 			if traits:
-				for char in active_chars[:]:
+				for char in other_chars[:]:
 					for trait in traits:
-						if char in chars_from_trait[trait]:
+						if trait in extracted_traits and char in extracted_traits[trait]:
 							# Character has at least one of these traits. Leave it in.
 							break
 					# Did we find this char in any of the traits?
-					if char not in chars_from_trait[trait]:
-						active_chars.remove(char)
+					if trait not in extracted_traits or char not in extracted_traits[trait]:
+						other_chars.remove(char)
 
-			# Split active_chars into meta_chars and other_chars
-			meta_chars  = [char for char in active_chars if char in meta]
-			other_chars = [char for char in active_chars if not char in meta]
-
-			# If table provided specifies 
+			# If only meta specified, just move it to others so we don't treat it special.
 			if meta_chars and not other_chars:
 				other_chars,meta_chars = meta_chars,other_chars
-
-			print ('meta_chars:',meta_chars,'\nother_chars:',other_chars)
-
 
 			# Use the full Player List if explicit Strike Teams haven't been defined.
 			if not strike_teams:
@@ -103,7 +95,7 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 
 			# Always generate the Others table.
 			# Only label it as such if Meta section exists.
-			html_file += generate_table(processed_players, char_stats, keys, other_chars, strike_teams, table_lbl, all_team_pwr=get_stp_list(processed_players, active_chars))
+			html_file += generate_table(processed_players, char_stats, keys, other_chars, strike_teams, table_lbl, all_team_pwr=get_stp_list(processed_players, meta_chars+other_chars))
 
 			# If in a nested table, close the nested table.
 			if meta_chars:
@@ -441,11 +433,11 @@ def get_stp_list(processed_players, char_list, team_pwr_dict={}):
 
 # Bring back a sorted list of characters from our char_stats
 def get_char_list(char_stats):
-	char_list = list(char_stats.keys())
+	char_list = list(char_stats)
 
 	# Prune the unsummoned characters.
 	for char in char_list[:]:
-		if 'iso' not in char_stats[char].keys():
+		if 'iso' not in char_stats[char]:
 			char_list.remove(char)
 
 	char_list.sort()
@@ -455,7 +447,7 @@ def get_char_list(char_stats):
 
 # Bring back a sorted list of players from our processed_players data
 def get_player_list(processed_players):
-	player_list = list(processed_players.keys())
+	player_list = list(processed_players)
 	
 	player_list.remove('alliance_info')
 	
@@ -468,12 +460,37 @@ def get_player_list(processed_players):
 def translate_name(value):
 
 	tlist = {	"Avenger": "Avengers",
+				"AForce": "A-Force",
+				"BionicAvenger": "Bionic<br>Avengers",
+				"BlackOrder": "Black<br>Order",
+				"Brawler": "Brawlers",
 				"Brotherhood": "B'Hood",
+				"DarkHunter": "Dark<br>Hunters",
+				"Defender": "Defenders",
+				"Eternal": "Eternals",
 				"HeroesForHire": "H4H",
+				"Hydra Armored Guard": "Hydra Arm Guard",
+				"InfinityWatch": "Infinity<br>Watch",
+				"Invader": "Invaders",
+				"MastersOfEvil": "Masters<br>Of Evil",
 				"Mercenary": "Mercs",
+				"NewAvenger": "New<br>Avengers",
+				"NewWarrior": "New<br>Warriors",
 				"PymTech": "Pym Tech",
+				"Ravager": "Ravagers",
+				"SecretAvenger": "Secret<br>Avengers",
+				"SecretDefender": "Secret<br>Defenders",
+				"SinisterSix": "Sinister<br>Six",
 				"SpiderVerse": "Spiders",
+				"Symbiote": "Symbiotes",
+				"TangledWeb": "Tangled<br>Web",
+				"WarDog": "War Dogs",
+				"WeaponX": "Weapon X",
+				"WebWarrior": "Web<br>Warriors",
+				"XFactor": "X-Factor",
+				"Xforce": "X-Force",
 				"Xmen": "X-Men",
+				"YoungAvenger": "Young<br>Avengers",
 				"Captain America (WWII)": "Capt. America (WWII)",
 				"Captain America (Sam)": "Capt. America (Sam)"}
 

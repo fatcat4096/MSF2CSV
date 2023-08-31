@@ -74,12 +74,15 @@ def parse_alliance(contents):
 	alliance['captains'] = captains
 	alliance['order']    = order
 	
+	# Just grab the URLs for the js scripts on the page. Will be used by extract_traits.
+	alliance['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
+	
 	# Return the parsed alliance info.
 	return alliance
 
 
 # Parse the character file out of MHTML or the page_source directly from the website.
-def parse_characters(contents, char_stats, processed_players):
+def parse_roster(contents, char_stats, processed_players):
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	player_name = remove_tags(soup.find('div', attrs = {'class':'player-name is-italic'}).text.strip())

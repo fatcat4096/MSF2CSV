@@ -7,6 +7,7 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from parse_contents import *
+from extract_traits import *
 
 import datetime
 import keyring
@@ -16,14 +17,14 @@ import time
 
 alliance_name = "SIGMA Infamously Strange"
 
-def process_website(alliance_name=alliance_name, char_stats={}, processed_players= {}):
+def process_website(alliance_name=alliance_name, char_stats={}, processed_players= {}, force=True):
 
 	# Load cached roster info from pickled data, this is possibly stale, but we will attempt to refresh.
 	if os.path.exists('cached_data-'+alliance_name):
 		[char_stats,processed_players] = pickle.load(open('cached_data-'+alliance_name,'rb'))
 
 		# If it's been less than 24 hours since last update, just return the cached data. 
-		if time.time()-os.path.getmtime('cached_data-'+alliance_name) < 86400:
+		if not force and (time.time()-os.path.getmtime('cached_data-'+alliance_name) < 86400):
 			return char_stats,processed_players
 
 	# Login to the website. 
@@ -51,13 +52,13 @@ def process_website(alliance_name=alliance_name, char_stats={}, processed_player
 		member = driver.find_elements(By.TAG_NAME, "H4")[index]
 
 		if member.text:
-			print ("Looking for roster button for",member.text,"...")
+			#print ("Looking for roster button for",member.text,"...")
 			
 			# Find the relevant button.
 			buttons = driver.find_elements(By.CLASS_NAME, 'button')
 			
 			for button in buttons:
-				# If the 
+
 				if abs(member.location['y']-button.location['y'])<12 and button.size['width'] in (53,54):
 					break
 					
@@ -69,25 +70,25 @@ def process_website(alliance_name=alliance_name, char_stats={}, processed_player
 				#print ("Roster button is not clickable. On to next H4 entry!")
 				continue
 
-			# Scroll so this button is visible.
-			driver.execute_script("window.scrollTo(0, %i)" % button.location['y'])
+			# Scroll so this button is visible. -- Don't think this is working.
+			#driver.execute_script("window.scrollTo(0, %i)" % button.location['y'])
 			
 			# We found a Roster Button. Should we click it?
 			# If we already have an entry for this person, see if it's up-to-date/recent
-			roster_name = member.text.replace('[ME]','')
+			member = member.text.replace('[ME]','')
 			
-			if roster_name in processed_players and 'last_download' in processed_players[roster_name]:
-				time_since_last = datetime.datetime.now()-processed_players[roster_name]['last_download']
+			if member in processed_players and 'last_download' in processed_players[member]:
+				time_since_last = datetime.datetime.now()-processed_players[member]['last_download']
 				
 				# Less than an hour since last refresh, or power hasn't changed, let's skip it.
-				if (time_since_last.total_seconds() < 3600) or (processed_players[roster_name]['tot_power'] == alliance_info['members'][roster_name]['tcp']):
-					print ("Found",roster_name,"but",["too soon,","unchanged,"][time_since_last.total_seconds() > 3600],"skipping...")
+				if not force and ((time_since_last.total_seconds() < 3600) or (processed_players[member]['tot_power'] == alliance_info['members'][member]['tcp'])):
+					print ("Found",member,"but",["too soon,","unchanged,"][time_since_last.total_seconds() > 3600],"skipping...")
 					continue
 
 			try:
 				button.click()
 			except:
-				time.sleep(1)
+				time.sleep(0.5)
 				button.click()
 
 			timer = 0
@@ -107,8 +108,11 @@ def process_website(alliance_name=alliance_name, char_stats={}, processed_player
 
 			# If page loaded, pass contents to scraping routines for stat extraction.
 			if len(driver.page_source)>1000000:
-				parse_characters(driver.page_source, char_stats, processed_players)
-				processed_players[roster_name]['last_download'] = datetime.datetime.now()
+				parse_roster(driver.page_source, char_stats, processed_players)
+				processed_players[member]['last_download'] = datetime.datetime.now()
+			
+			# Cache the URL just in case we can use this later
+			alliance_info['members'][member]['url'] = driver.current_url
 			
 			# Back up and move on to the next roster on the page.
 			driver.back()
@@ -129,7 +133,22 @@ def process_website(alliance_name=alliance_name, char_stats={}, processed_player
 
 	# After everything, update processed_players with the current alliance_info.
 	processed_players['alliance_info'] = alliance_info
+	
+	# If the old trait file isn't being used, extracted_traits needs to be updated.
+	if 'trait_file' not in char_stats or char_stats['trait_file'] not in alliance_info['scripts']:
+		print ("Extracted traits location has changed...updating.")
+		for script in alliance_info['scripts']:
+			extracted_traits = extract_traits(script)
 
+			# If this file was correctly parsed, store this new trait file.
+			if extracted_traits:
+				print ("Found extracted traits in",script)
+
+				# Remember which script was the valid trait file
+				char_stats['trait_file'] = script
+				char_stats['extracted_traits'] = extracted_traits
+				break
+		
 	# cache the updated roster info to disk.
 	pickle.dump([char_stats,processed_players],open('cached_data-'+alliance_name,'wb'))
 
