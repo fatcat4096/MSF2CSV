@@ -81,7 +81,7 @@ def get_alliance_data(alliance_name=alliance_name, force=True):
 				continue
 
 			# Scroll so this button is visible. -- Don't think this is working.
-			#driver.execute_script("window.scrollTo(0, %i)" % button.location['y'])
+			driver.execute_script("window.scrollTo(0, %i)" % button.location['y'])
 			
 			# We found a Roster Button. Should we click it?
 			# If we already have an entry for this person, see if it's up-to-date/recent
