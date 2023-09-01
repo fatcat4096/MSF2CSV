@@ -28,10 +28,10 @@ def parse_alliance(contents):
 	alliance_stats = soup.findAll('div', attrs = {'class':'level-item'})
 	
 	alliance['num_mems']  = int(alliance_stats[0].text.split('/')[-1])
-	alliance['stark_lvl'] = alliance_stats[1].text.split('level ')[-1]
-	alliance['type']      = alliance_stats[2].text.split('Type ')[-1]
-	alliance['tot_power'] = alliance_stats[3].text.split('power ')[-1]
-	alliance['avg_power'] = alliance_stats[4].text.split('Power')[-1]
+	alliance['stark_lvl'] = alliance_stats[1].text.split()[-1]
+	alliance['type']      = alliance_stats[2].text.split()[-1]
+	alliance['tot_power'] = alliance_stats[3].text.split()[-1]
+	alliance['avg_power'] = alliance_stats[4].span.text
 	
 	# Parse each row of the members table, extracting stats for each member.
 	members_table = soup.find('tbody').findAll('tr', attrs={'draggable':'false'})
@@ -44,7 +44,7 @@ def parse_alliance(contents):
 	for member_row in members_table:
 		member = {}
 
-		member_name = remove_tags(member_row.find('td', attrs={'data-label':'Name'}).text)
+		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text)
 
 		# It's ME, hi, I'm the problem it's ME.
 		if member_name.find('[ME]') != -1:
@@ -53,18 +53,24 @@ def parse_alliance(contents):
 
 		member['level'] = int(member_row.find('td', attrs={'class':'avatar'}).text.strip())
 		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src')
-		member['role']  = member_row.find('td', attrs={'data-label':'Role'}).text
+		member_role     = member_row.find('td', attrs={'class':'role'})
 
 		# Process role information.
-		if member['role'] == 'Leader':
+		if member_role.find('is-leader') != -1:
 			alliance['leader'] = member_name
-		elif member['role'] == 'Captain':
+		elif member_role.find('is-captain') != -1:
 			captains.append(member_name)
 
-		member['tcp'] = int(member_row.find('td', attrs={'data-label':'Collection Power'}).text.replace(',',''))
-		member['stp'] = int(member_row.find('td', attrs={'data-label':'Strongest Team Power'}).text.replace(',',''))
-		member['mvp'] = int(member_row.find('td', attrs={'data-label':'War MVP'}).text.replace(',',''))
-		member['tcc'] = int(member_row.find('td', attrs={'data-label':'Total Characters Collected'}).text.replace(',',''))
+		member['role'] = member_role.text
+
+		member['tcp'] = int(re.sub(r"\D", "", member_row.find('td', attrs={'class':'tcp'}).text))
+
+		# The fact that they've used 'stp' for all three of these is probably a bug 
+		# on their part, and I'll probably need to change this a year down the road.
+		member_stp = member_row.findAll('td', attrs={'class':'stp'})
+		member['stp'] = int(re.sub(r"\D", "", member_stp[0].text))
+		member['mvp'] = int(re.sub(r"\D", "", member_stp[1].text))
+		member['tcc'] = int(re.sub(r"\D", "", member_stp[2].text))
 
 		# Store the finished member info.
 		members[member_name] = member

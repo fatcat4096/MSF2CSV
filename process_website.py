@@ -17,7 +17,10 @@ import time
 
 alliance_name = "SIGMA Infamously Strange"
 
-def process_website(alliance_name=alliance_name, char_stats={}, processed_players= {}, force=True):
+def get_alliance_data(alliance_name=alliance_name, force=True):
+
+	char_stats        = {}
+	processed_players = {}
 
 	# Load cached roster info from pickled data, this is possibly stale, but we will attempt to refresh.
 	if os.path.exists('cached_data-'+alliance_name):
@@ -27,17 +30,24 @@ def process_website(alliance_name=alliance_name, char_stats={}, processed_player
 		if not force and (time.time()-os.path.getmtime('cached_data-'+alliance_name) < 86400):
 			return char_stats,processed_players
 
+	# Let's get fresh data from the website.
+
 	# Login to the website. 
 	driver = login(alliance_name)
 
-	# We are in, wait a second before starting.
-	time.sleep(1)
-
-	# Grab the title of this page for future reference.
+	# Grab the Allaince Info title/url for future reference.
 	alliance_title = driver.title
-
+	alliance_url   = driver.current_url
+	
 	# Pull alliance information from this Alliance Info screen
 	alliance_info  = parse_alliance(driver.page_source) 
+
+	# DOES THE ALLIANCE I LOGGED INTO MATCH THE NAME OF THE ALLIANCE I AM EXPECTING?
+	#if alliance_info['name'] == alliance_name:
+	
+		# IF SO, I CAN UPDATE STRIKE TEAMS AND ROSTERS AND ALLIANCE INFO WITH THIS DATA
+		
+		# IF NOT, I SHOULD USE THE ALLIANCE_INFO FROM THE CACHED DATA TO UPDATE ROSTERS.
 
 	# Remove any members in processed_players who are no longer in the alliance.
 	for member in list(processed_players):
@@ -173,7 +183,6 @@ def get_strike_teams(driver,raid='alpha_d',diff=0):
 def login(alliance_name=alliance_name):
 
 	alliance_path = 'https://marvelstrikeforce.com/en/alliance/members'
-	alliance_title = 'Alliance | MARVEL Strike Force Database'
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
@@ -197,9 +206,11 @@ def login(alliance_name=alliance_name):
 	elif facebook_cred:
 		facebook_login(driver, facebook_cred.username, facebook_cred.password)
 		
-	# Waiting while you login or approve login via 2FA.
-	while driver.title != alliance_title:
-		time.sleep(1)
+	# Waiting while you login manually, automatically, or approve login via 2FA.
+	try:
+		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-roster')))
+	except TimeoutException:
+		print("Timed out. Unable to complete login.")
 
 	return driver
 
