@@ -5,7 +5,7 @@ Takes the processed alliance / roster data and generate readable output to spec.
 """
 
 from gradients import *				# Routines to create color gradient for heat map
-from extract_traits import *		# Pull trait info from MSF.gg
+
 import datetime
 
 
@@ -55,10 +55,10 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 
 			# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
 			if min_iso:
-				other_chars = [char for char in other_chars if char_stats[char]['iso']['max'] >= min_iso]
+				other_chars = [char for char in other_chars if max([int(processed_players[player][char]['iso']) for player in player_list]) >= min_iso]
 
 			if min_tier:
-				other_chars = [char for char in other_chars if char_stats[char]['tier']['max'] >= min_tier]
+				other_chars = [char for char in other_chars if max([int(processed_players[player][char]['tier']) for player in player_list]) >= min_tier]
 			
 			# Trait filters are additive.
 			if traits:

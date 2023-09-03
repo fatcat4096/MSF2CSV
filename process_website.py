@@ -10,6 +10,7 @@ from parse_contents import *
 from extract_traits import *
 
 import datetime
+import getpass
 import keyring
 import os
 import pickle
@@ -17,7 +18,47 @@ import time
 
 alliance_name = "SIGMA Infamously Strange"
 
-def get_alliance_data(alliance_name=alliance_name, force=True):
+'''
+Planned changes in workflow.
+
+1. If no alliance passed in, we are defaulting to use whatever the login's alliance is.
+
+* If no cached_data file exists, first run, clearly we need to login.
+* If only one cached_data file exists, assume this is the login alliance. Use the modification time of this file to control whether we just return cached data or proceed to website.
+* If multiple cached_data files exist, unknown which is default -- login and get alliance info. Once alliance_info['name'] is known, bail if alliance_name = '' and modification time of cached_data+alliance_info['name'] is too new.
+
+? Any strategy to use if no alliance specified and multiple cached_data files exist? Should we be writing a default alliance hint somewhere so that we can tell which file is to be used and what to base the calculation upon? (I think so. Would obviate the need for third case above.)
+
+2. If alliance name is passed in, this is the alliance we are basing our login on. 
+
+* If no cached_data file for this alliance, first run, clearly we need to login. 
+* If cached_data file exists for this alliance, use the modification time of this file to control whether we just return cached data or proceed to website.
+
+3. If we proceed to website, download alliance_info.
+4 If alliance_name = '' and modification time of cached_data+alliance_info['name'] is too new, bail.
+5 If alliance_name == alliance_info['name'] this is the base case, we are updating the info for the login player's alliance. 
+	* Use local definitions of strike_teams for output. Store the current values of strike_teams in alliance_info. 
+	* Remove any members in processed_players who are no longer in the alliance.
+	* Walk down the list of the members in the alliance_info['order'] list. 
+		* If URL is known for player just get this page and parse data. Update if total power has changed since last update.
+		* If URL is unknown for player, get URL for main alliance table, find appropriate button, scroll, and click. Update alliance_info['members'][member]['url'] with current URL.
+	* Save the result in cached_data- + alliance_info['name']
+
+6. If alliance_name != alliance_info['name'] then we are being told to update data for an alliance which is not the login. 
+	* alliance_info = processed_chars['alliance_info']
+	* Walk down the list of the members in the alliance_info['order'] list.
+		* If URL is known for player, just get this page and parse data. Update if total power has changed since last update.
+		* If URL is unknown for player, skip this player.
+	* Save the result in cached_data- + alliance_info['name']
+
+
+Addl: Need to change strike_teams to be dict with keys defined for 'gamma','incur','other'. Ultimately, users can define their own keys and specify which key they want to use in their out output, but these three should be standard.  
+Addl: Make sure strike_teams are loaded prior to loading the rest of the data so they can be passed in and cached inside the processed_chars['alliance_info'] structure. This way we can still render output when working with another alliance.
+Addl: At some point, do away with char_stats. Do stat analysis of each hero in the table prior to rendering. Just build info for the characters and keys included in each table. Less crap to lug around. (Hide extracted_traits in alliance_info instead.) 
+
+'''
+
+def process_website(alliance_name=alliance_name, force=False):
 
 	char_stats        = {}
 	processed_players = {}
@@ -33,9 +74,12 @@ def get_alliance_data(alliance_name=alliance_name, force=True):
 	# Let's get fresh data from the website.
 
 	# Login to the website. 
-	driver = login(alliance_name)
+	driver = login()
 
-	# Grab the Allaince Info title/url for future reference.
+	# We are in, wait a second before starting.
+	time.sleep(1)
+
+	# Grab the Alliance Info title/url for future reference.
 	alliance_title = driver.title
 	alliance_url   = driver.current_url
 	
@@ -80,7 +124,7 @@ def get_alliance_data(alliance_name=alliance_name, force=True):
 				#print ("Roster button is not clickable. On to next H4 entry!")
 				continue
 
-			# Scroll so this button is visible. -- Don't think this is working.
+			# Scroll so this button is visible.
 			driver.execute_script("window.scrollTo(0, %i)" % button.location['y'])
 			
 			# We found a Roster Button. Should we click it?
@@ -133,10 +177,8 @@ def get_alliance_data(alliance_name=alliance_name, force=True):
 	# While we are in, let's double check the Strike Teams defined for Incursion and Gamma 4.5
 	
 	# Same strike teams are defined for all difficulties.  
-	#incur_strike_teams = get_strike_teams(driver,'incursion',0)
-	#other_strike_teams = get_strike_teams(driver,'gamma_d',0)
-
-	# HOW DO WE WANT TO STORE THESE? IN CACHED_DATA? IN processed_players['alliance_info']?
+	#incur_strike_teams = get_strike_teams(driver,'incursion')
+	#other_strike_teams = get_strike_teams(driver,'gamma_d')
 	
 	# Close the Selenium session.
 	driver.close()
@@ -180,15 +222,14 @@ def get_strike_teams(driver,raid='alpha_d',diff=0):
 	return strike_teams
 
 
-def login(alliance_name=alliance_name):
+def login():
 
 	alliance_path = 'https://marvelstrikeforce.com/en/alliance/members'
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
 
-	scopely_cred  = keyring.get_credential('scopely'+alliance_name,'')
-	facebook_cred = keyring.get_credential('facebook'+alliance_name,'')
+	facebook_cred, scopely_cred = get_creds()
 
 	# If login/password are provided, run this as a headless server.
 	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
@@ -211,6 +252,21 @@ def login(alliance_name=alliance_name):
 		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-roster')))
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
+
+	# Check for page language. Change to English if necessary.
+	try:
+		if driver.find_element(By.TAG_NAME, 'html').get_attribute('lang') != 'en_US':
+			wait = WebDriverWait(driver, 10)
+			
+			# Click on language selection
+			language = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'language-selector')))
+			language.click()
+			
+			# Select English language 
+			english = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.language-selector a[title="English"]')))
+			english.click()
+	except TimeoutException:
+		print("Timed out. Unable to switch to english.")
 
 	return driver
 
@@ -268,3 +324,33 @@ def facebook_login(driver, facebook_user, facebook_pass):
 
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
+
+
+def get_creds():
+	facebook_cred = keyring.get_credential('facebook','')
+	scopely_cred  = keyring.get_credential('scopely','')
+
+	# If no credentials are entered, check for presence of 'noprompt' file. 
+	if not os.path.exists('noprompt'):
+
+		# If 'noprompt' doesn't exist, prompt if person would like to cache their credentials
+		if input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
+
+			# Ask which login they would like to use.
+			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
+
+				# Prompt for each login and pass and store in keyring.
+				login = input("Facebook Login: ")
+				keyring.set_password('facebook', login, getpass.getpass(prompt="Facebook Password:"))
+			else:
+				login = input("Scopely Login: ")
+				keyring.set_password('scopely', login, getpass.getpass(prompt="Scopely Password:"))
+
+			# Reload both credentials before proceeding.
+			facebook_cred = keyring.get_credential('facebook','')
+			scopely_cred  = keyring.get_credential('scopely','')
+
+		# Create the file so we aren't asked again. User can delete if credentials have changed.
+		open('noprompt','a').close()
+
+	return facebook_cred, scopely_cred
