@@ -1,11 +1,17 @@
 # This file contains the Strike Teams used for HTML file output.
+#
 # Move entries between strike teams and reorder players within strike teams. 
 # Include lane dividers, i.e. "----" to indicate which players are in which lanes/clusters.
 #
+# Also, you can add entries in strike_teams dict and use them in output in msf2csv.py.
+# These teams will be saved and included in cached alliance information.
+#
 # DELETE THIS FILE TO AUTO-GENERATE A NEW ONE WITH CURRENT ALLIANCE MEMBERS
 
+strike_teams = {}
+
 # Used for Incursion Raid output.
-incur_strike_teams = [ 
+strike_teams['incur'] = [ 
 [### Strike Team 1 ###]
 	"Joey",
 	"Jutch",
@@ -26,7 +32,7 @@ incur_strike_teams = [
 	"mgmf", 
 	"HeadHunter2838",
 	"----",
-	"Luthher",
+	"Kenny Powers",
 	"keithchyiu",
 	"FabiooBessa",
 ],
@@ -43,9 +49,8 @@ incur_strike_teams = [
 	"Flashie",
 ]]
 
-
 # Used for Gamma Raids and other output.
-other_strike_teams = [
+strike_teams['other'] = [
 [### Strike Team 1 ###]
 	"FatCat",
 	"Joey",
@@ -54,7 +59,7 @@ other_strike_teams = [
 	"sjhughes",
 	"Ramalama",
 	"DrFett",
-	"Venom 4 Life",
+	"lanceb22",
 ],
 [### Strike Team 2 ###]
 	"Shammy",
@@ -62,7 +67,7 @@ other_strike_teams = [
 	"keithchyiu",
 	"mgmf",
 	"BigDiesel",
-	"Luthher",
+	"Kenny Powers",
 	"EXfieldy",
 	"FabiooBessa",
 ],

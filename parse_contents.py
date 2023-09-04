@@ -22,7 +22,7 @@ def parse_alliance(contents):
 	alliance['name']      = remove_tags(soup.find('span', attrs = {'class':'alliance-name'}).text)
 	alliance['desc']      = soup.find('div',  attrs = {'class':'editable-msg'}).text
 	alliance['trophies']  = soup.find('div',  attrs = {'class':'war-trophies'}).text.strip()
-	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src')
+	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('Portrait_')[-1]
 
 	# Parse the alliance stats.
 	alliance_stats = soup.findAll('div', attrs = {'class':'level-item'})
@@ -52,13 +52,13 @@ def parse_alliance(contents):
 			alliance['me'] = member_name
 
 		member['level'] = int(member_row.find('td', attrs={'class':'avatar'}).text.strip())
-		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src')
+		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src').split('Portrait_')[-1]
 		member_role     = member_row.find('td', attrs={'class':'role'})
 
 		# Process role information.
-		if member_role.find('is-leader') != -1:
+		if str(member_role).find('is-leader') != -1:
 			alliance['leader'] = member_name
-		elif member_role.find('is-captain') != -1:
+		elif str(member_role).find('is-captain') != -1:
 			captains.append(member_name)
 
 		member['role'] = member_role.text
@@ -88,7 +88,7 @@ def parse_alliance(contents):
 
 
 # Parse the character file out of MHTML or the page_source directly from the website.
-def parse_roster(contents, char_stats, processed_players):
+def parse_roster(contents, alliance_info):
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	player_name = remove_tags(soup.find('div', attrs = {'class':'player-name is-italic'}).text.strip())
@@ -96,6 +96,7 @@ def parse_roster(contents, char_stats, processed_players):
 	print("Parsing %i bytes...found Alliance Member named: %s" % (len(contents), player_name))
 
 	processed_chars  = {}
+	char_portraits   = {}
 	
 	chars  = soup.findAll('li', attrs = {'class':'character'})
 
@@ -110,16 +111,16 @@ def parse_roster(contents, char_stats, processed_players):
 		if not char_name:
 			pass
 
-		# Keep the path to the image for each character.
-		char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src')
-
-		char_stats.setdefault(char_name,{})
-		char_stats[char_name].setdefault('portrait',char_portrait)
-		
 		# Stats available only if character is recruited.
 		toon_stats = char.find('div', attrs = {'id':'toon-stats'})
 
 		if toon_stats:
+
+			# Keep the path to the image for each character.
+			char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1]
+			
+			char_portraits[char_name] = char_portrait
+
 			# Is this character a favorite? Using this format for the csv. 
 			favorite = ['true','false'][char.find('i', attrs = {'class':'is-favorite'}) == None]
 
@@ -130,9 +131,6 @@ def parse_roster(contents, char_stats, processed_players):
 
 			# For total roster calculation.
 			tot_power += int(power)
-
-			set_min_max(char_stats,char_name,'level',level)
-			set_min_max(char_stats,char_name,'power',power)
 			
 			# Decode Yellow and Red Stars
 			stars = str(toon_stats.find('span'))
@@ -151,8 +149,6 @@ def parse_roster(contents, char_stats, processed_players):
 			# Decode Gear Tier
 			gear = char.find('div',attrs={'class':'gear-tier-ring'})
 			tier = str(gear).split('"g')[2].split('"')[0]
-
-			set_min_max(char_stats,char_name,'tier',tier)
 		
 			# Decode ISO Level
 			iso_info = str(char.find('div',attrs={'class','iso-wrapper'}))
@@ -176,30 +172,36 @@ def parse_roster(contents, char_stats, processed_players):
 			elif iso_info.find('restoration') != -1:
 				iso_class = 'Healer'
 
-			set_min_max(char_stats,char_name,'iso',iso)
-			
-			processed_chars[char_name] = {'favorite':favorite, 'level':level, 'power':power, 'tier':tier, 'iso':iso, 'iso_class':iso_class, 'yelStars':yelStars, 'redStars':redStars, 'basic':basic, 'special':special, 'ult':ult, 'passive':passive}
+			processed_chars[char_name] = {'fav':favorite, 'lvl':level, 'power':power, 'tier':tier, 'iso':iso, 'class':iso_class, 'yel':yelStars, 'red':redStars, 'bas':basic, 'spec':special, 'ult':ult, 'pass':passive}
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
-			processed_chars[char_name] = {'favorite':'', 'level':'0', 'power':'0', 'tier':'0', 'iso':'0', 'iso_class':'', 'yelStars':'0', 'redStars':'0', 'basic':'0', 'special':'0', 'ult':'0', 'passive':'0'}
+			processed_chars[char_name] = {'fav':'', 'lvl':'0', 'power':'0', 'tier':'0', 'iso':'0', 'class':'', 'yel':'0', 'red':'0', 'bas':'0', 'spec':'0', 'ult':'0', 'pass':'0'}
 
 	# Finally, store total roster power and now as last_update.
 	processed_chars['tot_power'] = tot_power
 	processed_chars['last_update'] = datetime.datetime.now()
 	
+	# Get a little closer to our work. 
+	player = alliance_info['members'][player_name]
+	
 	# Only keep if we have no roster, or this roster's TCP is higher.
-	if player_name not in processed_players or tot_power > processed_players[player_name]['tot_power']:
+	if 'processed_chars' not in player or tot_power > player['processed_chars']['tot_power']:
 
 		# Add this parsed data to our list of processed players.
-		processed_players[player_name] = processed_chars
-		
+		player['processed_chars'] = processed_chars
+
+	# Update alliance_info with portrait information.
+	alliance_info['portraits'] = char_portraits
+
 	# After successfully parsing, cache the character.html file to disk for future use.
 	# open('roster.%s.html' % player_name, 'wb').write(soup.prettify().encode('utf8'))
 
-	return char_stats, processed_players
+	# Do I need to return this explicitly? I've been editing the dict directly.
+	#return alliance_info
 
-
+# Will likely not need this. Allowing users to continue to define their Strike Teams
+# locally and pass those along with the rest of the bundle / cached Alliance Info.
 def parse_teams(contents):
 	soup = BeautifulSoup(contents, 'html.parser')
 
@@ -212,20 +214,6 @@ def parse_teams(contents):
 			team_members.append(member_name)
 
 	return team_members
-
-
-# Keep track of min/max for each stat for each hero
-def set_min_max(char_stats,char_name,stat,value):
-	value = int(value)
-
-	# Find min/max stats for this specific toon.
-	char_stats[char_name].setdefault(stat,{'min':[value-1,0][stat=='iso'],'max':value})
-
-	if value<char_stats[char_name][stat]['min']:
-		char_stats[char_name][stat]['min'] = value
-
-	if value>char_stats[char_name][stat]['max']:
-		char_stats[char_name][stat]['max'] = value
 
 
 # Sanitize Alliance Names and player names of any HTML tags.

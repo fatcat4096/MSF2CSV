@@ -6,23 +6,12 @@ except:
 	pass
 	
 	
-def generate_strike_teams(path, alliance_members):
+def generate_strike_teams(alliance_members):
+
+	strike_teams = {}
 	
 	incur_strike_teams = []
 	other_strike_teams = []
-
-	new_file  = '# This file contains the Strike Teams used for HTML file output.\n'
-	new_file += '# Move entries between strike teams and reorder players within strike teams.\n'
-	new_file += '# Include lane dividers, i.e. "----" to indicate which players are in which lanes/clusters.\n'
-	new_file += '#\n'
-	new_file += '# DELETE THIS FILE TO AUTO-GENERATE A NEW ONE WITH CURRENT ALLIANCE MEMBERS\n'
-	new_file += '\n'
-
-	incur_def  = '# Used for Incursion Raid output.\n'
-	incur_def += 'incur_strike_teams = [\n'
-
-	other_def  = '\n\n# Used for Gamma Raids and other output.\n'
-	other_def += 'other_strike_teams = [\n'
 
 	for num_entry in range(len(alliance_members)):
 
@@ -30,37 +19,52 @@ def generate_strike_teams(path, alliance_members):
 		if not (num_entry%8):
 			incur_group = []
 			other_group = []
-
-			incur_def += '[### Strike Team %i ###]\n' % ((num_entry/8)+1)
-			other_def += '[### Strike Team %i ###]\n' % ((num_entry/8)+1)
-
 		# Incursion has dividers added.
 		elif ((num_entry%8)%3)==2:
-			incur_def += '\t"----",\n'
 			incur_group.append("----")
 
 		# Add the member into each.
-		incur_def += '\t"%s",\n' % alliance_members[num_entry]
-		other_def += '\t"%s",\n' % alliance_members[num_entry]
-		
 		incur_group.append(alliance_members[num_entry])
 		other_group.append(alliance_members[num_entry])
 		
 		# Finished with the group.
 		if (num_entry%8)==7 or num_entry==(len(alliance_members)-1):
-			if num_entry==(len(alliance_members)-1):
-				incur_def += ']]\n'
-				other_def += ']]\n'
-			else:
-				incur_def += '],\n'
-				other_def += '],\n'
-			
 			incur_strike_teams.append(incur_group)
 			other_strike_teams.append(other_group)
+
+	# All done, add these to the strike_teams dict to return.
+	strike_teams['incur'] = incur_strike_teams
+	strike_teams['other'] = other_strike_teams
 	
-	open(path+"strike_teams.py", 'w').write(new_file+incur_def+other_def)
+	new_file  = '# This file contains the Strike Teams used for HTML file output.\n'
+	new_file += '#\n'
+	new_file += '# Move entries between strike teams and reorder players within strike teams. \n'
+	new_file += '# Include lane dividers, i.e. "----" to indicate which players are in which lanes/clusters.\n'
+	new_file += '#\n'
+	new_file += '# Also, you can add entries in strike_teams dict and use them in output in msf2csv.py.\n'
+	new_file += '# These teams will be saved and included in cached alliance information.\n'
+	new_file += '#\n'
+	new_file += '# DELETE THIS FILE TO AUTO-GENERATE A NEW ONE WITH CURRENT ALLIANCE MEMBERS.\n'
+	new_file += '\nstrike_teams = {}\n\n'
+
+	new_file += generate_strike_team('incur',incur_strike_teams,'Used for Incursion Raid output.')
+	new_file += generate_strike_team('other',other_strike_teams,'Used for Gamma Raids and other output.')
+
+	open("strike_teams.py", 'w').write(new_file)
 	
-	return  incur_strike_teams,other_strike_teams
+	return strike_teams
 
 
+def generate_strike_team(type,strike_team,desc):
+	team_def  = '\n\n# %s\n' % desc
+	team_def += 'strike_teams[%s] = [\n' % type
 	
+	for team_num in range(len(strike_team)): 
+		team_def += '[### Strike team %i ###]\n' % (team_num+1)
+		
+		for member in strike_team[team_num]:
+			team_def += '\t"%s",\n' % member
+		
+		team_def += ['],\n',']]\n'][team_num == len(strike_team)-1]
+
+	return team_def

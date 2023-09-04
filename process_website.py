@@ -8,223 +8,230 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from parse_contents import *
 from extract_traits import *
+from generate_strike_teams import *
 
 import datetime
 import getpass
 import keyring
 import os
 import pickle
+import sys
 import time
 
-alliance_name = "SIGMA Infamously Strange"
-
 '''
-Planned changes in workflow.
-
-1. If no alliance passed in, we are defaulting to use whatever the login's alliance is.
-
-* If no cached_data file exists, first run, clearly we need to login.
-* If only one cached_data file exists, assume this is the login alliance. Use the modification time of this file to control whether we just return cached data or proceed to website.
-* If multiple cached_data files exist, unknown which is default -- login and get alliance info. Once alliance_info['name'] is known, bail if alliance_name = '' and modification time of cached_data+alliance_info['name'] is too new.
-
-? Any strategy to use if no alliance specified and multiple cached_data files exist? Should we be writing a default alliance hint somewhere so that we can tell which file is to be used and what to base the calculation upon? (I think so. Would obviate the need for third case above.)
-
-2. If alliance name is passed in, this is the alliance we are basing our login on. 
-
-* If no cached_data file for this alliance, first run, clearly we need to login. 
-* If cached_data file exists for this alliance, use the modification time of this file to control whether we just return cached data or proceed to website.
-
-3. If we proceed to website, download alliance_info.
-4 If alliance_name = '' and modification time of cached_data+alliance_info['name'] is too new, bail.
-5 If alliance_name == alliance_info['name'] this is the base case, we are updating the info for the login player's alliance. 
-	* Use local definitions of strike_teams for output. Store the current values of strike_teams in alliance_info. 
-	* Remove any members in processed_players who are no longer in the alliance.
-	* Walk down the list of the members in the alliance_info['order'] list. 
-		* If URL is known for player just get this page and parse data. Update if total power has changed since last update.
-		* If URL is unknown for player, get URL for main alliance table, find appropriate button, scroll, and click. Update alliance_info['members'][member]['url'] with current URL.
-	* Save the result in cached_data- + alliance_info['name']
-
-6. If alliance_name != alliance_info['name'] then we are being told to update data for an alliance which is not the login. 
-	* alliance_info = processed_chars['alliance_info']
-	* Walk down the list of the members in the alliance_info['order'] list.
-		* If URL is known for player, just get this page and parse data. Update if total power has changed since last update.
-		* If URL is unknown for player, skip this player.
-	* Save the result in cached_data- + alliance_info['name']
-
-
 Addl: Need to change strike_teams to be dict with keys defined for 'gamma','incur','other'. Ultimately, users can define their own keys and specify which key they want to use in their out output, but these three should be standard.  
-Addl: Make sure strike_teams are loaded prior to loading the rest of the data so they can be passed in and cached inside the processed_chars['alliance_info'] structure. This way we can still render output when working with another alliance.
-Addl: At some point, do away with char_stats. Do stat analysis of each hero in the table prior to rendering. Just build info for the characters and keys included in each table. Less crap to lug around. (Hide extracted_traits in alliance_info instead.) 
-
+Addl: Make sure strike_teams are loaded prior to loading the rest of the data so they can be passed in and cached inside the alliance_info structure. This way we can still render output when working with another alliance.
 '''
+def get_alliance_info(alliance_name='', force=False):
 
-def process_website(alliance_name=alliance_name, force=False):
+	# Value for checking freshness of cached_data files, 86400 seconds = one day.
+	stale_period = 86400
 
-	char_stats        = {}
-	processed_players = {}
+	# If updated recently, use this to determine whether cached_data is stale.
+	if os.path.exists('strike_teams.py'):
+		stale_period = min(86400,os.path.getmtime('strike_teams.py'))
 
-	# Load cached roster info from pickled data, this is possibly stale, but we will attempt to refresh.
-	if os.path.exists('cached_data-'+alliance_name):
-		[char_stats,processed_players] = pickle.load(open('cached_data-'+alliance_name,'rb'))
+	# Look for cached_data files. 
+	cached_data_files = [file for file in os.listdir() if file.find('cached_data') != -1]
+	
+	# If alliance specified and is in the list of cached_data files, need to check when updated last. 
+	# Or if only one cached_data file and alliance_name=='', assume this is the alliance to use. 
+	if 'cached_data-'+alliance_name in cached_data_files or (len(cached_data_files) == 1 and not alliance_name):
+
+		# Base case, checking if cached_data stale
+		cached_data_file = ['cached_data-'+alliance_name,cached_data_files[0]][not alliance_name]
+		cached_alliance_info =  pickle.load(open(cached_data_file,'rb'))
 
 		# If it's been less than 24 hours since last update, just return the cached data. 
-		if not force and (time.time()-os.path.getmtime('cached_data-'+alliance_name) < 86400):
-			return char_stats,processed_players
-
-	# Let's get fresh data from the website.
-
+		if not force and (time.time()-os.path.getmtime(cached_data_file) < stale_period):
+			return cached_alliance_info
+	
 	# Login to the website. 
 	driver = login()
+	
+	# We are in, wait until loaded before starting.
+	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
 
-	# We are in, wait a second before starting.
-	time.sleep(1)
+	# Pull alliance information from this Alliance Info screen
+	website_alliance_info  = parse_alliance(driver.page_source) 
 
+	# If no alliance_name specified, we are defaulting to use whatever the login's alliance is.
+	if not alliance_name:
+		alliance_name = website_alliance_info['name']
+
+	# If we don't have cached_data, we have to work from the website. Fall back to the login alliance_info. 
+	if 'cached_data-'+alliance_name not in cached_data_files and alliance_name != website_alliance_info['name']:
+		print ("Cached_data not found for %s. Generating tables for %s instead." % (alliance_name, website_alliance_info['name']))
+		alliance_name = website_alliance_info['name']
+
+	# We're working from website if the specified alliance_name matches the website alliance_name
+	working_from_website = (alliance_name == website_alliance_info['name'])
+	cached_data_file     = 'cached_data-'+alliance_name
+	
+	# If working_from_website, the website_alliance_info will be our baseline. 
+	if working_from_website:
+		alliance_info = website_alliance_info
+	
+		# * Does this cached_data file exist? If so, load it. 
+		if cached_data_file in cached_data_files:
+			cached_alliance_info = pickle.load(open(cached_data_file,'rb'))
+
+			# If member lists are identical and it's been less than 24 hours since last update, just return the cached data. 
+			if not force and alliance_info.keys() == cached_alliance_info.keys() and (time.time()-os.path.getmtime(cached_data_file) < stale_period):
+				driver.close()
+				return cached_alliance_info
+
+			# So we have fresh alliance_info and the stale cached information.
+			# Copy over extra information into freshly downloaded alliance_info.
+			alliance_info['trait_file']       = cached_alliance_info['trait_file']
+			alliance_info['extracted_traits'] = cached_alliance_info['extracted_traits']
+			alliance_info['portraits']        = cached_alliance_info['portraits']
+			alliance_info['strike_teams']     = cached_alliance_info['strike_teams']
+			
+			for member in alliance_info['members']:
+				for key in ['processed_chars','last_download','url']:
+					if key in cached_alliance_info['members'][member]:
+						alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
+
+	# If not working_from_website, the cached_alliance_info will be our baseline. 
+	else:
+		alliance_info = cached_alliance_info
+
+	# Work the website or cached URLs to update alliance_info 
+	process_rosters(driver, alliance_info, working_from_website, force)
+
+	# Close the Selenium session.
+	driver.close()
+
+	# Update extracted_traits if necessary.
+	get_extracted_traits(alliance_info)
+
+	# Generate strike_teams.py if one doesn't exist locally already.
+	if 'strike_teams' not in sys.modules:
+		global strike_teams
+		strike_teams = generate_strike_teams(list(alliance_info['members']))	
+
+	# Update the strike_teams definition in alliance_info if majority of the members listed in them are actually in the alliance. 
+	if len(set(sum(sum(strike_teams.values(),[]),[])).intersection(alliance_info['members'])) > len(alliance_info['members']) / 2:
+		alliance_info['strike_teams'] = strike_teams
+
+	# cache the updated roster info to disk.
+	pickle.dump(alliance_info,open(cached_data_file,'wb'))
+
+	return alliance_info
+
+
+def process_rosters(driver, alliance_info, working_from_website, force):
 	# Grab the Alliance Info title/url for future reference.
 	alliance_title = driver.title
 	alliance_url   = driver.current_url
-	
-	# Pull alliance information from this Alliance Info screen
-	alliance_info  = parse_alliance(driver.page_source) 
 
-	# DOES THE ALLIANCE I LOGGED INTO MATCH THE NAME OF THE ALLIANCE I AM EXPECTING?
-	#if alliance_info['name'] == alliance_name:
-	
-		# IF SO, I CAN UPDATE STRIKE TEAMS AND ROSTERS AND ALLIANCE INFO WITH THIS DATA
-		
-		# IF NOT, I SHOULD USE THE ALLIANCE_INFO FROM THE CACHED DATA TO UPDATE ROSTERS.
+	# Let's get a little closer to our work.
+	members = alliance_info['members']
 
-	# Remove any members in processed_players who are no longer in the alliance.
-	for member in list(processed_players):
-		if member != 'alliance_info' and member not in alliance_info['members']:
-			print ('%s is no longer in this alliance. Removing from the output.' % member)
-			del processed_players[member]
-
-	# Let's use the h4 headers to drive Roster extraction.
-	members = driver.find_elements(By.TAG_NAME, "H4")
-	
-	for index in range(len(members)):
-		member = driver.find_elements(By.TAG_NAME, "H4")[index]
-
-		if member.text:
-			#print ("Looking for roster button for",member.text,"...")
+	# Let's iterate through the member names in alliance_info.
+	for member in members:
+		# Start off by checking if it's too soon. 
+		if 'last_download' in members[member]:
+			time_since_last = datetime.datetime.now() - members[member]['last_download']
 			
-			# Find the relevant button.
+			# Less than an hour since last refresh, let's skip it.
+			if not force and (time_since_last.total_seconds() < 3600):
+				print ("Found",member,"but too soon, skipping...")
+				continue
+
+		# Use a cached URL if available.
+		if 'url' in members[member]:
+			#print ("Using cached URL to download",member)
+			driver.get(members[member]['url'])
+		# Cached URL is the ONLY option if not working_from_website
+		elif not working_from_website:
+			print ("Skipping",member,"-- no cached URL available.")
+			continue
+		# Otherwise, if working from website, we can look for a button.
+		else:
+			#print("Looking for roster button for",member)
+			# Start off by getting back to the Alliance page if we're not already on it.
+			if driver.current_url != alliance_url:
+
+				# Request the alliance page and then wait until we get back to it.
+				driver.get(alliance_url)
+				time.sleep(1)
+
+				# Once the title indicates we're back, continue.
+				while driver.title != alliance_title:
+					time.sleep(1)
+
+			# Start by looking for the H4 label for this member. 
+			member_labels = driver.find_elements(By.TAG_NAME, "H4")
+
+			for member_label in member_labels:
+				if member == member_label.text.replace('[ME]',''):
+					break
+
+				# This isn't it.
+				member_label = None
+			
+			# This shouldn't happen. Should always be able to find Member on screen.
+			if not member_label:
+				print ("Couldn't find label for member",member,"-- skipping...")
+				continue
+
+			# Find the roster button in same row as the Member name and click on it. 
 			buttons = driver.find_elements(By.CLASS_NAME, 'button')
 			
 			for button in buttons:
-
-				if abs(member.location['y']-button.location['y'])<12 and button.size['width'] in (53,54):
+				if abs(member_label.location['y']-button.location['y'])<12 and button.size['width'] in (53,54):
 					break
 					
 				# This isn't it.
 				button = None
 
-			# If button on screen, but not enabled, member needs to login and resync before we can use.
-			if not button.is_enabled():
-				#print ("Roster button is not clickable. On to next H4 entry!")
+			# Abort if we couldn't find the button, or found it and it's not active.
+			if not button or not button.is_enabled():
+				print ("Active roster button not found for member",member,"-- skipping...")
 				continue
 
 			# Scroll so this button is visible.
 			driver.execute_script("window.scrollTo(0, %i)" % button.location['y'])
-			
-			# We found a Roster Button. Should we click it?
-			# If we already have an entry for this person, see if it's up-to-date/recent
-			member = member.text.replace('[ME]','')
-			
-			if member in processed_players and 'last_download' in processed_players[member]:
-				time_since_last = datetime.datetime.now()-processed_players[member]['last_download']
-				
-				# Less than an hour since last refresh, or power hasn't changed, let's skip it.
-				if not force and ((time_since_last.total_seconds() < 3600) or (processed_players[member]['tot_power'] == alliance_info['members'][member]['tcp'])):
-					print ("Found",member,"but",["too soon,","unchanged,"][time_since_last.total_seconds() > 3600],"skipping...")
-					continue
-
+		
+			# Use a Try / Except structure because in my testing, offscreen buttons always throw an exception, even
+			# when I tell Selenium to scroll to them first. With Try/Except, first click focuses them, second succeeds.
 			try:
 				button.click()
 			except:
 				time.sleep(0.5)
 				button.click()
-
-			timer = 0
-			
-			# Page loads in sections, will be > 1MB after roster information loads.
-			while len(driver.page_source)<1000000:
-				# Still loading
-				time.sleep(1)
-				timer += 1
-				
-				# Call refresh if load failed to complete after 5 seconds.
-				if timer == 5:
-					driver.refresh()
-				# Just give up after 10 seconds.
-				elif timer == 10:
-					break
-
-			# If page loaded, pass contents to scraping routines for stat extraction.
-			if len(driver.page_source)>1000000:
-				parse_roster(driver.page_source, char_stats, processed_players)
-				processed_players[member]['last_download'] = datetime.datetime.now()
-			
-			# Cache the URL just in case we can use this later
-			alliance_info['members'][member]['url'] = driver.current_url
-			
-			# Back up and move on to the next roster on the page.
-			driver.back()
-			time.sleep(1)
-			while driver.title != alliance_title:
-				time.sleep(1)
-
-	# While we are in, let's double check the Strike Teams defined for Incursion and Gamma 4.5
-	
-	# Same strike teams are defined for all difficulties.  
-	#incur_strike_teams = get_strike_teams(driver,'incursion')
-	#other_strike_teams = get_strike_teams(driver,'gamma_d')
-	
-	# Close the Selenium session.
-	driver.close()
-
-	# After everything, update processed_players with the current alliance_info.
-	processed_players['alliance_info'] = alliance_info
-	
-	# If the old trait file isn't being used, extracted_traits needs to be updated.
-	if 'trait_file' not in char_stats or char_stats['trait_file'] not in alliance_info['scripts']:
-		print ("Extracted traits location has changed...updating.")
-		for script in alliance_info['scripts']:
-			extracted_traits = extract_traits(script)
-
-			# If this file was correctly parsed, store this new trait file.
-			if extracted_traits:
-				print ("Found extracted traits in",script)
-
-				# Remember which script was the valid trait file
-				char_stats['trait_file'] = script
-				char_stats['extracted_traits'] = extracted_traits
-				break
 		
-	# cache the updated roster info to disk.
-	pickle.dump([char_stats,processed_players],open('cached_data-'+alliance_name,'wb'))
+		# At this point, we're on the right page. Just need to wait for it to load before we parse it.
+		timer = 0
+		
+		# Page loads in sections, will be > 1MB after roster information loads.
+		while len(driver.page_source)<1000000:
+			# Still loading
+			time.sleep(1)
+			timer += 1
+			
+			# Call refresh if load failed to complete after 5 seconds.
+			if timer == 5:
+				driver.refresh()
+			# Just give up after 10 seconds.
+			elif timer == 10:
+				break
 
-	return char_stats,processed_players
+		# If page loaded, pass contents to scraping routines for stat extraction.
+		if len(driver.page_source)>1000000:
+			parse_roster(driver.page_source, alliance_info)
+		
+			# Prevent second download within an hour.
+			members[member]['last_download'] = datetime.datetime.now()
+
+			# Cache the URL just in case we can use this later
+			members[member]['url'] = driver.current_url
 
 
-def get_strike_teams(driver,raid='alpha_d',diff=0):
-	#
-	strike_teams = []
-	#
-	for team_num in range(3):
-		wait = WebDriverWait(driver, 10)
-		#
-		driver.get('https://marvelstrikeforce.com/en/alliance/maps/raid_%s/%i?strikeTeam=%i' % (raid, diff, team_num+1))
-		wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-user')))
-		#
-		strike_teams.append(parse_teams(driver.page_source))
-	#
-	return strike_teams
-
-
-def login():
-
-	alliance_path = 'https://marvelstrikeforce.com/en/alliance/members'
+# Login to the website. Return the Selenium Driver object.
+def login(url = 'https://marvelstrikeforce.com/en/alliance/members'):
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
@@ -237,7 +244,7 @@ def login():
 	#	options.add_argument('--headless=new')
 	
 	driver = webdriver.Chrome(options=options)
-	driver.get(alliance_path)
+	driver.get(url)
 
 	# Default to Scopely Login, does not require 2FA.
 	if scopely_cred:
@@ -271,6 +278,7 @@ def login():
 	return driver
 
 
+# Auto Login via Scopely authentication using cached credentials.
 def scopely_login(driver, scopely_user, scopely_pass):
 
 	try:
@@ -302,6 +310,7 @@ def scopely_login(driver, scopely_user, scopely_pass):
 		print("Timed out. Unable to complete login.")
 
 
+# Auto Login via Facebook authentication using cached credentials.
 def facebook_login(driver, facebook_user, facebook_pass):
 
 	try:
@@ -326,6 +335,7 @@ def facebook_login(driver, facebook_user, facebook_pass):
 		print("Timed out. Unable to complete login.")
 
 
+# Check for saved credentials. If none and never asked, ask if would like to cache them.
 def get_creds():
 	facebook_cred = keyring.get_credential('facebook','')
 	scopely_cred  = keyring.get_credential('scopely','')
@@ -354,3 +364,21 @@ def get_creds():
 		open('noprompt','a').close()
 
 	return facebook_cred, scopely_cred
+
+
+# Update the Character Trait information using the latest info from website.
+def get_extracted_traits(alliance_info):
+	# If the old trait file isn't being used, extracted_traits needs to be updated.
+	if 'trait_file' not in alliance_info or alliance_info['trait_file'] not in alliance_info['scripts']:
+		print ("Extracted traits location has changed...updating.")
+		for script in alliance_info['scripts']:
+			extracted_traits = extract_traits(script)
+
+			# If this file was correctly parsed, store this new trait file.
+			if extracted_traits:
+				print ("Found extracted traits in",script)
+
+				# Remember which script was the valid trait file
+				alliance_info['trait_file'] = script
+				alliance_info['extracted_traits'] = extracted_traits
+				break

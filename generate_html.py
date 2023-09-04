@@ -16,17 +16,17 @@ default_lanes = [[{'traits': ['Mutant']},
 				  {'traits': ['Tech']}]]
 
 
-def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], table_name=''):
+def generate_html(alliance_info, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], table_name=''):
 
 	# If no char_list is specified, pull the list of all characters from char_stats
 	if not char_list:
-		char_list = get_char_list (char_stats)
+		char_list = get_char_list (alliance_info)
 	
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list (processed_players)
+	player_list = get_player_list (alliance_info)
 	
 	# Get extracted_traits from char_stats
-	extracted_traits = char_stats['extracted_traits']
+	extracted_traits = alliance_info['extracted_traits']
 	
 	html_file = '<!doctype html>\n<html lang="en">\n'
 	
@@ -55,10 +55,10 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 
 			# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
 			if min_iso:
-				other_chars = [char for char in other_chars if max([int(processed_players[player][char]['iso']) for player in player_list]) >= min_iso]
+				other_chars = [char for char in other_chars if max([int(alliance_info['members'][player]['processed_chars'][char]['iso']) for player in player_list]) >= min_iso]
 
 			if min_tier:
-				other_chars = [char for char in other_chars if max([int(processed_players[player][char]['tier']) for player in player_list]) >= min_tier]
+				other_chars = [char for char in other_chars if max([int(alliance_info['members'][player]['processed_chars'][char]['tier']) for player in player_list]) >= min_tier]
 			
 			# Trait filters are additive.
 			if traits:
@@ -87,7 +87,7 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 				meta_lbl = table_lbl+'<br><span class="table_subtitle">META</span>'
 
 				html_file += '<table>\n <tr>\n  <td>\n'
-				html_file += generate_table(processed_players, char_stats, keys, meta_chars, strike_teams, meta_lbl, all_team_pwr=get_stp_list(processed_players, meta_chars))
+				html_file += generate_table(alliance_info, keys, meta_chars, strike_teams, meta_lbl, all_team_pwr=get_stp_list(alliance_info, meta_chars))
 				html_file += '  </td>\n  <td>\n   <br>\n  </td>\n  <td>\n'
 
 				# Differentiate Others Section from Meta Section
@@ -95,7 +95,7 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 
 			# Always generate the Others table.
 			# Only label it as such if Meta section exists.
-			html_file += generate_table(processed_players, char_stats, keys, other_chars, strike_teams, table_lbl, all_team_pwr=get_stp_list(processed_players, meta_chars+other_chars))
+			html_file += generate_table(alliance_info, keys, other_chars, strike_teams, table_lbl, all_team_pwr=get_stp_list(alliance_info, meta_chars+other_chars))
 
 			# If in a nested table, close the nested table.
 			if meta_chars:
@@ -109,7 +109,7 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 		html_file += '</div>\n'
 
 	# After all Lanes are added, add the Alliance Info tab.
-	html_file += generate_alliance_tab(processed_players)
+	html_file += generate_alliance_tab(alliance_info)
 
 	# Finally, add the Javascript to control tabbed display.
 	html_file += add_tabbed_footer()
@@ -120,10 +120,10 @@ def generate_html(processed_players, char_stats, strike_teams=[], lanes=default_
 	return html_file
 
 
-def generate_table(processed_players, char_stats, keys=['power','tier','iso'], char_list=[], strike_teams = [], table_lbl='', team_pwr_lbl='', all_team_pwr={}, html_file = ''):
+def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], strike_teams = [], table_lbl='', team_pwr_lbl='', all_team_pwr={}, html_file = ''):
 
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list (processed_players)
+	player_list = get_player_list (alliance_info)
 
 	if table_lbl.find('OTHERS') == -1:
 		title_cell    = 'title_cell_blue'
@@ -145,11 +145,11 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 
 	# WRITE THE IMAGES ROW. #############################################
 	html_file += '    <tr class="%s">\n' % (title_cell) 
-	html_file += '     <td>%s</td>\n' % (table_lbl)
+	html_file += '     <td width="100">%s</td>\n' % (table_lbl)
 
 	# Include Images for each of the Characters.
 	for char in char_list:
-		html_file += '     <th class="image_cell" colspan="%i"><img src="%s" alt="" width="100"></th>\n' % (len(keys), char_stats[char]['portrait'])
+		html_file += '     <th class="image_cell" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s" alt="" width="100"></th>\n' % (len(keys), alliance_info['portraits'][char])
 
 	# If we have all_team_pwr info, need a Team Power column.
 	if all_team_pwr:
@@ -162,9 +162,9 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 	html_file += '    <tr class="%s">\n' % (char_cell)
 	
 	if len(keys)>1 and len(strike_teams)>1:
-		html_file += '     <th width="%s">Alliance<br>Member</th>\n'
+		html_file += '     <th>Alliance<br>Member</th>\n'
 	else:
-		html_file += '     <td width="%s"></td>\n'
+		html_file += '     <td></td>\n'
 
 	# Include information for the Meta Characters.
 	for char in char_list:
@@ -227,7 +227,7 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 					player_name = player_list[player_lower.index(player_name.lower())]
 
 				# Maybe we just haven't gotten a roster yet?
-				elif player_name in processed_players['alliance_info']['members']:
+				elif player_name in alliance_info['members']:
 					pass
 
 				# Toggle a flag for each divider to change the color of Player Name slightly
@@ -235,7 +235,7 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 					alt_color = not alt_color
 
 			# Time to build the row.
-			if player_name in player_list or player_name in processed_players['alliance_info']['members']:
+			if player_name in player_list:
 				html_file += '    <tr style="text-align: center;">\n'
 				html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_cell_alt][alt_color], player_name)
 
@@ -243,15 +243,17 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 				for char_name in char_list:
 
 					for key in keys:
-						min = char_stats[char_name][key]['min']
-						max = char_stats[char_name][key]['max']
+						key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) for player in player_list]
+
+						min_val = min(key_vals)
+						max_val = max(key_vals)
 
 						# Only look up the value if we have a roster.
 						value = 0
 						if player_name in player_list:
-							value = processed_players[player_name][char_name][key]
+							value = alliance_info['members'][player_name]['processed_chars'][char_name][key]
 						
-						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min,max,value,key), value)
+						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value,key), value)
 
 				# If we have all_team_pwr info, need a Team Power column.
 				if all_team_pwr:
@@ -272,9 +274,7 @@ def generate_table(processed_players, char_stats, keys=['power','tier','iso'], c
 	return html_file
 
 
-def generate_alliance_tab(processed_players, html_file=''):
-
-	alliance_info = processed_players['alliance_info']
+def generate_alliance_tab(alliance_info, html_file=''):
 
 	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
 	html_file += '<table style="background-color:SteelBlue;" border="0">\n'
@@ -330,7 +330,7 @@ def generate_alliance_tab(processed_players, html_file=''):
 						'Captain': 'DeepSkyBlue',
 						'Member':  'PowderBlue' }[member_stats['role']]
 
-		html_file += '  <td style="padding: 0px; background-color:%s;"><img height="45" src="%s"/></td>\n' % (member_color, member_stats['image'])
+		html_file += '  <td style="padding: 0px; background-color:%s;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s"/></td>\n' % (member_color, member_stats['image'])
 		html_file += '  <td class="bold_text" style="background-color:%s;">%s</td>\n' % (member_color, member)
 		html_file += '  <td style="background-color:%s;">%i</td>\n' % (member_color,member_stats['level'])
 		html_file += '  <td style="background-color:%s;">%s</td>\n' % (member_color, member_stats['role'])
@@ -340,10 +340,10 @@ def generate_alliance_tab(processed_players, html_file=''):
 		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range), member_stats['tcc']), f'{member_stats["tcc"]:,}')
 
 		time_since_last = 4*86400
-		time_value      = 'Never'
-		if member in processed_players:
-			time_since_last = datetime.datetime.now() - processed_players[member]['last_update']
-			time_value = '%s,<br>%s ago' % (processed_players[member]['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
+		time_value      = 'Never<br>Member needs to re-sync their roster.'
+		if member in alliance_info['members'] and 'processed_chars' in alliance_info['members'][member]:
+			time_since_last = datetime.datetime.now() - alliance_info['members'][member]['processed_chars']['last_update']
+			time_value = '%s,<br>%s ago' % (alliance_info['members'][member]['processed_chars']['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
 			time_since_last = time_since_last.total_seconds()
 		
 		time_color = get_value_color(0, 4*86400, (4*86400)-time_since_last)
@@ -356,23 +356,23 @@ def generate_alliance_tab(processed_players, html_file=''):
 
 
 # Including this here for expedience.
-def generate_csv(processed_players, char_stats):
+def generate_csv(alliance_info):
 	# Write the basic output to a CSV in the local directory.
-	keys = ['favorite','level','power','yelStars','redStars','tier','basic','special','ult','passive','iso_class','iso','iso','iso','iso','iso','iso']
+	keys = ['fav','lvl','power','yel','red','tier','bas','spec','ult','pass','class','iso','iso','iso','iso','iso','iso']
 	
 	csv_file = ['Name,AllianceName,CharacterId,Favorite,Level,Power,Stars,RedStar,GearLevel,Basic,Special,Ultimate,Passive,ISO Class,ISO Level,ISO Armor,ISO Damage,ISO Focus,ISO Health,ISO Resist']
 	
-	player_list = get_player_list(processed_players)
-	char_list   = get_char_list (char_stats)
+	player_list = get_player_list(alliance_info)
+	char_list   = get_char_list (alliance_info)
 		
-	alliance_name = processed_players['alliance_info']['name']
+	alliance_name = alliance_info['name']
 			
 	for player_name in player_list:
-		processed_chars = processed_players[player_name]
+		processed_chars = alliance_info['members'][player_name]['processed_chars']
 
 		# Only include entries for recruited characters.
 		for char_name in char_list:
-			if processed_chars[char_name]['level'] != '0' and 'favorite' in processed_chars[char_name]:									# and 'favorite' is a temp fix for data in cached_data. Remove in a week.
+			if processed_chars[char_name]['lvl'] != '0':
 				csv_file.append(','.join([player_name, alliance_name, char_name] + [processed_chars[char_name][key] for key in keys]))
 
 	return '\n'.join(csv_file)
@@ -414,15 +414,15 @@ def get_value_color(min, max, value, stat='power'):
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
-def get_stp_list(processed_players, char_list, team_pwr_dict={}):
+def get_stp_list(alliance_info, char_list, team_pwr_dict={}):
 	
 	# Get the list of Alliance Members 
-	player_list = get_player_list (processed_players)
+	player_list = get_player_list (alliance_info)
 
 	for player_name in player_list:
 
 		# Build a list of all character powers.
-		all_char_pwr = [int(processed_players[player_name][char_name]['power']) for char_name in char_list]
+		all_char_pwr = [int(alliance_info['members'][player_name]['processed_chars'][char_name]['power']) for char_name in char_list]
 		all_char_pwr.sort()
 
 		# And sum up the Top 5 power entries for STP.
@@ -432,24 +432,18 @@ def get_stp_list(processed_players, char_list, team_pwr_dict={}):
 
 
 # Bring back a sorted list of characters from our char_stats
-def get_char_list(char_stats):
-	char_list = list(char_stats)
+def get_char_list(alliance_info):
+	char_list = list(alliance_info['portraits'])
 
 	# Prune the unsummoned characters.
-	for char in char_list[:]:
-		if 'iso' not in char_stats[char]:
-			char_list.remove(char)
-
 	char_list.sort()
 
 	return char_list
 
 
 # Bring back a sorted list of players from our processed_players data
-def get_player_list(processed_players):
-	player_list = list(processed_players)
-	
-	player_list.remove('alliance_info')
+def get_player_list(alliance_info):
+	player_list = [member for member in alliance_info['members'] if 'processed_chars' in alliance_info['members'][member]]
 	
 	player_list.sort(key=str.lower)
 	
@@ -560,11 +554,13 @@ def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
   font-weight      : 700;
   background-color : MidnightBlue;
   color            : white;
+  white-space      : nowrap;
 }
 .table_header_gray {
   font-weight      : 700;
   background-color : Black;
   color            : white;
+  white-space      : nowrap;
 }
 .char_cell_blue {
   font-weight      : 700;
@@ -577,18 +573,22 @@ def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
 .name_cell_blue {
   font-weight      : 700;
   background-color : PowderBlue;
+  white-space      : nowrap;
 }
 .name_cell_blue_alt {
   font-weight      : 700;
   background-color : DeepSkyBlue;
+  white-space      : nowrap;
 }
 .name_cell_gray {
   font-weight      : 700;
   background-color : Gainsboro;
+  white-space      : nowrap;
 }
 .name_cell_gray_alt {
   font-weight      : 700;
   background-color : DarkGray;
+  white-space      : nowrap;
 }
 .table_subtitle {
   font-size        : 12pt;
