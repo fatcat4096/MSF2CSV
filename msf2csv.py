@@ -88,24 +88,24 @@ def main(alliance_name=alliance_name):
 
 	# Tables with just Incursion 1.4 Meta. Requires ISO 2-4 and Gear Tier 16.
 	html_file = generate_html(alliance_info, alliance_info['strike_teams']['incur'], incur_lanes, min_iso=9, min_tier=16, table_name='Incursion Raid')
-	open(filename+"incursion.html", 'w', encoding='utf-8').write(html_file)    
+	open(filename+"incursion-utf16.html", 'w', encoding='utf-16').write(html_file)    
                                                              
 	# Tables with just Gamma Lanes. Only limit is Gear Tier 16.
 	html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], gamma_lanes, min_tier=16, table_name='Gamma Raid')
-	open(filename+"gamma.html", 'w', encoding='utf-8').write(html_file)
+	open(filename+"gamma.html", 'w', encoding='utf-16').write(html_file)
 
 	# Tables with typical War Teams.
-	html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], war_lanes, table_name='War')
-	open(filename+"war.html", 'w', encoding='utf-8').write(html_file)  
+	#html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], war_lanes, table_name='War')
+	#open(filename+"war.html", 'w', encoding='utf-16').write(html_file)  
 	
 	# Tables for all characters, broken down by Origin. 
 	# Filtering with minimum ISO and Gear Tier just to reduce noise from Minions, old heroes, etc.
-	html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], keys=['power','tier','iso'], min_iso=9, min_tier=16)
-	open(filename+"all.html", 'w', encoding='utf-8').write(html_file)
+	#html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], keys=['power','tier','iso'], min_iso=9, min_tier=16)
+	#open(filename+"all.html", 'w', encoding='utf-16').write(html_file)
 
 	# Original file format. Requested for input to projects using old CSV format.
-	csv_file = generate_csv(alliance_info)
-	open(filename+"original.csv", 'w', encoding='utf-8').write(csv_file)
+	#csv_file = generate_csv(alliance_info)
+	#open(filename+"original.csv", 'w', encoding='utf-16').write(csv_file)
 
 
 if __name__ == "__main__":

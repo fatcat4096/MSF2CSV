@@ -29,8 +29,8 @@ def get_alliance_info(alliance_name='', force=False):
 
 	# If updated recently, use this to determine whether cached_data is stale.
 	if os.path.exists('strike_teams.py'):
-		stale_period = min(86400,os.path.getmtime('strike_teams.py'))
-
+		stale_period = min(86400,time.time()-os.path.getmtime('strike_teams.py'))
+	
 	# Look for cached_data files. 
 	cached_data_files = [file for file in os.listdir() if file.find('cached_data') != -1]
 	
@@ -42,8 +42,13 @@ def get_alliance_info(alliance_name='', force=False):
 		cached_data_file = ['cached_data-'+alliance_name,cached_data_files[0]][not alliance_name]
 		cached_alliance_info =  pickle.load(open(cached_data_file,'rb'))
 
+		# Previous version of cached_data found. Pretending the file doesn't even exist. 
+		if len(cached_alliance_info) == 2:
+			print ("Old format cached_data found. Will be ignored and new data downloaded.")
+			cached_data_files.remove(cached_data_file)
+
 		# If it's been less than 24 hours since last update, just return the cached data. 
-		if not force and (time.time()-os.path.getmtime(cached_data_file) < stale_period):
+		elif not force and (time.time()-os.path.getmtime(cached_data_file) < stale_period):
 			return cached_alliance_info
 	
 	# Login to the website. 
@@ -76,22 +81,28 @@ def get_alliance_info(alliance_name='', force=False):
 		if cached_data_file in cached_data_files:
 			cached_alliance_info = pickle.load(open(cached_data_file,'rb'))
 
+			# Previous version of cached_data found. Pretending the file doesn't even exist. 
+			if len(cached_alliance_info) == 2:
+				print ("Old format cached_data found. Will be ignored and new data downloaded.")
+				cached_data_files.remove(cached_data_file)
+
 			# If member lists are identical and it's been less than 24 hours since last update, just return the cached data. 
-			if not force and alliance_info.keys() == cached_alliance_info.keys() and (time.time()-os.path.getmtime(cached_data_file) < stale_period):
+			elif not force and alliance_info.keys() == cached_alliance_info.keys() and (time.time()-os.path.getmtime(cached_data_file) < stale_period):
 				driver.close()
 				return cached_alliance_info
 
-			# So we have fresh alliance_info and the stale cached information.
-			# Copy over extra information into freshly downloaded alliance_info.
-			alliance_info['trait_file']       = cached_alliance_info['trait_file']
-			alliance_info['extracted_traits'] = cached_alliance_info['extracted_traits']
-			alliance_info['portraits']        = cached_alliance_info['portraits']
-			alliance_info['strike_teams']     = cached_alliance_info['strike_teams']
-			
-			for member in alliance_info['members']:
-				for key in ['processed_chars','last_download','url']:
-					if key in cached_alliance_info['members'][member]:
-						alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
+			else:
+				# So we have fresh alliance_info and the stale cached information.
+				# Copy over extra information into freshly downloaded alliance_info.
+				alliance_info['trait_file']       = cached_alliance_info['trait_file']
+				alliance_info['extracted_traits'] = cached_alliance_info['extracted_traits']
+				alliance_info['portraits']        = cached_alliance_info['portraits']
+				alliance_info['strike_teams']     = cached_alliance_info['strike_teams']
+				
+				for member in alliance_info['members']:
+					for key in ['processed_chars','last_download','url']:
+						if key in cached_alliance_info['members'][member]:
+							alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
 
 	# If not working_from_website, the cached_alliance_info will be our baseline. 
 	else:
