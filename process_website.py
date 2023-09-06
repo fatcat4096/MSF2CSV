@@ -111,20 +111,58 @@ def get_alliance_info(alliance_name='', force=False):
 	# Work the website or cached URLs to update alliance_info 
 	process_rosters(driver, alliance_info, working_from_website, force)
 
+	# If working from website, use strike team definition . 
+	if working_from_website:
+
+		# Just in case it wasn't sourced.
+		if 'strike_teams' not in vars():
+			strike_teams = {}
+
+		if not valid_strike_team(strike_teams.get('incur',[]),alliance_info):
+
+			print ("Checking Incursion team definitions on website.")
+			incur_teams = get_strike_teams(driver,'incursion')
+
+			if valid_strike_team(incur_teams, alliance_info):
+				print ("Using Incursion definition from website.")
+				strike_teams['incur'] = incur_teams
+
+		if not valid_strike_team(strike_teams.get('other',[]),alliance_info):
+
+			print ("Checking Gamma team definitions on website.")
+			other_teams = get_strike_teams(driver,'gamma_d')
+
+			if valid_strike_team(other_teams, alliance_info):
+				print ("Using Gamma definition from website.")
+				strike_teams['other'] = other_teams
+
+		# Whether from strike_teams.py or from the website, store these away in alliance_info
+		alliance_info['strike_teams'] = strike_teams
+
+		# Generate strike_teams.py if one doesn't exist locally.
+		if not os.path.exists('strike_teams.py'):
+		
+			# If we got good data from the website, use that.
+			if valid_strike_team(strike_teams['incur'], alliance_info) and valid_strike_team(strike_teams['other'], alliance_info):
+				strike_teams = generate_strike_teams(strike_teams)	
+
+			# If not, just do a generic alphabetic sort of the members in this alliance.
+			else:
+				members = alliance_info['members']
+				members.sort()
+
+				# Break it up into chunks for each team.
+				strike_team = [members[:8],members[8:16],members[16:]]
+				strike_teams = generate_strike_teams({'incur':strike_team,'other':strike_team})					
+
+				# Stow this away for use during output.
+				alliance_info['strike_teams'] = strike_teams
+
 	# Close the Selenium session.
 	driver.close()
 
 	# Update extracted_traits if necessary.
 	get_extracted_traits(alliance_info)
-
-	# Generate strike_teams.py if one doesn't exist locally already.
-	if 'strike_teams' not in sys.modules:
-		global strike_teams
-		strike_teams = generate_strike_teams(list(alliance_info['members']))	
-
-	# Update the strike_teams definition in alliance_info if majority of the members listed in them are actually in the alliance. 
-	if len(set(sum(sum(strike_teams.values(),[]),[])).intersection(alliance_info['members'])) > len(alliance_info['members']) / 2:
-		alliance_info['strike_teams'] = strike_teams
 
 	# cache the updated roster info to disk.
 	pickle.dump(alliance_info,open(cached_data_file,'wb'))
@@ -133,8 +171,7 @@ def get_alliance_info(alliance_name='', force=False):
 
 
 def process_rosters(driver, alliance_info, working_from_website, force):
-	# Grab the Alliance Info title/url for future reference.
-	alliance_title = driver.title
+	# Grab the Alliance Info url for future reference.
 	alliance_url   = driver.current_url
 
 	# Let's get a little closer to our work.
@@ -167,11 +204,10 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 				# Request the alliance page and then wait until we get back to it.
 				driver.get(alliance_url)
-				time.sleep(1)
 
-				# Once the title indicates we're back, continue.
-				while driver.title != alliance_title:
-					time.sleep(1)
+				# Once member labels have populated, we're ready.
+				while len(driver.find_elements(By.TAG_NAME, "H4"))<4:
+					time.sleep(0.25)
 
 			# Start by looking for the H4 label for this member. 
 			member_labels = driver.find_elements(By.TAG_NAME, "H4")
@@ -246,6 +282,7 @@ def login(url = 'https://marvelstrikeforce.com/en/alliance/members'):
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
+	options.add_argument('--accept-lang=en-US')	
 
 	facebook_cred, scopely_cred = get_creds()
 
@@ -253,7 +290,7 @@ def login(url = 'https://marvelstrikeforce.com/en/alliance/members'):
 	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
 	#if scopely_cred or facebook_cred:
 	#	options.add_argument('--headless=new')
-	
+
 	driver = webdriver.Chrome(options=options)
 	driver.get(url)
 
@@ -270,21 +307,6 @@ def login(url = 'https://marvelstrikeforce.com/en/alliance/members'):
 		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-roster')))
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
-
-	# Check for page language. Change to English if necessary.
-	try:
-		if driver.find_element(By.TAG_NAME, 'html').get_attribute('lang') != 'en_US':
-			wait = WebDriverWait(driver, 10)
-			
-			# Click on language selection
-			language = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'language-selector')))
-			language.click()
-			
-			# Select English language 
-			english = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'div.language-selector a[title="English"]')))
-			english.click()
-	except TimeoutException:
-		print("Timed out. Unable to switch to english.")
 
 	return driver
 
@@ -377,10 +399,41 @@ def get_creds():
 	return facebook_cred, scopely_cred
 
 
+# Pull Strike Team definitions from MSF.gg Lanes 
+def get_strike_teams(driver,raid='alpha_d',diff=0):
+
+	strike_teams = []
+
+	# Download and parse each page for the specified Raid
+	for team_num in range(3):
+		driver.get('https://marvelstrikeforce.com/en/alliance/maps/raid_%s/%i?strikeTeam=%i' % (raid, diff, team_num+1))
+
+		# Wait until the list of Players is displayed.
+		WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-user')))
+
+		# Parse the current page.
+		strike_team = parse_teams(driver.page_source)
+		
+		# Automatically use 2-3-3 lanes if Incursion.
+		if raid == "incursion":
+			if len(strike_team) > 2:
+				strike_team.insert(2,'----')
+
+			if len(strike_team) > 6:
+				strike_team.insert(6,'----')
+
+		# Add each team to the Strike Team definition
+		strike_teams.append(strike_team)
+
+	return strike_teams
+
+
 # Update the Character Trait information using the latest info from website.
 def get_extracted_traits(alliance_info):
+
 	# If the old trait file isn't being used, extracted_traits needs to be updated.
 	if 'trait_file' not in alliance_info or alliance_info['trait_file'] not in alliance_info['scripts']:
+
 		print ("Extracted traits location has changed...updating.")
 		for script in alliance_info['scripts']:
 			extracted_traits = extract_traits(script)

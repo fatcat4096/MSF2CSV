@@ -30,8 +30,12 @@ def parse_alliance(contents):
 	alliance['num_mems']  = int(alliance_stats[0].text.split('/')[-1])
 	alliance['stark_lvl'] = alliance_stats[1].text.split()[-1]
 	alliance['type']      = alliance_stats[2].text.split()[-1]
-	alliance['tot_power'] = alliance_stats[3].text.split()[-1]
-	alliance['avg_power'] = alliance_stats[4].span.text
+	
+	tot_power = int(re.sub(r"\D", "", alliance_stats[3].text))
+	avg_power = int(re.sub(r"\D", "", alliance_stats[4].text))
+	
+	alliance['tot_power'] = f'{tot_power:,}'
+	alliance['avg_power'] = f'{avg_power:,}'
 	
 	# Parse each row of the members table, extracting stats for each member.
 	members_table = soup.find('tbody').findAll('tr', attrs={'draggable':'false'})
@@ -185,31 +189,30 @@ def parse_roster(contents, alliance_info):
 	# Get a little closer to our work. 
 	player = alliance_info['members'][player_name]
 	
-	# Only keep if we have no roster, or this roster's TCP is higher.
-	if 'processed_chars' not in player or tot_power > player['processed_chars']['tot_power']:
-
-		# Add this parsed data to our list of processed players.
-		player['processed_chars'] = processed_chars
+	# Keep the old 'last_update' if the tot_power hasn't changed.
+	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
+		processed_chars['last_update'] = player['processed_chars']['last_update']
+	
+	# Add this parsed data to our list of processed players.
+	player['processed_chars'] = processed_chars
 
 	# Update alliance_info with portrait information.
 	alliance_info['portraits'] = char_portraits
 
-	# After successfully parsing, cache the character.html file to disk for future use.
-	# open('roster.%s.html' % player_name, 'wb').write(soup.prettify().encode('utf8'))
 
-	# Do I need to return this explicitly? I've been editing the dict directly.
-	#return alliance_info
-
-# Will likely not need this. Allowing users to continue to define their Strike Teams
-# locally and pass those along with the rest of the bundle / cached Alliance Info.
+# Pull strike team definitions directly from the website. 
 def parse_teams(contents):
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	team_members = []
-
+	
 	members = soup.findAll('div', attrs = {'class':'alliance-user'})
+
+	# Iterate through each entry.
 	for member in members:
 		member_name = member.findAll('span')[-1].text
+
+		# Don't include blank entries
 		if member_name:
 			team_members.append(member_name)
 
