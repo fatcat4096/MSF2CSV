@@ -11,19 +11,16 @@ import sys
 from process_website import *       # Routines to get Roster data from website
 from generate_html import *         # Routines to generate the finished tables.		
 
-# We will be working in the same directory as this file.
-if '__file__' in globals():
-	path = os.path.dirname(__file__)+os.sep
-# Sourcing locally, no __file__ object.
-else:
-	path = '.'+os.sep
 
-# Ultimately, Alliance Name will be pulled from Discord tags/roles
-# This information will be used to differentiate login information, strike team definition, cached_data, and output
-alliance_name = ''
+# If not frozen, work in the same directory as this script.
+path = os.path.dirname(__file__)
+# If frozen, work in the same directory as the executable.
+if getattr(sys, 'frozen', False):
+	path = os.path.dirname(sys.executable)
 
-# Just do it. 
-def main(alliance_name=alliance_name):
+
+# If no name specified, default to the alliance for the Login player 
+def main(alliance_name=''):
 
 	# Load roster info directly from cached data or the website.
 	alliance_info = get_alliance_info(alliance_name)
@@ -38,12 +35,12 @@ def main(alliance_name=alliance_name):
 	# Meta Heroes for use in Gamma 
 					 # Lane 1    
 	gamma_lanes =	[[{'traits': ['Avenger','GotG'],								'meta': ['Viv Vision','Vision','Deathlok','Hulkbuster','Iron Man']},
-					  {'traits': ['PymTech','Kree'],								'meta': ['Ghost','Yellowjacket','Minn-Erva','Captain Marvel','Phyla-Vell']},
+					  {'traits': ['PymTech','Infestation','Kree'],					'meta': ['Ghost','Yellowjacket','Minn-Erva','Captain Marvel','Phyla-Vell']},
 					  {'traits': ['Brotherhood','Mercenary','Xmen'],				'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
 					  {'traits': ['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
 					 # Lane 2	 		
 					 [{'traits': ['Avenger','SpiderVerse'],							'meta': ['Viv Vision','Vision','Deathlok','Hulkbuster','Iron Man']},
-					  {'traits': ['PymTech','Wakanda'],								'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
+					  {'traits': ['PymTech','Infestation','Wakanda'],				'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
 					  {'traits': ['Brotherhood','Mercenary','Xmen'],				'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
 					  {'traits': ['Kree','SpiderVerse','GotG'],						'meta': ['Ghost-Spider','Spider-Man (Miles)','Spider-Weaver','Spider-Man','Scarlet Spider']}],
 					 # Lane 3    
@@ -84,19 +81,19 @@ def main(alliance_name=alliance_name):
 
 	print ("Writing pivot tables to:",path)
 
-	filename = path + alliance_info['name'] + datetime.datetime.now().strftime("-%Y%m%d-")
+	filename = path + os.sep + alliance_info['name'] + datetime.datetime.now().strftime("-%Y%m%d-")
 
 	# Tables with just Incursion 1.4 Meta. Requires ISO 2-4 and Gear Tier 16.
 	html_file = generate_html(alliance_info, alliance_info['strike_teams']['incur'], incur_lanes, min_iso=9, min_tier=16, table_name='Incursion Raid')
-	open(filename+"incursion-utf16.html", 'w', encoding='utf-16').write(html_file)    
+	open(filename+"incursion.html", 'w', encoding='utf-16').write(html_file)    
                                                              
 	# Tables with just Gamma Lanes. Only limit is Gear Tier 16.
 	html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], gamma_lanes, min_tier=16, table_name='Gamma Raid')
 	open(filename+"gamma.html", 'w', encoding='utf-16').write(html_file)
 
 	# Tables with typical War Teams.
-	#html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], war_lanes, table_name='War')
-	#open(filename+"war.html", 'w', encoding='utf-16').write(html_file)  
+	html_file = generate_html(alliance_info, alliance_info['strike_teams']['other'], war_lanes, table_name='War')
+	open(filename+"war.html", 'w', encoding='utf-16').write(html_file)  
 	
 	# Tables for all characters, broken down by Origin. 
 	# Filtering with minimum ISO and Gear Tier just to reduce noise from Minions, old heroes, etc.

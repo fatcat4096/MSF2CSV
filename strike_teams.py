@@ -6,78 +6,81 @@
 # Also, you can add entries in strike_teams dict and use them in output in msf2csv.py.
 # These teams will be saved and included in cached alliance information.
 #
-# DELETE THIS FILE TO AUTO-GENERATE A NEW ONE WITH CURRENT ALLIANCE MEMBERS
+# DELETE THIS FILE TO AUTO-GENERATE A NEW ONE WITH CURRENT ALLIANCE MEMBERS.
 
 strike_teams = {}
 
 # Used for Incursion Raid output.
-strike_teams['incur'] = [ 
-[### Strike Team 1 ###]
-	"Joey",
-	"Jutch",
-	"----",
+strike_teams["incur"] = [
+[### Strike team 1 ###]
 	"FatCat",
+	"Joey",
+	"----",
 	"sjhughes",
 	"Ramalama",
+	"Jutch",
 	"----",
+	"DrFett",
 	"lanceb22",
 	"Daner",
-	"DrFett",
 ],
-[### Strike Team 2 ###]
-	"Shammy",
+[### Strike team 2 ###]
+	"Zen Master",
 	"BigDiesel",
 	"----",
 	"EXfieldy",
-	"mgmf", 
 	"HeadHunter2838",
+	"mgmf",
 	"----",
 	"Kenny Powers",
 	"keithchyiu",
 	"FabiooBessa",
 ],
-[### Strike Team 3 ###]
-	"Zen Master", 
+[### Strike team 3 ###]
+	"Shammy",
+	"RadicalEvil",
 	"----",
-	"RadicalEvil", 
-	"Underdog", 
-	"Snicky", 
-	"Zairyuu", 
+	"Underdog",
+	"Snicky",
+	"Unclad",
 	"----",
-	"Unclad", 
-	"Incredibad", 
 	"Flashie",
+	"Incredibad",
+	"Zairyuu",
 ]]
 
 # Used for Gamma Raids and other output.
-strike_teams['other'] = [
-[### Strike Team 1 ###]
-	"FatCat",
-	"Joey",
-	"Daner",
-	"Jutch",
+strike_teams["other"] = [
+[### Strike team 1 ###]
 	"sjhughes",
+	"Joey",
+	"Jutch",
+	"Daner",
+	"----",
 	"Ramalama",
-	"DrFett",
+	"FatCat",
 	"lanceb22",
+	"DrFett",
 ],
-[### Strike Team 2 ###]
-	"Shammy",
-	"HeadHunter2838",
+[### Strike team 2 ###]
 	"keithchyiu",
-	"mgmf",
-	"BigDiesel",
-	"Kenny Powers",
-	"EXfieldy",
 	"FabiooBessa",
-],
-[### Strike Team 3 ###]
 	"Zen Master",
-	"Incredibad",
+	"EXfieldy",
+	"----",
+	"HeadHunter2838",
+	"Kenny Powers",
+	"BigDiesel",
+	"mgmf",
+],
+[### Strike team 3 ###]
 	"Underdog",
 	"Snicky",
-	"Zairyuu",
+	"Shammy",
+	"RadicalEvil",
+	"----",
 	"Flashie",
 	"Unclad",
-	"RadicalEvil",
+	"Incredibad",
+	"Zairyuu",
 ]]

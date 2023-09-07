@@ -145,7 +145,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 
 	# WRITE THE IMAGES ROW. #############################################
 	html_file += '    <tr class="%s">\n' % (title_cell) 
-	html_file += '     <td width="100">%s</td>\n' % (table_lbl)
+	html_file += '     <td>%s</td>\n' % (table_lbl)
 
 	# Include Images for each of the Characters.
 	for char in char_list:
