@@ -4,9 +4,10 @@
 Takes the processed alliance / roster data and generate readable output to spec.  
 """
 
-from gradients import *				# Routines to create color gradient for heat map
-
 import datetime
+
+# Routines to create color gradient for heat map
+from gradients import *	
 
 
 default_lanes = [[{'traits': ['Mutant']},
@@ -16,6 +17,7 @@ default_lanes = [[{'traits': ['Mutant']},
 				  {'traits': ['Tech']}]]
 
 
+# Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
 def generate_html(alliance_info, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], table_name=''):
 
 	# If no char_list is specified, pull the list of all characters from char_stats
@@ -120,6 +122,7 @@ def generate_html(alliance_info, strike_teams=[], lanes=default_lanes, keys=['po
 	return html_file
 
 
+# Generate individual tables for Meta/Other chars for each raid section.
 def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], strike_teams = [], table_lbl='', team_pwr_lbl='', all_team_pwr={}, html_file = ''):
 
 	# Get the list of Alliance Members we will iterate through as rows.	
@@ -274,6 +277,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 	return html_file
 
 
+# Generate just the Alliance Tab contents.
 def generate_alliance_tab(alliance_info, html_file=''):
 
 	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
@@ -289,7 +293,6 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	html_file += ' <td><span style="font-size:18px;">Level</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['stark_lvl'])
 	html_file += ' <td><span style="font-size:18px;">Trophies</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['trophies'])
 	html_file += ' <td colspan="2"><span style="font-size:18px;">Type</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['type'])
-	
 	html_file += ' <td colspan="2" rowspan="2"><span class="bold_text" style="font-size:24px">Alliance Message:</span><br><span style="font-size:18px;">%s</span></td>' % (alliance_info['desc'])
 	html_file += '</tr>\n'
 
@@ -431,20 +434,21 @@ def get_stp_list(alliance_info, char_list, team_pwr_dict={}):
 	return team_pwr_dict
 
 
-# Bring back a sorted list of characters from our char_stats
+# Bring back a sorted list of characters from alliance_info
 def get_char_list(alliance_info):
-	char_list = list(alliance_info['portraits'])
 
-	# Prune the unsummoned characters.
+	# We only keep images for heroes that at least one person has recruited.
+	char_list = list(alliance_info['portraits'])
 	char_list.sort()
 
 	return char_list
 
 
-# Bring back a sorted list of players from our processed_players data
+# Bring back a sorted list of players from alliance_info
 def get_player_list(alliance_info):
+
+	# Only include members that actually have processed_char information attached.
 	player_list = [member for member in alliance_info['members'] if 'processed_chars' in alliance_info['members'][member]]
-	
 	player_list.sort(key=str.lower)
 	
 	return player_list

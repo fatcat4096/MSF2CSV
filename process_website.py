@@ -1,3 +1,17 @@
+#!/usr/bin/env python3
+# Encoding: UTF-8
+"""process_website.py
+Returns cached_data information if still fresh 
+Logs into website and updates data from Alliance Information if not
+"""
+
+import datetime
+import getpass
+import keyring
+import os
+import pickle
+import sys
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,16 +24,9 @@ from parse_contents import *
 from extract_traits import *
 from generate_strike_teams import *
 
-import datetime
-import getpass
-import keyring
-import os
-import pickle
-import sys
-import time
 
-
-def get_alliance_info(alliance_name='', force=True):
+# Returns a cached_data version of alliance_info, or one freshly updated from online.
+def get_alliance_info(alliance_name='', force=False):
 
 	global strike_teams
 
@@ -45,7 +52,7 @@ def get_alliance_info(alliance_name='', force=True):
 	# Login to the website. 
 	driver = login()
 	
-	# We are in, wait until loaded before starting.
+	# We are in, wait until loaded before starting
 	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
 
 	# Pull alliance information from this Alliance Info screen
@@ -71,7 +78,7 @@ def get_alliance_info(alliance_name='', force=True):
 		# * Does this cached_data file exist? If so, load it. 
 		if cached_data_file in cached_data_files:
 		
-			# Load cached_alliance_info and ensure it's valid and fresh. 
+			# Load cached_alliance_info and ensure it's valid and fresh. On the website, only overt indication that something has changed is changes in membership.
 			if valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force) and alliance_info['members'].keys() == cached_alliance_info['members'].keys():
 				driver.close()
 				return cached_alliance_info	
@@ -98,58 +105,22 @@ def get_alliance_info(alliance_name='', force=True):
 	# If working from website, use strike team definition . 
 	if working_from_website:
 
-
-
-
-
-		# Just in case it wasn't sourced.
+		# Just in case file didn't exist, start by at least creating a structure to store teams in. 
 		if 'strike_teams' not in globals():
-			print ("strike_teams didn't exist previously, starting from scratch.")
 			strike_teams = {}
 
-		if not valid_strike_team(strike_teams.get('incur',[]),alliance_info):
+		# Make sure we have a valid strike_team for Incursion. 
+		updated = get_valid_strike_teams('incur', driver, strike_teams, alliance_info) 
 
-			print ("Checking Incursion team definitions on website.")
-			incur_teams = get_strike_teams(driver,'incursion')
+		# Make sure we have a valid strike_team for Incursion. 
+		updated = get_valid_strike_teams('other', driver, strike_teams, alliance_info) or updated 
 
-			if valid_strike_team(incur_teams, alliance_info):
-				print ("Using Incursion definition from website.")
-				strike_teams['incur'] = incur_teams
-
-		if not valid_strike_team(strike_teams.get('other',[]),alliance_info):
-
-			print ("Checking Gamma team definitions on website.")
-			other_teams = get_strike_teams(driver,'gamma_d')
-
-			if valid_strike_team(other_teams, alliance_info):
-				print ("Using Gamma definition from website.")
-				strike_teams['other'] = other_teams
-
-		# Whether from strike_teams.py or from the website, store these away in alliance_info
+		# Whatever the final result in strike_teams, stow that away in the alliance info structure for output.
 		alliance_info['strike_teams'] = strike_teams
-
-		# Generate strike_teams.py if one doesn't exist locally.
-		if not os.path.exists('strike_teams.py'):
 		
-			# If we got good data from the website, use that.
-			if valid_strike_team(strike_teams['incur'], alliance_info) and valid_strike_team(strike_teams['other'], alliance_info):
-				strike_teams = generate_strike_teams(strike_teams)	
-
-			# If not, just do a generic alphabetic sort of the members in this alliance.
-			else:
-				members = alliance_info['members']
-				members.sort()
-
-				# Break it up into chunks for each team.
-				strike_team = [members[:8],members[8:16],members[16:]]
-				strike_teams = generate_strike_teams({'incur':strike_team,'other':strike_team})					
-
-				# Stow this away for use during output.
-				alliance_info['strike_teams'] = strike_teams
-
-
-
-
+		# Generate strike_teams.py if we updated either definition or if this file doesn't exist locally.
+		if updated or not os.path.exists('strike_teams.py'):
+			generate_strike_teams(strike_teams)	
 
 	# Close the Selenium session.
 	driver.close()
@@ -163,6 +134,7 @@ def get_alliance_info(alliance_name='', force=True):
 	return alliance_info
 
 
+# Load cached_alliance_info and ensure it's valid and fresh. 
 def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force):
 
 	# Allow us to return an updated copy.
@@ -183,11 +155,11 @@ def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files,
 		if 'strike_teams' in globals():
 
 			if valid_strike_team(strike_teams['incur'], cached_alliance_info):
-				print ("Using Incursion definition from strike_teams.py.")
+				print ("Using Incursion strike_team definition from strike_teams.py.")
 				cached_alliance_info['strike_teams']['incur'] = strike_teams['incur']
 
 			if valid_strike_team(strike_teams['other'], cached_alliance_info):
-				print ("Using Other definition from strike_teams.py.")
+				print ("Using Other strike_team definition from strike_teams.py.")
 				cached_alliance_info['strike_teams']['other'] = strike_teams['other']
 
 		return True
@@ -296,6 +268,37 @@ def login(url = 'https://marvelstrikeforce.com/en/alliance/members'):
 	return driver
 
 
+# Check for saved credentials. If none and never asked, ask if would like to cache them.
+def get_creds():
+	facebook_cred = keyring.get_credential('facebook','')
+	scopely_cred  = keyring.get_credential('scopely','')
+
+	# Check for presence of 'noprompt' file. 
+	if not os.path.exists('noprompt'):
+
+		# If 'noprompt' doesn't exist, prompt if person would like to cache their credentials
+		if input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
+
+			# Ask which login they would like to use.
+			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
+
+				# Prompt for each login and pass and store in keyring.
+				login = input("Facebook Login: ")
+				keyring.set_password('facebook', login, getpass.getpass(prompt="Facebook Password:"))
+			else:
+				login = input("Scopely Login: ")
+				keyring.set_password('scopely', login, getpass.getpass(prompt="Scopely Password:"))
+
+			# Reload both credentials before proceeding.
+			facebook_cred = keyring.get_credential('facebook','')
+			scopely_cred  = keyring.get_credential('scopely','')
+
+		# Create the file so we aren't asked again. User can delete if credentials have changed.
+		open('noprompt','a').close()
+
+	return facebook_cred, scopely_cred
+
+
 # Auto Login via Scopely authentication using cached credentials.
 def scopely_login(driver, scopely_user, scopely_pass):
 	try:
@@ -351,37 +354,6 @@ def facebook_login(driver, facebook_user, facebook_pass):
 		print("Timed out. Unable to complete login.")
 
 
-# Check for saved credentials. If none and never asked, ask if would like to cache them.
-def get_creds():
-	facebook_cred = keyring.get_credential('facebook','')
-	scopely_cred  = keyring.get_credential('scopely','')
-
-	# Check for presence of 'noprompt' file. 
-	if not os.path.exists('noprompt'):
-
-		# If 'noprompt' doesn't exist, prompt if person would like to cache their credentials
-		if input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
-
-			# Ask which login they would like to use.
-			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
-
-				# Prompt for each login and pass and store in keyring.
-				login = input("Facebook Login: ")
-				keyring.set_password('facebook', login, getpass.getpass(prompt="Facebook Password:"))
-			else:
-				login = input("Scopely Login: ")
-				keyring.set_password('scopely', login, getpass.getpass(prompt="Scopely Password:"))
-
-			# Reload both credentials before proceeding.
-			facebook_cred = keyring.get_credential('facebook','')
-			scopely_cred  = keyring.get_credential('scopely','')
-
-		# Create the file so we aren't asked again. User can delete if credentials have changed.
-		open('noprompt','a').close()
-
-	return facebook_cred, scopely_cred
-
-
 # Get back to the Alliance page, then search to find the member's name and the related Roster button.
 def find_members_roster(driver, member):
 
@@ -433,56 +405,77 @@ def find_members_roster(driver, member):
 	return True
 
 
-# Pull Strike Team definitions from MSF.gg Lanes 
-def get_strike_teams(driver,raid='alpha_d'):
+# Go through a multi-stage process to find a valid strike_team definition to use.
+def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
 
-	web_teams = []
+	# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
+	if valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
+		# Return FALSE, nothing to update.
+		return False
+
+	# If not there, let's check on the website for a valid definition.
+	print ("%s team definitions in strike_teams.py were not valid. Checking definitions on MSF.gg" % ({'incur':'Incursion','other':'Gamma'}[raid_type]))
+	strike_team = get_strike_teams(driver,raid_type)
+
+	# If valid, update strike_teams with this info
+	if valid_strike_team(strike_team, alliance_info):
+		print ("Using strike_team definition from website.")
+		strike_teams[raid_type] = strike_team
+		return True
+
+	# If not there, let's check for one cached in the alliance_info
+	if 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
+		print ("Using cached strike_team definitions from alliance_info.")
+		strike_teams[raid_type] = alliance_info['strike_teams'][raid_type]
+		return True
+		
+	# If not there, just put the member list in generic groups of 8.
+	print ("Valid strike_team defintion not found. Creating default strike_team from member list.")
+	members = list(alliance_info['members'])
+	members.sort()
+
+	# Break it up into chunks for each team.
+	strike_teams[raid_type] = add_strike_team_dividers([members[:8], members[8:16], members[16:]], raid_type)
+	return True
+	
+
+# Pull Strike Team definitions from MSF.gg Lanes 
+def get_strike_teams(driver,raid_type='incur'):
+
+	strike_team = []
 
 	# Download and parse each page for the specified Raid
 	for team_num in range(3):
-		driver.get('https://marvelstrikeforce.com/en/alliance/maps/raid_%s/0?strikeTeam=%i' % (raid, team_num+1))
+		driver.get('https://marvelstrikeforce.com/en/alliance/maps/raid_%s/0?strikeTeam=%i' % ({'incur':'incursion','other':'gamma_d'}[raid_type], team_num+1))
 
-		print ("Parsing % raid Team #%i..." % (raid.title(), team_num+1))
+		print ("Parsing %s raid Team #%i..." % ({'incur':'Incursion','other':'Gamma'}[raid_type], team_num+1))
 		# Wait until the list of Players is displayed.
 		WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-user')))
 
 		# Parse the current page.
-		strike_team = parse_teams(driver.page_source)
-		
-		# Automatically use 2-3-3 lanes if Incursion.
-		if raid == "incursion":
-			if len(strike_team) > 2:
-				strike_team.insert(2,'----')
-
-			if len(strike_team) > 6:
-				strike_team.insert(6,'----')
-
-		# Put a divider in the middle to reflect left/right symmetry for Greek raids.
-		elif raid == "other":
-			if len(strike_team) > 4:
-				strike_team.insert(4,'----')
+		team_def = parse_teams(driver.page_source)
 
 		# Add each team to the Strike Team definition
-		web_teams.append(strike_team)
+		strike_team.append(team_def)
 
-	return web_teams
+	return add_strike_team_dividers(strike_team, raid_type)
 
 
-# Update the Character Trait information using the latest info from website.
-def get_extracted_traits(alliance_info):
+# Add divider definitions in the right places, depending upon the raid_type
+def add_strike_team_dividers(strike_team, raid_type):
 
-	# If the old trait file isn't being used, extracted_traits needs to be updated.
-	if 'trait_file' not in alliance_info or alliance_info['trait_file'] not in alliance_info['scripts']:
+	for team in strike_team:
 
-		print ("Extracted traits location has changed...updating.")
-		for script in alliance_info['scripts']:
-			extracted_traits = extract_traits(script)
+		# Automatically use 2-3-3 lanes if Incursion.
+		if raid_type == "incur":
+			if len(team) > 2:
+				team.insert(2,'----')
+			if len(team) > 6:
+				team.insert(6,'----')
 
-			# If this file was correctly parsed, store this new trait file.
-			if extracted_traits:
-				print ("Found extracted traits in",script)
+		# Put a divider in the middle to reflect left/right symmetry for Greek raids.
+		elif raid_type == "other":
+			if len(team) > 4:
+				team.insert(4,'----')
 
-				# Remember which script was the valid trait file
-				alliance_info['trait_file'] = script
-				alliance_info['extracted_traits'] = extracted_traits
-				break
+	return strike_team
