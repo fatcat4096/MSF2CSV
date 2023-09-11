@@ -10,29 +10,35 @@ import datetime
 from gradients import *	
 
 
-default_lanes = [[{'traits': ['Mutant']},
-				  {'traits': ['Bio']},
-				  {'traits': ['Skill']},
-				  {'traits': ['Mystic']},
-				  {'traits': ['Tech']}]]
-
-
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
-def generate_html(alliance_info, strike_teams=[], lanes=default_lanes, keys=['power','tier','iso'], min_iso=0, min_tier=0, char_list=[], table_name=''):
+def generate_html(alliance_info, table):
 
-	# If no char_list is specified, pull the list of all characters from char_stats
-	if not char_list:
-		char_list = get_char_list (alliance_info)
-	
+	default_lanes = [[{'traits': ['Mutant']},
+					  {'traits': ['Bio']},
+					  {'traits': ['Skill']},
+					  {'traits': ['Mystic']},
+					  {'traits': ['Tech']}]]
+
+	# Load up arguments from table, with defaults if necessary.
+	strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'),[])
+	lanes        = table.get('lanes',default_lanes)
+	keys         = table.get('keys',['power','tier','iso'])
+	min_iso      = table.get('min_iso',0)
+	min_tier     = table.get('min_tier',0)
+	table_name   = table.get('name','')
+
+	# Get the list of usable characters
+	char_list = get_char_list (alliance_info)
+
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info)
 	
-	# Get extracted_traits from char_stats
+	# Get extracted_traits from alliance_info
 	extracted_traits = alliance_info['extracted_traits']
 	
 	html_file = '<!doctype html>\n<html lang="en">\n'
 	
-	# If we have multiple lanes, add a quick hack of a header to give us a tabbed interface.
+	# Add a header to give us a tabbed interface.
 	num_lanes = len(lanes)
 	html_file += add_tabbed_header(num_lanes,table_name)
 	
@@ -393,8 +399,9 @@ def get_value_color(min, max, value, stat='power'):
 	# Just in case passed a string.
 	value = int(value)
 	
+	# Special treatment for the '0' fields. 
 	if not value:
-		return 'Beige'
+		return '#282828;color:#919191;'
 
 	#Tweak gradients for Tier and ISO
 	if stat=='iso':
@@ -406,7 +413,10 @@ def get_value_color(min, max, value, stat='power'):
 			scaled_value = int((0.65+((value-16)/3)*0.35) * max_colors)
 	# Everything else.
 	else:
-		scaled_value = int((value-min)/(max-min) * max_colors)
+		if min == max:
+			scaled_value = max_colors
+		else:
+			scaled_value = int((value-min)/(max-min) * max_colors)
 	
 	if scaled_value < 0:
 		scaled_value = 0
@@ -505,6 +515,7 @@ def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
 
 		html_file += '''
 <head>
+<title>'''+table_name+''' Info</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

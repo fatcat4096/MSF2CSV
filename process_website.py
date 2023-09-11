@@ -22,7 +22,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from parse_contents import *
 from extract_traits import *
-from generate_strike_teams import *
+from generate_local_files import *
 
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
@@ -33,13 +33,13 @@ def get_alliance_info(alliance_name='', force=False):
 	cached_alliance_info = {}
 
 	# Look for cached_data files. 
-	cached_data_files = [file for file in os.listdir() if file.find('cached_data') != -1]
-	
+	cached_data_files = get_cached_data_files()
+
 	# If alliance specified and is in the list of cached_data files, need to check when updated last. 
-	if 'cached_data-'+alliance_name in cached_data_files:
+	if alliance_name in cached_data_files:
 
 		# Load cached_alliance_info and ensure it's valid and fresh. 
-		if valid_cached_data(cached_alliance_info, 'cached_data-'+alliance_name, cached_data_files, force):
+		if valid_cached_data(cached_alliance_info, alliance_name, cached_data_files, force):
 			return cached_alliance_info
 
 	# Or if only one cached_data file and alliance_name=='', assume this is the alliance to use. 
@@ -63,13 +63,13 @@ def get_alliance_info(alliance_name='', force=False):
 		alliance_name = website_alliance_info['name']
 
 	# If we don't have cached_data, we have to work from the website. Fall back to the login alliance_info. 
-	if 'cached_data-'+alliance_name not in cached_data_files and alliance_name != website_alliance_info['name']:
+	if alliance_name not in cached_data_files and alliance_name != website_alliance_info['name']:
 		print ("Cached_data not found for %s. Generating tables for %s instead." % (alliance_name, website_alliance_info['name']))
 		alliance_name = website_alliance_info['name']
 
 	# We're working from website if the specified alliance_name matches the website alliance_name
 	working_from_website = (alliance_name == website_alliance_info['name'])
-	cached_data_file     = 'cached_data-'+alliance_name
+	cached_data_file     = alliance_name
 	
 	# If working_from_website, the website_alliance_info will be our baseline. 
 	if working_from_website:
@@ -129,16 +129,27 @@ def get_alliance_info(alliance_name='', force=False):
 	get_extracted_traits(alliance_info)
 
 	# cache the updated roster info to disk.
-	pickle.dump(alliance_info,open(cached_data_file,'wb'))
+	pickle.dump(alliance_info,open('cached_data-'+cached_data_file+'.msf','wb'))
 
 	return alliance_info
+
+
+# Handle the file list cleanly.
+def get_cached_data_files():
+
+	# Fix any files that are missing the .msf extension
+	for file in [file for file in os.listdir() if file.find('cached_data') != -1 and file[-4:] != '.msf']:
+		os.rename(file,file+'.msf')
+
+	# Pull the alliance names out of the cached_data files
+	return [file.split('cached_data-')[-1][:-4] for file in os.listdir() if file.find('cached_data') != -1]
 
 
 # Load cached_alliance_info and ensure it's valid and fresh. 
 def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force):
 
 	# Allow us to return an updated copy.
-	temp_alliance_info = pickle.load(open(cached_data_file,'rb'))
+	temp_alliance_info = pickle.load(open('cached_data-'+cached_data_file+'.msf','rb'))
 	cached_alliance_info.update(temp_alliance_info)
 
 	# Previous version of cached_data found. Pretending the file doesn't even exist. 
@@ -149,7 +160,7 @@ def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files,
 		return False
 
 	# If it's been less than 24 hours since last update, just return the cached data. 
-	elif not force and (time.time()-os.path.getmtime(cached_data_file) < 86400):
+	elif not force and (time.time()-os.path.getmtime('cached_data-'+cached_data_file+'.msf') < 86400):
 
 		# If defined strike_teams are valid for this cached_data, use them.
 		if 'strike_teams' in globals():
@@ -437,7 +448,12 @@ def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
 	# Break it up into chunks for each team.
 	strike_teams[raid_type] = add_strike_team_dividers([members[:8], members[8:16], members[16:]], raid_type)
 	return True
-	
+
+
+# Returns true if at least 75% people of the people in the Alliance are actually in the Strike Teams presented.
+def valid_strike_team(strike_team, alliance_info):
+	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.75	
+
 
 # Pull Strike Team definitions from MSF.gg Lanes 
 def get_strike_teams(driver,raid_type='incur'):

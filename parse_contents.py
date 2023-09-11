@@ -113,17 +113,17 @@ def parse_roster(contents, alliance_info):
 		# If no char_name defined, last entry on page. Skip.
 		char_name = char.find('h4').text.strip()
 		if not char_name:
-			pass
+			continue
+
+		# Keep the path to the image for each character.
+		char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1]
+		
+		char_portraits[char_name] = char_portrait
 
 		# Stats available only if character is recruited.
 		toon_stats = char.find('div', attrs = {'id':'toon-stats'})
 
 		if toon_stats:
-
-			# Keep the path to the image for each character.
-			char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1]
-			
-			char_portraits[char_name] = char_portrait
 
 			# Is this character a favorite? Using this format for the csv. 
 			favorite = ['true','false'][char.find('i', attrs = {'class':'is-favorite'}) == None]
