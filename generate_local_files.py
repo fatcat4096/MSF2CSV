@@ -3,17 +3,22 @@
 """generate_local_files.py
 Sources strike_teams and raids_and_lanes if they exist locally.  
 Builds a new strike_teams.py if a valid file isn't present in the folder. 
-Copies the existing raids_and_lanes.py into the local dir if not present.
+Builds a new raids_and_lanes.py if a valid file isn't present in the folder.
 """
 
 import os
 import sys
 
 
-# If frozen, allow local strike_teams.py to override packaged versions.
-if getattr(sys, 'frozen', False):
-	sys.path.insert(0,os.path.dirname(sys.executable))
+# If not frozen, work in the same directory as this script.
+path = os.path.dirname(__file__)
 
+# If frozen, work in the same directory as the executable.
+if getattr(sys, 'frozen', False):
+	path = os.path.dirname(sys.executable)
+
+# Insert the local directory at the front of path to override packaged versions.
+sys.path.insert(0, path)
 
 # If file is invalid/deleted, generate a new one after alliance_info loaded.
 try:
@@ -22,11 +27,10 @@ except:
 	print ("Missing strike_teams.py...will be regenerated after alliance_members are known.")
 
 
-# Create a local raids_and_lanes.py that users can edit if we are Frozen and one doesn't exist. 
-from raids_and_lanes import *
-if not os.path.exists('raids_and_lanes.py'):
-	generate_raids_and_lanes()
-
+try:
+	from raids_and_lanes import *
+except:
+	print ("Missing raids_and_lanes.py...will be regenerated and used next run.")
 
 # Create a new strike_teams.py if an outdated one exists.
 def generate_strike_teams(strike_teams={}):
@@ -50,7 +54,7 @@ strike_teams = {}
 	new_file += generate_strike_team('other',strike_teams['other'],'Used for Gamma Raids and other output.')
 
 	# Write it to disk.
-	open("strike_teams.py", 'w').write(new_file)
+	open(path + os.sep + "strike_teams.py", 'w').write(new_file)
 
 
 # Take the strike_team variable and create the text for the team definition in strike_teams.py
@@ -69,9 +73,9 @@ def generate_strike_team(type,strike_team,desc):
 
 	return team_def
 
-
-# Use the default lanes defined to generate another local copy of the file.
-def generate_raids_and_lanes():
+	
+# Create a local raids_and_lanes.py that users can edit if we are Frozen and one doesn't exist. 
+if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
 
 	# Create header
 	new_file  = '''# This file contains the list of active formats to be used for output
@@ -107,6 +111,76 @@ def generate_raids_and_lanes():
 
 # Active tables are the files which will be generated.
 '''
+
+	# Active tables are the files which will be generated.
+	tables = {'active': ['incur', 'gamma', 'war', 'all']}
+
+	# Meta Heroes for use in Incursion Raid
+	tables['incur'] = { 'name': 'Incursion Raid', 'min_tier': 16, 'min_iso': 9, 'strike_teams': 'incur',
+						'lanes':[ [
+								{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
+								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
+								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
+								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
+								{'traits': ['Tech'], 'meta': ['Kang the Conqueror', 'Doctor Doom', 'Hulkbuster', 'Viv Vision', 'Vision']},
+								] ]
+						}
+
+	# Meta Heroes for use in Gamma Raid
+	tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'strike_teams': 'other',
+						'lanes':[ [
+								{'traits': ['Avenger', 'GotG'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
+								{'traits': ['PymTech', 'Infestation', 'Kree'], 'meta': ['Ghost', 'Yellowjacket', 'Minn-Erva', 'Captain Marvel', 'Phyla-Vell']},
+								{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								],[ ### Lane 2 ###
+								{'traits': ['Avenger', 'SpiderVerse'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
+								{'traits': ['PymTech', 'Infestation', 'Wakanda'], 'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
+								{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								],[ ### Lane 3 ###
+								{'traits': ['Shield', 'Brotherhood'], 'meta': ['Black Widow', 'Captain America', 'Nick Fury', 'Maria Hill', 'Magneto']},
+								{'traits': ['Defender', 'Mercenary', 'HeroesForHire'], 'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
+								{'traits': ['GotG', 'Xmen', 'Mercenary'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+								{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								],[ ### Lane 4 ###
+								{'traits': ['Shield', 'Aim'], 'meta': ['Black Widow', 'Captain America', 'Nick Fury', 'Maria Hill', 'Hawkeye']},
+								{'traits': ['Defender', 'Hydra', 'HeroesForHire'], 'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
+								{'traits': ['Shield', 'Wakanda', 'Defender', 'HeroesForHire'], 'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								] ]
+						}
+
+	# Meta Heroes for use in War
+	tables['war'] = { 'name': 'War',
+						'lanes':[ [
+								{'traits': ['Key<br>Villains'], 'meta': ['Apocalypse', 'Dormammu', 'Doctor Doom', 'Kang the Conqueror', 'Super Skrull']},
+								{'traits': ['MastersOfEvil']},
+								{'traits': ['Knowhere']},
+								{'traits': ['Gamma']},
+								{'traits': ['Unlimited']},
+								{'traits': ['Deathseed']},
+								{'traits': ['Darkhold']},
+								{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
+								{'traits': ['AForce']},
+								{'traits': ['WarDog']},
+								{'traits': ['WeaponX']},
+								{'traits': ['InfinityWatch']},
+								{'traits': ['DarkHunter']},
+								{'traits': ['Dark<br>Hunters<br>+<br>Quicksilver'], 'meta': ['Doctor Voodoo', 'Elsa Bloodstone', 'Ghost Rider', 'Morbius', 'Quicksilver']},
+								{'traits': ['Undying']},
+								{'traits': ['TangledWeb']},
+								{'traits': ['Eternal']},
+								{'traits': ['Invaders'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
+								{'traits': ['Bifrost']},
+								{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},
+								{'traits': ['Infestation']},
+								] ]
+						}
+
+	# All Characters
+	tables['all'] = { 'name': 'All Characters', 'keys': ['power', 'lvl', 'tier'] }
 
 	new_file += "tables = {'active': " + repr(tables['active']) + "}\n\n\n"
 
@@ -147,11 +221,4 @@ def generate_raids_and_lanes():
 		new_file += "\t\t\t\t\t}\n\n"
 
 	# Write it to disk.
-	open("tables.py", 'w').write(new_file)
-	
-
-
-
-
-
-
+	open(path + os.sep + "raids_and_lanes.py", 'w').write(new_file)

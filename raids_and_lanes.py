@@ -104,6 +104,6 @@ tables['war'] = { 'name': 'War',
 
 # All Characters
 tables['all'] = { 'name': 'All Characters',
-					'keys': ['power'],
+					'keys': ['power', 'lvl', 'tier'],
 					}
 

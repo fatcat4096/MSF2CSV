@@ -213,7 +213,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 			# Insert stat headings for each included Character.
 			for char in char_list:
 				for key in keys:
-					html_file += '     <td>%s</td>\n' % key.title()
+					html_file += '     <td>%s</td>\n' % {'lvl':'Level'}.get(key,key.title())
 
 			# If we have all_team_pwr info, need a Team Power column.
 			if all_team_pwr:
@@ -262,7 +262,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 						if player_name in player_list:
 							value = alliance_info['members'][player_name]['processed_chars'][char_name][key]
 						
-						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value,key), value)
+						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value, key), value)
 
 				# If we have all_team_pwr info, need a Team Power column.
 				if all_team_pwr:
@@ -411,6 +411,11 @@ def get_value_color(min, max, value, stat='power'):
 			scaled_value = int(((value**2)/15**2)*0.50 * max_colors)
 		else:
 			scaled_value = int((0.65+((value-16)/3)*0.35) * max_colors)
+	elif stat=='lvl':
+		if value <= 75:
+			scaled_value = int(((value**2)/75**2)*0.50 * max_colors)
+		else:
+			scaled_value = int((0.65+((value-75)/20)*0.35) * max_colors)
 	# Everything else.
 	else:
 		if min == max:

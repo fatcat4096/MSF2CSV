@@ -7,6 +7,8 @@ Transform stats from MSF.gg into readable tables with heatmaps.
 import os
 import datetime
 import sys
+import time
+
 
 from process_website import *       # Routines to get Roster data from website
 from generate_html import *         # Routines to generate the finished tables.		
@@ -25,8 +27,6 @@ def main(alliance_name=''):
 	if getattr(sys, 'frozen', False):
 		path = os.path.dirname(sys.executable)
 
-	print ("Writing pivot tables to:",path)
-	
 	# Build a default path and filename. 
 	filename = path + os.sep + alliance_info['name'] + datetime.datetime.now().strftime("-%Y%m%d-")
 
@@ -39,6 +39,9 @@ def main(alliance_name=''):
 	#csv_file = generate_csv(alliance_info)
 	#open(filename+"original.csv", 'w', encoding='utf-16').write(csv_file)
 
+	print ("Alliance Roster tables written to: "+path)
+
+	time.sleep(2)
 
 if __name__ == "__main__":
 	main() # Just run myself

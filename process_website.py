@@ -24,6 +24,15 @@ from parse_contents import *
 from extract_traits import *
 from generate_local_files import *
 
+import traceback
+
+# If not frozen, work in the same directory as this script.
+path = os.path.dirname(__file__)
+
+# If frozen, work in the same directory as the executable.
+if getattr(sys, 'frozen', False):
+	path = os.path.dirname(sys.executable)
+	
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 def get_alliance_info(alliance_name='', force=False):
@@ -36,10 +45,11 @@ def get_alliance_info(alliance_name='', force=False):
 	cached_data_files = get_cached_data_files()
 
 	# If alliance specified and is in the list of cached_data files, need to check when updated last. 
-	if alliance_name in cached_data_files:
+	if 'cached_data-'+alliance_name+'.msf' in cached_data_files:
 
 		# Load cached_alliance_info and ensure it's valid and fresh. 
-		if valid_cached_data(cached_alliance_info, alliance_name, cached_data_files, force):
+		if valid_cached_data(cached_alliance_info, 'cached_data-'+alliance_name+'.msf', cached_data_files, force):
+			print ("Using cached_data from file:", 'cached_data-'+alliance_name+'.msf')
 			return cached_alliance_info
 
 	# Or if only one cached_data file and alliance_name=='', assume this is the alliance to use. 
@@ -47,7 +57,12 @@ def get_alliance_info(alliance_name='', force=False):
 
 		# Load cached_alliance_info and ensure it's valid and fresh. 
 		if valid_cached_data(cached_alliance_info, cached_data_files[0], cached_data_files, force):
+			print ("Using cached_data from file:", cached_data_files[0])
 			return cached_alliance_info
+
+		# If we double-clicked or passed this in as an argument, alliance_name won't be set automatically. 
+		if len(sys.argv)>1 and sys.argv[1] == cached_data_files[0]:
+			alliance_name = sys.argv[1].split('cached_data-')[1][:-4]
 	
 	# Login to the website. 
 	driver = login()
@@ -63,13 +78,13 @@ def get_alliance_info(alliance_name='', force=False):
 		alliance_name = website_alliance_info['name']
 
 	# If we don't have cached_data, we have to work from the website. Fall back to the login alliance_info. 
-	if alliance_name not in cached_data_files and alliance_name != website_alliance_info['name']:
+	if not [file for file in cached_data_files if file.find('cached_data-'+alliance_name+'.msf') != -1] and alliance_name != website_alliance_info['name']:
 		print ("Cached_data not found for %s. Generating tables for %s instead." % (alliance_name, website_alliance_info['name']))
 		alliance_name = website_alliance_info['name']
 
 	# We're working from website if the specified alliance_name matches the website alliance_name
 	working_from_website = (alliance_name == website_alliance_info['name'])
-	cached_data_file     = alliance_name
+	cached_data_file     = 'cached_data-'+alliance_name+'.msf'
 	
 	# If working_from_website, the website_alliance_info will be our baseline. 
 	if working_from_website:
@@ -77,9 +92,10 @@ def get_alliance_info(alliance_name='', force=False):
 	
 		# * Does this cached_data file exist? If so, load it. 
 		if cached_data_file in cached_data_files:
-		
+	
 			# Load cached_alliance_info and ensure it's valid and fresh. On the website, only overt indication that something has changed is changes in membership.
 			if valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force) and alliance_info['members'].keys() == cached_alliance_info['members'].keys():
+				print ("Using cached_data from file:", cached_data_file)
 				driver.close()
 				return cached_alliance_info	
 
@@ -119,7 +135,7 @@ def get_alliance_info(alliance_name='', force=False):
 		alliance_info['strike_teams'] = strike_teams
 		
 		# Generate strike_teams.py if we updated either definition or if this file doesn't exist locally.
-		if updated or not os.path.exists('strike_teams.py'):
+		if updated or not os.path.exists(path+os.sep+'strike_teams.py'):
 			generate_strike_teams(strike_teams)	
 
 	# Close the Selenium session.
@@ -129,7 +145,8 @@ def get_alliance_info(alliance_name='', force=False):
 	get_extracted_traits(alliance_info)
 
 	# cache the updated roster info to disk.
-	pickle.dump(alliance_info,open('cached_data-'+cached_data_file+'.msf','wb'))
+	os.chdir(path)
+	pickle.dump(alliance_info,open(cached_data_file,'wb'))
 
 	return alliance_info
 
@@ -138,18 +155,27 @@ def get_alliance_info(alliance_name='', force=False):
 def get_cached_data_files():
 
 	# Fix any files that are missing the .msf extension
-	for file in [file for file in os.listdir() if file.find('cached_data') != -1 and file[-4:] != '.msf']:
-		os.rename(file,file+'.msf')
+	for file in [file for file in os.listdir(path) if file.find('cached_data') != -1 and file[-4:] != '.msf']:
+		os.rename(path+os.sep+file, path+os.sep+file+'.msf')
 
-	# Pull the alliance names out of the cached_data files
-	return [file.split('cached_data-')[-1][:-4] for file in os.listdir() if file.find('cached_data') != -1]
+	# Check to see whether we were passed a cached_data file as an argument.
+	if len(sys.argv) > 1 and sys.argv[1].find('cached_data') != -1:
+		return [sys.argv[1]]
+
+	# Otherwise, return full paths to the cached_data files in the local directory.
+	return [file for file in os.listdir(path) if file.find('cached_data') != -1]
 
 
 # Load cached_alliance_info and ensure it's valid and fresh. 
 def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force):
 
+	# Check whether file needs full-pathname to be valid.
+	filename = cached_data_file
+	if not os.path.exists(filename) and os.path.exists(path+os.sep+filename):
+		filename = path+os.sep+filename
+
 	# Allow us to return an updated copy.
-	temp_alliance_info = pickle.load(open('cached_data-'+cached_data_file+'.msf','rb'))
+	temp_alliance_info = pickle.load(open(filename,'rb'))
 	cached_alliance_info.update(temp_alliance_info)
 
 	# Previous version of cached_data found. Pretending the file doesn't even exist. 
@@ -160,7 +186,7 @@ def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files,
 		return False
 
 	# If it's been less than 24 hours since last update, just return the cached data. 
-	elif not force and (time.time()-os.path.getmtime('cached_data-'+cached_data_file+'.msf') < 86400):
+	elif not force and (time.time()-os.path.getmtime(filename) < 86400):
 
 		# If defined strike_teams are valid for this cached_data, use them.
 		if 'strike_teams' in globals():
@@ -285,7 +311,7 @@ def get_creds():
 	scopely_cred  = keyring.get_credential('scopely','')
 
 	# Check for presence of 'noprompt' file. 
-	if not os.path.exists('noprompt'):
+	if not os.path.exists(path+os.sep+'noprompt'):
 
 		# If 'noprompt' doesn't exist, prompt if person would like to cache their credentials
 		if input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
@@ -305,7 +331,7 @@ def get_creds():
 			scopely_cred  = keyring.get_credential('scopely','')
 
 		# Create the file so we aren't asked again. User can delete if credentials have changed.
-		open('noprompt','a').close()
+		open(path+os.sep+'noprompt','a').close()
 
 	return facebook_cred, scopely_cred
 

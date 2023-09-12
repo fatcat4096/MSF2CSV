@@ -28,7 +28,7 @@ def get_extracted_traits(alliance_info):
 
 
 # Parse the provided js file to hopefully find trait information.
-def extract_traits(file='/static/js/0.71802ea4a42a748d20fb.js'):
+def extract_traits(file=''):
 
 	# load the indicated script, MSF.gg will respond with a 404 page if not available anymore.
 	page = urllib.request.urlopen('https://marvelstrikeforce.com'+file)
