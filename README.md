@@ -8,31 +8,24 @@ This is my attempt at a solution to the problem. I hope you enjoy it.
 Feel free to provide feedback, questions, comments, etc. My username is "fatcat4096" on Discord. 
 	
 # Requirements:
-1. Install Python
-2. Install Beautiful Soup 4 -- 'pip install beautifulsoup4'
-3. Install Selenium -- 'pip install selenium'
+1. Install Python 3.x from Python.org
+2. Install Beautiful Soup 4, KeyRing, and Selenium -- 'pip install -r requirements.txt'
+3. Double click on msf2csv.py
 
 # Configuration:
-* Add your own login / pass to user_and_pass.py if you want the script to run headless and download alliance/roster data without intervention
-* In msf2csv.py, uncomment the call to 'process_website' in order to allow it to pull data from msf.gg. Currently configured to use cached data for dev.
-* In msf2csv.py, define your own strike teams at the top of the file. Use of '----' is optional but will define lanes between groups of players.
-* Edit the calls to generate_html if you want different filters (via min_iso and min_tier) or different data to be shown (via keys)
+* Members of Strike Teams are configurable in strike_teams.py. If contents of this file DON'T pertain to your Alliance (or if this file has been deleted), the system will automatically attempt to build another. To do so, it will first check the Team definitions on MSF.gg for Incursion and Gamma raids. If these aren't available, it will generate a generic file template with the current alliance members broken up into 3 groups of 8. 
+* The files to output and Lane/Section defintions are in Raids_and_lanes.py. Remove files you don't need from the active list. Change Min_iso and Min_tier to match the level of raid you're running. Change the displayed keys if you like. If this file is broken or deleted, it will be regenerated using default parameters.
+* NOTE: If building a frozen version of this script to distribute, EXCLUDE both raids_and_lanes.py and strike_teams.py from the package, as these will both be auto-generated in the same directory as the EXE on first run and the results will be editable by end users. 
 
 # Usage:
-1. Install packages.
-2. Configure as desired above.
-3. Double click on the mht2csv.py file. 
-
-# Output:
-This project originally produced the CSV file MSF.gg used to give us. I have since abandoned this. 
-Instead, I am focusing on producing immediately usable tables that I used to create manually. Currently, this includes:
-1. A table showing Power, Gear Tier and ISO. One section per Origin, filtered to only heroes with at least one at ISO 2-4 and Gear Tier 16.
-2. A table showing  the meta heroes for each section of Incursion.
-3. A table with tabs for ecah of the the meta heroes for each section of Gamma.
+* At first run, the script will prompt you as to whether you want to store your credentials for Login. These credentials will be stored locally in KeyRing and used only for MSF.gg login.
+* If you would prefer not to store credentials, the system will give you five minutes to log into your desired account. Once in, processing will resume.
+* If you need to update passwords or initially did not enter a password, delete the noprompt file in the local directory to allow the script to prompt again.
+* The script will by default use the cached_data file for 24 hours without requesting updated information from the website, there is a flag on the process_website call which will FORCE it to check website information each run.
 
 # To-Do:
-1. Clean up the Selenium code used to log in. Current use of system timer is super basic.
-2. Clean up the use of CSS. Keep playing with font options.
-3. Clean up the code that generates the Alliance Info tab. Is not elegant. 
+1. Looking at an option to output to Google Sheets.
+2. Toying with the idea of a report that tracks changes over time, so that you can see where your players are building and validate that people are building the teams required.
+3. I've been told that Linux-based installations require a 3rd party provider to use KeyRing. MacOS and Windows should support it without any additional. Please provide info if you get things working on Linux.
 
 
