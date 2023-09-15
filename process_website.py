@@ -101,11 +101,11 @@ def get_alliance_info(alliance_name='', force=False):
 
 			# So we have fresh alliance_info and the stale cached information.
 			# Copy over extra information into freshly downloaded alliance_info.
-			alliance_info['trait_file']       = cached_alliance_info['trait_file']
-			alliance_info['extracted_traits'] = cached_alliance_info['extracted_traits']
-			alliance_info['portraits']        = cached_alliance_info['portraits']
-			alliance_info['strike_teams']     = cached_alliance_info['strike_teams']
-			
+			for key in cached_alliance_info:
+				if key not in alliance_info:
+					alliance_info[key] = cached_alliance_info[key]
+					
+			# Also copy over additional information inside the member definitions.
 			for member in alliance_info['members']:
 				for key in ['processed_chars','last_download','url']:
 					if key in cached_alliance_info['members'][member]:
@@ -144,7 +144,10 @@ def get_alliance_info(alliance_name='', force=False):
 	# Update extracted_traits if necessary.
 	get_extracted_traits(alliance_info)
 
-	# cache the updated roster info to disk.
+	# Keep a copy of critical stats from today's run for historical analysis.
+	update_history(alliance_info)
+	
+	# Change working directory to the local directory and cache the updated roster info to disk.
 	os.chdir(path)
 	pickle.dump(alliance_info,open(cached_data_file,'wb'))
 
@@ -521,3 +524,32 @@ def add_strike_team_dividers(strike_team, raid_type):
 				team.insert(4,'----')
 
 	return strike_team
+
+
+# Archive the current run into the 'hist' tag for future analysis.
+def update_history(alliance_info):	
+
+	# Create the 'hist' key if it doesn't already exist.
+	alliance_info.setdefault('hist',{})
+
+	# Overwrite any existing info for today.
+	today = datetime.date.today()
+	alliance_info['hist'][today] = {}
+	
+	# Check each member, if we have roster data, copy it over. 
+	for member in alliance_info['members']:
+		if 'processed_chars' in alliance_info['members'][member]:
+			alliance_info['hist'][today][member] = {}
+			processed_chars = alliance_info['members'][member]['processed_chars']
+			for char in processed_chars:
+				if type(processed_chars[char]) is dict:
+					alliance_info['hist'][today][member][char] = {	'lvl':  processed_chars[char]['lvl'] , 
+																	'power':processed_chars[char]['power'] , 
+																	'tier': processed_chars[char]['tier'] , 
+																	'iso':  processed_chars[char]['iso']}
+	
+	# Keep only one entry per ISO calendar week. Also, purge any entries > 60 days. 
+	for key in alliance_info['hist']:
+		if (today != key and today.isocalendar().week == key.isocalendar().week) or today-key > datetime.timedelta(60):
+			del alliance_info['hist'][key]
+
