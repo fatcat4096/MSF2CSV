@@ -15,7 +15,8 @@ Feel free to provide feedback, questions, comments, etc. My username is "fatcat4
 # Configuration:
 * Members of Strike Teams are configurable in strike_teams.py. If contents of this file DON'T pertain to your Alliance (or if this file has been deleted), the system will automatically attempt to build another. To do so, it will first check the Team definitions on MSF.gg for Incursion and Gamma raids. If these aren't available, it will generate a generic file template with the current alliance members broken up into 3 groups of 8. 
 * The files to output and Lane/Section defintions are in Raids_and_lanes.py. Remove files you don't need from the active list. Change Min_iso and Min_tier to match the level of raid you're running. Change the displayed keys if you like. If this file is broken or deleted, it will be regenerated using default parameters.
-* NOTE: If building a frozen version of this script to distribute, EXCLUDE both raids_and_lanes.py and strike_teams.py from the package, as these will both be auto-generated in the same directory as the EXE on first run and the results will be editable by end users. 
+* NOTE: If building a frozen version of this script to distribute, EXCLUDE both raids_and_lanes.py and strike_teams.py from the package, as these will both be auto-generated in the same directory as the EXE on first run and the results will be editable by end users, e.g.:
+* 		pyinstaller msf2csv.py --onefile --exclude-module strike_teams --exclude-module raids_and_lanes.py
 
 # Usage:
 * At first run, the script will prompt you as to whether you want to store your credentials for Login. These credentials will be stored locally in KeyRing and used only for MSF.gg login.
