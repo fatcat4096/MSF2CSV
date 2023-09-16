@@ -549,7 +549,7 @@ def update_history(alliance_info):
 																	'iso':  processed_chars[char]['iso']}
 	
 	# Keep only one entry per ISO calendar week. Also, purge any entries > 60 days. 
-	for key in alliance_info['hist']:
+	for key in list(alliance_info['hist']):
 		if (today != key and today.isocalendar().week == key.isocalendar().week) or today-key > datetime.timedelta(60):
 			del alliance_info['hist'][key]
 
