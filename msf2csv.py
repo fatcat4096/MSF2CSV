@@ -33,7 +33,12 @@ def main(alliance_name=''):
 	# Generate the active html files specified in tables.py
 	for table in tables['active']:
 		html_file = generate_html(alliance_info, tables[table])
-		open(filename+table+'.html', 'w', encoding='utf-16').write(html_file)
+		# Default output is UTF-8. Attempt to use it as it's more compatible.
+		try:
+			open(filename+table+'.html', 'w').write(html_file)
+		# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
+		except:
+			open(filename+table+'.html', 'w', encoding='utf-16').write(html_file)
 
 	# Original file format. Requested for input to projects using old CSV format.
 	#csv_file = generate_csv(alliance_info)
@@ -41,7 +46,7 @@ def main(alliance_name=''):
 
 	print ("Alliance Roster tables written to: "+path)
 
-	time.sleep(2)
+	time.sleep(1)
 
 if __name__ == "__main__":
 	main() # Just run myself

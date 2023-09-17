@@ -19,102 +19,26 @@ def generate_html(alliance_info, table):
 					  {'traits': ['Mystic']},
 					  {'traits': ['Tech']}]]
 
-	# Load up arguments from table, with defaults if necessary.
-	strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'),[])
-	lanes        = table.get('lanes',default_lanes)
-	keys         = table.get('keys',['power','tier','iso'])
-	min_iso      = table.get('min_iso',0)
-	min_tier     = table.get('min_tier',0)
-	table_name   = table.get('name','')
-
-	# Get the list of usable characters
-	char_list = get_char_list (alliance_info)
-
-	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list (alliance_info)
+	lanes      = table.get('lanes',default_lanes)
+	table_name = table.get('name','')
 	
-	# Get extracted_traits from alliance_info
-	extracted_traits = alliance_info['extracted_traits']
-	
+	# If we're doing a single lane format and we have history, let's generate a historical data tab. 
+	hist_tab = ''
+	if len(lanes) == 1 and len(alliance_info['hist'])>1:
+		hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
+
+	# Gotta start somewhere.
 	html_file = '<!doctype html>\n<html lang="en">\n'
-	
+
 	# Add a header to give us a tabbed interface.
-	num_lanes = len(lanes)
-	html_file += add_tabbed_header(num_lanes,table_name)
+	html_file += add_tabbed_header(len(lanes), hist_tab, table_name)
 	
-	# Iterate through all the lanes. Showing tables for each section. 
-	for lane in lanes:
-		
-		# Display each lane in a separate tab.
-		lane_num = lanes.index(lane)+1
-		html_file += '<div id="Lane%i" class="tabcontent"">\n' % lane_num
+	# Add a tab for each lane. 
+	html_file += generate_lanes(alliance_info, table, lanes)
 
-		# Process each section individually, filtering only the specified traits into the Active Chars list.
-		for section in lane:
-			traits	   = section['traits']
-			meta_chars = section.get('meta',[])
-
-			# Meta Chars not subject to min requirements. Filter out only uncollected heroes.
-			meta_chars.sort()
-			meta_chars = [char for char in char_list if char in meta_chars]
-
-			# Other is everything left over. 
-			other_chars = [char for char in char_list if not char in meta_chars]
-
-			# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
-			if min_iso:
-				other_chars = [char for char in other_chars if max([int(alliance_info['members'][player]['processed_chars'][char]['iso']) for player in player_list]) >= min_iso]
-
-			if min_tier:
-				other_chars = [char for char in other_chars if max([int(alliance_info['members'][player]['processed_chars'][char]['tier']) for player in player_list]) >= min_tier]
-			
-			# Trait filters are additive.
-			if traits:
-				for char in other_chars[:]:
-					for trait in traits:
-						if trait in extracted_traits and char in extracted_traits[trait]:
-							# Character has at least one of these traits. Leave it in.
-							break
-					# Did we find this char in any of the traits?
-					if trait not in extracted_traits or char not in extracted_traits[trait]:
-						other_chars.remove(char)
-
-			# If only meta specified, just move it to others so we don't treat it special.
-			if meta_chars and not other_chars:
-				other_chars,meta_chars = meta_chars,other_chars
-
-			# Use the full Player List if explicit Strike Teams haven't been defined.
-			if not strike_teams:
-				strike_teams = [player_list]
-
-			# Start with the Basic Table Lable and Colors.
-			table_lbl = '<br>'.join([translate_name(trait) for trait in traits]).upper()
-
-			# Only calling it twice if we have meta_chars defined.
-			if meta_chars:
-				meta_lbl = table_lbl+'<br><span class="table_subtitle">META</span>'
-
-				html_file += '<table>\n <tr>\n  <td>\n'
-				html_file += generate_table(alliance_info, keys, meta_chars, strike_teams, meta_lbl, all_team_pwr=get_stp_list(alliance_info, meta_chars))
-				html_file += '  </td>\n  <td>\n   <br>\n  </td>\n  <td>\n'
-
-				# Differentiate Others Section from Meta Section
-				table_lbl += '<br><span class="table_subtitle">OTHERS</span>'
-
-			# Always generate the Others table.
-			# Only label it as such if Meta section exists.
-			html_file += generate_table(alliance_info, keys, other_chars, strike_teams, table_lbl, all_team_pwr=get_stp_list(alliance_info, meta_chars+other_chars))
-
-			# If in a nested table, close the nested table.
-			if meta_chars:
-				html_file += '  </td>\n </tr>\n</table>\n'
-
-			# If not the final section, add a divider row. 
-			if lane.index(section) != len(lane)-1:
-				html_file += '    <p></p>\n'
-
-		# After Lane content is done, close the div for the Tab implementation.
-		html_file += '</div>\n'
+	# Add a historical info tab.
+	if hist_tab:
+		html_file += generate_lanes(alliance_info, table, lanes, hist_tab)
 
 	# After all Lanes are added, add the Alliance Info tab.
 	html_file += generate_alliance_tab(alliance_info)
@@ -128,8 +52,109 @@ def generate_html(alliance_info, table):
 	return html_file
 
 
+# Generate the contents for each lane.
+def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
+
+	# Iterate through all the lanes. Showing tables for each section. 
+	for lane in lanes:
+		
+		# Display each lane in a separate tab.
+		lane_num = lanes.index(lane)+1
+		html_file += '<div id="%s%i" class="tabcontent">\n' % (['Hist','Lane'][not hist_tab], lane_num)
+
+		# Process each section individually, filtering only the specified traits into the Active Chars list.
+		for section in lane:
+		
+			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section)
+			keys = table.get('keys',['power','tier','iso'])
+
+			# Use the full Player List if explicit Strike Teams haven't been defined.
+			strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'), [get_player_list(alliance_info)])
+
+			# Start with the Basic Table Label and Colors.
+			table_lbl = '<br>'.join([translate_name(trait) for trait in section['traits']]).upper()
+
+			# Only calling it twice if we have meta_chars defined.
+			if meta_chars:
+				meta_lbl = table_lbl+'<br><span class="table_subtitle">META</span>'
+
+				html_file += '<table>\n <tr>\n  <td>\n'
+				html_file += generate_table(alliance_info, keys, meta_chars, strike_teams, meta_lbl, get_stp_list(alliance_info, meta_chars, hist_tab), hist_tab)
+				html_file += '  </td>\n  <td>\n   <br>\n  </td>\n  <td>\n'
+
+				# Differentiate Others Section from Meta Section
+				table_lbl += '<br><span class="table_subtitle">OTHERS</span>'
+
+			# Always generate the Others table.
+			# Only label it as such if Meta section exists.
+			html_file += generate_table(alliance_info, keys, other_chars, strike_teams, table_lbl, get_stp_list(alliance_info, meta_chars+other_chars, hist_tab), hist_tab)
+
+			# If in a nested table, close the nested table.
+			if meta_chars:
+				html_file += '  </td>\n </tr>\n</table>\n'
+
+			# If not the final section, add a divider row. 
+			if lane.index(section) != len(lane)-1:
+				html_file += '    <p></p>\n'
+
+		# After Lane content is done, close the div for the Tab implementation.
+		html_file += '</div>\n'
+
+	return html_file
+
+
+# Split meta chars from other chars. Filter others based on provided traits.
+def get_meta_other_chars(alliance_info, table, section):
+
+	# Get the list of usable characters
+	char_list = get_char_list (alliance_info)
+
+	# Meta Chars not subject to min requirements. Filter out only uncollected heroes.
+	meta_chars = section.get('meta',[])
+	meta_chars.sort()
+	meta_chars = [char for char in char_list if char in meta_chars]
+
+	# Other is everything left over. 
+	other_chars = [char for char in char_list if not char in meta_chars]
+
+	# Load up arguments from table, with defaults if necessary.
+	min_iso  = table.get('min_iso', 0)
+	min_tier = table.get('min_tier',0)
+
+	# Get the list of Alliance Members we will iterate through as rows.	
+	player_list = get_player_list (alliance_info)
+
+	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
+	if min_iso:
+		other_chars = [char for char in other_chars if max([int(alliance_info['members'][player]['processed_chars'][char]['iso']) for player in player_list]) >= min_iso]
+
+	if min_tier:
+		other_chars = [char for char in other_chars if max([int(alliance_info['members'][player]['processed_chars'][char]['tier']) for player in player_list]) >= min_tier]
+	
+	# Get extracted_traits from alliance_info
+	extracted_traits = alliance_info['extracted_traits']
+	
+	# Trait filters are additive. Only filter other_chars.
+	traits = section['traits']
+	if traits:
+		for char in other_chars[:]:
+			for trait in traits:
+				if trait in extracted_traits and char in extracted_traits[trait]:
+					# Character has at least one of these traits. Leave it in.
+					break
+			# Did we find this char in any of the traits?
+			if trait not in extracted_traits or char not in extracted_traits[trait]:
+				other_chars.remove(char)
+
+	# If only meta specified, just move it to others so we don't have to do anything special.
+	if meta_chars and not other_chars:
+		other_chars, meta_chars = meta_chars, other_chars
+		
+	return meta_chars, other_chars
+
+
 # Generate individual tables for Meta/Other chars for each raid section.
-def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], strike_teams = [], table_lbl='', team_pwr_lbl='', all_team_pwr={}, html_file = ''):
+def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], strike_teams = [], table_lbl='', all_team_pwr={}, hist_tab = '', html_file = ''):
 
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info)
@@ -150,7 +175,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 		team_pwr_lbl  = 'STP<br>(Top 5)'
 
 	# Let's get this party started!
-	html_file += '   <table border="0" font-weight:400; font-size:10pt;">\n'
+	html_file += '   <table>\n'
 
 	# WRITE THE IMAGES ROW. #############################################
 	html_file += '    <tr class="%s">\n' % (title_cell) 
@@ -160,10 +185,8 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 	for char in char_list:
 		html_file += '     <th class="image_cell" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s" alt="" width="100"></th>\n' % (len(keys), alliance_info['portraits'][char])
 
-	# If we have all_team_pwr info, need a Team Power column.
-	if all_team_pwr:
-		html_file += '     <td></td>\n'
-		
+	# Include a Team Power column.
+	html_file += '     <td></td>\n'
 	html_file += '    </tr>\n'
 	# DONE WITH THE IMAGES ROW. #########################################
 
@@ -179,10 +202,8 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 	for char in char_list:
 		html_file += '     <th colspan="%i" width="100">%s</th>\n' % (len(keys), translate_name(char))
 
-	# If we have all_team_pwr info, need a Team Power column.
-	if all_team_pwr:
-		html_file += '     <th></th>\n' 
-	
+	# Include the Team Power column.
+	html_file += '     <th></th>\n' 
 	html_file += '    </tr>\n'
 	# DONE WITH THE CHARACTER NAMES ROW. ################################
 
@@ -191,14 +212,9 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 
 		# Find min/max for meta/strongest team power in this Strike Team
 		# This will be used for color calculation for the Team Power column.
-		min_team_pwr = 0
-		max_team_pwr = 0
-		if all_team_pwr:
-			for player_name in player_list:
-				if player_name in team:
-					tot_team_pwr = all_team_pwr[player_name]
-					min_team_pwr = [min_team_pwr,tot_team_pwr][tot_team_pwr < min_team_pwr or not min_team_pwr]
-					max_team_pwr = [max_team_pwr,tot_team_pwr][tot_team_pwr > max_team_pwr]
+		tot_team_pwr = [all_team_pwr[player_name] for player_name in player_list if player_name in team]
+		min_team_pwr = min(tot_team_pwr)
+		max_team_pwr = max(tot_team_pwr)
 
 		# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
 		# (only if more than one item requested)
@@ -215,10 +231,8 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 				for key in keys:
 					html_file += '     <td>%s</td>\n' % {'lvl':'Level'}.get(key,key.title())
 
-			# If we have all_team_pwr info, need a Team Power column.
-			if all_team_pwr:
-				html_file += '     <td class="power_header">%s</td>\n' % (team_pwr_lbl)
-	
+			# Insert the Team Power column.
+			html_file += '     <td class="power_header">%s</td>\n' % (team_pwr_lbl)
 			html_file += '    </tr>\n'
 		# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
 
@@ -252,7 +266,15 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 				for char_name in char_list:
 
 					for key in keys:
-						key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) for player in player_list]
+
+						# More work to do if we're calculating this for the History Tab.
+						if hist_tab:
+							# We want the diff between the current values and the values in the oldest record
+							key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key)) for player in player_list]
+
+						# Standard lookup. Get the range of values for this character for all rosters.
+						else:
+							key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) for player in player_list]
 
 						min_val = min(key_vals)
 						max_val = max(key_vals)
@@ -260,20 +282,19 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 						# Only look up the value if we have a roster.
 						value = 0
 						if player_name in player_list:
-							value = alliance_info['members'][player_name]['processed_chars'][char_name][key]
+							# More work to do if we're calculating this for the History Tab.
+							if hist_tab:
+								# Basically, we gotta look for the first time this member exists within the History file, oldest to newest, and then display the difference between the stat in that record and this one.
+								value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key))
+							# Standard lookup. Get the value for this character stat from this player's roster.
+							else:
+								value = alliance_info['members'][player_name]['processed_chars'][char_name][key]
 						
-						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value, key), value)
+						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value, key), [value,'-'][value in (0,'0')])
 
-				# If we have all_team_pwr info, need a Team Power column.
-				if all_team_pwr:
-
-					# Only look up the value if we have a roster.
-					team_pwr = 0
-					if player_name in player_list:
-						team_pwr        = all_team_pwr[player_name]
-
-					html_file += '     <td class="bold_text" style="background-color:%s;">%i</td>\n' % (get_value_color(min_team_pwr, max_team_pwr, team_pwr), team_pwr)
-				
+				# Include the Team Power column.
+				team_pwr = all_team_pwr.get(player_name,0)
+				html_file += '     <td class="bold_text" style="background-color:%s;">%s</td>\n' % (get_value_color(min_team_pwr, max_team_pwr, team_pwr), [team_pwr,'-'][team_pwr in (0,'0')])
 				html_file += '    </tr>\n'
 		# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
 
@@ -283,18 +304,39 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 	return html_file
 
 
+# Find this member's oldest entry in our historical entries.
+def find_oldest_val(alliance_info, player_name, char_name, key):
+	dates = list(alliance_info['hist'])
+
+	# Start with the oldest entry in 'hist', looking for this member's stats.
+	while dates:
+		min_date = min(dates)
+		if player_name in alliance_info['hist'][min_date]:
+			# Found a valid record, return the value in 'key'
+			if char_name in alliance_info['hist'][min_date][player_name]:
+				return alliance_info['hist'][min_date][player_name][char_name][key]
+			# This character has been added since oldest history record.
+			return '0'
+
+		# Oldest entry didn't have it, go one newer.
+		dates.remove(min_date)
+
+	# Should not happen. Should always at least find this member in the most recent run.
+	return '0'
+
+
 # Generate just the Alliance Tab contents.
 def generate_alliance_tab(alliance_info, html_file=''):
 
 	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
-	html_file += '<table style="background-color:SteelBlue;" border="0">\n'
+	html_file += '<table style="background-color:SteelBlue;">\n'
 
 	html_file += '<tr>\n'
 	html_file += ' <td colspan="9" class="alliance_name">%s</td>' % (alliance_info['name'].upper())
 	html_file += '</tr>\n'
 	
 	html_file += '<tr>\n'
-	html_file += ' <td colspan="2" rowspan="2"><img width="150" src="%s"/></font></td>\n' % (alliance_info['image'])
+	html_file += ' <td colspan="2" rowspan="2"><img width="150" src="%s"/></td>\n' % (alliance_info['image'])
 	html_file += ' <td colspan="2"><span style="font-size:18px;">Members</span><br><span style="font-size:24px;"><b>%i/24</b></span></td>\n' % (alliance_info['num_mems'])
 	html_file += ' <td><span style="font-size:18px;">Level</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['stark_lvl'])
 	html_file += ' <td><span style="font-size:18px;">Trophies</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['trophies'])
@@ -303,8 +345,8 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	html_file += '</tr>\n'
 
 	html_file += '<tr>\n'
-	html_file += ' <td colspan="3"><span style="font-size:18px;">Total Power</span><br><span style="font-size:24px;"><b>%s<b/24</span></td>\n' % (alliance_info['tot_power'])
-	html_file += ' <td colspan="3"><span style="font-size:18px;">Average Collection Power</span><br><span style="font-size:24px;"><b>%s<b></span></td>\n' % (alliance_info['avg_power'])
+	html_file += ' <td colspan="3"><span style="font-size:18px;">Total Power</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['tot_power'])
+	html_file += ' <td colspan="3"><span style="font-size:18px;">Average Collection Power</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['avg_power'])
 	html_file += '</tr>\n'
 	
 	# Create the headings for the Alliance Info table.
@@ -357,6 +399,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 		
 		time_color = get_value_color(0, 4*86400, (4*86400)-time_since_last)
 		html_file += '  <td style="background-color:%s;">%s</td>\n' % (time_color, time_value)
+		html_file += ' </tr>\n'
 
 	html_file += '</table>\n'
 	html_file += '</div>\n'
@@ -432,7 +475,7 @@ def get_value_color(min, max, value, stat='power'):
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
-def get_stp_list(alliance_info, char_list, team_pwr_dict={}):
+def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
 	
 	# Get the list of Alliance Members 
 	player_list = get_player_list (alliance_info)
@@ -446,6 +489,14 @@ def get_stp_list(alliance_info, char_list, team_pwr_dict={}):
 		# And sum up the Top 5 power entries for STP.
 		team_pwr_dict[player_name] = sum(all_char_pwr[-5:])
 
+		# Get power of all heroes in the char_list from earliest entry in history. We will sum these and subtract from entry below. 
+		if hist_tab:
+			old_char_pwr = [int(find_oldest_val(alliance_info, player_name, char_name, 'power')) for char_name in char_list]
+			old_char_pwr.sort()
+			
+			# Use the difference between the new STP and the old value.
+			team_pwr_dict[player_name] -= sum(old_char_pwr[-5:])
+			
 	return team_pwr_dict
 
 
@@ -516,7 +567,7 @@ def translate_name(value):
 
 
 # Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
-def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
+def add_tabbed_header(num_lanes, hist_tab, table_name = '', html_file = ''):
 
 		html_file += '''
 <head>
@@ -539,7 +590,7 @@ def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
   font-size        : 24px;
   font-family      : 'Fira Sans Condensed';
   font-weight      : 900;
-  width            : '''+str(int(100/(num_lanes+1))) +'''%;	# Adding 1 for Alliance Info tab
+  width            : '''+str(int(100/(num_lanes+[2,1][not hist_tab]))) +'''%;	# Adding 1 for Alliance Info tab, 2 if there's also history.
 }
 .tablink:hover {
   background-color : #555;
@@ -627,6 +678,9 @@ def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
 		for num in range(num_lanes):
 			html_file += '#Lane%i {background-color: #343734;}\n' % (num+1)
 
+		if hist_tab:
+			html_file += '#Hist {background-color: #343734;}\n'
+
 		html_file += '#AllianceInfo {background-color: #343734;}\n'	
 
 		html_file += '</style>\n'
@@ -640,6 +694,9 @@ def add_tabbed_header(num_lanes, table_name = '', html_file = ''):
 				tab_name = '%s %s' % (table_name.upper(), tab_name)
 
 			html_file += '''<button class="tablink" onclick="openPage('Lane%i', this)" %s>%s</button>''' % (num+1,['','id="defaultOpen"'][not num],tab_name) + '\n'
+
+		if hist_tab:
+			html_file += '''<button class="tablink" onclick="openPage('Hist1', this)">%s</button>''' % (hist_tab) + '\n'
 
 		# And a tab for Alliance Info
 		html_file += '''<button class="tablink" onclick="openPage('AllianceInfo', this)">ALLIANCE INFO</button>''' + '\n'
@@ -669,4 +726,3 @@ def add_tabbed_footer(html_file = ''):
 		html_file += '</body>\n'
 		
 		return html_file
-			
