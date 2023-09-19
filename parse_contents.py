@@ -138,8 +138,8 @@ def parse_roster(contents, alliance_info):
 			
 			# Decode Yellow and Red Stars
 			stars = str(toon_stats.find('span'))
-			redStars = str(stars.count('red'))
-			yelStars = str(stars.count('red') + stars.count('orange'))
+			redStars = str(stars.count('star-red'))
+			yelStars = str(stars.count('star-red') + stars.count('star-orange'))
 			
 			# Decode Abilities
 			abilities = toon_stats.findAll('div', attrs = {'class':'ability-level'})

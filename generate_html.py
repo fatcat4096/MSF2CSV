@@ -24,7 +24,7 @@ def generate_html(alliance_info, nohist, table):
 	
 	# If we're doing a single lane format and we have history, let's generate a historical data tab. 
 	hist_tab = ''
-	if len(lanes) == 1 and len(alliance_info['hist'])>1 and not nohist:
+	if len(lanes) == 1 and len(alliance_info['hist'])>1 and {'power','tier','iso','lvl'}.issuperset(table.get('keys',[])) and not nohist:
 		hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
 
 	# Gotta start somewhere.
@@ -298,7 +298,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 							else:
 								value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key))
 						
-						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value, key), [value,'-'][value in (0,'0')])
+						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value, key, hist_tab), [value,'-'][value in (0,'0')])
 
 				# Include the Team Power column.
 				team_pwr = all_team_pwr.get(player_name,0)
@@ -445,7 +445,7 @@ max_colors  = len(color_scale)-1
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(min, max, value, stat='power'):
+def get_value_color(min, max, value, stat='power', hist_tab=''):
 	
 	# Just in case passed a string.
 	value = int(value)
@@ -454,19 +454,30 @@ def get_value_color(min, max, value, stat='power'):
 	if not value:
 		return '#282828;color:#919191;'
 
-	#Tweak gradients for Tier and ISO
+	#Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 	if stat=='iso':
-		scaled_value     = int(((value**3)/10**3) * max_colors)
+		if not hist_tab:
+			scaled_value = int(((value**3)/10**3) * max_colors)
+		else:
+			scaled_value = [int((0.6 + 0.4 * ((value**3)/10**3)) * max_colors),0][value<0]
 	elif stat=='tier':
-		if value <= 15:
+		if not hist_tab and value <= 15:
 			scaled_value = int(((value**2)/15**2)*0.50 * max_colors)
+		elif not hist_tab:
+			scaled_value = int((0.65 + 0.35 * ((value-16)/3)) * max_colors)
 		else:
-			scaled_value = int((0.65+((value-16)/3)*0.35) * max_colors)
+			scaled_value = int((0.60 + 0.40 * ((value**2)/17**2)) * max_colors)
 	elif stat=='lvl':
-		if value <= 75:
+		if not hist_tab and value <= 75:
 			scaled_value = int(((value**2)/75**2)*0.50 * max_colors)
+		elif not hist_tab:
+			scaled_value = int((0.65 + 0.35 * ((value-75)/20)) * max_colors)
 		else:
-			scaled_value = int((0.65+((value-75)/20)*0.35) * max_colors)
+			scaled_value = int((0.60 + 0.40 * ((value**2)/95**2)) * max_colors)
+	elif stat in ('red','yel'):
+		min = 2
+		max = 7
+		scaled_value = int((value-min)/(max-min) * max_colors)
 	# Everything else.
 	else:
 		if min == max:
