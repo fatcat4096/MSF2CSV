@@ -35,14 +35,14 @@ if getattr(sys, 'frozen', False):
 	
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
-def get_alliance_info(alliance_name='', force=False):
+def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=False):
 
 	global strike_teams
 
 	cached_alliance_info = {}
 
 	# Look for cached_data files. 
-	cached_data_files = get_cached_data_files()
+	cached_data_files = get_cached_data_files(cached_data)
 
 	# If alliance specified and is in the list of cached_data files, need to check when updated last. 
 	if 'cached_data-'+alliance_name+'.msf' in cached_data_files:
@@ -65,7 +65,7 @@ def get_alliance_info(alliance_name='', force=False):
 			alliance_name = sys.argv[1].split('cached_data-')[1][:-4]
 	
 	# Login to the website. 
-	driver = login()
+	driver = login(prompt)
 	
 	# We are in, wait until loaded before starting
 	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
@@ -155,15 +155,15 @@ def get_alliance_info(alliance_name='', force=False):
 
 
 # Handle the file list cleanly.
-def get_cached_data_files():
+def get_cached_data_files(cached_data):
 
 	# Fix any files that are missing the .msf extension
 	for file in [file for file in os.listdir(path) if file.find('cached_data') != -1 and file[-4:] != '.msf']:
 		os.rename(path+os.sep+file, path+os.sep+file+'.msf')
 
 	# Check to see whether we were passed a cached_data file as an argument.
-	if len(sys.argv) > 1 and sys.argv[1].find('cached_data') != -1:
-		return [sys.argv[1]]
+	if cached_data and cached_data.find('cached_data') != -1:
+		return [cached_data]
 
 	# Otherwise, return full paths to the cached_data files in the local directory.
 	return [file for file in os.listdir(path) if file.find('cached_data') != -1]
@@ -275,13 +275,13 @@ def process_roster(driver, alliance_info, member):
 
 
 # Login to the website. Return the Selenium Driver object.
-def login(url = 'https://marvelstrikeforce.com/en/alliance/members'):
+def login(prompt=False, url = 'https://marvelstrikeforce.com/en/alliance/members'):
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')	
 
-	facebook_cred, scopely_cred = get_creds()
+	facebook_cred, scopely_cred = get_creds(prompt)
 
 	# If login/password are provided, run this as a headless server.
 	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
@@ -309,12 +309,12 @@ def login(url = 'https://marvelstrikeforce.com/en/alliance/members'):
 
 
 # Check for saved credentials. If none and never asked, ask if would like to cache them.
-def get_creds():
+def get_creds(prompt):
 	facebook_cred = keyring.get_credential('facebook','')
 	scopely_cred  = keyring.get_credential('scopely','')
 
-	# Check for presence of 'noprompt' file. 
-	if not os.path.exists(path+os.sep+'noprompt'):
+	# Check for prompt flag or presence of 'noprompt' file. 
+	if prompt or not os.path.exists(path+os.sep+'noprompt'):
 
 		# If 'noprompt' doesn't exist, prompt if person would like to cache their credentials
 		if input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':

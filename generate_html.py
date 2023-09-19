@@ -11,7 +11,7 @@ from gradients import *
 
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
-def generate_html(alliance_info, table):
+def generate_html(alliance_info, nohist, table):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -24,7 +24,7 @@ def generate_html(alliance_info, table):
 	
 	# If we're doing a single lane format and we have history, let's generate a historical data tab. 
 	hist_tab = ''
-	if len(lanes) == 1 and len(alliance_info['hist'])>1:
+	if len(lanes) == 1 and len(alliance_info['hist'])>1 and not nohist:
 		hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
 
 	# Gotta start somewhere.
@@ -65,7 +65,7 @@ def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
 		
-			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section)
+			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, hist_tab)
 			keys = table.get('keys',['power','tier','iso'])
 
 			# Use the full Player List if explicit Strike Teams haven't been defined.
@@ -104,7 +104,7 @@ def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
 
 
 # Split meta chars from other chars. Filter others based on provided traits.
-def get_meta_other_chars(alliance_info, table, section):
+def get_meta_other_chars(alliance_info, table, section, hist_tab):
 
 	# Get the list of usable characters
 	char_list = get_char_list (alliance_info)
@@ -145,6 +145,15 @@ def get_meta_other_chars(alliance_info, table, section):
 			# Did we find this char in any of the traits?
 			if trait not in extracted_traits or char not in extracted_traits[trait]:
 				other_chars.remove(char)
+
+	# Filter out anyone with zero power, i.e. which no one has summoned.
+	meta_chars  = [char for char in meta_chars  if sum([int(alliance_info['members'][player]['processed_chars'][char]['power']) for player in player_list])]
+	other_chars = [char for char in other_chars if sum([int(alliance_info['members'][player]['processed_chars'][char]['power']) for player in player_list])]
+
+	# If historical, filter out anyone who's had zero change in power. 
+	if hist_tab:
+		meta_chars  = [char for char in meta_chars  if sum([int(alliance_info['members'][player]['processed_chars'][char]['power'])-int(find_oldest_val(alliance_info, player, char, 'power')) for player in player_list])]
+		other_chars = [char for char in other_chars if sum([int(alliance_info['members'][player]['processed_chars'][char]['power'])-int(find_oldest_val(alliance_info, player, char, 'power')) for player in player_list])]
 
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:
@@ -267,14 +276,13 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 
 					for key in keys:
 
-						# More work to do if we're calculating this for the History Tab.
-						if hist_tab:
-							# We want the diff between the current values and the values in the oldest record
-							key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key)) for player in player_list]
-
 						# Standard lookup. Get the range of values for this character for all rosters.
-						else:
+						if not hist_tab:
 							key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) for player in player_list]
+
+						# If historical, we want the diff between the current values and the values in the oldest record
+						else:
+							key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key)) for player in player_list]
 
 						min_val = min(key_vals)
 						max_val = max(key_vals)
@@ -282,13 +290,13 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 						# Only look up the value if we have a roster.
 						value = 0
 						if player_name in player_list:
-							# More work to do if we're calculating this for the History Tab.
-							if hist_tab:
-								# Basically, we gotta look for the first time this member exists within the History file, oldest to newest, and then display the difference between the stat in that record and this one.
-								value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key))
+						
 							# Standard lookup. Get the value for this character stat from this player's roster.
-							else:
+							if not hist_tab:
 								value = alliance_info['members'][player_name]['processed_chars'][char_name][key]
+							# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
+							else:
+								value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key))
 						
 						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value, key), [value,'-'][value in (0,'0')])
 
