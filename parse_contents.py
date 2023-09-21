@@ -22,27 +22,18 @@ def parse_alliance(contents):
 	alliance['name']      = remove_tags(soup.find('span', attrs = {'class':'alliance-name'}).text)
 	alliance['desc']      = soup.find('div',  attrs = {'class':'editable-msg'}).text
 	alliance['trophies']  = soup.find('div',  attrs = {'class':'war-trophies'}).text.strip()
-	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('Portrait_')[-1]
+	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('ALLIANCEICON_')[-1]
 
 	# Parse the alliance stats.
 	alliance_stats = soup.findAll('div', attrs = {'class':'level-item'})
 	
-	alliance['num_mems']  = int(alliance_stats[0].text.split('/')[-1])
 	alliance['stark_lvl'] = alliance_stats[1].text.split()[-1]
-	alliance['type']      = alliance_stats[2].text.split()[-1]
-	
-	tot_power = int(re.sub(r"\D", "", alliance_stats[3].text))
-	avg_power = int(re.sub(r"\D", "", alliance_stats[4].text))
-	
-	alliance['tot_power'] = f'{tot_power:,}'
-	alliance['avg_power'] = f'{avg_power:,}'
 	
 	# Parse each row of the members table, extracting stats for each member.
 	members_table = soup.find('tbody').findAll('tr', attrs={'draggable':'false'})
 
 	members  = {}
 	captains = []
-	order    = []
 
 	# Iterate through each entry, building up a member dict with stats for each.
 	for member_row in members_table:
@@ -65,8 +56,6 @@ def parse_alliance(contents):
 		elif str(member_role).find('is-captain') != -1:
 			captains.append(member_name)
 
-		member['role'] = member_role.text
-
 		member['tcp'] = int(re.sub(r"\D", "", member_row.find('td', attrs={'class':'tcp'}).text))
 
 		# The fact that they've used 'stp' for all three of these is probably a bug 
@@ -78,11 +67,9 @@ def parse_alliance(contents):
 
 		# Store the finished member info.
 		members[member_name] = member
-		order.append(member_name)
 
 	alliance['members']  = members
 	alliance['captains'] = captains
-	alliance['order']    = order
 	
 	# Just grab the URLs for the js scripts on the page. Will be used by extract_traits.
 	alliance['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
@@ -95,9 +82,32 @@ def parse_alliance(contents):
 def parse_roster(contents, alliance_info):
 	soup = BeautifulSoup(contents, 'html.parser')
 
-	player_name = remove_tags(soup.find('div', attrs = {'class':'player-name is-italic'}).text.strip())
+	# Start by parsing Player Info from the right panel. We will use this to update alliance_info if not working_from_web.
+	player = soup.find('div', attrs = {'class':'fixed-wrapper panel-wrapper'})
 
-	print("Parsing %i bytes...found Alliance Member named: %s" % (len(contents), player_name))
+	player_info = {}
+
+	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
+	player_info['name'] = remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
+	print("Parsing %i bytes...found Alliance Member named: %s" % (len(contents), player_info['name']))
+
+	player_info['image'] = player.find('img').get('src').split('Portrait_')[-1]
+	player_info['level'] = int(player.find('span').text)
+
+	player_stats = player.find('div', attrs = {'class':'player-stats'}).findAll('span')
+
+	mvp_missing = player.text.find('MVP') == -1
+
+	player_info['tcp']   =  int(re.sub(r"\D", "", player_stats[0].text))
+	player_info['stp']   =  int(re.sub(r"\D", "", player_stats[1].text))
+	player_info['mvp']   = [int(re.sub(r"\D", "", player_stats[2].text)),0][mvp_missing]
+	player_info['tcc']   =  int(re.sub(r"\D", "", player_stats[3-mvp_missing].text))
+	player_info['max']   =  int(re.sub(r"\D", "", player_stats[4-mvp_missing].text))
+	player_info['arena'] =  int(re.sub(r"\D", "", player_stats[5-mvp_missing].text))
+	
+	player_info['blitz'] =  int(re.sub(r"\D", "", player_stats[-3].text))
+	player_info['stars'] =  int(re.sub(r"\D", "", player_stats[-2].text))
+	player_info['red']   =  int(re.sub(r"\D", "", player_stats[-1].text))
 
 	processed_chars  = {}
 	char_portraits   = {}
@@ -182,22 +192,32 @@ def parse_roster(contents, alliance_info):
 		elif char_name:
 			processed_chars[char_name] = {'fav':'', 'lvl':'0', 'power':'0', 'tier':'0', 'iso':'0', 'class':'', 'yel':'0', 'red':'0', 'bas':'0', 'spec':'0', 'ult':'0', 'pass':'0'}
 
-	# Finally, store total roster power and now as last_update.
+	# Finally, store calculated total roster power.
 	processed_chars['tot_power'] = tot_power
-	processed_chars['last_update'] = datetime.datetime.now()
 	
 	# Get a little closer to our work. 
-	player = alliance_info['members'][player_name]
-	
-	# Keep the old 'last_update' if the tot_power hasn't changed.
+	player = alliance_info['members'].setdefault(player_info['name'],{})
+		
+	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
 	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
 		processed_chars['last_update'] = player['processed_chars']['last_update']
+	else:
+		processed_chars['last_update'] = datetime.datetime.now()
 	
-	# Add this parsed data to our list of processed players.
+	# Add the 'clean' parsed data to our list of processed players.
 	player['processed_chars'] = processed_chars
 
+	# And update the player info with current stats from the side panel.
+	player.update(player_info)
+	
 	# Update alliance_info with portrait information.
 	alliance_info['portraits'] = char_portraits
+
+	# If 'scripts' isn't already defined, just grab the URLs for the js scripts on the page. Will be used by extract_traits.
+	if 'scripts' not in alliance_info:
+		alliance_info['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
+
+	return player_info['name']
 
 
 # Pull strike team definitions directly from the website. 

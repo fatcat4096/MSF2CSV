@@ -10,6 +10,7 @@ import getpass
 import keyring
 import os
 import pickle
+import string
 import sys
 import time
 
@@ -226,12 +227,19 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 		# Use a cached URL if available.
 		if 'url' in members[member]:
+
+			# Fix existing, cached entries.
+			if 'https' in members[member]['url']:
+				members[member]['url'] = members[member]['url'].split('/')[-2]
+				
 			#print ("Using cached URL to download",member)
-			driver.get(members[member]['url'])
+			driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % members[member]['url'])
+			
 		# Cached URL is the ONLY option if not working_from_website
 		elif not working_from_website:
 			print ("Skipping",member,"-- no cached URL available.")
 			continue
+
 		# Otherwise, find an active roster button for this member
 		else:
 			# Start off by getting back to the Alliance page if we're not already on it.
@@ -242,11 +250,11 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			if not find_members_roster(driver, member):
 				continue
 
-		process_roster(driver, alliance_info, member)
+		process_roster(driver, alliance_info)
 
 
 # Parse just the current Roster page.
-def process_roster(driver, alliance_info, member):
+def process_roster(driver, alliance_info):
 	# At this point, we're on the right page. Just need to wait for it to load before we parse it.
 	timer = 0
 	
@@ -265,14 +273,140 @@ def process_roster(driver, alliance_info, member):
 
 	# If page loaded, pass contents to scraping routines for stat extraction.
 	if len(driver.page_source)>1000000:
-		parse_roster(driver.page_source, alliance_info)
+		member = parse_roster(driver.page_source, alliance_info)
 	
 		# Prevent second download within an hour.
 		alliance_info['members'][member]['last_download'] = datetime.datetime.now()
 
 		# Cache the URL just in case we can use this later
-		alliance_info['members'][member]['url'] = driver.current_url
+		alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
+		
+		return member
 
+
+# Encode key info from alliance_info into something that fits in a DM.
+def encode_alliance_info(alliance_info):
+	block = []
+
+	# Include basic info about the alliance.
+	block.append(alliance_info['name'].replace(' ','_'))
+	block.append(alliance_info['image'])
+
+	# Include the count of leader + captains.
+	block.append(str(len(alliance_info['captains'])+1))
+
+	# Encode each member's URL.
+	member_list  = [alliance_info['leader']]+alliance_info['captains']
+	member_list += [member for member in alliance_info['members'] if member not in member_list]
+	member_urls  = [encode_url(alliance_info['members'][member]['url']) for member in member_list]
+	block += member_urls
+
+	# Encode the strike teams
+	for team in ['incur','other']:
+		encoded_team = ''
+		for member in sum(alliance_info['strike_teams'][team],[]):
+			if member in member_list:
+				encoded_team += string.ascii_uppercase[member_list.index(member)]
+		block.append(encoded_team)
+	
+	# Smash it all together and hand it off.
+	return ','.join(block)
+
+	
+# Decode the encoded block and populate alliance_info with stats and rosters from MSF.gg. 
+def decode_alliance_info(block):
+	
+	alliance_info = {'members':{}}
+	
+	parts = block.split(',')
+
+	alliance_info['name']  = parts[0].replace('_',' ')
+	alliance_info['image'] = parts[1]
+
+	leader_count = int(parts[2])
+	
+	# These are the encoded URL fragments
+	member_urls = [decode_url(part) for part in parts[3:-2]]
+	
+	# These are the encoded Strike Teams
+	encoded_strike_teams = {}
+	encoded_strike_teams['incur'] = parts[-2]
+	encoded_strike_teams['other'] = parts[-1]
+	
+	# Start by logging in. 
+	driver = login()
+
+	# Download and parse each roster
+	member_list = []
+	for member_url in member_urls:
+		driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % member_url)
+		member_list.append(process_roster(driver, alliance_info))
+
+	# Close the Selenium session.
+	driver.close()
+
+	alliance_info['leader']   = member_list[0]
+	alliance_info['captains'] = member_list[1:leader_count]
+
+	# Translate the Strike Teams from the encoded format.
+	strike_teams = alliance_info.setdefault('strike_teams',{})
+	
+	for raid_type in ['incur','other']:
+		strike_team = []
+		for encoded_member in encoded_strike_teams[raid_type]:
+			strike_team.append(member_list[string.ascii_uppercase.index(encoded_member)])
+
+		# Break it up into chunks for each team.
+		strike_teams[raid_type] = add_strike_team_dividers([strike_team[:8], strike_team[8:16], strike_team[16:]], raid_type)
+
+	# Populate extracted_traits.
+	get_extracted_traits(alliance_info)
+
+	# Keep a copy of critical stats from today's run for historical analysis.
+	update_history(alliance_info)
+	
+	# Change working directory to the local directory and cache the updated roster info to disk.
+	os.chdir(path)
+	pickle.dump(alliance_info,open('cached_data-'+alliance_info['name']+'-block.msf','wb'))
+
+	return alliance_info
+
+
+# Use as many printable characters as possible. None of these cause problems in Discord or DOS.
+ENCODING = string.digits + string.ascii_lowercase + string.ascii_uppercase + '!#$%+-./:;=?@[]{}~'
+
+
+# Convert to Base 92 for shorter encoding.
+def encode_url(decoded):
+
+	# Start by removing any dashes and converting to base 10 int
+	pid = int(decoded.replace('-',''),16)
+
+	# Convert from base 10 to base 92.
+	encoded = []
+	while pid != 0:
+		pid, mod = divmod(pid, len(ENCODING))
+		encoded.append(ENCODING[mod])
+
+	return ''.join(reversed(encoded))
+
+
+# Decode from base 92 and insert hyphens as needed.
+def decode_url(encoded):
+	pid = 0
+	
+	for idx in range(len(encoded)-1,-1,-1):
+		pid += ENCODING.index(encoded[idx]) * len(ENCODING)**(len(encoded)-1-idx)
+	decoded = hex(pid)[2:].zfill(13)
+	
+	# If short format, we're done.
+	if len(decoded)==13:
+		return decoded
+
+	# Long format includes dashes.
+	decoded = decoded.zfill(32)
+	return decoded[:8]+'-'+decoded[8:12]+'-'+decoded[12:16]+'-'+decoded[16:20]+'-'+decoded[20:]
+	
 
 # Login to the website. Return the Selenium Driver object.
 def login(prompt=False, url = 'https://marvelstrikeforce.com/en/alliance/members'):

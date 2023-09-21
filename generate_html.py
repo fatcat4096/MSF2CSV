@@ -336,73 +336,103 @@ def find_oldest_val(alliance_info, player_name, char_name, key):
 # Generate just the Alliance Tab contents.
 def generate_alliance_tab(alliance_info, html_file=''):
 
+	tot_power = sum([alliance_info['members'][member]['tcp'] for member in alliance_info['members']])
+	avg_power = int(tot_power/len(alliance_info['members']))
+
+	# Use this flag to determine which header information is displayed.
+	extras_avail = alliance_info.get('trophies')
+	
 	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
 	html_file += '<table style="background-color:SteelBlue;">\n'
 
-	html_file += '<tr>\n'
-	html_file += ' <td colspan="9" class="alliance_name">%s</td>' % (alliance_info['name'].upper())
-	html_file += '</tr>\n'
+	html_file += '<tr>\n</tr>\n'
+
+	html_file += '<tr style="font-size:18px;">\n'
+	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s"/></td>\n' % (alliance_info['image'])
+	html_file += ' <td colspan="10" rowspan="%s" class="alliance_name">%s</td>' % (['1','2'][not extras_avail], alliance_info['name'].upper())
 	
-	html_file += '<tr>\n'
-	html_file += ' <td colspan="2" rowspan="2"><img width="150" src="%s"/></td>\n' % (alliance_info['image'])
-	html_file += ' <td colspan="2"><span style="font-size:18px;">Members</span><br><span style="font-size:24px;"><b>%i/24</b></span></td>\n' % (alliance_info['num_mems'])
-	html_file += ' <td><span style="font-size:18px;">Level</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['stark_lvl'])
-	html_file += ' <td><span style="font-size:18px;">Trophies</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['trophies'])
-	html_file += ' <td colspan="2"><span style="font-size:18px;">Type</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['type'])
-	html_file += ' <td colspan="2" rowspan="2"><span class="bold_text" style="font-size:24px">Alliance Message:</span><br><span style="font-size:18px;">%s</span></td>' % (alliance_info['desc'])
+	if extras_avail:	html_file += ' <td colspan="2" rowspan="2"><span class="bold_text" style="font-size:24px">Alliance Message:</span><br>%s</td>' % (alliance_info.get('desc',''))
+	else:				html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
+
 	html_file += '</tr>\n'
 
-	html_file += '<tr>\n'
-	html_file += ' <td colspan="3"><span style="font-size:18px;">Total Power</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['tot_power'])
-	html_file += ' <td colspan="3"><span style="font-size:18px;">Average Collection Power</span><br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['avg_power'])
+	html_file += '<tr style="font-size:18px;">\n'
+	if extras_avail:	html_file += ' <td colspan="2">Members<br><span style="font-size:24px;"><b>%i/24</b></span></td>\n' % (len(alliance_info['members']))
+	if extras_avail:	html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
+	html_file += ' <td colspan="2">Average Collection Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{avg_power:,}')
+	if extras_avail:	html_file += ' <td colspan="2">Level<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('stark_lvl',''))
+	if extras_avail:	html_file += ' <td colspan="2">Trophies<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('trophies',''))
 	html_file += '</tr>\n'
 	
 	# Create the headings for the Alliance Info table.
-	html_file += '<tr class="table_header_blue" height="40" style="font-size:14pt;">\n'
-	html_file += ' <td width="50" ></td>\n'
-	html_file += ' <td width="200">Name</td>\n'            
-	html_file += ' <td width="100">Level</td>\n'
-	html_file += ' <td width="100">Role</td>\n'
-	html_file += ' <td width="200">Collection Power</td>\n'
-	html_file += ' <td width="200">Strongest Team</td>\n'
-	html_file += ' <td width="100">War MVP</td>\n'
-	html_file += ' <td width="100">Collected</td>\n'
-	html_file += ' <td width="300">Last Updated:</td>\n'
+	html_file += '<tr class="table_header_blue" style="font-size:14pt;">\n'
+	html_file += ' <td width="60" ></td>\n'
+	html_file += ' <td width="215">Name</td>\n'            
+	html_file += ' <td width="110">Level</td>\n'
+	html_file += ' <td width="110">Role</td>\n'
+	html_file += ' <td width="110">Collection<br>Power</td>\n'
+	html_file += ' <td width="110">Strongest<br>Team</td>\n'
+	html_file += ' <td width="110">War<br>MVP</td>\n'
+	html_file += ' <td width="110">Total<br>Collected</td>\n'
+	html_file += ' <td width="110">Max<br>Stars</td>\n'
+	html_file += ' <td width="110">Arena<br>Rank</td>\n'
+	html_file += ' <td width="110">Blitz<br>Wins</td>\n'
+	html_file += ' <td width="110">Total<br>Stars</td>\n'
+	html_file += ' <td width="110">Total<br>Red</td>\n'
+	html_file += ' <td width="215">Last Updated:</td>\n'
 	html_file += '</tr>\n'
+	
+	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
 	
 	# Build up the list of Alliance Members
 	member_list =  [alliance_info['leader']] + alliance_info['captains']
-	member_list += [member for member in alliance_info['order'] if member not in member_list]
+	member_list += [member for member in alliance_order if member not in member_list]
 
-	tcp_range = [alliance_info['members'][member]['tcp'] for member in member_list]
-	stp_range = [alliance_info['members'][member]['stp'] for member in member_list]
-	mvp_range = [alliance_info['members'][member]['mvp'] for member in member_list]
-	tcc_range = [alliance_info['members'][member]['tcc'] for member in member_list]
+	tcp_range   = [alliance_info['members'][member]['tcp']   for member in member_list]
+	stp_range   = [alliance_info['members'][member]['stp']   for member in member_list]
+	mvp_range   = [alliance_info['members'][member]['mvp']   for member in member_list]
+	tcc_range   = [alliance_info['members'][member]['tcc']   for member in member_list]
+	max_range   = [alliance_info['members'][member]['max']   for member in member_list]
+	arena_range = [alliance_info['members'][member]['arena'] for member in member_list]
+	blitz_range = [alliance_info['members'][member]['blitz'] for member in member_list]
+	stars_range = [alliance_info['members'][member]['stars'] for member in member_list]
+	red_range   = [alliance_info['members'][member]['red']   for member in member_list]
 
 	for member in member_list:
 		# Get a little closer to what we're working with.
 		member_stats = alliance_info['members'][member]
 		
-		html_file += ' <tr style="font-size:12pt;">\n'
+		if member in alliance_info['leader']:
+			member_role = 'Leader'
+		elif member in alliance_info['captains']:
+			member_role = 'Captain'
+		else:
+			member_role = 'Member'
 
 		member_color = {'Leader':  'PowderBlue',
 						'Captain': 'DeepSkyBlue',
-						'Member':  'PowderBlue' }[member_stats['role']]
+						'Member':  'PowderBlue' }[member_role]
 
-		html_file += '  <td style="padding: 0px; background-color:%s;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s"/></td>\n' % (member_color, member_stats['image'])
-		html_file += '  <td class="bold_text" style="background-color:%s;">%s</td>\n' % (member_color, member)
-		html_file += '  <td style="background-color:%s;">%i</td>\n' % (member_color,member_stats['level'])
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (member_color, member_stats['role'])
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tcp_range), max(tcp_range), member_stats['tcp']), f'{member_stats["tcp"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stp_range), max(stp_range), member_stats['stp']), f'{member_stats["stp"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(mvp_range), max(mvp_range), member_stats['mvp']), f'{member_stats["mvp"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range), member_stats['tcc']), f'{member_stats["tcc"]:,}')
+		html_file += ' <tr style="background-color:%s;">\n' % (member_color)
+		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s"/></td>\n' % (member_stats['image'])
+		html_file += '  <td class="bold_text">%s</td>\n' % (member)
+		html_file += '  <td>%i</td>\n' % (member_stats['level'])
+		html_file += '  <td>%s</td>\n' % (member_role)
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats['tcp']),   f'{member_stats["tcp"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stp_range),   max(stp_range),   member_stats['stp']),   f'{member_stats["stp"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(mvp_range),   max(mvp_range),   member_stats['mvp']),   f'{member_stats["mvp"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range),   member_stats['tcc']),   f'{member_stats["tcc"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats['max']),   f'{member_stats["max"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats['arena']), f'{member_stats["arena"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats['blitz']), f'{member_stats["blitz"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats['stars']), f'{member_stats["stars"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats['red']),   f'{member_stats["red"]:,}')
 
 		time_since_last = 4*86400
 		time_value      = 'Never<br>Member needs to re-sync their roster.'
-		if member in alliance_info['members'] and 'processed_chars' in alliance_info['members'][member]:
-			time_since_last = datetime.datetime.now() - alliance_info['members'][member]['processed_chars']['last_update']
-			time_value = '%s,<br>%s ago' % (alliance_info['members'][member]['processed_chars']['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
+		if member in alliance_info['members'] and 'processed_chars' in member_stats:
+			time_since_last = datetime.datetime.now() - member_stats['processed_chars']['last_update']
+			time_value = '%s,<br>%s ago' % (member_stats['processed_chars']['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
 			time_since_last = time_since_last.total_seconds()
 		
 		time_color = get_value_color(0, 4*86400, (4*86400)-time_since_last)
@@ -577,18 +607,14 @@ def translate_name(value):
 				"Captain America (WWII)": "Capt. America (WWII)",
 				"Captain America (Sam)": "Capt. America (Sam)"}
 
-	#Return the translation
-	if value in tlist:
-		return tlist[value]
-	
-	# No change.
-	return value
+	# Return the translation if available.
+	return tlist.get(value, value)
 
 
 # Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
-def add_tabbed_header(num_lanes, hist_tab, table_name = '', html_file = ''):
+def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
 
-		html_file += '''
+		html_file = '''
 <head>
 <title>'''+table_name+''' Info</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -724,24 +750,25 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = '', html_file = ''):
 
 
 # Quick and dirty Javascript to allow Tabbed implementation for raids with lanes.
-def add_tabbed_footer(html_file = ''):
-		html_file += '<script>\n'
-		html_file += 'function openPage(pageName,elmnt) {\n'
-		html_file += '  var i, tabcontent, tablinks;\n'
-		html_file += '  tabcontent = document.getElementsByClassName("tabcontent");\n'
-		html_file += '  for (i = 0; i < tabcontent.length; i++) {\n'
-		html_file += '    tabcontent[i].style.display = "none";\n'
-		html_file += '  }\n'
-		html_file += '  tablinks = document.getElementsByClassName("tablink");\n'
-		html_file += '  for (i = 0; i < tablinks.length; i++) {\n'
-		html_file += '    tablinks[i].style.backgroundColor = "";\n'
-		html_file += '  }\n'
-		html_file += '  document.getElementById(pageName).style.display = "block";\n'
-		html_file += '  elmnt.style.backgroundColor = "#343734";\n'
-		html_file += '}\n\n'
-		html_file += '// Get the element with id="defaultOpen" and click on it\n'
-		html_file += 'document.getElementById("defaultOpen").click();\n'
-		html_file += '</script>\n'
-		html_file += '</body>\n'
-		
-		return html_file
+def add_tabbed_footer():
+		return '''
+<script>
+function openPage(pageName,elmnt) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+	tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < tablinks.length; i++) {
+	tablinks[i].style.backgroundColor = "";
+  }
+  document.getElementById(pageName).style.display = "block";
+  elmnt.style.backgroundColor = "#343734";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+</body>
+'''
