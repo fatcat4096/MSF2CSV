@@ -153,12 +153,14 @@ def parse_roster(contents, alliance_info):
 			
 			# Decode Abilities
 			abilities = toon_stats.findAll('div', attrs = {'class':'ability-level'})
-			basic   = str(abilities[0]).split('-')[3][1]
-			special = str(abilities[1]).split('-')[3][1]
+			bas = str(abilities[0]).split('-')[3][1]
+			spc = str(abilities[1]).split('-')[3][1]
 			ult = '0'
-			if len(abilities)==4:
+			if '-level-' in str(abilities[-2]) and len(abilities)==4:
 				ult = str(abilities[-2]).split('-')[3][1]
-			passive = str(abilities[-1]).split('-')[3][1]
+			pas = '0'
+			if '-level-' in str(abilities[-1]):
+				pas = str(abilities[-1]).split('-')[3][1]
 			
 			# Decode Gear Tier
 			gear = char.find('div',attrs={'class':'gear-tier-ring'})
@@ -186,11 +188,11 @@ def parse_roster(contents, alliance_info):
 			elif iso_info.find('restoration') != -1:
 				iso_class = 'Healer'
 
-			processed_chars[char_name] = {'fav':favorite, 'lvl':level, 'power':power, 'tier':tier, 'iso':iso, 'class':iso_class, 'yel':yelStars, 'red':redStars, 'bas':basic, 'spec':special, 'ult':ult, 'pass':passive}
+			processed_chars[char_name] = {'fav':favorite, 'lvl':level, 'power':power, 'tier':tier, 'iso':iso, 'class':iso_class, 'yel':yelStars, 'red':redStars, 'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
-			processed_chars[char_name] = {'fav':'', 'lvl':'0', 'power':'0', 'tier':'0', 'iso':'0', 'class':'', 'yel':'0', 'red':'0', 'bas':'0', 'spec':'0', 'ult':'0', 'pass':'0'}
+			processed_chars[char_name] = {'fav':'', 'lvl':'0', 'power':'0', 'tier':'0', 'iso':'0', 'class':'', 'yel':'0', 'red':'0', 'bas':'0', 'spc':'0', 'ult':'0', 'pas':'0'}
 
 	# Finally, store calculated total roster power.
 	processed_chars['tot_power'] = tot_power

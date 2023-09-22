@@ -47,8 +47,9 @@ def main(alliance_name='', cached_data='', csv=False, nohist=False, prompt=False
 		 write_file(filename+"original.csv", generate_csv(alliance_info))
 	else:
 		# Generate the active html files specified in tables.py
+		cached_tabs = {}
 		for table in tables['active']:
-			write_file(filename+table+'.html', generate_html(alliance_info, nohist, tables[table]))
+			write_file(filename+table+'.html', generate_html(alliance_info, nohist, tables[table], cached_tabs))
 
 	time.sleep(1)
 
