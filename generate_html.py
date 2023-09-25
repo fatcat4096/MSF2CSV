@@ -155,14 +155,14 @@ def get_meta_other_chars(alliance_info, table, section, hist_tab):
 			if trait not in extracted_traits or char not in extracted_traits[trait]:
 				other_chars.remove(char)
 
-	# Filter out anyone with zero power, i.e. which no one has summoned.
+	# Filter out any characters which no one has summoned.
 	meta_chars  = [char for char in meta_chars  if sum([int(alliance_info['members'][player]['processed_chars'][char]['power']) for player in player_list])]
 	other_chars = [char for char in other_chars if sum([int(alliance_info['members'][player]['processed_chars'][char]['power']) for player in player_list])]
 
-	# If historical, filter out anyone who's had zero change in power. 
+	# If historical, filter out any character which no one has improved. 
 	if hist_tab:
-		meta_chars  = [char for char in meta_chars  if sum([int(alliance_info['members'][player]['processed_chars'][char]['power'])-int(find_oldest_val(alliance_info, player, char, 'power')) for player in player_list])]
-		other_chars = [char for char in other_chars if sum([int(alliance_info['members'][player]['processed_chars'][char]['power'])-int(find_oldest_val(alliance_info, player, char, 'power')) for player in player_list])]
+		meta_chars  = [char for char in meta_chars  if sum([find_oldest_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
+		other_chars = [char for char in other_chars if sum([find_oldest_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:
@@ -291,13 +291,14 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 
 						# If historical, we want the diff between the current values and the values in the oldest record
 						else:
-							key_vals = [int(alliance_info['members'][player]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key)) for player in player_list]
+							key_vals = [find_oldest_diff(alliance_info, player, char_name, key)[0] for player in player_list]
 
 						min_val = min(key_vals)
 						max_val = max(key_vals)
 
 						# Only look up the value if we have a roster.
 						value = 0
+						other_diffs = ''
 						if player_name in player_list:
 						
 							# Standard lookup. Get the value for this character stat from this player's roster.
@@ -305,9 +306,8 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 								value = alliance_info['members'][player_name]['processed_chars'][char_name][key]
 							# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
 							else:
-								value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(find_oldest_val(alliance_info, player_name, char_name, key))
-						
-						html_file += '     <td style="background-color:%s;">%s</td>\n' % (get_value_color(min_val, max_val, value, key, hist_tab), [value,'-'][value in (0,'0')])
+								value,other_diffs = find_oldest_diff(alliance_info, player_name, char_name, key)
+						html_file += '     <td style="background-color:%s;"%s>%s</td>\n' % (get_value_color(min_val, max_val, value, key, hist_tab), other_diffs, [value,'-'][value in (0,'0')])
 
 				# Include the Team Power column.
 				team_pwr = all_team_pwr.get(player_name,0)
@@ -319,6 +319,39 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 	html_file += '   </table>\n'
 
 	return html_file
+
+
+# Find this member's oldest entry in our historical entries.
+def find_oldest_diff(alliance_info, player_name, char_name, key):
+	dates = list(alliance_info['hist'])
+
+	# Start with the oldest entry in 'hist', looking for this member's stats.
+	while dates:
+		min_date = min(dates)
+		if player_name in alliance_info['hist'][min_date]:
+
+			# Get the current value of this key.
+			value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(alliance_info['hist'][min_date][player_name].get(char_name,{}).get(key,0))
+
+			if not value:
+				return 0,''
+		
+			# If there was a difference, let's make note of what created that difference.
+			diffs = []
+			for entry in [item for item in ['power','lvl','tier','iso'] if item != key]:
+				diff = int(alliance_info['members'][player_name]['processed_chars'][char_name][entry]) - int(alliance_info['hist'][min_date][player_name].get(char_name,{}).get(entry,0))
+
+				if diff:
+					diffs.append(f'{entry.title()}: {diff:+}')
+
+			other_diffs = [' title="%s"' % (', '.join(diffs)),''][not diffs]
+			return value, other_diffs
+
+		# Oldest entry didn't have it, go one newer.
+		dates.remove(min_date)
+
+	# Should not happen. Should always at least find this member in the most recent run.
+	return 0,''
 
 
 # Find this member's oldest entry in our historical entries.
@@ -340,6 +373,8 @@ def find_oldest_val(alliance_info, player_name, char_name, key):
 
 	# Should not happen. Should always at least find this member in the most recent run.
 	return '0'
+
+
 
 
 # Generate just the Alliance Tab contents.
@@ -647,11 +682,11 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	stp_range   = [alliance_info['members'][member]['stp']   for member in member_list]
 	mvp_range   = [alliance_info['members'][member]['mvp']   for member in member_list]
 	tcc_range   = [alliance_info['members'][member]['tcc']   for member in member_list]
-	max_range   = [alliance_info['members'][member]['max']   for member in member_list]
-	arena_range = [alliance_info['members'][member]['arena'] for member in member_list]
-	blitz_range = [alliance_info['members'][member]['blitz'] for member in member_list]
-	stars_range = [alliance_info['members'][member]['stars'] for member in member_list]
-	red_range   = [alliance_info['members'][member]['red']   for member in member_list]
+	max_range   = [alliance_info['members'][member].get('max',0)   for member in member_list]
+	arena_range = [alliance_info['members'][member].get('arena',0) for member in member_list]
+	blitz_range = [alliance_info['members'][member].get('blitz',0) for member in member_list]
+	stars_range = [alliance_info['members'][member].get('stars',0) for member in member_list]
+	red_range   = [alliance_info['members'][member].get('red',0)   for member in member_list]
 
 	for member in member_list:
 		# Get a little closer to what we're working with.
@@ -677,14 +712,14 @@ def generate_alliance_tab(alliance_info, html_file=''):
 		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stp_range),   max(stp_range),   member_stats['stp']),   f'{member_stats["stp"]:,}')
 		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(mvp_range),   max(mvp_range),   member_stats['mvp']),   f'{member_stats["mvp"]:,}')
 		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range),   member_stats['tcc']),   f'{member_stats["tcc"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats['max']),   f'{member_stats["max"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats['arena']), f'{member_stats["arena"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats['blitz']), f'{member_stats["blitz"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats['stars']), f'{member_stats["stars"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats['red']),   f'{member_stats["red"]:,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats.get('max',0)),   f'{member_stats.get("max",0):,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats.get('arena',0)), f'{member_stats.get("arena",0):,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats.get('blitz',0)), f'{member_stats.get("blitz",0):,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats.get('stars',0)), f'{member_stats.get("stars",0):,}')
+		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0)),   f'{member_stats.get("red",0):,}')
 
 		time_since_last = 4*86400
-		time_value      = 'Never<br>Member needs to re-sync their roster.'
+		time_value      = 'Never<br>Ask member to sync roster.'
 		if member in alliance_info['members'] and 'processed_chars' in member_stats:
 			time_since_last = datetime.datetime.now() - member_stats['processed_chars']['last_update']
 			time_value = '%s,<br>%s ago' % (member_stats['processed_chars']['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])

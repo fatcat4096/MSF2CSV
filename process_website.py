@@ -109,7 +109,7 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 			# Also copy over additional information inside the member definitions.
 			for member in alliance_info['members']:
 				for key in ['processed_chars','last_download','url']:
-					if key in cached_alliance_info['members'][member]:
+					if key in cached_alliance_info['members'].get(member,{}):
 						alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
 
 	# If not working_from_website, the cached_alliance_info will be our baseline. 
@@ -284,6 +284,10 @@ def process_roster(driver, alliance_info):
 		return member
 
 
+# Use as many printable characters as possible. None of these cause problems in Discord or DOS.
+ENCODING = string.digits + string.ascii_lowercase + string.ascii_uppercase + '!#$%+-./:;=?@[]{}~'
+
+
 # Encode key info from alliance_info into something that fits in a DM.
 def encode_alliance_info(alliance_info):
 	block = []
@@ -306,7 +310,7 @@ def encode_alliance_info(alliance_info):
 		encoded_team = ''
 		for member in sum(alliance_info['strike_teams'][team],[]):
 			if member in member_list:
-				encoded_team += string.ascii_uppercase[member_list.index(member)]
+				encoded_team += ENCODING[member_list.index(member)]
 		block.append(encoded_team)
 	
 	# Smash it all together and hand it off.
@@ -354,7 +358,7 @@ def decode_alliance_info(block):
 	for raid_type in ['incur','other']:
 		strike_team = []
 		for encoded_member in encoded_strike_teams[raid_type]:
-			strike_team.append(member_list[string.ascii_uppercase.index(encoded_member)])
+			strike_team.append(member_list[ENCODING.index(encoded_member)])
 
 		# Break it up into chunks for each team.
 		strike_teams[raid_type] = add_strike_team_dividers([strike_team[:8], strike_team[8:16], strike_team[16:]], raid_type)
@@ -370,10 +374,6 @@ def decode_alliance_info(block):
 	pickle.dump(alliance_info,open('cached_data-'+alliance_info['name']+'-block.msf','wb'))
 
 	return alliance_info
-
-
-# Use as many printable characters as possible. None of these cause problems in Discord or DOS.
-ENCODING = string.digits + string.ascii_lowercase + string.ascii_uppercase + '!#$%+-./:;=?@[]{}~'
 
 
 # Convert to Base 92 for shorter encoding.
