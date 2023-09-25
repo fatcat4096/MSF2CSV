@@ -9,7 +9,7 @@ Feel free to provide feedback, questions, comments, etc. My username is "fatcat4
 	
 # Requirements:
 1. Install Python 3.x from Python.org
-2. Install Beautiful Soup 4, KeyRing, and Selenium -- 'pip install -r requirements.txt'
+2. Install Beautiful Soup 4, KeyRing, and Selenium -- from a command prompt: <code>python -m pip install -r requirements.txt</code>
 3. Double click on msf2csv.py
 
 # Configuration:
