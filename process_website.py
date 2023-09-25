@@ -574,8 +574,14 @@ def find_members_roster(driver, member):
 		button.click()
 	except:
 		time.sleep(0.5)
+	
+	# Try one more time, if second exception, exit with False and move on.
+	try:
 		button.click()
-
+	except:
+		print ("Click raised exception twice for ",member,"-- skipping...")
+		return False
+	
 	return True
 
 

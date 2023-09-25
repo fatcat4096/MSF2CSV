@@ -54,16 +54,6 @@ def main(alliance_name='', cached_data='', csv=False, nohist=False, prompt=False
 	time.sleep(1)
 
 
-def write_file(filename, content):
-	# Default output is UTF-8. Attempt to use it as it's more compatible.
-	try:
-		open(filename, 'w').write(content)
-	# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
-	except:
-		open(filename, 'w', encoding='utf-16').write(content)	
-	print ("Writing %s" % (filename))
-
-
 # Parse arguments
 if __name__ == '__main__':
 

@@ -13,7 +13,7 @@ def get_value_color(min, max, value, stat='power', hist_tab=''):
 	
 	# Special treatment for the '0' fields. 
 	if not value:
-		return '#282828;color:#919191;'
+		return '#282828;color:#919191'
 
 	#Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 	if stat=='iso':

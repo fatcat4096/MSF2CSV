@@ -85,14 +85,14 @@ def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
 
 			# Only calling it twice if we have meta_chars defined.
 			if meta_chars:
-				meta_lbl = table_lbl+'<br><span class="table_subtitle">META</span>'
+				meta_lbl = table_lbl+'<br><span class="subtitle">META</span>'
 
 				html_file += '<table>\n <tr>\n  <td>\n'
 				html_file += generate_table(alliance_info, keys, meta_chars, strike_teams, meta_lbl, get_stp_list(alliance_info, meta_chars, hist_tab), hist_tab)
-				html_file += '  </td>\n  <td>\n   <br>\n  </td>\n  <td>\n'
+				html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
 				# Differentiate Others Section from Meta Section
-				table_lbl += '<br><span class="table_subtitle">OTHERS</span>'
+				table_lbl += '<br><span class="subtitle">OTHERS</span>'
 
 			# Always generate the Others table.
 			# Only label it as such if Meta section exists.
@@ -178,18 +178,18 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 	player_list = get_player_list (alliance_info)
 
 	if table_lbl.find('OTHERS') == -1:
-		title_cell    = 'title_cell_blue'
-		table_header  = 'table_header_blue'
-		char_cell     = 'char_cell_blue'
-		name_cell     = 'name_cell_blue'
-		name_cell_alt = 'name_cell_blue_alt'
+		title_cell    = 'title_blue'
+		table_header  = 'header_blue'
+		char_cell     = 'char_blue'
+		name_cell     = 'name_blue'
+		name_cell_alt = 'name_blue_alt'
 		team_pwr_lbl  = 'Team<br>Power'
 	else:
-		title_cell    = 'title_cell_gray'
-		table_header  = 'table_header_gray'
-		char_cell     = 'char_cell_gray'
-		name_cell     = 'name_cell_gray'
-		name_cell_alt = 'name_cell_gray_alt'
+		title_cell    = 'title_gray'
+		table_header  = 'header_gray'
+		char_cell     = 'char_gray'
+		name_cell     = 'name_gray'
+		name_cell_alt = 'name_gray_alt'
 		team_pwr_lbl  = 'STP<br>(Top 5)'
 
 	# Let's get this party started!
@@ -201,7 +201,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 
 	# Include Images for each of the Characters.
 	for char in char_list:
-		html_file += '     <th class="image_cell" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s" alt="" width="100"></th>\n' % (len(keys), alliance_info['portraits'][char])
+		html_file += '     <th class="image" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s" alt="" width="100"></th>\n' % (len(keys), alliance_info['portraits'][char])
 
 	# Include a Team Power column.
 	html_file += '     <td></td>\n'
@@ -250,7 +250,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 					html_file += '     <td>%s</td>\n' % {'lvl':'Level'}.get(key,key.title())
 
 			# Insert the Team Power column.
-			html_file += '     <td class="power_header">%s</td>\n' % (team_pwr_lbl)
+			html_file += '     <td class="power">%s</td>\n' % (team_pwr_lbl)
 			html_file += '    </tr>\n'
 		# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
 
@@ -277,7 +277,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 
 			# Time to build the row.
 			if player_name in player_list:
-				html_file += '    <tr style="text-align: center;">\n'
+				html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
 				html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_cell_alt][alt_color], player_name)
 
 				# Write the stat values for each character.
@@ -307,11 +307,14 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 							# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
 							else:
 								value,other_diffs = find_oldest_diff(alliance_info, player_name, char_name, key)
-						html_file += '     <td style="background-color:%s;"%s>%s</td>\n' % (get_value_color(min_val, max_val, value, key, hist_tab), other_diffs, [value,'-'][value in (0,'0')])
+						style = ''
+						if value not in (0,'0'):
+							style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, hist_tab), ['color:black;',''][not hist_tab])
+						html_file += '     <td%s%s>%s</td>\n' % (style, other_diffs, [value,'-'][value in (0,'0')])
 
 				# Include the Team Power column.
 				team_pwr = all_team_pwr.get(player_name,0)
-				html_file += '     <td class="bold_text" style="background-color:%s;">%s</td>\n' % (get_value_color(min_team_pwr, max_team_pwr, team_pwr), [team_pwr,'-'][team_pwr in (0,'0')])
+				html_file += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(min_team_pwr, max_team_pwr, team_pwr), [team_pwr,'-'][team_pwr in (0,'0')])
 				html_file += '    </tr>\n'
 		# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
 
@@ -384,7 +387,7 @@ def generate_roster_analysis(alliance_info, html_file=''):
 	html_file += '<table>\n'
 
 	# Create the headings for the Alliance Info table.
-	html_file += '<tr class="table_header_blue" style="font-size:14pt;">\n'
+	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
 	html_file += ' <td width="200" rowspan="2">Name</td>\n'            
 	html_file += ' <td width="80" rowspan="2">Total<br>Power</td>\n'
 	html_file += ' <td width="80" rowspan="2">Strongest<br>Team</td>\n'
@@ -414,56 +417,56 @@ def generate_roster_analysis(alliance_info, html_file=''):
 	
 
 	# Second Row with subheadings.
-	html_file += '<tr class="name_cell_blue">\n'
+	html_file += '<tr>\n'
 
 	# Averages
-	html_file += ' <td class="name_cell_blue" width="40">Yel</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">Red</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">Tier</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">Lvl</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">ISO</td>\n'
+	html_file += ' <td class="name_blue" width="40">Yel</td>\n'
+	html_file += ' <td class="name_blue" width="40">Red</td>\n'
+	html_file += ' <td class="name_blue" width="40">Tier</td>\n'
+	html_file += ' <td class="name_blue" width="40">Lvl</td>\n'
+	html_file += ' <td class="name_blue" width="40">ISO</td>\n'
 	
 	# Yellow Stars
-	html_file += ' <td class="name_cell_blue" width="40">4*</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">5*</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">6*</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">7*</td>\n'
+	html_file += ' <td class="name_blue" width="40">4*</td>\n'
+	html_file += ' <td class="name_blue" width="40">5*</td>\n'
+	html_file += ' <td class="name_blue" width="40">6*</td>\n'
+	html_file += ' <td class="name_blue" width="40">7*</td>\n'
 	
 	# Red Stars
-	html_file += ' <td class="name_cell_blue" width="40">4*</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">5*</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">6*</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">7*</td>\n'
+	html_file += ' <td class="name_blue" width="40">4*</td>\n'
+	html_file += ' <td class="name_blue" width="40">5*</td>\n'
+	html_file += ' <td class="name_blue" width="40">6*</td>\n'
+	html_file += ' <td class="name_blue" width="40">7*</td>\n'
 
 	# ISO Levels
-	html_file += ' <td class="name_cell_blue" width="40">1-4</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">5</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">6-8</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">9</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">10</td>\n'
+	html_file += ' <td class="name_blue" width="40">1-4</td>\n'
+	html_file += ' <td class="name_blue" width="40">5</td>\n'
+	html_file += ' <td class="name_blue" width="40">6-8</td>\n'
+	html_file += ' <td class="name_blue" width="40">9</td>\n'
+	html_file += ' <td class="name_blue" width="40">10</td>\n'
 
 	# Gear Tiers
-	html_file += ' <td class="name_cell_blue" width="40">13</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">14</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">15</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">16</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">17</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">18</td>\n'
+	html_file += ' <td class="name_blue" width="40">13</td>\n'
+	html_file += ' <td class="name_blue" width="40">14</td>\n'
+	html_file += ' <td class="name_blue" width="40">15</td>\n'
+	html_file += ' <td class="name_blue" width="40">16</td>\n'
+	html_file += ' <td class="name_blue" width="40">17</td>\n'
+	html_file += ' <td class="name_blue" width="40">18</td>\n'
 
 	# T4 Abilities
-	html_file += ' <td class="name_cell_blue" width="40">Bas</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">Spc</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">Ult</td>\n'
-	html_file += ' <td class="name_cell_blue" width="40">Pas</td>\n'
+	html_file += ' <td class="name_blue" width="40">Bas</td>\n'
+	html_file += ' <td class="name_blue" width="40">Spc</td>\n'
+	html_file += ' <td class="name_blue" width="40">Ult</td>\n'
+	html_file += ' <td class="name_blue" width="40">Pas</td>\n'
 
 	# Level Ranges
-	html_file += ' <td class="name_cell_blue" width="50">&lt;65</td>\n'
-	html_file += ' <td class="name_cell_blue" width="50">66-70</td>\n'
-	html_file += ' <td class="name_cell_blue" width="50">71-75</td>\n'
-	html_file += ' <td class="name_cell_blue" width="50">76-80</td>\n'
-	html_file += ' <td class="name_cell_blue" width="50">81-85</td>\n'
-	html_file += ' <td class="name_cell_blue" width="50">86-90</td>\n'
-	html_file += ' <td class="name_cell_blue" width="50">91-95</td>\n'
+	html_file += ' <td class="name_blue" width="50">&lt;65</td>\n'
+	html_file += ' <td class="name_blue" width="50">66-70</td>\n'
+	html_file += ' <td class="name_blue" width="50">71-75</td>\n'
+	html_file += ' <td class="name_blue" width="50">76-80</td>\n'
+	html_file += ' <td class="name_blue" width="50">81-85</td>\n'
+	html_file += ' <td class="name_blue" width="50">86-90</td>\n'
+	html_file += ' <td class="name_blue" width="50">91-95</td>\n'
 
 	html_file += '</tr>\n'
 	
@@ -554,66 +557,66 @@ def generate_roster_analysis(alliance_info, html_file=''):
 			member_stats = stats[member]
 			
 			html_file += '<tr>\n'
-			html_file += ' <td class="name_cell_blue">%s</td>\n' % (member)
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tcp_range), max(tcp_range), member_info['tcp']), f'{member_info["tcp"]:,}')
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stp_range), max(stp_range), member_info['stp']), f'{member_info["stp"]:,}')
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tcc_range), max(tcc_range), member_info['tcc']), f'{member_info["tcc"]:,}')
-			html_file += ' <td width="2"></td>\n' 										# Vertical Divider
+			html_file += ' <td class="name_blue">%s</td>\n' % (member)
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range), max(tcp_range), member_info['tcp']), f'{member_info["tcp"]:,}')
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stp_range), max(stp_range), member_info['stp']), f'{member_info["stp"]:,}')
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcc_range), max(tcc_range), member_info['tcc']), f'{member_info["tcc"]:,}')
+			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_info['stars']), round(member_info['stars'] / member_info['tcc'], 2))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_info['red']),   round(member_info['red']   / member_info['tcc'], 2))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tier_range),  max(tier_range),  sum([lvl*member_stats['tier'][lvl] for lvl in member_stats['tier']])), round(sum([lvl*member_stats['tier'][lvl] for lvl in member_stats['tier']]) / member_info['tcc'], 2))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl_range),   max(lvl_range),   sum([lvl*member_stats['lvl' ][lvl] for lvl in member_stats['lvl' ]])), round(sum([lvl*member_stats['lvl' ][lvl] for lvl in member_stats['lvl' ]]) / member_info['tcc'], 2))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(iso_range),   max(iso_range),   sum([lvl*member_stats['iso' ][lvl] for lvl in member_stats['iso' ]])), round(sum([lvl*member_stats['iso' ][lvl] for lvl in member_stats['iso' ]]) / member_info['tcc'], 2))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_info['stars']), round(member_info['stars'] / member_info['tcc'], 2))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_info['red']),   round(member_info['red']   / member_info['tcc'], 2))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier_range),  max(tier_range),  sum([lvl*member_stats['tier'][lvl] for lvl in member_stats['tier']])), round(sum([lvl*member_stats['tier'][lvl] for lvl in member_stats['tier']]) / member_info['tcc'], 2))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl_range),   max(lvl_range),   sum([lvl*member_stats['lvl' ][lvl] for lvl in member_stats['lvl' ]])), round(sum([lvl*member_stats['lvl' ][lvl] for lvl in member_stats['lvl' ]]) / member_info['tcc'], 2))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso_range),   max(iso_range),   sum([lvl*member_stats['iso' ][lvl] for lvl in member_stats['iso' ]])), round(sum([lvl*member_stats['iso' ][lvl] for lvl in member_stats['iso' ]]) / member_info['tcc'], 2))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(yel4_range),  max(yel4_range),  member_stats['yel'].get(4,0)),  member_stats['yel'].get(4,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(yel5_range),  max(yel5_range),  member_stats['yel'].get(5,0)),  member_stats['yel'].get(5,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(yel6_range),  max(yel6_range),  member_stats['yel'].get(6,0)),  member_stats['yel'].get(6,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(yel7_range),  max(yel7_range),  member_stats['yel'].get(7,0)),  member_stats['yel'].get(7,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel4_range),  max(yel4_range),  member_stats['yel'].get(4,0)),  member_stats['yel'].get(4,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel5_range),  max(yel5_range),  member_stats['yel'].get(5,0)),  member_stats['yel'].get(5,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel6_range),  max(yel6_range),  member_stats['yel'].get(6,0)),  member_stats['yel'].get(6,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel7_range),  max(yel7_range),  member_stats['yel'].get(7,0)),  member_stats['yel'].get(7,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Red Stars                                                                                                                                       
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red4_range),  max(red4_range),  member_stats['red'].get(4,0)),  member_stats['red'].get(4,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red5_range),  max(red5_range),  member_stats['red'].get(5,0)),  member_stats['red'].get(5,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red6_range),  max(red6_range),  member_stats['red'].get(6,0)),  member_stats['red'].get(6,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(7,0)),  member_stats['red'].get(7,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red4_range),  max(red4_range),  member_stats['red'].get(4,0)),  member_stats['red'].get(4,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red5_range),  max(red5_range),  member_stats['red'].get(5,0)),  member_stats['red'].get(5,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red6_range),  max(red6_range),  member_stats['red'].get(6,0)),  member_stats['red'].get(6,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(7,0)),  member_stats['red'].get(7,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# ISO Levels                                                                                                                                      
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(iso4_range),  max(iso4_range),  sum([member_stats['iso'].get(iso,0) for iso in range(0,5)])), sum([member_stats['iso'].get(iso,0) for iso in range(0,5)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(iso5_range),  max(iso5_range),  member_stats['iso'].get(5,0)),  member_stats['iso'].get(5,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(iso8_range),  max(iso8_range),  sum([member_stats['iso'].get(iso,0) for iso in range(6,9)])), sum([member_stats['iso'].get(iso,0) for iso in range(6,9)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(iso9_range),  max(iso9_range),  member_stats['iso'].get(9,0)),  member_stats['iso'].get(9,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(iso10_range), max(iso10_range), member_stats['iso'].get(10,0)), member_stats['iso'].get(10,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso4_range),  max(iso4_range),  sum([member_stats['iso'].get(iso,0) for iso in range(0,5)])), sum([member_stats['iso'].get(iso,0) for iso in range(0,5)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso5_range),  max(iso5_range),  member_stats['iso'].get(5,0)),  member_stats['iso'].get(5,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso8_range),  max(iso8_range),  sum([member_stats['iso'].get(iso,0) for iso in range(6,9)])), sum([member_stats['iso'].get(iso,0) for iso in range(6,9)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso9_range),  max(iso9_range),  member_stats['iso'].get(9,0)),  member_stats['iso'].get(9,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso10_range), max(iso10_range), member_stats['iso'].get(10,0)), member_stats['iso'].get(10,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tier13_range),  max(tier13_range), member_stats['tier'].get(13,0)), member_stats['tier'].get(13,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tier14_range),  max(tier14_range), member_stats['tier'].get(14,0)), member_stats['tier'].get(14,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tier15_range),  max(tier15_range), member_stats['tier'].get(15,0)), member_stats['tier'].get(15,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tier16_range),  max(tier16_range), member_stats['tier'].get(16,0)), member_stats['tier'].get(16,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tier17_range),  max(tier17_range), member_stats['tier'].get(17,0)), member_stats['tier'].get(17,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tier18_range),  max(tier18_range), member_stats['tier'].get(18,0)), member_stats['tier'].get(18,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier13_range),  max(tier13_range), member_stats['tier'].get(13,0)), member_stats['tier'].get(13,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier14_range),  max(tier14_range), member_stats['tier'].get(14,0)), member_stats['tier'].get(14,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier15_range),  max(tier15_range), member_stats['tier'].get(15,0)), member_stats['tier'].get(15,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier16_range),  max(tier16_range), member_stats['tier'].get(16,0)), member_stats['tier'].get(16,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier17_range),  max(tier17_range), member_stats['tier'].get(17,0)), member_stats['tier'].get(17,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier18_range),  max(tier18_range), member_stats['tier'].get(18,0)), member_stats['tier'].get(18,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(bas_range), max(bas_range), member_stats['bas'].get(7,0)+member_stats['bas'].get(8,0)), member_stats['bas'].get(7,0)+member_stats['bas'].get(8,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(spc_range), max(spc_range), member_stats['spc'].get(7,0)+member_stats['spc'].get(8,0)), member_stats['spc'].get(7,0)+member_stats['spc'].get(8,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(ult_range), max(ult_range), member_stats['ult'].get(7,0)+member_stats['ult'].get(8,0)), member_stats['ult'].get(7,0)+member_stats['ult'].get(8,0))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(pas_range), max(pas_range), member_stats['pas'].get(5,0)+member_stats['pas'].get(6,0)), member_stats['pas'].get(5,0)+member_stats['pas'].get(6,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(bas_range), max(bas_range), member_stats['bas'].get(7,0)+member_stats['bas'].get(8,0)), member_stats['bas'].get(7,0)+member_stats['bas'].get(8,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(spc_range), max(spc_range), member_stats['spc'].get(7,0)+member_stats['spc'].get(8,0)), member_stats['spc'].get(7,0)+member_stats['spc'].get(8,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(ult_range), max(ult_range), member_stats['ult'].get(7,0)+member_stats['ult'].get(8,0)), member_stats['ult'].get(7,0)+member_stats['ult'].get(8,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(pas_range), max(pas_range), member_stats['pas'].get(5,0)+member_stats['pas'].get(6,0)), member_stats['pas'].get(5,0)+member_stats['pas'].get(6,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl65_range), max(lvl65_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range( 1,66)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range( 1,66)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl70_range), max(lvl70_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(66,71)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(66,71)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl75_range), max(lvl75_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(71,76)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(71,76)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl80_range), max(lvl80_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(76,81)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(76,81)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl85_range), max(lvl85_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(81,86)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(81,86)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl90_range), max(lvl90_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(86,91)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(86,91)]))
-			html_file += ' <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(lvl95_range), max(lvl95_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(91,96)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(91,96)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl65_range), max(lvl65_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range( 1,66)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range( 1,66)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl70_range), max(lvl70_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(66,71)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(66,71)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl75_range), max(lvl75_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(71,76)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(71,76)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl80_range), max(lvl80_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(76,81)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(76,81)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl85_range), max(lvl85_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(81,86)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(81,86)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl90_range), max(lvl90_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(86,91)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(86,91)]))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl95_range), max(lvl95_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(91,96)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(91,96)]))
 
 			html_file += '</tr>\n'
 
@@ -633,7 +636,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	extras_avail = alliance_info.get('trophies')
 	
 	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
-	html_file += '<table style="background-color:SteelBlue;">\n'
+	html_file += '<table style="background:SteelBlue;">\n'
 
 	html_file += '<tr>\n</tr>\n'
 
@@ -641,7 +644,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s"/></td>\n' % (alliance_info['image'])
 	html_file += ' <td colspan="10" rowspan="%s" class="alliance_name">%s</td>' % (['1','2'][not extras_avail], alliance_info['name'].upper())
 	
-	if extras_avail:	html_file += ' <td colspan="2" rowspan="2"><span class="bold_text" style="font-size:24px">Alliance Message:</span><br>%s</td>' % (alliance_info['desc'])
+	if extras_avail:	html_file += ' <td colspan="2" rowspan="2"><span class="bold" style="font-size:24px">Alliance Message:</span><br>%s</td>' % (alliance_info['desc'])
 	else:				html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
 
 	html_file += '</tr>\n'
@@ -655,7 +658,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	html_file += '</tr>\n'
 	
 	# Create the headings for the Alliance Info table.
-	html_file += '<tr class="table_header_blue" style="font-size:14pt;">\n'
+	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
 	html_file += ' <td width="60" ></td>\n'
 	html_file += ' <td width="215">Name</td>\n'            
 	html_file += ' <td width="110">Level</td>\n'
@@ -703,20 +706,20 @@ def generate_alliance_tab(alliance_info, html_file=''):
 						'Captain': 'DeepSkyBlue',
 						'Member':  'PowderBlue' }[member_role]
 
-		html_file += ' <tr style="background-color:%s;">\n' % (member_color)
+		html_file += ' <tr style="background:%s;">\n' % (member_color)
 		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s"/></td>\n' % (member_stats['image'])
-		html_file += '  <td class="bold_text">%s</td>\n' % (member)
+		html_file += '  <td class="bold">%s</td>\n' % (member)
 		html_file += '  <td>%i</td>\n' % (member_stats['level'])
 		html_file += '  <td>%s</td>\n' % (member_role)
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats['tcp']),   f'{member_stats["tcp"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stp_range),   max(stp_range),   member_stats['stp']),   f'{member_stats["stp"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(mvp_range),   max(mvp_range),   member_stats['mvp']),   f'{member_stats["mvp"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range),   member_stats['tcc']),   f'{member_stats["tcc"]:,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats.get('max',0)),   f'{member_stats.get("max",0):,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats.get('arena',0)), f'{member_stats.get("arena",0):,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats.get('blitz',0)), f'{member_stats.get("blitz",0):,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats.get('stars',0)), f'{member_stats.get("stars",0):,}')
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0)),   f'{member_stats.get("red",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats['tcp']),   f'{member_stats["tcp"]:,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stp_range),   max(stp_range),   member_stats['stp']),   f'{member_stats["stp"]:,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(mvp_range),   max(mvp_range),   member_stats['mvp']),   f'{member_stats["mvp"]:,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range),   member_stats['tcc']),   f'{member_stats["tcc"]:,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats.get('max',0)),   f'{member_stats.get("max",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats.get('arena',0)), f'{member_stats.get("arena",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats.get('blitz',0)), f'{member_stats.get("blitz",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats.get('stars',0)), f'{member_stats.get("stars",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0)),   f'{member_stats.get("red",0):,}')
 
 		time_since_last = 4*86400
 		time_value      = 'Never<br>Ask member to sync roster.'
@@ -726,7 +729,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 			time_since_last = time_since_last.total_seconds()
 		
 		time_color = get_value_color(0, 4*86400, (4*86400)-time_since_last)
-		html_file += '  <td style="background-color:%s;">%s</td>\n' % (time_color, time_value)
+		html_file += '  <td style="background:%s;">%s</td>\n' % (time_color, time_value)
 		html_file += ' </tr>\n'
 
 	html_file += '</table>\n'
@@ -860,112 +863,121 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
 
 /* Style tab links */
 .tablink {
-  background-color : #888;
-  color            : white;
-  float            : left;
-  border           : none;
-  outline          : none;
-  cursor           : pointer;
-  padding          : 14px 16px;
-  font-size        : 24px;
-  font-family      : 'Fira Sans Condensed';
-  font-weight      : 900;
-  width            : '''+str(int(100/(num_lanes+[3,2][not hist_tab]))) +'''%;	# Adding 1 for Roster Analysis and Alliance Info tabs, 3 if there's also history.
+  background  : #888;
+  color       : white;
+  float       : left;
+  border      : none;
+  outline     : none;
+  cursor      : pointer;
+  padding     : 14px 16px;
+  font-size   : 24px;
+  font-family : 'Fira Sans Condensed';
+  font-weight : 900;
+  width       : '''+str(int(100/(num_lanes+[3,2][not hist_tab]))) +'''%;	# Adding 1 for Roster Analysis and Alliance Info tabs, 3 if there's also history.
 }
 .tablink:hover {
-  background-color : #555;
+  background  : #555;
 }
 .tabcontent {
-  background-color : #343734;
-  display          : none;
-  padding          : 70px 20px;
-  height           : 100%;
+  background  : #343734;
+  display     : none;
+  padding     : 70px 20px;
+  height      : 100%;
 }
 
 /* Styles for table cells */
 
-.bold_text {
-  font-weight      : bold;
+.bold {
+  font-weight : bold;
+  color       : black;
 }
 .alliance_name {
-  font-weight      : 700;
-  font-size        : 36pt;
+  font-weight : 700;
+  font-size   : 36pt;
 }
-.title_cell_blue {
-  font-weight      : 700;
-  font-size        : 14pt;
-  background-color : PowderBlue;
+.title_blue {
+  font-weight : 700;
+  font-size   : 14pt;
+  background  : PowderBlue;
 }
-.title_cell_gray {
-  font-weight      : 700;
-  font-size        : 14pt;
-  background-color : Gainsboro;
+.title_gray {
+  font-weight : 700;
+  font-size   : 14pt;
+  background  : Gainsboro;
 }
-.table_header_blue {
-  font-weight      : 700;
-  background-color : MidnightBlue;
-  color            : white;
-  white-space      : nowrap;
+.header_blue {
+  font-weight : 700;
+  background  : MidnightBlue;
+  color       : white;
+  white-space : nowrap;
 }
-.table_header_gray {
-  font-weight      : 700;
-  background-color : Black;
-  color            : white;
-  white-space      : nowrap;
+.header_gray {
+  font-weight : 700;
+  background  : Black;
+  color       : white;
+  white-space : nowrap;
 }
-.char_cell_blue {
-  font-weight      : 700;
-  background-color : SkyBlue;
+.char_blue {
+  font-weight : 700;
+  background  : SkyBlue;
 }
-.char_cell_gray {
-  font-weight      : 700;
-  background-color : Silver;
+.char_gray {
+  font-weight : 700;
+  background  : Silver;
 }
-.name_cell_blue {
-  font-weight      : 700;
-  background-color : PowderBlue;
-  white-space      : nowrap;
+.name_blue {
+  font-weight : 700;
+  background  : PowderBlue;
+  white-space : nowrap;
+  color       : black;
 }
-.name_cell_blue_alt {
-  font-weight      : 700;
-  background-color : DeepSkyBlue;
-  white-space      : nowrap;
+.name_blue_alt {
+  font-weight : 700;
+  background  : DeepSkyBlue;
+  white-space : nowrap;
+  color       : black;
 }
-.name_cell_gray {
-  font-weight      : 700;
-  background-color : Gainsboro;
-  white-space      : nowrap;
+.name_gray {
+  font-weight : 700;
+  background  : Gainsboro;
+  white-space : nowrap;
+  color       : black;
 }
-.name_cell_gray_alt {
-  font-weight      : 700;
-  background-color : DarkGray;
-  white-space      : nowrap;
+.name_gray_alt {
+  font-weight : 700;
+  background  : DarkGray;
+  white-space : nowrap;
+  color       : black;
 }
-.table_subtitle {
-  font-size        : 12pt;
-  font-weight      : normal;
+.subtitle {
+  font-size   : 12pt;
+  font-weight : normal;
 }
-.image_cell {
-  background-color : Black;
+.image {
+  background  : Black;
 }
-.power_header {
-  font-weight      : 700;
-  background-color : Maroon;
-  color            : white;
+.power {
+  font-weight : 700;
+  background  : Maroon;
+  color       : white;
+}
+.hist {
+  background  : #282828;
+  color       : #919191;
 }
 '''
 
 		for num in range(num_lanes):
-			html_file += '#Lane%i {background-color: #343734;}\n' % (num+1)
+			html_file += '#Lane%i {background: #343734;}\n' % (num+1)
 
 		if hist_tab:
-			html_file += '#Hist {background-color: #343734;}\n'
+			html_file += '#Hist {background: #343734;}\n'
 
-		html_file += '#AllianceInfo {background-color: #343734;}\n'	
+		html_file += '#AllianceInfo {background: #343734;}\n'	
 
 		html_file += '</style>\n'
 		html_file += '</head>\n'
-		html_file += '<body style="background-color: #343734; font-family: \'Fira Sans Condensed\', sans-serif; text-align:center;">\n'
+		html_file += '<body style="background: #343734; font-family: \'Fira Sans Condensed\', sans-serif; text-align:center;">\n'
 
 		for num in range(num_lanes):
 			tab_name = ['ROSTER INFO', 'LANE %i' % (num+1)][num_lanes>1]

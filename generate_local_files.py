@@ -54,8 +54,8 @@ strike_teams = {}
 	new_file += generate_strike_team('other',strike_teams['other'],'Used for Gamma Raids and other output.')
 
 	# Write it to disk.
-	open(path + os.sep + "strike_teams.py", 'w').write(new_file)
-
+	write_file(path+os.sep+"strike_teams.py", new_file)
+		
 
 # Take the strike_team variable and create the text for the team definition in strike_teams.py
 def generate_strike_team(type,strike_team,desc):
@@ -72,6 +72,16 @@ def generate_strike_team(type,strike_team,desc):
 		team_def += ['],\n',']]\n'][team_num == len(strike_team)-1]
 
 	return team_def
+	
+	
+def write_file(filename, content):
+	# Default output is UTF-8. Attempt to use it as it's more compatible.
+	try:
+		open(filename, 'w').write(content)
+	# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
+	except:
+		open(filename, 'w', encoding='utf-16').write(content)	
+	print ("Writing %s" % (filename))
 
 	
 # Create a local raids_and_lanes.py that users can edit if we are Frozen and one doesn't exist. 
@@ -221,4 +231,4 @@ if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
 		new_file += "\t\t\t\t\t}\n\n"
 
 	# Write it to disk.
-	open(path + os.sep + "raids_and_lanes.py", 'w').write(new_file)
+	write_file(path+os.sep+"raids_and_lanes.py", new_file)
