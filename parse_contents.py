@@ -183,12 +183,12 @@ def parse_roster(contents, alliance_info, parse_cache):
 			elif iso_info.find('restoration') != -1:
 				iso_class = 'H'
 
-			processed_chars[char_name] = {'lvl':int(level), 'power':int(power), 'tier':int(tier), 'iso':int(iso), 'yel':int(yelStars), 'red':int(redStars), 'abil':int(bas+spc+ult+pas)}
+			processed_chars[char_name] = {'power':int(power), 'lvl':int(level), 'tier':int(tier), 'iso':int(iso), 'yel':int(yelStars), 'red':int(redStars), 'abil':int(bas+spc+ult+pas)}
 			other_data[char_name]      = {'fav':favorite, 'class':iso_class}
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
-			processed_chars[char_name] = {'lvl':0, 'power':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'abil':0}
+			processed_chars[char_name] = {'power':0, 'lvl':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'abil':0}
 			other_data[char_name]      = {'fav':'', 'class':''}
 
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
@@ -204,10 +204,10 @@ def parse_roster(contents, alliance_info, parse_cache):
 		
 	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
 	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
-		print (" (Skipping...roster unchanged)")
+		print (" (skipping...unchanged)")
 		processed_chars['last_update'] = player['processed_chars']['last_update']
 	else:
-		print (" (Updated with new roster data)")
+		print (" (UPDATED with new roster data!)")
 		processed_chars['last_update'] = datetime.datetime.now()
 	
 	# Add the 'clean' parsed data to our list of processed players.

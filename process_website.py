@@ -715,7 +715,7 @@ def update_history(alliance_info):
 			today_info[member] = member_info
 
 	# Keep the oldest entry, plus one per ISO calendar week. Also, purge any entries > 60 days. 
-	for key in hist:
+	for key in list(hist):
 		if (key != today and key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(60):
 			del alliance_info['hist'][key]
 

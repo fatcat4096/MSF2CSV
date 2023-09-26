@@ -310,7 +310,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 						style = ''
 						if value not in (0,'0'):
 							style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, hist_tab), ['color:black;',''][not hist_tab])
-						html_file += '     <td%s%s>%s</td>\n' % (style, other_diffs, [value,'-'][value in (0,'0')])
+						html_file += '     <td%s%s>%s</td>\n' % (style, ['',other_diffs][key=='power'], [value,'-'][value in (0,'0')])
 
 				# Include the Team Power column.
 				team_pwr = all_team_pwr.get(player_name,0)
@@ -333,8 +333,11 @@ def find_oldest_diff(alliance_info, player_name, char_name, key):
 		min_date = min(dates)
 		if player_name in alliance_info['hist'][min_date]:
 
+			player_info = alliance_info['members'][player_name]['processed_chars'][char_name]
+			hist_info   = alliance_info['hist'][min_date][player_name].get(char_name,{})
+
 			# Get the current value of this key.
-			value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(alliance_info['hist'][min_date][player_name].get(char_name,{}).get(key,0))
+			value = int(player_info[key]) - int(hist_info.get(key,0))
 
 			# If no difference, return nothing. 
 			if not value:
@@ -342,8 +345,10 @@ def find_oldest_diff(alliance_info, player_name, char_name, key):
 		
 			# If there was a difference, let's make note of what created that difference.
 			diffs = []
-			for entry in [item for item in ['power','lvl','tier','iso']]:
-				diff = int(alliance_info['members'][player_name]['processed_chars'][char_name][entry]) - int(alliance_info['hist'][min_date][player_name].get(char_name,{}).get(entry,0))
+			
+			# Iterate through all the stats we're currently tracking.
+			for entry in player_info:
+				diff = int(player_info[entry]) - int(hist_info.get(entry,0))
 
 				if diff:
 					diffs.append(f'{entry.title()}: {diff:+}')
