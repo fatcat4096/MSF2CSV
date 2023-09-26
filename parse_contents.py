@@ -39,12 +39,8 @@ def parse_alliance(contents):
 	for member_row in members_table:
 		member = {}
 
-		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text)
-
-		# It's ME, hi, I'm the problem it's ME.
-		if member_name.find('[ME]') != -1:
-			member_name = member_name.replace('[ME]','')
-			alliance['me'] = member_name
+		# Remove '[ME]' and HTML tags if present.
+		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text.replace('[ME]',''))
 
 		member['level'] = int(member_row.find('td', attrs={'class':'avatar'}).text.strip())
 		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src').split('Portrait_')[-1]
@@ -79,7 +75,7 @@ def parse_alliance(contents):
 
 
 # Parse the character file out of MHTML or the page_source directly from the website.
-def parse_roster(contents, alliance_info):
+def parse_roster(contents, alliance_info, parse_cache):
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	# Start by parsing Player Info from the right panel. We will use this to update alliance_info if not working_from_web.
@@ -89,8 +85,6 @@ def parse_roster(contents, alliance_info):
 
 	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
 	player_info['name'] = remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
-	print("Parsing %i bytes...found Alliance Member named: %s" % (len(contents), player_info['name']))
-
 	player_info['image'] = player.find('img').get('src').split('Portrait_')[-1]
 	player_info['level'] = int(player.find('span').text)
 
@@ -110,6 +104,7 @@ def parse_roster(contents, alliance_info):
 	player_info['red']   =  int(re.sub(r"\D", "", player_stats[-1].text))
 
 	processed_chars  = {}
+	other_data       = {}
 	char_portraits   = {}
 	
 	chars  = soup.findAll('li', attrs = {'class':'character'})
@@ -178,36 +173,47 @@ def parse_roster(contents, alliance_info):
 
 			iso_class = ''
 			if iso_info.find('gambler') != -1:
-				iso_class = 'Raider'
+				iso_class = 'R'
 			elif iso_info.find('assassin') != -1:
-				iso_class = 'Striker'
+				iso_class = 'S'
 			elif iso_info.find('fortify') != -1:
-				iso_class = 'Fortifier'
+				iso_class = 'F'
 			elif iso_info.find('skirmish') != -1:
-				iso_class = 'Skirmisher'
+				iso_class = 'K'
 			elif iso_info.find('restoration') != -1:
-				iso_class = 'Healer'
+				iso_class = 'H'
 
-			processed_chars[char_name] = {'fav':favorite, 'lvl':level, 'power':power, 'tier':tier, 'iso':iso, 'class':iso_class, 'yel':yelStars, 'red':redStars, 'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
+			processed_chars[char_name] = {'lvl':int(level), 'power':int(power), 'tier':int(tier), 'iso':int(iso), 'yel':int(yelStars), 'red':int(redStars), 'abil':int(bas+spc+ult+pas)}
+			other_data[char_name]      = {'fav':favorite, 'class':iso_class}
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
-			processed_chars[char_name] = {'fav':'', 'lvl':'0', 'power':'0', 'tier':'0', 'iso':'0', 'class':'', 'yel':'0', 'red':'0', 'bas':'0', 'spc':'0', 'ult':'0', 'pas':'0'}
+			processed_chars[char_name] = {'lvl':0, 'power':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'abil':0}
+			other_data[char_name]      = {'fav':'', 'class':''}
+
+		# Look for a duplicate entry in our cache and point both to the same entry if possible.
+		update_parse_cache(processed_chars,char_name,parse_cache)
 
 	# Finally, store calculated total roster power.
 	processed_chars['tot_power'] = tot_power
 	
 	# Get a little closer to our work. 
 	player = alliance_info['members'].setdefault(player_info['name'],{})
+
+	print("Parsing %i bytes...found Alliance Member named: %s" % (len(contents), player_info['name']), end='')
 		
 	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
 	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
+		print (" (Skipping...roster unchanged)")
 		processed_chars['last_update'] = player['processed_chars']['last_update']
 	else:
+		print (" (Updated with new roster data)")
 		processed_chars['last_update'] = datetime.datetime.now()
 	
 	# Add the 'clean' parsed data to our list of processed players.
 	player['processed_chars'] = processed_chars
+	player['cls'] = iso_class
+	player['fav'] = favorite
 
 	# And update the player info with current stats from the side panel.
 	player.update(player_info)
@@ -220,6 +226,81 @@ def parse_roster(contents, alliance_info):
 		alliance_info['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
 
 	return player_info['name']
+
+
+# Create a cache of entries to optimize our cached_data.
+def update_parse_cache(processed_chars,char_name,parse_cache):
+	
+	# Will index everything by power.
+	power = processed_chars[char_name]['power']
+	
+	# Get a list of other entries already added at this same power.
+	cached_entries = parse_cache.setdefault(power,[])
+	
+	# Look for a duplicate entry in that list and use it if available.
+	for entry in cached_entries:
+		if processed_chars[char_name] == entry:
+			processed_chars[char_name] = entry
+			return
+	
+	# If none available, add the current entry to list.
+	cached_entries.append(processed_chars[char_name])
+
+
+# Create a cache of entries to optimize our cached_data.
+def build_parse_cache(alliance_info, parse_cache):
+
+	# Let's process these entries in chronological order. 
+	hist_list = list(alliance_info.get('hist',[]))
+	hist_list.sort()
+
+	for entry in hist_list:
+
+		# Iterate through all the members and chars from this history entry.
+		for member in alliance_info['hist'][entry]:
+			for char in alliance_info['hist'][entry][member]:
+
+				# Skip the tot_power and last_updated entries.
+				if type(alliance_info['hist'][entry][member][char]) is not dict:
+					continue
+
+				# Will index everything by power.
+				power = alliance_info['hist'][entry][member][char]['power']
+
+				# Get a list of other entries already added at this same power.
+				cached_entries = parse_cache.setdefault(power,[])
+
+				# If this entry already exists, update the current entry to point at the cached one.
+				if alliance_info['hist'][entry][member][char] in cached_entries:
+						alliance_info['hist'][entry][member][char] = cached_entries[cached_entries.index(alliance_info['hist'][entry][member][char])]
+						continue
+
+				# Otherwise, add the current entry to cached entry list.
+				cached_entries.append(alliance_info['hist'][entry][member][char])
+
+	# After History has been processed. Update alliance_info['members'][member]['processed_chars'] with the same info.
+	for member in alliance_info['members']:
+	
+		# Iterate through characters in the members with rosters.
+		for char in alliance_info['members'][member].get('processed_chars',[]):
+
+			# Skip the tot_power and last_updated entries.
+			if type(alliance_info['members'][member]['processed_chars'][char]) is not dict:
+				continue
+
+			# Will index everything by power.
+			power = alliance_info['members'][member]['processed_chars'][char]['power']
+
+			# Get a list of other entries already added at this same power.
+			cached_entries = parse_cache.setdefault(power,[])
+
+			# If this entry already exists, update the current entry to point at the cached one.
+			if alliance_info['members'][member]['processed_chars'][char] in cached_entries:
+					alliance_info['members'][member]['processed_chars'][char] = cached_entries[cached_entries.index(alliance_info['members'][member]['processed_chars'][char])]
+					continue
+
+			# Otherwise, add the current entry to cached entry list.
+			cached_entries.append(alliance_info['members'][member]['processed_chars'][char])
 
 
 # Pull strike team definitions directly from the website. 

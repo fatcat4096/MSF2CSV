@@ -336,12 +336,13 @@ def find_oldest_diff(alliance_info, player_name, char_name, key):
 			# Get the current value of this key.
 			value = int(alliance_info['members'][player_name]['processed_chars'][char_name][key]) - int(alliance_info['hist'][min_date][player_name].get(char_name,{}).get(key,0))
 
+			# If no difference, return nothing. 
 			if not value:
 				return 0,''
 		
 			# If there was a difference, let's make note of what created that difference.
 			diffs = []
-			for entry in [item for item in ['power','lvl','tier','iso'] if item != key]:
+			for entry in [item for item in ['power','lvl','tier','iso']]:
 				diff = int(alliance_info['members'][player_name]['processed_chars'][char_name][entry]) - int(alliance_info['hist'][min_date][player_name].get(char_name,{}).get(entry,0))
 
 				if diff:
@@ -376,8 +377,6 @@ def find_oldest_val(alliance_info, player_name, char_name, key):
 
 	# Should not happen. Should always at least find this member in the most recent run.
 	return '0'
-
-
 
 
 # Generate just the Alliance Tab contents.
@@ -494,8 +493,17 @@ def generate_roster_analysis(alliance_info, html_file=''):
 			char_stats = alliance_info['members'][member]['processed_chars'][char]
 			
 			# Just tally the values in each key. Increment the count of each value found.
-			for key in ['yel', 'red', 'lvl', 'tier', 'iso', 'bas', 'spc', 'ult', 'pas']:
-				member_stats.setdefault(key,{})[int(char_stats[key])] = member_stats.get(key,{}).setdefault(int(char_stats[key]),0)+1
+			for key in ['yel', 'red', 'lvl', 'tier', 'iso']:
+				member_stats.setdefault(key,{})[char_stats[key]] = member_stats.get(key,{}).setdefault(char_stats[key],0)+1
+
+			# Abilities have to be treated a little differently. 
+			bas,abil = divmod(char_stats['abil'],1000)
+			spc,abil = divmod(abil,100)
+			ult,pas  = divmod(abil,10)
+			abil_stats = {'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
+
+			for key in abil_stats:
+				member_stats.setdefault(key,{})[abil_stats[key]] = member_stats.get(key,{}).setdefault(abil_stats[key],0)+1
 
 	# Build ranges for each statistic. We will use min() and max() to 
 	tcp_range    = [alliance_info['members'][member]['tcp'] for member in member_list]
@@ -741,7 +749,8 @@ def generate_alliance_tab(alliance_info, html_file=''):
 # Including this here for expedience.
 def generate_csv(alliance_info):
 	# Write the basic output to a CSV in the local directory.
-	keys = ['fav','lvl','power','yel','red','tier','bas','spc','ult','pas','class','iso','iso','iso','iso','iso','iso']
+	keys1 = ['lvl','power','yel','red','tier']
+	keys2 = ['iso','iso','iso','iso','iso','iso']
 	
 	csv_file = ['Name,AllianceName,CharacterId,Favorite,Level,Power,Stars,RedStar,GearLevel,Basic,Special,Ultimate,Passive,ISO Class,ISO Level,ISO Armor,ISO Damage,ISO Focus,ISO Health,ISO Resist']
 	
@@ -756,7 +765,14 @@ def generate_csv(alliance_info):
 		# Only include entries for recruited characters.
 		for char_name in char_list:
 			if processed_chars[char_name]['lvl'] != '0':
-				csv_file.append(','.join([player_name, alliance_name, char_name] + [processed_chars[char_name][key] for key in keys]))
+				iso_class = {'S':'Striker','K':'Skirmisher','H':'Healer','F':'Fortifier','R':'Raider'}[alliance_info['members'][player_name]['cls']]
+				
+				bas,abil = divmod(alliance_info['members'][player_name]['abil'],1000)
+				spc,abil = divmod(abil,100)
+				ult,pas  = divmod(abil,10)
+				abil_stats = [str(abil) for abil in [bas, spc, ult, pas]]
+
+				csv_file.append(','.join([player_name, alliance_name, char_name, alliance_info['members'][player_name]['fav']] + [str(processed_chars[char_name][key]) for key in keys1] + abil_stats + [iso_class] + [str(processed_chars[char_name][key]) for key in keys2]))
 
 	return '\n'.join(csv_file)
 

@@ -214,6 +214,13 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
 
+	# Use this cache to optimize our cached_data output.
+	parse_cache = {}
+
+	# Populate the parse_cache if we have existing history.  
+	if 'hist' in alliance_info:
+		build_parse_cache(alliance_info, parse_cache)
+
 	# Let's iterate through the member names in alliance_info.
 	for member in members:
 		# Start off by checking if it's too soon. 
@@ -250,11 +257,11 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			if not find_members_roster(driver, member):
 				continue
 
-		process_roster(driver, alliance_info)
+		process_roster(driver, alliance_info, parse_cache)
 
 
 # Parse just the current Roster page.
-def process_roster(driver, alliance_info):
+def process_roster(driver, alliance_info, parse_cache):
 	# At this point, we're on the right page. Just need to wait for it to load before we parse it.
 	timer = 0
 	
@@ -273,7 +280,7 @@ def process_roster(driver, alliance_info):
 
 	# If page loaded, pass contents to scraping routines for stat extraction.
 	if len(driver.page_source)>1000000:
-		member = parse_roster(driver.page_source, alliance_info)
+		member = parse_roster(driver.page_source, alliance_info, parse_cache)
 	
 		# Prevent second download within an hour.
 		alliance_info['members'][member]['last_download'] = datetime.datetime.now()
@@ -342,9 +349,11 @@ def decode_alliance_info(block):
 
 	# Download and parse each roster
 	member_list = []
+	parse_cache = {}
 	for member_url in member_urls:
 		driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % member_url)
-		member_list.append(process_roster(driver, alliance_info))
+		member_name = process_roster(driver, alliance_info, parse_cache)
+		member_list.append(member_name)
 
 	# Close the Selenium session.
 	driver.close()
@@ -533,7 +542,7 @@ def find_members_roster(driver, member):
 
 	# Once member labels have populated, we're ready.
 	while len(driver.find_elements(By.TAG_NAME, "H4"))<4:
-		time.sleep(0.25)
+		time.sleep(0.5)
 
 	# Start by looking for the H4 label for this member. 
 	member_labels = driver.find_elements(By.TAG_NAME, "H4")
@@ -565,19 +574,21 @@ def find_members_roster(driver, member):
 		print ("Active roster button not found for member",member,"-- skipping...")
 		return False
 
-	# Scroll so this button is visible.
-	driver.execute_script("window.scrollTo(0, %i)" % button.location['y'])
+	# Scroll so this button is visible. Subtracting 200 because it's scrolling TOO FAR DOWN.
+	driver.execute_script("window.scrollTo(0, %i)" % (button.location['y']-200))
 
 	# Use a Try / Except structure because in my testing, offscreen buttons always throw an exception, even
 	# when I tell Selenium to scroll to them first. With Try/Except, first click focuses them, second succeeds.
 	try:
 		button.click()
 	except:
-		time.sleep(0.5)
-	
-	# Try one more time, if second exception, exit with False and move on.
+		time.sleep(1)
+
+	# If the URL / page title hasn't changed, try one more time
 	try:
-		button.click()
+		if 'Alliance' in driver.title:
+			button.click()
+	# If second exception, exit with False and move on.
 	except:
 		print ("Click raised exception twice for ",member,"-- skipping...")
 		return False
@@ -670,26 +681,46 @@ def add_strike_team_dividers(strike_team, raid_type):
 def update_history(alliance_info):	
 
 	# Create the 'hist' key if it doesn't already exist.
-	alliance_info.setdefault('hist',{})
+	hist = alliance_info.setdefault('hist',{})
 
 	# Overwrite any existing info for today.
 	today = datetime.date.today()
-	alliance_info['hist'][today] = {}
+	if today in hist:
+		del hist[today]
+
+	# Compare today's data vs. the most recent History entry. 
+	# Anything that duplicates yesterday's entry, point today's information at the historical entry.
 	
-	# Check each member, if we have roster data, copy it over. 
+	# Grab the most recent entry.
+	max_hist = {}
+	if hist:
+		max_hist = hist[max(hist)]
+	
+	# Create an entry for today.
+	today_info = hist.setdefault(today,{})
+
+	# Iterate through each of the members.
 	for member in alliance_info['members']:
-		if 'processed_chars' in alliance_info['members'][member]:
-			alliance_info['hist'][today][member] = {}
-			processed_chars = alliance_info['members'][member]['processed_chars']
-			for char in processed_chars:
-				if type(processed_chars[char]) is dict:
-					alliance_info['hist'][today][member][char] = {	'lvl':  processed_chars[char]['lvl'] , 
-																	'power':processed_chars[char]['power'] , 
-																	'tier': processed_chars[char]['tier'] , 
-																	'iso':  processed_chars[char]['iso']}
 	
-	# Keep only one entry per ISO calendar week. Also, purge any entries > 60 days. 
+		# Can only examine those with processed roster information.
+		if 'processed_chars' in alliance_info['members'][member]:
+
+			# Get a little closer to our work.
+			member_info = alliance_info['members'][member]['processed_chars']
+			hist_info   = max_hist.get(member)
+
+			# Compare today's information vs the previous run.
+			if member_info == hist_info:
+			
+				# If equal, no changes have been made or roster hasn't been resynced.
+				# Point today's entry to the previous entry
+				member_info = hist_info
+
+			# Finally set today's entry to the final value.
+			today_info[member] = member_info
+
+	# Purge any entries > 60 days. 
 	for key in list(alliance_info['hist']):
-		if (today != key and today.isocalendar().week == key.isocalendar().week) or today-key > datetime.timedelta(60):
+		if today-key > datetime.timedelta(60):
 			del alliance_info['hist'][key]
 
