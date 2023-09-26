@@ -584,14 +584,14 @@ def find_members_roster(driver, member):
 	except:
 		time.sleep(1)
 
-	# If the URL / page title hasn't changed, try one more time
-	try:
-		if 'Alliance' in driver.title:
+		# If the URL / page title hasn't changed, try one more time
+		try:
+			#if 'Alliance' in driver.title:
 			button.click()
-	# If second exception, exit with False and move on.
-	except:
-		print ("Click raised exception twice for ",member,"-- skipping...")
-		return False
+		# If second exception, exit with False and move on.
+		except:
+			print ("Click raised exception twice for ",member,"-- skipping...")
+			return False
 	
 	return True
 
@@ -688,13 +688,8 @@ def update_history(alliance_info):
 	if today in hist:
 		del hist[today]
 
-	# Compare today's data vs. the most recent History entry. 
-	# Anything that duplicates yesterday's entry, point today's information at the historical entry.
-	
-	# Grab the most recent entry.
-	max_hist = {}
-	if hist:
-		max_hist = hist[max(hist)]
+	# Building Compare today's data vs. the most recent History entry. 
+	# If anything identical to previous entry, point today's entry at the previous entry.
 	
 	# Create an entry for today.
 	today_info = hist.setdefault(today,{})
@@ -707,20 +702,20 @@ def update_history(alliance_info):
 
 			# Get a little closer to our work.
 			member_info = alliance_info['members'][member]['processed_chars']
-			hist_info   = max_hist.get(member)
+			hist_info   = hist[max(hist)].get(member)
 
 			# Compare today's information vs the previous run.
 			if member_info == hist_info:
 			
 				# If equal, no changes have been made or roster hasn't been resynced.
-				# Point today's entry to the previous entry
+				# Point the info in processed_chars to the previous entry
 				member_info = hist_info
 
 			# Finally set today's entry to the final value.
 			today_info[member] = member_info
 
-	# Purge any entries > 60 days. 
-	for key in list(alliance_info['hist']):
-		if today-key > datetime.timedelta(60):
+	# Keep the oldest entry, plus one per ISO calendar week. Also, purge any entries > 60 days. 
+	for key in hist:
+		if (key != today and key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(60):
 			del alliance_info['hist'][key]
 
