@@ -201,7 +201,7 @@ def generate_table(alliance_info, keys=['power','tier','iso'], char_list=[], str
 
 	# Include Images for each of the Characters.
 	for char in char_list:
-		html_file += '     <th class="image" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s" alt="" width="100"></th>\n' % (len(keys), alliance_info['portraits'][char])
+		html_file += '     <th class="image" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt="" width="100"></th>\n' % (len(keys), alliance_info['portraits'][char])
 
 	# Include a Team Power column.
 	html_file += '     <td></td>\n'
@@ -482,6 +482,8 @@ def generate_roster_analysis(alliance_info, html_file=''):
 	# Get the list of usable characters for analysis.
 	char_list = get_char_list(alliance_info)
 	
+	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
+
 	# Start by doing stat analysis.	
 	for member in member_list:
 	
@@ -565,7 +567,7 @@ def generate_roster_analysis(alliance_info, html_file=''):
 	lvl95_range   = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range(91,96)]) for member in member_list]
 
 	# Iterate through each row for members in the table.
-	for member in member_list:
+	for member in alliance_order:
 			member_info = alliance_info['members'][member]
 			member_stats = stats[member]
 			
@@ -654,7 +656,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	html_file += '<tr>\n</tr>\n'
 
 	html_file += '<tr style="font-size:18px;">\n'
-	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s"/></td>\n' % (alliance_info['image'])
+	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png"/></td>\n' % (alliance_info['image'])
 	html_file += ' <td colspan="10" rowspan="%s" class="alliance_name">%s</td>' % (['1','2'][not extras_avail], alliance_info['name'].upper())
 	
 	if extras_avail:	html_file += ' <td colspan="2" rowspan="2"><span class="bold" style="font-size:24px">Alliance Message:</span><br>%s</td>' % (alliance_info['desc'])
@@ -720,7 +722,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 						'Member':  'PowderBlue' }[member_role]
 
 		html_file += ' <tr style="background:%s;">\n' % (member_color)
-		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s"/></td>\n' % (member_stats['image'])
+		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png"/></td>\n' % (member_stats['image'])
 		html_file += '  <td class="bold">%s</td>\n' % (member)
 		html_file += '  <td>%i</td>\n' % (member_stats['level'])
 		html_file += '  <td>%s</td>\n' % (member_role)

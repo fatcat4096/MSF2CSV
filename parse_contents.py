@@ -22,7 +22,7 @@ def parse_alliance(contents):
 	alliance['name']      = remove_tags(soup.find('span', attrs = {'class':'alliance-name'}).text)
 	alliance['desc']      = soup.find('div',  attrs = {'class':'editable-msg'}).text
 	alliance['trophies']  = soup.find('div',  attrs = {'class':'war-trophies'}).text.strip()
-	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('ALLIANCEICON_')[-1]
+	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('ALLIANCEICON_')[-1][:-4]
 
 	# Parse the alliance stats.
 	alliance_stats = soup.findAll('div', attrs = {'class':'level-item'})
@@ -43,7 +43,7 @@ def parse_alliance(contents):
 		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text.replace('[ME]',''))
 
 		member['level'] = int(member_row.find('td', attrs={'class':'avatar'}).text.strip())
-		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src').split('Portrait_')[-1]
+		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src').split('Portrait_')[-1][:-4]
 		member_role     = member_row.find('td', attrs={'class':'role'})
 
 		# Process role information.
@@ -85,7 +85,7 @@ def parse_roster(contents, alliance_info, parse_cache):
 
 	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
 	player_info['name'] = remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
-	player_info['image'] = player.find('img').get('src').split('Portrait_')[-1]
+	player_info['image'] = player.find('img').get('src').split('Portrait_')[-1][:-4]
 	player_info['level'] = int(player.find('span').text)
 
 	player_stats = player.find('div', attrs = {'class':'player-stats'}).findAll('span')
@@ -121,7 +121,7 @@ def parse_roster(contents, alliance_info, parse_cache):
 			continue
 
 		# Keep the path to the image for each character.
-		char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1]
+		char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1][:-4]
 		
 		char_portraits[char_name] = char_portrait
 
@@ -204,10 +204,10 @@ def parse_roster(contents, alliance_info, parse_cache):
 		
 	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
 	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
-		print (" (skipping...unchanged)")
+		print (" (skipping -- roster data unchanged)")
 		processed_chars['last_update'] = player['processed_chars']['last_update']
 	else:
-		print (" (UPDATED with new roster data!)")
+		print (" (Updated!)")
 		processed_chars['last_update'] = datetime.datetime.now()
 	
 	# Add the 'clean' parsed data to our list of processed players.
@@ -258,25 +258,34 @@ def build_parse_cache(alliance_info, parse_cache):
 
 		# Iterate through all the members and chars from this history entry.
 		for member in alliance_info['hist'][entry]:
+		
 			for char in alliance_info['hist'][entry][member]:
 
+				member_info = alliance_info['hist'][entry][member]
+
 				# Skip the tot_power and last_updated entries.
-				if type(alliance_info['hist'][entry][member][char]) is not dict:
+				if type(member_info[char]) is not dict:
 					continue
 
 				# Will index everything by power.
-				power = alliance_info['hist'][entry][member][char]['power']
+				power = member_info[char]['power']
 
+				# Convert old format to the new, only needs to be done once.
+				if type(power) is str:
+					for key in member_info[char]:
+						member_info[char][key] = int(member_info[char][key])
+					power = int(power)
+					
 				# Get a list of other entries already added at this same power.
 				cached_entries = parse_cache.setdefault(power,[])
 
 				# If this entry already exists, update the current entry to point at the cached one.
-				if alliance_info['hist'][entry][member][char] in cached_entries:
-						alliance_info['hist'][entry][member][char] = cached_entries[cached_entries.index(alliance_info['hist'][entry][member][char])]
+				if member_info[char] in cached_entries:
+						member_info[char] = cached_entries[cached_entries.index(member_info[char])]
 						continue
 
 				# Otherwise, add the current entry to cached entry list.
-				cached_entries.append(alliance_info['hist'][entry][member][char])
+				cached_entries.append(member_info[char])
 
 	# After History has been processed. Update alliance_info['members'][member]['processed_chars'] with the same info.
 	for member in alliance_info['members']:
@@ -284,23 +293,25 @@ def build_parse_cache(alliance_info, parse_cache):
 		# Iterate through characters in the members with rosters.
 		for char in alliance_info['members'][member].get('processed_chars',[]):
 
+			processed_chars = alliance_info['members'][member]['processed_chars']
+
 			# Skip the tot_power and last_updated entries.
-			if type(alliance_info['members'][member]['processed_chars'][char]) is not dict:
+			if type(processed_chars[char]) is not dict:
 				continue
 
 			# Will index everything by power.
-			power = alliance_info['members'][member]['processed_chars'][char]['power']
+			power = processed_chars[char]['power']
 
 			# Get a list of other entries already added at this same power.
 			cached_entries = parse_cache.setdefault(power,[])
 
 			# If this entry already exists, update the current entry to point at the cached one.
-			if alliance_info['members'][member]['processed_chars'][char] in cached_entries:
-					alliance_info['members'][member]['processed_chars'][char] = cached_entries[cached_entries.index(alliance_info['members'][member]['processed_chars'][char])]
+			if processed_chars[char] in cached_entries:
+					processed_chars[char] = cached_entries[cached_entries.index(processed_chars[char])]
 					continue
 
 			# Otherwise, add the current entry to cached entry list.
-			cached_entries.append(alliance_info['members'][member]['processed_chars'][char])
+			cached_entries.append(processed_chars[char])
 
 
 # Pull strike team definitions directly from the website. 

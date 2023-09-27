@@ -13,7 +13,6 @@ def get_extracted_traits(alliance_info):
 	# If the old trait file isn't being used, extracted_traits needs to be updated.
 	if 'trait_file' not in alliance_info or alliance_info['trait_file'] not in alliance_info['scripts']:
 
-		print ("Extracted traits location has changed...updating.")
 		for script in alliance_info['scripts']:
 			extracted_traits = extract_traits(script)
 

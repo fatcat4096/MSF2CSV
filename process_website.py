@@ -701,18 +701,18 @@ def update_history(alliance_info):
 		if 'processed_chars' in alliance_info['members'][member]:
 
 			# Get a little closer to our work.
-			member_info = alliance_info['members'][member]['processed_chars']
+			member_info = alliance_info['members'][member]
 			hist_info   = hist[max(hist)].get(member)
 
 			# Compare today's information vs the previous run.
-			if member_info == hist_info:
+			if member_info['processed_chars'] == hist_info:
 			
 				# If equal, no changes have been made or roster hasn't been resynced.
 				# Point the info in processed_chars to the previous entry
-				member_info = hist_info
+				member_info['processed_chars'] = hist_info
 
 			# Finally set today's entry to the final value.
-			today_info[member] = member_info
+			today_info[member] = member_info['processed_chars']
 
 	# Keep the oldest entry, plus one per ISO calendar week. Also, purge any entries > 60 days. 
 	for key in list(hist):
