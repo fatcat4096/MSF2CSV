@@ -10,6 +10,8 @@ def get_value_color(min, max, value, stat='power', hist_tab=''):
 	
 	# Just in case passed a string.
 	value = int(value)
+
+	max_colors  = len(color_scale)-1
 	
 	# Special treatment for the '0' fields. 
 	if not value:
@@ -121,6 +123,6 @@ def polylinear_gradient(colors, n):
 # Linear gradient from red, to yellow, to green. 
 # Costly to calculate, so only doing it once.
 color_scale = polylinear_gradient(['#FF866F','#F6FF6F','#6FFF74'],1000)['hex']
-max_colors  = len(color_scale)-1
+
 
 

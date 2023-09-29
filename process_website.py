@@ -61,10 +61,16 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 			print ("Using cached_data from file:", cached_data_files[0])
 			return cached_alliance_info
 
+		alliance_name = cached_data_files[0].split('cached_data-')[1][:-4]
+
+		## WE SHOULD NO LONGER BE LOOKING DIRECTLY AT SYS.ARGV. 
+		## All arguments should have been properly parsed by parse_args
+		## WE NEED TO CHANGE THIS TO PULL A FILENAME DIRECTLY FROM THERE.
+		
 		# If we double-clicked or passed this in as an argument, alliance_name won't be set automatically. 
-		if len(sys.argv)>1 and sys.argv[1] == cached_data_files[0]:
-			alliance_name = sys.argv[1].split('cached_data-')[1][:-4]
-	
+		#if len(sys.argv)>1 and sys.argv[1] == cached_data_files[0]:
+		#	alliance_name = sys.argv[1].split('cached_data-')[1][:-4]
+
 	# Login to the website. 
 	driver = login(prompt)
 	
@@ -85,7 +91,7 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 
 	# We're working from website if the specified alliance_name matches the website alliance_name
 	working_from_website = (alliance_name == website_alliance_info['name'])
-	cached_data_file     = 'cached_data-'+alliance_name+'.msf'
+	cached_data_file     = 'cached_data-'+remove_tags(alliance_name)+'.msf'
 	
 	# If working_from_website, the website_alliance_info will be our baseline. 
 	if working_from_website:
@@ -300,16 +306,25 @@ def encode_alliance_info(alliance_info):
 	block = []
 
 	# Include basic info about the alliance.
-	block.append(alliance_info['name'].replace(' ','_'))
+	block.append(alliance_info['name'].replace(' ','_').replace('>','gt;').replace('<','lt;'))
 	block.append(alliance_info['image'])
+	block.append(alliance_info['stark_lvl'])
+	block.append(alliance_info['trophies'])
+
+	# Only members with a defined URL can be sent this way.
+	encodable_members = [member for member in alliance_info['members'] if 'url' in alliance_info['members'][member]]
+
+	encodable_leader   = [member for member in [alliance_info['leader']] if member in encodable_members]
+	encodable_captains = [member for member in alliance_info['captains'] if member in encodable_members]
+
+	captain_list  = encodable_leader + encodable_captains
 
 	# Include the count of leader + captains.
-	block.append(str(len(alliance_info['captains'])+1))
+	block.append(str(len(captain_list)))
 
 	# Encode each member's URL.
-	member_list  = [alliance_info['leader']]+alliance_info['captains']
-	member_list += [member for member in alliance_info['members'] if member not in member_list]
-	member_urls  = [encode_url(alliance_info['members'][member]['url']) for member in member_list]
+	member_list = captain_list + [member for member in encodable_members if member not in captain_list]
+	member_urls = [encode_url(alliance_info['members'][member]['url']) for member in member_list]
 	block += member_urls
 
 	# Encode the strike teams
@@ -331,13 +346,16 @@ def decode_alliance_info(block):
 	
 	parts = block.split(',')
 
-	alliance_info['name']  = parts[0].replace('_',' ')
+	alliance_info['name']  = parts[0].replace('_',' ').replace('gt;','>').replace('lt;','<')
 	alliance_info['image'] = parts[1]
+	
+	alliance_info['stark_lvl'] = parts[2]
+	alliance_info['trophies']  = parts[3]
 
-	leader_count = int(parts[2])
+	leader_count = int(parts[4])
 	
 	# These are the encoded URL fragments
-	member_urls = [decode_url(part) for part in parts[3:-2]]
+	member_urls = [decode_url(part) for part in parts[5:-2]]
 	
 	# These are the encoded Strike Teams
 	encoded_strike_teams = {}
@@ -380,7 +398,7 @@ def decode_alliance_info(block):
 	
 	# Change working directory to the local directory and cache the updated roster info to disk.
 	os.chdir(path)
-	pickle.dump(alliance_info,open('cached_data-'+alliance_info['name']+'-block.msf','wb'))
+	pickle.dump(alliance_info,open('cached_data-'+remove_tags(alliance_info['name'])+'-block.msf','wb'))
 
 	return alliance_info
 
@@ -582,7 +600,7 @@ def find_members_roster(driver, member):
 	try:
 		button.click()
 	except:
-		time.sleep(1)
+		time.sleep(0.5)
 
 		# If the URL / page title hasn't changed, try one more time
 		try:

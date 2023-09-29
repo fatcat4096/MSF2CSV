@@ -19,8 +19,7 @@ def parse_alliance(contents):
 	alliance = {}
 
 	# Parse the basic alliance info
-	alliance['name']      = remove_tags(soup.find('span', attrs = {'class':'alliance-name'}).text)
-	alliance['desc']      = soup.find('div',  attrs = {'class':'editable-msg'}).text
+	alliance['name']      = str(soup.find('span', attrs = {'class':'alliance-name'}).contents[0])
 	alliance['trophies']  = soup.find('div',  attrs = {'class':'war-trophies'}).text.strip()
 	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('ALLIANCEICON_')[-1][:-4]
 
@@ -148,19 +147,30 @@ def parse_roster(contents, alliance_info, parse_cache):
 			
 			# Decode Abilities
 			abilities = toon_stats.findAll('div', attrs = {'class':'ability-level'})
-			bas = str(abilities[0]).split('-')[3][1]
-			spc = str(abilities[1]).split('-')[3][1]
+			
+			bas = '0'
+			spc = '0'
 			ult = '0'
+			pas = '0'
+
+			if '-level-' in str(abilities[0]):
+				bas = str(abilities[0]).split('-')[3][1]
+			
+			if '-level-' in str(abilities[1]):
+				spc = str(abilities[1]).split('-')[3][1]
+			
 			if '-level-' in str(abilities[-2]) and len(abilities)==4:
 				ult = str(abilities[-2]).split('-')[3][1]
-			pas = '0'
+			
 			if '-level-' in str(abilities[-1]):
 				pas = str(abilities[-1]).split('-')[3][1]
 			
 			# Decode Gear Tier
+			tier = '0'
 			gear = char.find('div',attrs={'class':'gear-tier-ring'})
-			tier = str(gear).split('"g')[2].split('"')[0]
-		
+			if str(gear) != 'None':
+				tier = str(gear).split('"g')[2].split('"')[0]
+
 			# Decode ISO Level
 			iso_info = str(char.find('div',attrs={'class','iso-wrapper'}))
 			

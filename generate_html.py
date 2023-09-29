@@ -5,6 +5,7 @@ Takes the processed alliance / roster data and generate readable output to spec.
 """
 
 import datetime
+import string
 
 # Routines to create color gradient for heat map
 from gradients import *	
@@ -350,8 +351,22 @@ def find_oldest_diff(alliance_info, player_name, char_name, key):
 			for entry in player_info:
 				diff = int(player_info[entry]) - int(hist_info.get(entry,0))
 
+				# If there's a difference, note it in the tooltip.
 				if diff:
-					diffs.append(f'{entry.title()}: {diff:+}')
+					if entry != 'abil':
+						diffs.append(f'{entry.title()}: {diff:+}')
+
+					# More work to decode the Abilities.
+					else:
+						bas,abil = divmod(diff,1000)
+						spc,abil = divmod(abil,100)
+						ult,pas  = divmod(abil,10)
+						abil_diffs = {'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
+						
+						# And then add only the specific abilities which changed.
+						for abil in abil_diffs:
+							if abil_diffs[abil]:
+								diffs.append(f'{abil.title()}: {abil_diffs[abil]:+}')
 
 			other_diffs = [' title="%s"' % (', '.join(diffs)),''][not diffs]
 			return value, other_diffs
@@ -477,12 +492,13 @@ def generate_roster_analysis(alliance_info, html_file=''):
 	stats = {}
 	
 	# Get the list of Alliance Members 
-	member_list = get_player_list(alliance_info)
+	member_list = [member for member in get_player_list(alliance_info) if 'processed_chars' in alliance_info['members'][member]]
 
 	# Get the list of usable characters for analysis.
 	char_list = get_char_list(alliance_info)
 	
 	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
+	alliance_order = [member for member in alliance_order if member in member_list]
 
 	# Start by doing stat analysis.	
 	for member in member_list:
@@ -644,32 +660,28 @@ def generate_roster_analysis(alliance_info, html_file=''):
 # Generate just the Alliance Tab contents.
 def generate_alliance_tab(alliance_info, html_file=''):
 
+	alt_color = extract_color(alliance_info['name'])
+	
 	tot_power = sum([alliance_info['members'][member]['tcp'] for member in alliance_info['members']])
 	avg_power = int(tot_power/len(alliance_info['members']))
 
-	# Use this flag to determine which header information is displayed.
-	extras_avail = alliance_info.get('trophies')
-	
 	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
-	html_file += '<table style="background:SteelBlue;">\n'
+	html_file += '<table style="background:#222;">\n'
 
 	html_file += '<tr>\n</tr>\n'
 
-	html_file += '<tr style="font-size:18px;">\n'
-	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png"/></td>\n' % (alliance_info['image'])
-	html_file += ' <td colspan="10" rowspan="%s" class="alliance_name">%s</td>' % (['1','2'][not extras_avail], alliance_info['name'].upper())
-	
-	if extras_avail:	html_file += ' <td colspan="2" rowspan="2"><span class="bold" style="font-size:24px">Alliance Message:</span><br>%s</td>' % (alliance_info['desc'])
-	else:				html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
-
+	html_file += '<tr style="font-size:18px;color:white;">\n'
+	html_file += ' <td colspan="2" rowspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>'
+	html_file += ' <td colspan="10" class="alliance_name"%s>%s</td>' % (alt_color, alliance_info['name'].upper())
+	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></td>\n' % (alliance_info['image'])
 	html_file += '</tr>\n'
 
-	html_file += '<tr style="font-size:18px;">\n'
-	if extras_avail:	html_file += ' <td colspan="2">Members<br><span style="font-size:24px;"><b>%i/24</b></span></td>\n' % (len(alliance_info['members']))
-	if extras_avail:	html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
+	html_file += '<tr style="font-size:18px;color:white;">\n'
+	html_file += ' <td colspan="2">Members<br><span style="font-size:24px;"><b>%i/24</b></span></td>\n' % (len(alliance_info['members']))
+	html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
 	html_file += ' <td colspan="2">Average Collection Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{avg_power:,}')
-	if extras_avail:	html_file += ' <td colspan="2">Level<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['stark_lvl'])
-	if extras_avail:	html_file += ' <td colspan="2">Trophies<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info['trophies'])
+	html_file += ' <td colspan="2">Level<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('stark_lvl','80'))
+	html_file += ' <td colspan="2">Trophies<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('trophies','XXX'))
 	html_file += '</tr>\n'
 	
 	# Create the headings for the Alliance Info table.
@@ -751,6 +763,23 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	html_file += '</div>\n'
 
 	return html_file
+
+
+def extract_color(alliance_name):
+	alt_color = ''
+
+	check_for_color = ''.join(alliance_name.split()).lower()
+
+	# If we have a color, clean it up and extract it.
+	if '<color=' in check_for_color:
+			color_name = check_for_color.split('<color=')[1].split('>')[0].replace('#','')
+
+			# Is this a hex number or a named color?
+			hex_or_named = ['','#'][all(char in string.hexdigits for char in color_name)]
+
+			alt_color=' style="color:%s%s";' % (hex_or_named, color_name)
+
+	return alt_color
 
 
 # Including this here for expedience.

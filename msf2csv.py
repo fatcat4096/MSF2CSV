@@ -7,14 +7,12 @@ Transform stats from MSF.gg into readable tables with heatmaps.
 import os
 import datetime
 import sys
-import time
 import argparse
 
 from process_website import *       # Routines to get Roster data from website
-from generate_html import *         # Routines to generate the finished tables.		
+from generate_html import *         # Routines to generate the finished tables.
 
-
-# If no name specified, default to the alliance for the Login player 
+# If no name specified, default to the alliance for the Login player
 def main(alliance_name='', cached_data='', csv=False, nohist=False, prompt=False, force=False, exportblock=False, importblock=''):
 
 	# Parse alliance info from importblock and update rosters from website.
@@ -50,8 +48,6 @@ def main(alliance_name='', cached_data='', csv=False, nohist=False, prompt=False
 		cached_tabs = {}
 		for table in tables['active']:
 			write_file(filename+table+'.html', generate_html(alliance_info, nohist, tables[table], cached_tabs))
-
-	time.sleep(1)
 
 
 # Parse arguments

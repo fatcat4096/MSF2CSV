@@ -8,7 +8,9 @@ Builds a new raids_and_lanes.py if a valid file isn't present in the folder.
 
 import os
 import sys
+import re
 
+TAG_RE = re.compile(r'<[^>]+>')
 
 # If not frozen, work in the same directory as this script.
 path = os.path.dirname(__file__)
@@ -75,6 +77,10 @@ def generate_strike_team(type,strike_team,desc):
 	
 	
 def write_file(filename, content):
+
+	# Sanitize to remove HTML tags.
+	filename = TAG_RE.sub('', filename)
+
 	# Default output is UTF-8. Attempt to use it as it's more compatible.
 	try:
 		open(filename, 'w').write(content)
@@ -83,7 +89,7 @@ def write_file(filename, content):
 		open(filename, 'w', encoding='utf-16').write(content)	
 	print ("Writing %s" % (filename))
 
-	
+
 # Create a local raids_and_lanes.py that users can edit if we are Frozen and one doesn't exist. 
 if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
 
