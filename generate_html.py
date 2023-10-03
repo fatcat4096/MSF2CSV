@@ -196,7 +196,7 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 	elif sort_by == 'stp':
 		player_list = sorted(player_list, key=lambda x: -all_team_pwr[x])
 
-	print ("Player Order:",player_list)
+	#print ("Player Order:",player_list)
 
 	# Clean up the strike_team defs before we begin.
 	player_upper = list(alliance_info['members'])
@@ -216,7 +216,7 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 			if player_name in player_upper and player_name not in player_list:
 				strike_team.remove(player_name)
 
-	print ('strike_teams:',strike_teams)
+	#print ('strike_teams:',strike_teams)
 
 	# Let's get this party started!
 	html_file += '   <table>\n'
@@ -292,7 +292,7 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 		if sort_by:
 			strike_team = [member for member in player_list if member in strike_team]
 
-		print ('sorted team:',strike_team)
+		#print ('sorted team:',strike_team)
 
 		# FINALLY, WRITE THE DATA FOR EACH ROW. #########################
 		alt_color = False
