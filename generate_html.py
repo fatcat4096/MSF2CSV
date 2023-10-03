@@ -306,7 +306,7 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 
 			# Player Name, then relevant stats for each character.
 			html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
-			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_cell_alt][alt_color], player_name)
+			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_cell_alt][alt_color], player_name.replace('Commander','Cmdr.'))
 
 			# Write the stat values for each character.
 			for char_name in char_list:
@@ -981,11 +981,13 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
   font-weight : 700;
   font-size   : 14pt;
   background  : PowderBlue;
+  min-width   : 125px;
 }
 .title_gray {
   font-weight : 700;
   font-size   : 14pt;
   background  : Gainsboro;
+  min-width   : 125px;
 }
 .header_blue {
   font-weight : 700;
@@ -1018,7 +1020,6 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
   background  : PowderBlue;
   white-space : nowrap;
   color       : black;
-  min-width   : 125px;
 }
 .name_blue_alt {
   font-weight : 700;
@@ -1031,7 +1032,6 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
   background  : Gainsboro;
   white-space : nowrap;
   color       : black;
-  min-width   : 125px;
 }
 .name_gray_alt {
   font-weight : 700;
