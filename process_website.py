@@ -61,15 +61,9 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 			print ("Using cached_data from file:", cached_data_files[0])
 			return cached_alliance_info
 
-		alliance_name = cached_data_files[0].split('cached_data-')[1][:-4]
-
-		## WE SHOULD NO LONGER BE LOOKING DIRECTLY AT SYS.ARGV. 
-		## All arguments should have been properly parsed by parse_args
-		## WE NEED TO CHANGE THIS TO PULL A FILENAME DIRECTLY FROM THERE.
-		
-		# If we double-clicked or passed this in as an argument, alliance_name won't be set automatically. 
-		#if len(sys.argv)>1 and sys.argv[1] == cached_data_files[0]:
-		#	alliance_name = sys.argv[1].split('cached_data-')[1][:-4]
+		alliance_name = cached_data_files[0].split('-')[1]
+		if alliance_name[-4:] == '.msf':
+			alliance_name = alliance_name[:-4]
 
 	# Login to the website. 
 	driver = login(prompt)
@@ -149,7 +143,7 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 	driver.close()
 
 	# Update extracted_traits if necessary.
-	get_extracted_traits(alliance_info)
+	add_extracted_traits(alliance_info)
 
 	# Keep a copy of critical stats from today's run for historical analysis.
 	update_history(alliance_info)
@@ -169,7 +163,7 @@ def get_cached_data_files(cached_data):
 		os.rename(path+os.sep+file, path+os.sep+file+'.msf')
 
 	# Check to see whether we were passed a cached_data file as an argument.
-	if cached_data and cached_data.find('cached_data') != -1:
+	if cached_data and cached_data[-4:] == ('.msf'):
 		return [cached_data]
 
 	# Otherwise, return full paths to the cached_data files in the local directory.
@@ -391,7 +385,7 @@ def decode_alliance_info(block):
 		strike_teams[raid_type] = add_strike_team_dividers([strike_team[:8], strike_team[8:16], strike_team[16:]], raid_type)
 
 	# Populate extracted_traits.
-	get_extracted_traits(alliance_info)
+	add_extracted_traits(alliance_info)
 
 	# Keep a copy of critical stats from today's run for historical analysis.
 	update_history(alliance_info)
@@ -623,14 +617,7 @@ def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
 		return False
 
 	# If not there, let's check on the website for a valid definition.
-	print ("%s team definitions in strike_teams.py were not valid. Checking definitions on MSF.gg" % ({'incur':'Incursion','other':'Gamma'}[raid_type]))
-	strike_team = get_strike_teams(driver,raid_type)
-
-	# If valid, update strike_teams with this info
-	if valid_strike_team(strike_team, alliance_info):
-		print ("Using strike_team definition from website.")
-		strike_teams[raid_type] = strike_team
-		return True
+	print ("%s team definitions in strike_teams.py were not valid." % ({'incur':'Incursion','other':'Gamma'}[raid_type]))
 
 	# If not there, let's check for one cached in the alliance_info
 	if 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
@@ -641,7 +628,7 @@ def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
 	# If not there, just put the member list in generic groups of 8.
 	print ("Valid strike_team defintion not found. Creating default strike_team from member list.")
 	members = list(alliance_info['members'])
-	members.sort()
+	members.sort(key=str.lower)
 
 	# Break it up into chunks for each team.
 	strike_teams[raid_type] = add_strike_team_dividers([members[:8], members[8:16], members[16:]], raid_type)
@@ -650,29 +637,7 @@ def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
 
 # Returns true if at least 75% people of the people in the Alliance are actually in the Strike Teams presented.
 def valid_strike_team(strike_team, alliance_info):
-	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.75	
-
-
-# Pull Strike Team definitions from MSF.gg Lanes 
-def get_strike_teams(driver,raid_type='incur'):
-
-	strike_team = []
-
-	# Download and parse each page for the specified Raid
-	for team_num in range(3):
-		driver.get('https://marvelstrikeforce.com/en/alliance/maps/raid_%s/0?strikeTeam=%i' % ({'incur':'incursion','other':'gamma_d'}[raid_type], team_num+1))
-
-		print ("Parsing %s raid Team #%i..." % ({'incur':'Incursion','other':'Gamma'}[raid_type], team_num+1))
-		# Wait until the list of Players is displayed.
-		WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-user')))
-
-		# Parse the current page.
-		team_def = parse_teams(driver.page_source)
-
-		# Add each team to the Strike Team definition
-		strike_team.append(team_def)
-
-	return add_strike_team_dividers(strike_team, raid_type)
+	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.66	
 
 
 # Add divider definitions in the right places, depending upon the raid_type

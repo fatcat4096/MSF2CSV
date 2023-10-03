@@ -8,7 +8,7 @@ import urllib.request
 
 
 # Update the Character Trait information using the latest info from website.
-def get_extracted_traits(alliance_info):
+def add_extracted_traits(alliance_info):
 
 	# If the old trait file isn't being used, extracted_traits needs to be updated.
 	if 'trait_file' not in alliance_info or alliance_info['trait_file'] not in alliance_info['scripts']:
