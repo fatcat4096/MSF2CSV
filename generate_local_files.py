@@ -113,6 +113,11 @@ if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
 #
 #	* STRIKE_TEAMS -- If not specified, entire alliance member list will be used.
 #
+#	* SORT_BY -- Sort the alliance members before display. Options include 'stp' and 'tcp'. 
+#
+#		If not specified, uses order in strike_team definitions
+#		(or alphabetical order if no strike_teams are specified)
+#
 #	* KEYS -- Controls which columns are displayed for each member's characters.
 #
 #		Default is ['power','tier','iso'] if not specified.
@@ -169,7 +174,7 @@ if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in War
-	tables['war'] = { 'name': 'War',
+	tables['war'] = { 'name': 'War', 'sort_by': 'tcp',
 						'lanes':[ [
 								{'traits': ['Key<br>Villains'], 'meta': ['Apocalypse', 'Dormammu', 'Doctor Doom', 'Kang the Conqueror', 'Super Skrull']},
 								{'traits': ['MastersOfEvil']},
@@ -196,7 +201,7 @@ if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
 						}
 
 	# All Characters
-	tables['all'] = { 'name': 'All Characters', 'keys': ['power', 'lvl', 'tier'] }
+	tables['all'] = { 'name': 'All Characters', 'sort_by':'stp' }
 
 	new_file += "tables = {'active': " + repr(tables['active']) + "}\n\n\n"
 

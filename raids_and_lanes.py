@@ -17,6 +17,11 @@
 #
 #	* STRIKE_TEAMS -- If not specified, entire alliance member list will be used.
 #
+#	* SORT_BY -- Sort the alliance members before display. Options include 'stp' and 'tcp'. 
+#
+#		If not specified, uses order in strike_team definitions
+#		(or alphabetical order if no strike_teams are specified)
+#
 #	* KEYS -- Controls which columns are displayed for each member's characters.
 #
 #		Default is ['power','tier','iso'] if not specified.
@@ -34,10 +39,7 @@ tables = {'active': ['incur', 'gamma', 'war', 'all']}
 
 
 # Meta Heroes for use in Incursion Raid
-tables['incur'] = { 'name': 'Incursion Raid',
-					'min_tier': 16,
-					'min_iso': 9,
-					'strike_teams': 'incur',
+tables['incur'] = { 'name': 'Incursion Raid', 'min_tier': 16, 'min_iso': 9, 'strike_teams': 'incur',
 					'lanes':[ [
 							{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
 							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
@@ -48,9 +50,7 @@ tables['incur'] = { 'name': 'Incursion Raid',
 					}
 
 # Meta Heroes for use in Gamma Raid
-tables['gamma'] = { 'name': 'Gamma Raid',
-					'min_tier': 16,
-					'strike_teams': 'other',
+tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'strike_teams': 'other',
 					'lanes':[ [
 							{'traits': ['Avenger', 'GotG'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
 							{'traits': ['PymTech', 'Infestation', 'Kree'], 'meta': ['Ghost', 'Yellowjacket', 'Minn-Erva', 'Captain Marvel', 'Phyla-Vell']},
@@ -76,9 +76,10 @@ tables['gamma'] = { 'name': 'Gamma Raid',
 					}
 
 # Meta Heroes for use in War
-tables['war'] = { 'name': 'War',
+tables['war'] = { 'name': 'War', 'sort_by': 'tcp', 'keys': ['power', 'yel'],
 					'lanes':[ [
 							{'traits': ['Key<br>Villains'], 'meta': ['Apocalypse', 'Dormammu', 'Doctor Doom', 'Kang the Conqueror', 'Super Skrull']},
+							{'traits': ['Pegasus']},
 							{'traits': ['MastersOfEvil']},
 							{'traits': ['Knowhere']},
 							{'traits': ['Gamma']},
@@ -103,7 +104,5 @@ tables['war'] = { 'name': 'War',
 					}
 
 # All Characters
-tables['all'] = { 'name': 'All Characters',
-					'keys': ['power', 'lvl', 'tier'],
-					}
+tables['all'] = { 'name': 'All Characters', 'sort_by':'stp' }
 
