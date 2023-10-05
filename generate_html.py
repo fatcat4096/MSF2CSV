@@ -65,42 +65,76 @@ def generate_html(alliance_info, nohist, table, cached_tabs={}):
 # Generate the contents for each lane.
 def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
 
+	# Use the full Player List if explicit Strike Teams haven't been defined.
+	sort_by = table.get('sort_by','')
+	strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'), [get_player_list(alliance_info, sort_by)])
+
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
 		
 		# Display each lane in a separate tab.
-		lane_num = lanes.index(lane)+1
-		html_file += '<div id="%s%i" class="tabcontent">\n' % (['Hist','Lane'][not hist_tab], lane_num)
+		divider_id = ['Hist','Lane'][not hist_tab] + str(lanes.index(lane)+1)
+		html_file += '<div id="%s" class="tabcontent">\n' % (divider_id)
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
 		
 			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, hist_tab)
 
-			# Use the full Player List if explicit Strike Teams haven't been defined.
-			strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'), [get_player_list(alliance_info)])
-
 			# Start with the Basic Table Label and Colors.
 			table_lbl = '<br>'.join([translate_name(trait) for trait in section['traits']]).upper()
 
-			# Only calling it twice if we have meta_chars defined.
+			# Let's make it easy on ourselves. Start every section the same way.
+			html_file += '<table>\n <tr>\n  <td>\n'
+
+			# Only building meta table if we have meta_chars defined.
 			if meta_chars:
 				meta_lbl = table_lbl+'<br><span class="subtitle">META</span>'
 
-				html_file += '<table>\n <tr>\n  <td>\n'
-				html_file += generate_table(alliance_info, table, meta_chars, strike_teams, meta_lbl, get_stp_list(alliance_info, meta_chars, hist_tab), hist_tab)
+				stp_list = get_stp_list(alliance_info, meta_chars, hist_tab)
+
+				html_file += generate_table(alliance_info, table, meta_chars, strike_teams, meta_lbl, stp_list, hist_tab)
 				html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
 				# Differentiate Others Section from Meta Section
 				table_lbl += '<br><span class="subtitle">OTHERS</span>'
 
-			# Always generate the Others table.
-			# Only label it as such if Meta section exists.
-			html_file += generate_table(alliance_info, table, other_chars, strike_teams, table_lbl, get_stp_list(alliance_info, meta_chars+other_chars, hist_tab), hist_tab)
+			# Generate stp_list dict for the Other Table calls.
+			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_tab)
+			
+			# Special code for Spanning format here. It's a very narrow window of applicability.
+			if other_chars and not meta_chars and len(other_chars) <= 5 and table.get('format') == 'span':
 
-			# If in a nested table, close the nested table.
-			if meta_chars:
-				html_file += '  </td>\n </tr>\n</table>\n'
+				# If strike_team is just the entire player list, break it up into 3 groups.
+				if len(strike_teams) == 1:
+					
+					# Need to do a new sort for strike_teams if sort_by is STP.
+					if sort_by == 'stp':
+						strike_temp = [get_player_list(alliance_info, sort_by, stp_list)]
+					else:
+						strike_temp = strike_teams[:]
+						
+					# Split the sorted player list into 3 groups of 8 players.
+					strike_temp = [[strike_temp[0][:8]], [strike_temp[0][8:16]], [strike_temp[0][16:]]]
+
+				# If we have defined Strike Teams, create a fake set of Strike Teams so that a label is generated.
+				else:
+					strike_temp = [[strike_teams[0],[],[]],
+								   [[],strike_teams[1],[]],
+								   [[],[],strike_teams[2]]]
+
+				# Generate 3 tables, spanning the page.
+				for strike_team in strike_temp:
+					# Pass in only a single chunk of 8 players three separate times.
+					html_file += generate_table(alliance_info, table, other_chars, strike_team, table_lbl, stp_list, hist_tab)
+					html_file += '  </td>\n  <td><br></td>\n  <td>\n'
+
+			# We are NOT spanning. Standard table generation.
+			else:
+				html_file += generate_table(alliance_info, table, other_chars, strike_teams, table_lbl, stp_list, hist_tab)
+
+			# End every section the same way.
+			html_file += '  </td>\n </tr>\n</table>\n'
 
 			# If not the final section, add a divider row. 
 			if lane.index(section) != len(lane)-1:
@@ -167,7 +201,7 @@ def get_meta_other_chars(alliance_info, table, section, hist_tab):
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
-def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], table_lbl='', all_team_pwr={}, hist_tab = '', html_file = ''):
+def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], table_lbl='', stp_list={}, hist_tab = '', html_file = ''):
 
 	# Pick a color scheme.
 	if table_lbl.find('OTHERS') == -1:
@@ -186,17 +220,8 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 		team_pwr_lbl  = 'STP<br>(Top 5)'
 
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list (alliance_info)
 	sort_by  = table.get('sort_by', '')
-
-	# If Sort Order specified, sort player_list in the correct order. 
-	if sort_by == 'tcp':
-		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x]['tcp'])
-
-	elif sort_by == 'stp':
-		player_list = sorted(player_list, key=lambda x: -all_team_pwr[x])
-
-	#print ("Player Order:",player_list)
+	player_list = get_player_list (alliance_info, sort_by, stp_list)
 
 	# Clean up the strike_team defs before we begin.
 	player_upper = list(alliance_info['members'])
@@ -215,8 +240,6 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 		for player_name in strike_team[:]:
 			if player_name in player_upper and player_name not in player_list:
 				strike_team.remove(player_name)
-
-	#print ('strike_teams:',strike_teams)
 
 	# Let's get this party started!
 	html_file += '   <table>\n'
@@ -264,9 +287,9 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 
 		# Find min/max for meta/strongest team power in the Alliance
 		# This will be used for color calculation for the Team Power column.
-		all_team_pwrs = [all_team_pwr[player_name] for player_name in player_list]
-		min_team_pwr = min(all_team_pwrs)
-		max_team_pwr = max(all_team_pwrs)
+		all_stps = [stp_list[player_name] for player_name in player_list]
+		min_all_stps = min(all_stps)
+		max_all_stps = max(all_stps)
 
 		# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
 		# (only if more than one item requested)
@@ -291,8 +314,6 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 		# Last minute sort if proscribed by the table format.
 		if sort_by:
 			strike_team = [member for member in player_list if member in strike_team]
-
-		#print ('sorted team:',strike_team)
 
 		# FINALLY, WRITE THE DATA FOR EACH ROW. #########################
 		alt_color = False
@@ -329,14 +350,15 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 						# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
 						value,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab)
 
-					style = ''
-					if value not in (0,'0'):
+					if value == 0 and hist_tab:
+						style = ''
+					else:
 						style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, hist_tab), ['color:black;',''][not hist_tab])
-					html_file += '     <td%s%s>%s</td>\n' % (style, ['',other_diffs][key=='power'], [value,'-'][value in (0,'0')])
+					html_file += '     <td%s%s>%s</td>\n' % (style, ['',other_diffs][key=='power'], [value,'-'][not value])
 
 			# Include the Team Power column.
-			team_pwr = all_team_pwr.get(player_name,0)
-			html_file += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(min_team_pwr, max_team_pwr, team_pwr), [team_pwr,'-'][team_pwr in (0,'0')])
+			player_stp = stp_list.get(player_name,0)
+			html_file += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(min_all_stps, max_all_stps, player_stp), [player_stp,'-'][not player_stp])
 			html_file += '    </tr>\n'
 		# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
 
@@ -469,53 +491,53 @@ def generate_roster_analysis(alliance_info, html_file=''):
 	html_file += '<tr>\n'
 
 	# Averages
-	html_file += ' <td class="name_blue" width="40">Yel</td>\n'
-	html_file += ' <td class="name_blue" width="40">Red</td>\n'
-	html_file += ' <td class="name_blue" width="40">Tier</td>\n'
-	html_file += ' <td class="name_blue" width="40">Lvl</td>\n'
-	html_file += ' <td class="name_blue" width="40">ISO</td>\n'
+	html_file += ' <td class="blue" width="40">Yel</td>\n'
+	html_file += ' <td class="blue" width="40">Red</td>\n'
+	html_file += ' <td class="blue" width="40">Tier</td>\n'
+	html_file += ' <td class="blue" width="40">Lvl</td>\n'
+	html_file += ' <td class="blue" width="40">ISO</td>\n'
 	
 	# Yellow Stars
-	html_file += ' <td class="name_blue" width="40">4*</td>\n'
-	html_file += ' <td class="name_blue" width="40">5*</td>\n'
-	html_file += ' <td class="name_blue" width="40">6*</td>\n'
-	html_file += ' <td class="name_blue" width="40">7*</td>\n'
+	html_file += ' <td class="blue" width="40">4*</td>\n'
+	html_file += ' <td class="blue" width="40">5*</td>\n'
+	html_file += ' <td class="blue" width="40">6*</td>\n'
+	html_file += ' <td class="blue" width="40">7*</td>\n'
 	
 	# Red Stars
-	html_file += ' <td class="name_blue" width="40">4*</td>\n'
-	html_file += ' <td class="name_blue" width="40">5*</td>\n'
-	html_file += ' <td class="name_blue" width="40">6*</td>\n'
-	html_file += ' <td class="name_blue" width="40">7*</td>\n'
+	html_file += ' <td class="blue" width="40">4*</td>\n'
+	html_file += ' <td class="blue" width="40">5*</td>\n'
+	html_file += ' <td class="blue" width="40">6*</td>\n'
+	html_file += ' <td class="blue" width="40">7*</td>\n'
 
 	# ISO Levels
-	html_file += ' <td class="name_blue" width="40">1-4</td>\n'
-	html_file += ' <td class="name_blue" width="40">5</td>\n'
-	html_file += ' <td class="name_blue" width="40">6-8</td>\n'
-	html_file += ' <td class="name_blue" width="40">9</td>\n'
-	html_file += ' <td class="name_blue" width="40">10</td>\n'
+	html_file += ' <td class="blue" width="40">1-4</td>\n'
+	html_file += ' <td class="blue" width="40">5</td>\n'
+	html_file += ' <td class="blue" width="40">6-8</td>\n'
+	html_file += ' <td class="blue" width="40">9</td>\n'
+	html_file += ' <td class="blue" width="40">10</td>\n'
 
 	# Gear Tiers
-	html_file += ' <td class="name_blue" width="40">13</td>\n'
-	html_file += ' <td class="name_blue" width="40">14</td>\n'
-	html_file += ' <td class="name_blue" width="40">15</td>\n'
-	html_file += ' <td class="name_blue" width="40">16</td>\n'
-	html_file += ' <td class="name_blue" width="40">17</td>\n'
-	html_file += ' <td class="name_blue" width="40">18</td>\n'
+	html_file += ' <td class="blue" width="40">13</td>\n'
+	html_file += ' <td class="blue" width="40">14</td>\n'
+	html_file += ' <td class="blue" width="40">15</td>\n'
+	html_file += ' <td class="blue" width="40">16</td>\n'
+	html_file += ' <td class="blue" width="40">17</td>\n'
+	html_file += ' <td class="blue" width="40">18</td>\n'
 
 	# T4 Abilities
-	html_file += ' <td class="name_blue" width="40">Bas</td>\n'
-	html_file += ' <td class="name_blue" width="40">Spc</td>\n'
-	html_file += ' <td class="name_blue" width="40">Ult</td>\n'
-	html_file += ' <td class="name_blue" width="40">Pas</td>\n'
+	html_file += ' <td class="blue" width="40">Bas</td>\n'
+	html_file += ' <td class="blue" width="40">Spc</td>\n'
+	html_file += ' <td class="blue" width="40">Ult</td>\n'
+	html_file += ' <td class="blue" width="40">Pas</td>\n'
 
 	# Level Ranges
-	html_file += ' <td class="name_blue" width="50">&lt;65</td>\n'
-	html_file += ' <td class="name_blue" width="50">66-70</td>\n'
-	html_file += ' <td class="name_blue" width="50">71-75</td>\n'
-	html_file += ' <td class="name_blue" width="50">76-80</td>\n'
-	html_file += ' <td class="name_blue" width="50">81-85</td>\n'
-	html_file += ' <td class="name_blue" width="50">86-90</td>\n'
-	html_file += ' <td class="name_blue" width="50">91-95</td>\n'
+	html_file += ' <td class="blue" width="50">&lt;65</td>\n'
+	html_file += ' <td class="blue" width="50">66-70</td>\n'
+	html_file += ' <td class="blue" width="50">71-75</td>\n'
+	html_file += ' <td class="blue" width="50">76-80</td>\n'
+	html_file += ' <td class="blue" width="50">81-85</td>\n'
+	html_file += ' <td class="blue" width="50">86-90</td>\n'
+	html_file += ' <td class="blue" width="50">91-95</td>\n'
 
 	html_file += '</tr>\n'
 	
@@ -880,11 +902,26 @@ def get_char_list(alliance_info):
 
 
 # Bring back a sorted list of players from alliance_info
-def get_player_list(alliance_info):
+def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 	# Only include members that actually have processed_char information attached.
 	player_list = [member for member in alliance_info['members'] if 'processed_chars' in alliance_info['members'][member]]
-	player_list.sort(key=str.lower)
+
+	# If Sort Order specified, sort player_list in the correct order. 
+	if sort_by == 'stp':
+		# If we weren't provided a list of STPs, fall back to using TCP.
+		if not stp_list:
+			sort_by = 'tcp'
+		else:
+			player_list = sorted(player_list, key=lambda x: -stp_list[x])
+
+	if sort_by == 'tcp':
+		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x]['tcp'])
+
+	# Default sort: alphabetical, ignoring case
+	if not sort_by:
+		player_list.sort(key=str.lower)
+
 	
 	return player_list
 
@@ -981,13 +1018,11 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
   font-weight : 700;
   font-size   : 14pt;
   background  : PowderBlue;
-  min-width   : 125px;
 }
 .title_gray {
   font-weight : 700;
   font-size   : 14pt;
   background  : Gainsboro;
-  min-width   : 125px;
 }
 .header_blue {
   font-weight : 700;
@@ -1015,11 +1050,18 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
                 0 0 0.8em white, 
                 0 0 0.2em white;
 }
+.blue {
+  font-weight : 700;
+  background  : PowderBlue;
+  white-space : nowrap;
+  color       : black;
+}
 .name_blue {
   font-weight : 700;
   background  : PowderBlue;
   white-space : nowrap;
   color       : black;
+  min-width   : 125px;
 }
 .name_blue_alt {
   font-weight : 700;
@@ -1032,6 +1074,7 @@ def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
   background  : Gainsboro;
   white-space : nowrap;
   color       : black;
+  min-width   : 125px;
 }
 .name_gray_alt {
   font-weight : 700;

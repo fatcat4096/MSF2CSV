@@ -22,6 +22,8 @@
 #		If not specified, uses order in strike_team definitions
 #		(or alphabetical order if no strike_teams are specified)
 #
+#	* FORMAT -- Only alternate format is currently 'span', used by War output.
+#
 #	* KEYS -- Controls which columns are displayed for each member's characters.
 #
 #		Default is ['power','tier','iso'] if not specified.
@@ -76,7 +78,7 @@ tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'strike_teams': 'other
 					}
 
 # Meta Heroes for use in War
-tables['war'] = { 'name': 'War', 'sort_by': 'tcp', 'keys': ['power', 'yel'],
+tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
 					'lanes':[ [
 							{'traits': ['Key<br>Villains'], 'meta': ['Apocalypse', 'Dormammu', 'Doctor Doom', 'Kang the Conqueror', 'Super Skrull']},
 							{'traits': ['Pegasus']},
@@ -104,5 +106,5 @@ tables['war'] = { 'name': 'War', 'sort_by': 'tcp', 'keys': ['power', 'yel'],
 					}
 
 # All Characters
-tables['all'] = { 'name': 'All Characters', 'sort_by':'stp' }
+tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp' }
 
