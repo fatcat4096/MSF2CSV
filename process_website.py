@@ -25,7 +25,6 @@ from parse_contents import *
 from extract_traits import *
 from generate_local_files import *
 
-import traceback
 
 # If not frozen, work in the same directory as this script.
 path = os.path.dirname(__file__)
@@ -156,7 +155,7 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 
 
 # Handle the file list cleanly.
-def get_cached_data_files(cached_data):
+def get_cached_data_files(cached_data=''):
 
 	# Fix any files that are missing the .msf extension
 	for file in [file for file in os.listdir(path) if file.find('cached_data') != -1 and file[-4:] != '.msf']:
@@ -171,7 +170,7 @@ def get_cached_data_files(cached_data):
 
 
 # Load cached_alliance_info and ensure it's valid and fresh. 
-def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force):
+def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force=False):
 
 	# Check whether file needs full-pathname to be valid.
 	filename = cached_data_file
@@ -241,6 +240,8 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 				
 			#print ("Using cached URL to download",member)
 			driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % members[member]['url'])
+
+			print ('Using URL...',end='')
 			
 		# Cached URL is the ONLY option if not working_from_website
 		elif not working_from_website:
@@ -249,6 +250,8 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 		# Otherwise, find an active roster button for this member
 		else:
+			print ('Using Alliance Page...',end='')
+
 			# Start off by getting back to the Alliance page if we're not already on it.
 			if driver.current_url != alliance_url:
 				driver.get(alliance_url)
@@ -332,7 +335,7 @@ def encode_alliance_info(alliance_info):
 	# Smash it all together and hand it off.
 	return ','.join(block)
 
-	
+
 # Decode the encoded block and populate alliance_info with stats and rosters from MSF.gg. 
 def decode_alliance_info(block):
 	
@@ -356,12 +359,37 @@ def decode_alliance_info(block):
 	encoded_strike_teams['incur'] = parts[-2]
 	encoded_strike_teams['other'] = parts[-1]
 	
+	# Once we've parsed all the parts of the block, let's see if there's "cached_data-" + alliance_name + ".msf" file locally. 
+	filename = 'cached_data-'+remove_tags(alliance_info['name']) +'.msf'
+
+	# If a cached_data file exists locally, load it. 
+	cached_alliance_info = {}
+	if os.path.exists(filename):
+		cached_alliance_info = pickle.load(open(filename,'rb'))
+	
+	# Then copy any members from the previous cached_data if they are still in the alliance. 
+	# These will all be updated during roster refresh.
+	for member in cached_alliance_info.setdefault('members',{}):
+		if 'url' in cached_alliance_info['members'][member] and cached_alliance_info['members'][member]['url'] in member_urls:
+			alliance_info.setdefault('members',{})[member] = cached_alliance_info['members'][member]
+
+	# Copy over the old definitions to start. Will also be updated during or after roster refresh.
+	for key in cached_alliance_info:
+		if key not in alliance_info:
+			alliance_info[key] = cached_alliance_info[key]
+
+	# Use this cache to optimize our cached_data output.
+	parse_cache = {}
+
+	# Populate the parse_cache if we have existing history.  
+	if 'hist' in alliance_info:
+		build_parse_cache(alliance_info, parse_cache)
+	
 	# Start by logging in. 
 	driver = login()
 
-	# Download and parse each roster
+	# Download, parse, and update each roster
 	member_list = []
-	parse_cache = {}
 	for member_url in member_urls:
 		driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % member_url)
 		member_name = process_roster(driver, alliance_info, parse_cache)
@@ -370,6 +398,7 @@ def decode_alliance_info(block):
 	# Close the Selenium session.
 	driver.close()
 
+	# Update our new alliance_info with the info from the block.
 	alliance_info['leader']   = member_list[0]
 	alliance_info['captains'] = member_list[1:leader_count]
 
@@ -384,7 +413,7 @@ def decode_alliance_info(block):
 		# Break it up into chunks for each team.
 		strike_teams[raid_type] = add_strike_team_dividers([strike_team[:8], strike_team[8:16], strike_team[16:]], raid_type)
 
-	# Populate extracted_traits.
+	# Populate extracted_traits if not present.
 	add_extracted_traits(alliance_info)
 
 	# Keep a copy of critical stats from today's run for historical analysis.
@@ -392,7 +421,7 @@ def decode_alliance_info(block):
 	
 	# Change working directory to the local directory and cache the updated roster info to disk.
 	os.chdir(path)
-	pickle.dump(alliance_info,open('cached_data-'+remove_tags(alliance_info['name'])+'-block.msf','wb'))
+	pickle.dump(alliance_info,open('cached_data-'+remove_tags(alliance_info['name'])+'.msf','wb'))
 
 	return alliance_info
 
@@ -430,7 +459,7 @@ def decode_url(encoded):
 	
 
 # Login to the website. Return the Selenium Driver object.
-def login(prompt=False, url = 'https://marvelstrikeforce.com/en/alliance/members'):
+def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/alliance/members'):
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
@@ -440,8 +469,8 @@ def login(prompt=False, url = 'https://marvelstrikeforce.com/en/alliance/members
 
 	# If login/password are provided, run this as a headless server.
 	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
-	#if scopely_cred or facebook_cred:
-	#	options.add_argument('--headless=new')
+	if headless: #scopely_cred or facebook_cred:
+		options.add_argument('--headless=new')
 
 	driver = webdriver.Chrome(options=options)
 	driver.get(url)

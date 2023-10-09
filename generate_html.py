@@ -430,27 +430,6 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 	return 0,''
 
 
-# Find this member's oldest entry in our historical entries.
-def find_oldest_val(alliance_info, player_name, char_name, key):
-	dates = list(alliance_info['hist'])
-
-	# Start with the oldest entry in 'hist', looking for this member's stats.
-	while dates:
-		min_date = min(dates)
-		if player_name in alliance_info['hist'][min_date]:
-			# Found a valid record, return the value in 'key'
-			if char_name in alliance_info['hist'][min_date][player_name]:
-				return alliance_info['hist'][min_date][player_name][char_name][key]
-			# This character has been added since oldest history record.
-			return '0'
-
-		# Oldest entry didn't have it, go one newer.
-		dates.remove(min_date)
-
-	# Should not happen. Should always at least find this member in the most recent run.
-	return '0'
-
-
 # Generate just the Alliance Tab contents.
 def generate_roster_analysis(alliance_info, html_file=''):
 
@@ -874,20 +853,12 @@ def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
 	for player_name in player_list:
 
 		# Build a list of all character powers.
-		all_char_pwr = [int(alliance_info['members'][player_name]['processed_chars'][char_name]['power']) for char_name in char_list]
+		all_char_pwr = [find_value_or_diff(alliance_info, player_name, char_name,'power', hist_tab)[0] for char_name in char_list]
 		all_char_pwr.sort()
 
 		# And sum up the Top 5 power entries for STP.
 		team_pwr_dict[player_name] = sum(all_char_pwr[-5:])
 
-		# Get power of all heroes in the char_list from earliest entry in history. We will sum these and subtract from entry below. 
-		if hist_tab:
-			old_char_pwr = [int(find_oldest_val(alliance_info, player_name, char_name, 'power')) for char_name in char_list]
-			old_char_pwr.sort()
-			
-			# Use the difference between the new STP and the old value.
-			team_pwr_dict[player_name] -= sum(old_char_pwr[-5:])
-			
 	return team_pwr_dict
 
 
