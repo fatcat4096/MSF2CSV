@@ -241,7 +241,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			#print ("Using cached URL to download",member)
 			driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % members[member]['url'])
 
-			print ('Using URL...',end='')
+			print ('Cached URL....',end='')
 			
 		# Cached URL is the ONLY option if not working_from_website
 		elif not working_from_website:
@@ -250,7 +250,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 		# Otherwise, find an active roster button for this member
 		else:
-			print ('Using Alliance Page...',end='')
+			print ('Roster Link...',end='')
 
 			# Start off by getting back to the Alliance page if we're not already on it.
 			if driver.current_url != alliance_url:
@@ -692,42 +692,49 @@ def add_strike_team_dividers(strike_team, raid_type):
 # Archive the current run into the 'hist' tag for future analysis.
 def update_history(alliance_info):	
 
+	alliance_members = alliance_info['members']
+
 	# Create the 'hist' key if it doesn't already exist.
 	hist = alliance_info.setdefault('hist',{})
 
 	# Overwrite any existing info for today.
-	today = datetime.date.today()
-	if today in hist:
-		del hist[today]
-
-	# Building Compare today's data vs. the most recent History entry. 
-	# If anything identical to previous entry, point today's entry at the previous entry.
-	
-	# Create an entry for today.
+	today      = datetime.date.today()
 	today_info = hist.setdefault(today,{})
 
-	# Iterate through each of the members.
-	for member in alliance_info['members']:
+	for member in alliance_members:
+		if 'processed_chars' in alliance_members[member]:
+			today_info[member] = alliance_members[member]['processed_chars']
+	
+	# Clean up any old / unnecessary entries in 'hist':
+	for entry in hist:
+		for member in list(hist[entry]):
+			if member not in alliance_members:
+				del hist[entry][member]
+	
+	# Compare today's data vs. the most recent History entry. 
+	# If anything identical to previous entry, point today's entry at the previous entry.
+
+	hist_list = list(hist)
+	hist_list.remove(today)
+	
+	for member in alliance_members:
 	
 		# Can only examine those with processed roster information.
-		if 'processed_chars' in alliance_info['members'][member]:
+		if 'processed_chars' in alliance_members[member] and member in hist[max(hist_list)]:
 
 			# Get a little closer to our work.
-			member_info = alliance_info['members'][member]
-			hist_info   = hist[max(hist)].get(member)
-
-			# Compare today's information vs the previous run.
-			if member_info['processed_chars'] == hist_info:
+			member_info = alliance_members[member]
 			
-				# If equal, no changes have been made or roster hasn't been resynced.
-				# Point the info in processed_chars to the previous entry
-				member_info['processed_chars'] = hist_info
+			# Compare today's information vs the previous run.
+			if member_info['processed_chars'] == hist[max(hist_list)][member]:
 
-			# Finally set today's entry to the final value.
-			today_info[member] = member_info['processed_chars']
+				# If equal, no changes have been made or roster hasn't been resynced.
+				# Point processed_chars and today's entry to the previous entry
+				member_info['processed_chars'] = hist[max(hist_list)][member]
+				today_info[member] = hist[max(hist_list)][member]
 
 	# Keep the oldest entry, plus one per ISO calendar week. Also, purge any entries > 60 days. 
-	for key in list(hist):
-		if (key != today and key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(60):
+	for key in hist_list:
+		if (key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(60):
 			del alliance_info['hist'][key]
 

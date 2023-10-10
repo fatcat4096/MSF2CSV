@@ -210,7 +210,7 @@ def parse_roster(contents, alliance_info, parse_cache):
 	# Get a little closer to our work. 
 	player = alliance_info['members'].setdefault(player_info['name'],{})
 
-	print("Parsing %i bytes...found Alliance Member named: %s" % (len(contents), player_info['name']), end='')
+	print("Parsing %i bytes...found: %s" % (len(contents), player_info['name']), end='')
 		
 	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
 	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
@@ -269,15 +269,15 @@ def build_parse_cache(alliance_info, parse_cache):
 		# Iterate through all the members and chars from this history entry.
 		for member in alliance_info['hist'][entry]:
 		
-			for char in alliance_info['hist'][entry][member]:
+			member_info = alliance_info['hist'][entry][member]
 
-				member_info = alliance_info['hist'][entry][member]
+			for char in member_info:
 
 				# Skip the tot_power and last_updated entries.
 				if type(member_info[char]) is not dict:
 					continue
 
-				# Will index everything by power.
+				# Index everything by power.
 				power = member_info[char]['power']
 
 				# Convert old format to the new, only needs to be done once.
@@ -300,16 +300,16 @@ def build_parse_cache(alliance_info, parse_cache):
 	# After History has been processed. Update alliance_info['members'][member]['processed_chars'] with the same info.
 	for member in alliance_info['members']:
 	
-		# Iterate through characters in the members with rosters.
-		for char in alliance_info['members'][member].get('processed_chars',[]):
+		processed_chars = alliance_info['members'][member].get('processed_chars',[])
 
-			processed_chars = alliance_info['members'][member]['processed_chars']
+		# Iterate through characters in the members with rosters.
+		for char in processed_chars:
 
 			# Skip the tot_power and last_updated entries.
 			if type(processed_chars[char]) is not dict:
 				continue
 
-			# Will index everything by power.
+			# Index everything by power.
 			power = processed_chars[char]['power']
 
 			# Get a list of other entries already added at this same power.
@@ -322,25 +322,6 @@ def build_parse_cache(alliance_info, parse_cache):
 
 			# Otherwise, add the current entry to cached entry list.
 			cached_entries.append(processed_chars[char])
-
-
-# Pull strike team definitions directly from the website. 
-def parse_teams(contents):
-	soup = BeautifulSoup(contents, 'html.parser')
-
-	team_members = []
-	
-	members = soup.findAll('div', attrs = {'class':'alliance-user'})
-
-	# Iterate through each entry.
-	for member in members:
-		member_name = member.findAll('span')[-1].text
-
-		# Don't include blank entries
-		if member_name:
-			team_members.append(member_name)
-
-	return team_members
 
 
 # Sanitize Alliance Names and player names of any HTML tags.
