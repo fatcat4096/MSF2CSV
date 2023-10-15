@@ -6,33 +6,15 @@ Builds a new strike_teams.py if a valid file isn't present in the folder.
 Builds a new raids_and_lanes.py if a valid file isn't present in the folder.
 """
 
-import os
-import sys
-import re
-
-TAG_RE = re.compile(r'<[^>]+>')
-
-# If not frozen, work in the same directory as this script.
-path = os.path.dirname(__file__)
-
-# If frozen, work in the same directory as the executable.
-if getattr(sys, 'frozen', False):
-	path = os.path.dirname(sys.executable)
-
-# Insert the local directory at the front of path to override packaged versions.
-sys.path.insert(0, path)
+from file_io import *
 
 # If file is invalid/deleted, generate a new one after alliance_info loaded.
-try:
-	from strike_teams import *
-except:
-	print ("Missing strike_teams.py...will be regenerated after alliance_members are known.")
+try:	from strike_teams import *
+except:	print ("Missing strike_teams.py...will be regenerated after alliance_members are known.")
 
-
-try:
-	from raids_and_lanes import *
-except:
-	print ("Missing raids_and_lanes.py...will be regenerated and used next run.")
+# If file is invalid/deleted, generate a new one now.
+try:	from raids_and_lanes import *
+except:	print ("Missing raids_and_lanes.py...will be regenerated and used next run.")
 
 # Create a new strike_teams.py if an outdated one exists.
 def generate_strike_teams(strike_teams={}):
@@ -56,7 +38,7 @@ strike_teams = {}
 	new_file += generate_strike_team('other',strike_teams['other'],'Used for Gamma Raids and other output.')
 
 	# Write it to disk.
-	write_file(path+os.sep+"strike_teams.py", new_file)
+	write_file(get_local_path() + "strike_teams.py", new_file)
 		
 
 # Take the strike_team variable and create the text for the team definition in strike_teams.py
@@ -74,24 +56,10 @@ def generate_strike_team(type,strike_team,desc):
 		team_def += ['],\n',']]\n'][team_num == len(strike_team)-1]
 
 	return team_def
-	
-	
-def write_file(filename, content):
-
-	# Sanitize to remove HTML tags.
-	filename = TAG_RE.sub('', filename)
-
-	# Default output is UTF-8. Attempt to use it as it's more compatible.
-	try:
-		open(filename, 'w').write(content)
-	# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
-	except:
-		open(filename, 'w', encoding='utf-16').write(content)	
-	print ("Writing %s" % (filename))
 
 
 # Create a local raids_and_lanes.py that users can edit if we are Frozen and one doesn't exist. 
-if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
+if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 
 	# Create header
 	new_file  = '''# This file contains the list of active formats to be used for output
@@ -244,4 +212,4 @@ if not os.path.exists(path + os.sep + 'raids_and_lanes.py'):
 		new_file += "\t\t\t\t\t}\n\n"
 
 	# Write it to disk.
-	write_file(path+os.sep+"raids_and_lanes.py", new_file)
+	write_file(get_local_path() + "raids_and_lanes.py", new_file)

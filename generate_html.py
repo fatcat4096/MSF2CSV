@@ -8,8 +8,8 @@ import datetime
 import string
 
 # Routines to create color gradient for heat map
-from gradients import *	
-
+from alliance_info import *
+from gradients import color_scale	
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
 def generate_html(alliance_info, nohist, table, cached_tabs={}):
@@ -144,60 +144,6 @@ def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
 		html_file += '</div>\n'
 
 	return html_file
-
-
-# Split meta chars from other chars. Filter others based on provided traits.
-def get_meta_other_chars(alliance_info, table, section, hist_tab):
-
-	# Get the list of usable characters
-	char_list = get_char_list (alliance_info)
-
-	# Meta Chars not subject to min requirements. Filter out only uncollected heroes.
-	meta_chars = section.get('meta',[])
-	meta_chars.sort()
-	meta_chars = [char for char in char_list if char in meta_chars]
-
-	# Other is everything left over. 
-	other_chars = [char for char in char_list if not char in meta_chars]
-
-	# Load up arguments from table, with defaults if necessary.
-	min_iso  = table.get('min_iso', 0)
-	min_tier = table.get('min_tier',0)
-
-	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list (alliance_info)
-
-	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
-	if min_iso:
-		other_chars = [char for char in other_chars if max([find_value_or_diff(alliance_info, player, char, 'iso')[0] for player in player_list]) >= min_iso]
-
-	if min_tier:
-		other_chars = [char for char in other_chars if max([find_value_or_diff(alliance_info, player, char, 'tier')[0] for player in player_list]) >= min_tier]
-	
-	# Get extracted_traits from alliance_info
-	extracted_traits = alliance_info['extracted_traits']
-	
-	# Trait filters are additive. Only filter other_chars.
-	traits = section['traits']
-	if traits:
-		for char in other_chars[:]:
-			for trait in traits:
-				if trait in extracted_traits and char in extracted_traits[trait]:
-					# Character has at least one of these traits. Leave it in.
-					break
-			# Did we find this char in any of the traits?
-			if trait not in extracted_traits or char not in extracted_traits[trait]:
-				other_chars.remove(char)
-
-	# Filter out any characters which no one has summoned.
-	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])]
-	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])]
-
-	# If only meta specified, just move it to others so we don't have to do anything special.
-	if meta_chars and not other_chars:
-		other_chars, meta_chars = meta_chars, other_chars
-		
-	return meta_chars, other_chars
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
@@ -366,68 +312,6 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 	html_file += '   </table>\n'
 
 	return html_file
-
-
-# Find this member's oldest entry in our historical entries.
-def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
-
-	# Find the current value. 
-	player_info = alliance_info['members'][player_name]['processed_chars'][char_name]
-	current_val = int(player_info[key])
-	
-	# If we're not on a history tab, we're done. Just return the current value.
-	if not hist_tab:
-		return current_val,''
-
-	# If we ARE on a history tab. A bit more work to be done.
-	dates = list(alliance_info['hist'])
-
-	# Start with the oldest entry in 'hist', looking for this member's stats.
-	while dates:
-		min_date = min(dates)
-		if player_name in alliance_info['hist'][min_date]:
-
-			hist_info   = alliance_info['hist'][min_date][player_name].get(char_name,{})
-
-			# get the difference between the oldest value and the current one.
-			delta_val = current_val - int(hist_info.get(key,0))
-
-			# If no difference, return nothing. 
-			if not delta_val:
-				return 0,''
-		
-			# If there was a difference, let's make note of what created that difference.
-			diffs = []
-			
-			# Iterate through all the stats we're currently tracking.
-			for entry in player_info:
-				diff = int(player_info[entry]) - int(hist_info.get(entry,0))
-
-				# If there's a difference, note it in the tooltip.
-				if diff:
-					if entry != 'abil':
-						diffs.append(f'{entry.title()}: {diff:+}')
-
-					# More work to decode the Abilities.
-					else:
-						bas,abil = divmod(diff,1000)
-						spc,abil = divmod(abil,100)
-						ult,pas  = divmod(abil,10)
-						abil_diffs = {'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
-						
-						# And then add only the specific abilities which changed.
-						for abil in abil_diffs:
-							if abil_diffs[abil]:
-								diffs.append(f'{abil.title()}: {abil_diffs[abil]:+}')
-
-			other_diffs = [' title="%s"' % (', '.join(diffs)),''][not diffs]
-			return delta_val, other_diffs
-
-		# Oldest entry didn't have it, go one newer.
-		dates.remove(min_date)
-
-	# Should not happen. Should always at least find this member in the most recent run.
-	return 0,''
 
 
 # Generate just the Alliance Tab contents.
@@ -813,89 +697,56 @@ def extract_color(alliance_name):
 	return alt_color
 
 
-# Including this here for expedience.
-def generate_csv(alliance_info):
-	# Write the basic output to a CSV in the local directory.
-	keys1 = ['lvl','power','yel','red','tier']
-	keys2 = ['iso','iso','iso','iso','iso','iso']
+# Translate value to a color from the Heat Map gradient.
+def get_value_color(min, max, value, stat='power', hist_tab=''):
 	
-	csv_file = ['Name,AllianceName,CharacterId,Favorite,Level,Power,Stars,RedStar,GearLevel,Basic,Special,Ultimate,Passive,ISO Class,ISO Level,ISO Armor,ISO Damage,ISO Focus,ISO Health,ISO Resist']
+	# Just in case passed a string.
+	value = int(value)
+
+	max_colors  = len(color_scale)-1
 	
-	player_list = get_player_list(alliance_info)
-	char_list   = get_char_list (alliance_info)
-		
-	alliance_name = alliance_info['name']
-			
-	for player_name in player_list:
-		processed_chars = alliance_info['members'][player_name]['processed_chars']
+	# Special treatment for the '0' fields. 
+	if not value:
+		return '#282828;color:#919191'
 
-		# Only include entries for recruited characters.
-		for char_name in char_list:
-			if processed_chars[char_name]['lvl'] != '0':
-				iso_class = {'S':'Striker','K':'Skirmisher','H':'Healer','F':'Fortifier','R':'Raider'}[alliance_info['members'][player_name]['cls']]
-				
-				bas,abil = divmod(alliance_info['members'][player_name]['abil'],1000)
-				spc,abil = divmod(abil,100)
-				ult,pas  = divmod(abil,10)
-				abil_stats = [str(abil) for abil in [bas, spc, ult, pas]]
-
-				csv_file.append(','.join([player_name, alliance_name, char_name, alliance_info['members'][player_name]['fav']] + [str(processed_chars[char_name][key]) for key in keys1] + abil_stats + [iso_class] + [str(processed_chars[char_name][key]) for key in keys2]))
-
-	return '\n'.join(csv_file)
-
-
-# Pull out STP values from either Meta Chars or all Active Chars.
-def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
-	
-	# Get the list of Alliance Members 
-	player_list = get_player_list (alliance_info)
-
-	for player_name in player_list:
-
-		# Build a list of all character powers.
-		all_char_pwr = [find_value_or_diff(alliance_info, player_name, char_name,'power', hist_tab)[0] for char_name in char_list]
-		all_char_pwr.sort()
-
-		# And sum up the Top 5 power entries for STP.
-		team_pwr_dict[player_name] = sum(all_char_pwr[-5:])
-
-	return team_pwr_dict
-
-
-# Bring back a sorted list of characters from alliance_info
-def get_char_list(alliance_info):
-
-	# We only keep images for heroes that at least one person has recruited.
-	char_list = list(alliance_info['portraits'])
-	char_list.sort()
-
-	return char_list
-
-
-# Bring back a sorted list of players from alliance_info
-def get_player_list(alliance_info, sort_by='', stp_list={}):
-
-	# Only include members that actually have processed_char information attached.
-	player_list = [member for member in alliance_info['members'] if 'processed_chars' in alliance_info['members'][member]]
-
-	# If Sort Order specified, sort player_list in the correct order. 
-	if sort_by == 'stp':
-		# If we weren't provided a list of STPs, fall back to using TCP.
-		if not stp_list:
-			sort_by = 'tcp'
+	#Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
+	if stat=='iso':
+		if not hist_tab:
+			scaled_value = int(((value**3)/10**3) * max_colors)
 		else:
-			player_list = sorted(player_list, key=lambda x: -stp_list[x])
-
-	if sort_by == 'tcp':
-		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x]['tcp'])
-
-	# Default sort: alphabetical, ignoring case
-	if not sort_by:
-		player_list.sort(key=str.lower)
-
+			scaled_value = [int((0.6 + 0.4 * ((value**3)/10**3)) * max_colors),0][value<0]
+	elif stat=='tier':
+		if not hist_tab and value <= 15:
+			scaled_value = int(((value**2)/15**2)*0.50 * max_colors)
+		elif not hist_tab:
+			scaled_value = int((0.65 + 0.35 * ((value-16)/3)) * max_colors)
+		else:
+			scaled_value = int((0.60 + 0.40 * ((value**2)/17**2)) * max_colors)
+	elif stat=='lvl':
+		if not hist_tab and value <= 75:
+			scaled_value = int(((value**2)/75**2)*0.50 * max_colors)
+		elif not hist_tab:
+			scaled_value = int((0.65 + 0.35 * ((value-75)/20)) * max_colors)
+		else:
+			scaled_value = int((0.60 + 0.40 * ((value**2)/95**2)) * max_colors)
+	elif stat in ('red','yel'):
+		min = 2
+		max = 7
+		scaled_value = int((value-min)/(max-min) * max_colors)
+	# Everything else.
+	else:
+		if min == max:
+			scaled_value = max_colors
+		else:
+			scaled_value = int((value-min)/(max-min) * max_colors)
 	
-	return player_list
+	if scaled_value < 0:
+		scaled_value = 0
+	elif scaled_value > max_colors:
+		scaled_value = max_colors
 
+	return color_scale[scaled_value]
+	
 
 # Quick and dirty translation to shorter or better names.
 def translate_name(value):

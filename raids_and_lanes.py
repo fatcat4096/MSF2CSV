@@ -106,5 +106,5 @@ tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
 					}
 
 # All Characters
-tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp' }
+tables['all'] = { 'name': 'All Characters', 'min_iso':9, 'sort_by':'tcp' }
 

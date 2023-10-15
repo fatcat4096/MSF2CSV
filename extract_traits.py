@@ -4,10 +4,11 @@
 Quick hack to pull live trait data from MSF.gg
 """
 
+
 import urllib.request
 
 
-# Update the Character Trait information using the latest info from website.
+# Update the Character Trait information in alliance_info using the latest info from website.
 def add_extracted_traits(alliance_info):
 
 	# If the old trait file isn't being used, extracted_traits needs to be updated.

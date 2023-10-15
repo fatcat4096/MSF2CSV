@@ -4,42 +4,39 @@
 Transform stats from MSF.gg into readable tables with heatmaps.
 """
 
+
 import os
 import datetime
-import sys
 import argparse
 
-from process_website import *       # Routines to get Roster data from website
-from generate_html import *         # Routines to generate the finished tables.
+from alliance_block	 import *             # Routines to encode/decode the alliance block.
+from process_website import *             # Routines to get Roster data from website.
+from file_io         import *             # Routines to read and write files to disk.
+from generate_html   import generate_html # Routines to generate the finished tables.
+from generate_csv    import generate_csv  # Routines to generate the original csv files.
+
 
 # If no name specified, default to the alliance for the Login player
-def main(alliance_name='', cached_data='', csv=False, nohist=False, prompt=False, force=False, exportblock=False, importblock=''):
+def main(alliance_name='', csv=False, nohist=False, prompt=False, force=False, exportblock=False, importblock=''):
 
 	# Parse alliance info from importblock and update rosters from website.
 	if importblock:
-		alliance_info = decode_alliance_info(importblock)
+		alliance_info = decode_block(importblock)
 
 	# Load roster info directly from cached data or the website.
 	else:
-		alliance_info = get_alliance_info(alliance_name, cached_data, prompt, force)
-								 
-	# If not frozen, work in the same directory as this script.
-	path = os.path.dirname(__file__)
-
-	# If frozen, work in the same directory as the executable.
-	if getattr(sys, 'frozen', False):
-		path = os.path.dirname(sys.executable)
+		alliance_info = get_alliance_info(alliance_name, prompt, force)
 
 	print ()
 
 	# Build a default path and filename. 
-	filename = path + os.sep + alliance_info['name'] + datetime.datetime.now().strftime("-%Y%m%d-")
+	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + datetime.datetime.now().strftime("-%Y%m%d-")
 
 	# Generate Export Block, CSV or HTML?
 	if exportblock:
-		exportblock = encode_alliance_info(alliance_info)
-		write_file(filename+'block.txt', exportblock)
-		print ("Encoded Alliance for SIGMA Bot:",exportblock)
+		alliance_block = encode_block(alliance_info)
+		write_file(filename+'block.txt', alliance_block)
+		print ("Encoded Alliance for SIGMA Bot:",alliance_block)
 	elif csv:
 		# Original file format. Requested for input to projects using old CSV format.
 		 write_file(filename+"original.csv", generate_csv(alliance_info))
@@ -76,12 +73,5 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 
-	if '.msf' in args.file_or_alliance:
-		cached_data   = args.file_or_alliance
-		alliance_name = ''
-	else: 
-		cached_data   = ''
-		alliance_name = args.file_or_alliance
-		
-	main(alliance_name, cached_data, args.csv, args.nohist, args.prompt, args.force, args.exportblock, args.importblock) # Just run myself
+	main(args.file_or_alliance, args.csv, args.nohist, args.prompt, args.force, args.exportblock, args.importblock) # Just run myself
 

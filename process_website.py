@@ -6,13 +6,10 @@ Logs into website and updates data from Alliance Information if not
 """
 
 import datetime
-import getpass
-import keyring
 import os
-import pickle
-import string
 import sys
 import time
+
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -21,48 +18,33 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
-from parse_contents import *
-from extract_traits import *
+from parse_contents       import *
 from generate_local_files import *
+from file_io              import *
+from login                import login
+from extract_traits       import add_extracted_traits
+from parse_cache          import build_parse_cache
+from alliance_info        import update_history
 
-
-# If not frozen, work in the same directory as this script.
-path = os.path.dirname(__file__)
-
-# If frozen, work in the same directory as the executable.
-if getattr(sys, 'frozen', False):
-	path = os.path.dirname(sys.executable)
-	
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
-def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=False):
+def get_alliance_info(alliance_name='', prompt=False, force=False):
 
 	global strike_teams
 
-	cached_alliance_info = {}
+	cached_alliance_info = find_cached_data(alliance_name)
 
-	# Look for cached_data files. 
-	cached_data_files = get_cached_data_files(cached_data)
+	# If we loaded a cached_data file, need to check when updated last. 
+	if cached_alliance_info:
 
-	# If alliance specified and is in the list of cached_data files, need to check when updated last. 
-	if 'cached_data-'+alliance_name+'.msf' in cached_data_files:
-
-		# Load cached_alliance_info and ensure it's valid and fresh. 
-		if valid_cached_data(cached_alliance_info, 'cached_data-'+alliance_name+'.msf', cached_data_files, force):
-			print ("Using cached_data from file:", 'cached_data-'+alliance_name+'.msf')
+		# If we didn't pass in an alliance_name but found a single MSF file, define alliance_name now
+		if not alliance_name:
+			alliance_name = cached_alliance_info['name']
+			
+		# Verify the cached_data is not too old. 
+		if not force and fresh_cached_data(cached_alliance_info):
+			print ("Using cached_data from file:", cached_alliance_info['file_path'])
 			return cached_alliance_info
-
-	# Or if only one cached_data file and alliance_name=='', assume this is the alliance to use. 
-	elif (len(cached_data_files) == 1 and not alliance_name):
-
-		# Load cached_alliance_info and ensure it's valid and fresh. 
-		if valid_cached_data(cached_alliance_info, cached_data_files[0], cached_data_files, force):
-			print ("Using cached_data from file:", cached_data_files[0])
-			return cached_alliance_info
-
-		alliance_name = cached_data_files[0].split('-')[1]
-		if alliance_name[-4:] == '.msf':
-			alliance_name = alliance_name[:-4]
 
 	# Login to the website. 
 	driver = login(prompt)
@@ -77,26 +59,31 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 	if not alliance_name:
 		alliance_name = website_alliance_info['name']
 
+	# Now that we're guaranteed to have an alliance_name check one last time for a matching cached_data file. 
+	if not cached_alliance_info:
+		cached_alliance_info = find_cached_data(alliance_name)
+
 	# If we don't have cached_data, we have to work from the website. Fall back to the login alliance_info. 
-	if not [file for file in cached_data_files if file.find('cached_data-'+alliance_name+'.msf') != -1] and alliance_name != website_alliance_info['name']:
-		print ("Cached_data not found for %s. Generating tables for %s instead." % (alliance_name, website_alliance_info['name']))
+	if not cached_alliance_info and alliance_name != website_alliance_info['name']:
+		print ("Cached_data not found for %s. Collecting info for %s instead." % (alliance_name, website_alliance_info['name']))
 		alliance_name = website_alliance_info['name']
+
+		# Final chance, check for an existing cached_data using the website_alliance_info's alliance_name
+		cached_alliance_info = find_cached_data(alliance_name)
 
 	# We're working from website if the specified alliance_name matches the website alliance_name
 	working_from_website = (alliance_name == website_alliance_info['name'])
-	cached_data_file     = 'cached_data-'+remove_tags(alliance_name)+'.msf'
-	
+
 	# If working_from_website, the website_alliance_info will be our baseline. 
 	if working_from_website:
 		alliance_info = website_alliance_info
 	
-		# * Does this cached_data file exist? If so, load it. 
-		if cached_data_file in cached_data_files:
+		# If we found cached_alliance_info, should we use it as-is or update the website info?
+		if cached_alliance_info:
 	
-			# Load cached_alliance_info and ensure it's valid and fresh. On the website, only overt indication that something has changed is changes in membership.
-			if valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force) and alliance_info['members'].keys() == cached_alliance_info['members'].keys():
-				print ("Using cached_data from file:", cached_data_file)
-				driver.close()
+			# If fresh data and no membership changes, let's just use it as-is.
+			if not force and fresh_cached_data(cached_alliance_info) and alliance_info['members'].keys() == cached_alliance_info['members'].keys():
+				print ("Using cached_data from file:", cached_alliance_info['file_path'])
 				return cached_alliance_info	
 
 			# So we have fresh alliance_info and the stale cached information.
@@ -118,6 +105,9 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 	# Work the website or cached URLs to update alliance_info 
 	process_rosters(driver, alliance_info, working_from_website, force)
 
+	# Close the Selenium session.
+	driver.close()
+
 	# If working from website, use strike team definition . 
 	if working_from_website:
 
@@ -135,71 +125,36 @@ def get_alliance_info(alliance_name='', cached_data='', prompt=False, force=Fals
 		alliance_info['strike_teams'] = strike_teams
 		
 		# Generate strike_teams.py if we updated either definition or if this file doesn't exist locally.
-		if updated or not os.path.exists(path+os.sep+'strike_teams.py'):
+		if updated or not os.path.exists(get_local_path()+'strike_teams.py'):
 			generate_strike_teams(strike_teams)	
-
-	# Close the Selenium session.
-	driver.close()
 
 	# Update extracted_traits if necessary.
 	add_extracted_traits(alliance_info)
 
 	# Keep a copy of critical stats from today's run for historical analysis.
 	update_history(alliance_info)
-	
-	# Change working directory to the local directory and cache the updated roster info to disk.
-	os.chdir(path)
-	pickle.dump(alliance_info,open(cached_data_file,'wb'))
+
+	# Write the collected roster info to disk in a subdirectory.
+	write_cached_data(alliance_info)
 
 	return alliance_info
 
 
-# Handle the file list cleanly.
-def get_cached_data_files(cached_data=''):
-
-	# Fix any files that are missing the .msf extension
-	for file in [file for file in os.listdir(path) if file.find('cached_data') != -1 and file[-4:] != '.msf']:
-		os.rename(path+os.sep+file, path+os.sep+file+'.msf')
-
-	# Check to see whether we were passed a cached_data file as an argument.
-	if cached_data and cached_data[-4:] == ('.msf'):
-		return [cached_data]
-
-	# Otherwise, return full paths to the cached_data files in the local directory.
-	return [file for file in os.listdir(path) if file.find('cached_data') != -1]
-
-
 # Load cached_alliance_info and ensure it's valid and fresh. 
-def valid_cached_data(cached_alliance_info, cached_data_file, cached_data_files, force=False):
-
-	# Check whether file needs full-pathname to be valid.
-	filename = cached_data_file
-	if not os.path.exists(filename) and os.path.exists(path+os.sep+filename):
-		filename = path+os.sep+filename
-
-	# Allow us to return an updated copy.
-	temp_alliance_info = pickle.load(open(filename,'rb'))
-	cached_alliance_info.update(temp_alliance_info)
-
-	# Previous version of cached_data found. Pretending the file doesn't even exist. 
-	if len(cached_alliance_info) == 2:
-		print ("Old format cached_data found. Will be ignored and new data downloaded.")
-		cached_data_files.remove(cached_data_file)
-
-		return False
+def fresh_cached_data(cached_alliance_info):
 
 	# If it's been less than 24 hours since last update, just return the cached data. 
-	elif not force and (time.time()-os.path.getmtime(filename) < 86400):
+	if time.time()-os.path.getmtime(cached_alliance_info['file_path']) < 86400:
 
 		# If defined strike_teams are valid for this cached_data, use them.
 		if 'strike_teams' in globals():
 
-			if valid_strike_team(strike_teams['incur'], cached_alliance_info):
-				print ("Using Incursion strike_team definition from strike_teams.py.")
+			if valid_strike_team(strike_teams['incur'], cached_alliance_info) and cached_alliance_info['strike_teams']['incur'] != strike_teams['incur']:
+				print ("Updating Incursion strike_team definition from strike_teams.py.")
 				cached_alliance_info['strike_teams']['incur'] = strike_teams['incur']
 
-			if valid_strike_team(strike_teams['other'], cached_alliance_info):
-				print ("Using Other strike_team definition from strike_teams.py.")
+			if valid_strike_team(strike_teams['other'], cached_alliance_info) and cached_alliance_info['strike_teams']['other'] != strike_teams['other']:
+				print ("Updating Other strike_team definition from strike_teams.py.")
 				cached_alliance_info['strike_teams']['other'] = strike_teams['other']
 
 		return True
@@ -294,290 +249,6 @@ def process_roster(driver, alliance_info, parse_cache):
 		return member
 
 
-# Use as many printable characters as possible. None of these cause problems in Discord or DOS.
-ENCODING = string.digits + string.ascii_lowercase + string.ascii_uppercase + '!#$%+-./:;=?@[]{}~'
-
-
-# Encode key info from alliance_info into something that fits in a DM.
-def encode_alliance_info(alliance_info):
-	block = []
-
-	# Include basic info about the alliance.
-	block.append(alliance_info['name'].replace(' ','_').replace('>','gt;').replace('<','lt;'))
-	block.append(alliance_info['image'])
-	block.append(alliance_info['stark_lvl'])
-	block.append(alliance_info['trophies'])
-
-	# Only members with a defined URL can be sent this way.
-	encodable_members = [member for member in alliance_info['members'] if 'url' in alliance_info['members'][member]]
-
-	encodable_leader   = [member for member in [alliance_info['leader']] if member in encodable_members]
-	encodable_captains = [member for member in alliance_info['captains'] if member in encodable_members]
-
-	captain_list  = encodable_leader + encodable_captains
-
-	# Include the count of leader + captains.
-	block.append(str(len(captain_list)))
-
-	# Encode each member's URL.
-	member_list = captain_list + [member for member in encodable_members if member not in captain_list]
-	member_urls = [encode_url(alliance_info['members'][member]['url']) for member in member_list]
-	block += member_urls
-
-	# Encode the strike teams
-	for team in ['incur','other']:
-		encoded_team = ''
-		for member in sum(alliance_info['strike_teams'][team],[]):
-			if member in member_list:
-				encoded_team += ENCODING[member_list.index(member)]
-		block.append(encoded_team)
-	
-	# Smash it all together and hand it off.
-	return ','.join(block)
-
-
-# Decode the encoded block and populate alliance_info with stats and rosters from MSF.gg. 
-def decode_alliance_info(block):
-	
-	alliance_info = {'members':{}}
-	
-	parts = block.split(',')
-
-	alliance_info['name']  = parts[0].replace('_',' ').replace('gt;','>').replace('lt;','<')
-	alliance_info['image'] = parts[1]
-	
-	alliance_info['stark_lvl'] = parts[2]
-	alliance_info['trophies']  = parts[3]
-
-	leader_count = int(parts[4])
-	
-	# These are the encoded URL fragments
-	member_urls = [decode_url(part) for part in parts[5:-2]]
-	
-	# These are the encoded Strike Teams
-	encoded_strike_teams = {}
-	encoded_strike_teams['incur'] = parts[-2]
-	encoded_strike_teams['other'] = parts[-1]
-	
-	# Once we've parsed all the parts of the block, let's see if there's "cached_data-" + alliance_name + ".msf" file locally. 
-	filename = 'cached_data-'+remove_tags(alliance_info['name']) +'.msf'
-
-	# If a cached_data file exists locally, load it. 
-	cached_alliance_info = {}
-	if os.path.exists(filename):
-		cached_alliance_info = pickle.load(open(filename,'rb'))
-	
-	# Then copy any members from the previous cached_data if they are still in the alliance. 
-	# These will all be updated during roster refresh.
-	for member in cached_alliance_info.setdefault('members',{}):
-		if 'url' in cached_alliance_info['members'][member] and cached_alliance_info['members'][member]['url'] in member_urls:
-			alliance_info.setdefault('members',{})[member] = cached_alliance_info['members'][member]
-
-	# Copy over the old definitions to start. Will also be updated during or after roster refresh.
-	for key in cached_alliance_info:
-		if key not in alliance_info:
-			alliance_info[key] = cached_alliance_info[key]
-
-	# Use this cache to optimize our cached_data output.
-	parse_cache = {}
-
-	# Populate the parse_cache if we have existing history.  
-	if 'hist' in alliance_info:
-		build_parse_cache(alliance_info, parse_cache)
-	
-	# Start by logging in. 
-	driver = login()
-
-	# Download, parse, and update each roster
-	member_list = []
-	for member_url in member_urls:
-		driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % member_url)
-		member_name = process_roster(driver, alliance_info, parse_cache)
-		member_list.append(member_name)
-
-	# Close the Selenium session.
-	driver.close()
-
-	# Update our new alliance_info with the info from the block.
-	alliance_info['leader']   = member_list[0]
-	alliance_info['captains'] = member_list[1:leader_count]
-
-	# Translate the Strike Teams from the encoded format.
-	strike_teams = alliance_info.setdefault('strike_teams',{})
-	
-	for raid_type in ['incur','other']:
-		strike_team = []
-		for encoded_member in encoded_strike_teams[raid_type]:
-			strike_team.append(member_list[ENCODING.index(encoded_member)])
-
-		# Break it up into chunks for each team.
-		strike_teams[raid_type] = add_strike_team_dividers([strike_team[:8], strike_team[8:16], strike_team[16:]], raid_type)
-
-	# Populate extracted_traits if not present.
-	add_extracted_traits(alliance_info)
-
-	# Keep a copy of critical stats from today's run for historical analysis.
-	update_history(alliance_info)
-	
-	# Change working directory to the local directory and cache the updated roster info to disk.
-	os.chdir(path)
-	pickle.dump(alliance_info,open('cached_data-'+remove_tags(alliance_info['name'])+'.msf','wb'))
-
-	return alliance_info
-
-
-# Convert to Base 92 for shorter encoding.
-def encode_url(decoded):
-
-	# Start by removing any dashes and converting to base 10 int
-	pid = int(decoded.replace('-',''),16)
-
-	# Convert from base 10 to base 92.
-	encoded = []
-	while pid != 0:
-		pid, mod = divmod(pid, len(ENCODING))
-		encoded.append(ENCODING[mod])
-
-	return ''.join(reversed(encoded))
-
-
-# Decode from base 92 and insert hyphens as needed.
-def decode_url(encoded):
-	pid = 0
-	
-	for idx in range(len(encoded)-1,-1,-1):
-		pid += ENCODING.index(encoded[idx]) * len(ENCODING)**(len(encoded)-1-idx)
-	decoded = hex(pid)[2:].zfill(13)
-	
-	# If short format, we're done.
-	if len(decoded)==13:
-		return decoded
-
-	# Long format includes dashes.
-	decoded = decoded.zfill(32)
-	return decoded[:8]+'-'+decoded[8:12]+'-'+decoded[12:16]+'-'+decoded[16:20]+'-'+decoded[20:]
-	
-
-# Login to the website. Return the Selenium Driver object.
-def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/alliance/members'):
-
-	options = webdriver.ChromeOptions()
-	options.add_argument('--log-level=3')
-	options.add_argument('--accept-lang=en-US')	
-
-	facebook_cred, scopely_cred = get_creds(prompt)
-
-	# If login/password are provided, run this as a headless server.
-	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
-	if headless: #scopely_cred or facebook_cred:
-		options.add_argument('--headless=new')
-
-	driver = webdriver.Chrome(options=options)
-	driver.get(url)
-
-	# Default to Scopely Login, does not require 2FA.
-	if scopely_cred:
-		scopely_login(driver, scopely_cred.username, scopely_cred.password)
-
-	# If Scopely login not defined, use Facebook login instead.
-	elif facebook_cred:
-		facebook_login(driver, facebook_cred.username, facebook_cred.password)
-		
-	# Waiting while you login manually, automatically, or approve login via 2FA.
-	try:
-		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-roster')))
-	except TimeoutException:
-		print("Timed out. Unable to complete login.")
-
-	return driver
-
-
-# Check for saved credentials. If none and never asked, ask if would like to cache them.
-def get_creds(prompt):
-	facebook_cred = keyring.get_credential('facebook','')
-	scopely_cred  = keyring.get_credential('scopely','')
-
-	# Check for prompt flag or presence of 'noprompt' file. 
-	if prompt or not os.path.exists(path+os.sep+'noprompt'):
-
-		# If 'noprompt' doesn't exist, prompt if person would like to cache their credentials
-		if input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
-
-			# Ask which login they would like to use.
-			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
-
-				# Prompt for each login and pass and store in keyring.
-				login = input("Facebook Login: ")
-				keyring.set_password('facebook', login, getpass.getpass(prompt="Facebook Password:"))
-			else:
-				login = input("Scopely Login: ")
-				keyring.set_password('scopely', login, getpass.getpass(prompt="Scopely Password:"))
-
-			# Reload both credentials before proceeding.
-			facebook_cred = keyring.get_credential('facebook','')
-			scopely_cred  = keyring.get_credential('scopely','')
-
-		# Create the file so we aren't asked again. User can delete if credentials have changed.
-		open(path+os.sep+'noprompt','a').close()
-
-	return facebook_cred, scopely_cred
-
-
-# Auto Login via Scopely authentication using cached credentials.
-def scopely_login(driver, scopely_user, scopely_pass):
-	try:
-		wait = WebDriverWait(driver, 10)
-	
-		# Click on the Scopely Login button.
-		login = wait.until(EC.element_to_be_clickable((By.ID, 'scopely-login')))
-		login.click()
-
-		# Find and enter Scopely ID for login.
-		login_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'ant-input')))
-		login_field.send_keys(scopely_user)
-				
-		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'submitButton')))
-		login_button.click()
-
-		# Enter password instead of using e-mailed link.
-		use_password = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'link')))
-		use_password.click()
-				
-		# Find login field and enter password to complete login process.
-		pass_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'password-with-toggle')))
-		pass_field.send_keys(scopely_pass)
-
-		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'button')))
-		login_button.click()
-
-	except TimeoutException:
-		print("Timed out. Unable to complete login.")
-
-
-# Auto Login via Facebook authentication using cached credentials.
-def facebook_login(driver, facebook_user, facebook_pass):
-	try:
-		wait = WebDriverWait(driver, 10)
-	
-		# Click on the Facebook Login button.
-		login = wait.until(EC.element_to_be_clickable((By.ID, 'facebook-login')))
-		login.click()
-
-		# Fill in username and password.
-		login_field = wait.until(EC.presence_of_element_located((By.ID,'email')))
-		login_field.send_keys(facebook_user)
-
-		pass_field = wait.until(EC.presence_of_element_located((By.ID,'pass')))
-		pass_field.send_keys(facebook_pass)
-
-		# Click the login button to generate 2FA challenge.
-		login_button = wait.until(EC.element_to_be_clickable((By.ID, 'loginbutton')))
-		login_button.click()
-
-	except TimeoutException:
-		print("Timed out. Unable to complete login.")
-
-
 # Get back to the Alliance page, then search to find the member's name and the related Roster button.
 def find_members_roster(driver, member):
 
@@ -645,7 +316,6 @@ def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
 		# Return FALSE, nothing to update.
 		return False
 
-	# If not there, let's check on the website for a valid definition.
 	print ("%s team definitions in strike_teams.py were not valid." % ({'incur':'Incursion','other':'Gamma'}[raid_type]))
 
 	# If not there, let's check for one cached in the alliance_info
@@ -659,18 +329,21 @@ def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
 	members = list(alliance_info['members'])
 	members.sort(key=str.lower)
 
-	# Break it up into chunks for each team.
-	strike_teams[raid_type] = add_strike_team_dividers([members[:8], members[8:16], members[16:]], raid_type)
+	# Break it up into chunks and add the appropriate dividers.
+	strike_teams[raid_type] = add_strike_team_dividers(members, raid_type)
 	return True
 
 
-# Returns true if at least 75% people of the people in the Alliance are actually in the Strike Teams presented.
+# Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
 def valid_strike_team(strike_team, alliance_info):
 	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.66	
 
 
 # Add divider definitions in the right places, depending upon the raid_type
 def add_strike_team_dividers(strike_team, raid_type):
+
+	# Break it up into chunks for each team.
+	strike_team = [strike_team[:8], strike_team[8:16], strike_team[16:]]
 
 	for team in strike_team:
 
@@ -687,54 +360,3 @@ def add_strike_team_dividers(strike_team, raid_type):
 				team.insert(4,'----')
 
 	return strike_team
-
-
-# Archive the current run into the 'hist' tag for future analysis.
-def update_history(alliance_info):	
-
-	alliance_members = alliance_info['members']
-
-	# Create the 'hist' key if it doesn't already exist.
-	hist = alliance_info.setdefault('hist',{})
-
-	# Overwrite any existing info for today.
-	today      = datetime.date.today()
-	today_info = hist.setdefault(today,{})
-
-	for member in alliance_members:
-		if 'processed_chars' in alliance_members[member]:
-			today_info[member] = alliance_members[member]['processed_chars']
-	
-	# Clean up any old / unnecessary entries in 'hist':
-	for entry in hist:
-		for member in list(hist[entry]):
-			if member not in alliance_members:
-				del hist[entry][member]
-	
-	# Compare today's data vs. the most recent History entry. 
-	# If anything identical to previous entry, point today's entry at the previous entry.
-
-	hist_list = list(hist)
-	hist_list.remove(today)
-	
-	for member in alliance_members:
-	
-		# Can only examine those with processed roster information.
-		if 'processed_chars' in alliance_members[member] and member in hist[max(hist_list)]:
-
-			# Get a little closer to our work.
-			member_info = alliance_members[member]
-			
-			# Compare today's information vs the previous run.
-			if member_info['processed_chars'] == hist[max(hist_list)][member]:
-
-				# If equal, no changes have been made or roster hasn't been resynced.
-				# Point processed_chars and today's entry to the previous entry
-				member_info['processed_chars'] = hist[max(hist_list)][member]
-				today_info[member] = hist[max(hist_list)][member]
-
-	# Keep the oldest entry, plus one per ISO calendar week. Also, purge any entries > 60 days. 
-	for key in hist_list:
-		if (key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(60):
-			del alliance_info['hist'][key]
-

@@ -5,57 +5,6 @@ Source is an excellent writeup by Ben Southgate
 See: https://bsouthga.dev/posts/color-gradients-with-python
 """
 
-# Translate value to a color from the Heat Map gradient.
-def get_value_color(min, max, value, stat='power', hist_tab=''):
-	
-	# Just in case passed a string.
-	value = int(value)
-
-	max_colors  = len(color_scale)-1
-	
-	# Special treatment for the '0' fields. 
-	if not value:
-		return '#282828;color:#919191'
-
-	#Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
-	if stat=='iso':
-		if not hist_tab:
-			scaled_value = int(((value**3)/10**3) * max_colors)
-		else:
-			scaled_value = [int((0.6 + 0.4 * ((value**3)/10**3)) * max_colors),0][value<0]
-	elif stat=='tier':
-		if not hist_tab and value <= 15:
-			scaled_value = int(((value**2)/15**2)*0.50 * max_colors)
-		elif not hist_tab:
-			scaled_value = int((0.65 + 0.35 * ((value-16)/3)) * max_colors)
-		else:
-			scaled_value = int((0.60 + 0.40 * ((value**2)/17**2)) * max_colors)
-	elif stat=='lvl':
-		if not hist_tab and value <= 75:
-			scaled_value = int(((value**2)/75**2)*0.50 * max_colors)
-		elif not hist_tab:
-			scaled_value = int((0.65 + 0.35 * ((value-75)/20)) * max_colors)
-		else:
-			scaled_value = int((0.60 + 0.40 * ((value**2)/95**2)) * max_colors)
-	elif stat in ('red','yel'):
-		min = 2
-		max = 7
-		scaled_value = int((value-min)/(max-min) * max_colors)
-	# Everything else.
-	else:
-		if min == max:
-			scaled_value = max_colors
-		else:
-			scaled_value = int((value-min)/(max-min) * max_colors)
-	
-	if scaled_value < 0:
-		scaled_value = 0
-	elif scaled_value > max_colors:
-		scaled_value = max_colors
-
-	return color_scale[scaled_value]
-
-
 def hex_to_RGB(hex):
 	''' "#FFFFFF" -> [255,255,255] '''
 	# Pass 16 to the integer function for change of base

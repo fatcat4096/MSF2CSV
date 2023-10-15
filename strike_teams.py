@@ -13,15 +13,15 @@ strike_teams = {}
 # Used for Incursion Raid output.
 strike_teams["incur"] = [
 [### Strike team 1 ###]
-	"FatCat",
 	"Joey",
+	"Commander Zoster",
 	"----",
 	"sjhughes",
-	"Ramalama",
+	"lanceb22",
 	"Jutch",
 	"----",
 	"DrFett",
-	"lanceb22",
+	"FatCat",
 	"Daner",
 ],
 [### Strike team 2 ###]
@@ -40,7 +40,7 @@ strike_teams["incur"] = [
 	"Zen Master",
 	"RadicalEvil",
 	"----",
-	"Underdog",
+	"xavichris",
 	"Snicky",
 	"Unclad",
 	"----",
@@ -53,11 +53,11 @@ strike_teams["incur"] = [
 strike_teams["other"] = [
 [### Strike team 1 ###]
 	"sjhughes",
-	"Joey",
+	"Commander Zoster",
 	"Jutch",
 	"Daner",
 	"----",
-	"Ramalama",
+	"Joey",
 	"FatCat",
 	"lanceb22",
 	"DrFett",
@@ -74,7 +74,7 @@ strike_teams["other"] = [
 	"mgmf",
 ],
 [### Strike team 3 ###]
-	"Underdog",
+	"XAVICHRIS",
 	"Snicky",
 	"Zen Master",
 	"RadicalEvil",
