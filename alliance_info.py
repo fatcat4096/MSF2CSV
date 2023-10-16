@@ -61,7 +61,7 @@ def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
 
 
 # Split meta chars from other chars. Filter others based on provided traits.
-def get_meta_other_chars(alliance_info, table, section, hist_tab):
+def get_meta_other_chars(alliance_info, table, section, hist_tab='', max_others=10):
 
 	# Get the list of usable characters
 	char_list = get_char_list (alliance_info)
@@ -106,6 +106,17 @@ def get_meta_other_chars(alliance_info, table, section, hist_tab):
 	# Filter out any characters which no one has summoned.
 	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])]
 	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])]
+
+	# Reduce the number of heroes included in Others. 
+	if len(other_chars) > max_others:
+
+		# Calculate the cutoff for power.
+		other_pwrs = [sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) for char in other_chars]
+		other_pwrs.sort()
+		pwr_cutoff = other_pwrs[len(other_pwrs)-max_others]
+
+		# Trim the other_chars list down to the top max_others in power
+		other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) >= pwr_cutoff]
 
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:

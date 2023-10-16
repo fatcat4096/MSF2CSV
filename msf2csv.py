@@ -12,12 +12,12 @@ import argparse
 from alliance_block	 import *             # Routines to encode/decode the alliance block.
 from process_website import *             # Routines to get Roster data from website.
 from file_io         import *             # Routines to read and write files to disk.
-from generate_html   import generate_html # Routines to generate the finished tables.
+from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
 
 
 # If no name specified, default to the alliance for the Login player
-def main(alliance_name='', csv=False, nohist=False, prompt=False, force=False, exportblock=False, importblock=''):
+def main(alliance_name='', csv=False, nohist=False, prompt=False, force=False, exportblock=False, importblock='', output=''):
 
 	# Parse alliance info from importblock and update rosters from website.
 	if importblock:
@@ -40,11 +40,14 @@ def main(alliance_name='', csv=False, nohist=False, prompt=False, force=False, e
 	elif csv:
 		# Original file format. Requested for input to projects using old CSV format.
 		 write_file(filename+"original.csv", generate_csv(alliance_info))
+	elif output:
+		if output in tables['active']+['roster_analysis','alliance_info']:
+			write_image_files(os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name']+'-', generate_html_files(alliance_info, tables.get(output,{}), nohist, output=output))
 	else:
 		# Generate the active html files specified in tables.py
 		cached_tabs = {}
 		for table in tables['active']:
-			write_file(filename+table+'.html', generate_html(alliance_info, nohist, tables[table], cached_tabs))
+			write_file(filename+table+'.html', generate_tabbed_html(alliance_info, tables[table], nohist, cached_tabs))
 
 
 # Parse arguments
@@ -57,8 +60,10 @@ if __name__ == '__main__':
 						help='generate csv output instead of html tables')
 	parser.add_argument('-f', '--force', action='store_true', 
 						help='force download of roster data, regardless of timing')
-	parser.add_argument('-n' , '--nohist', action='store_true', 
+	parser.add_argument('-n', '--nohist', action='store_true', 
 						help='exclude history tab from output')
+	parser.add_argument('-o', '--output', type=str,
+						help='output images of specific tables instead of tabbed HTML')
 	parser.add_argument('-p' , '--prompt', action='store_true', 
 						help='prompt and store credentials')
 	group = parser.add_mutually_exclusive_group()
@@ -73,5 +78,5 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 
-	main(args.file_or_alliance, args.csv, args.nohist, args.prompt, args.force, args.exportblock, args.importblock) # Just run myself
+	main(args.file_or_alliance, args.csv, args.nohist, args.prompt, args.force, args.exportblock, args.importblock, args.output) # Just run myself
 

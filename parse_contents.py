@@ -131,7 +131,7 @@ def parse_roster(contents, alliance_info, parse_cache):
 		if toon_stats:
 
 			# Is this character a favorite? Using this format for the csv. 
-			favorite = ['true','false'][char.find('i', attrs = {'class':'is-favorite'}) == None]
+			favorite = [1,0][char.find('i', attrs = {'class':'is-favorite'}) == None]
 
 			# Decode Level and Power
 			stats = toon_stats.findAll('div', attrs = {'class':''})
@@ -200,7 +200,7 @@ def parse_roster(contents, alliance_info, parse_cache):
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
 			processed_chars[char_name] = {'power':0, 'lvl':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'abil':0}
-			other_data[char_name]      = {'fav':'', 'class':''}
+			other_data[char_name]      = {'fav':0, 'class':''}
 
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
 		update_parse_cache(processed_chars,char_name,parse_cache)
@@ -223,8 +223,7 @@ def parse_roster(contents, alliance_info, parse_cache):
 	
 	# Add the 'clean' parsed data to our list of processed players.
 	player['processed_chars'] = processed_chars
-	player['cls'] = iso_class
-	player['fav'] = favorite
+	player['other_data']      = other_data
 
 	# And update the player info with current stats from the side panel.
 	player.update(player_info)

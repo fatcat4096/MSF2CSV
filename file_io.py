@@ -10,6 +10,9 @@ import sys
 import re
 import pickle
 
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
 
 TAG_RE = re.compile(r'<[^>]+>')
 
@@ -42,6 +45,34 @@ def write_file(filename, content):
 	# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
 	except:
 		open(filename, 'w', encoding='utf-16').write(content)	
+
+
+def write_image_files(pathname, html_files={}):
+	
+	# Start by creating a Selenium driver.
+	options = webdriver.ChromeOptions()
+	options.add_argument('--log-level=3')
+	options.add_argument('--headless=new')
+	driver = webdriver.Chrome(options=options)
+	driver.maximize_window()
+
+	# html_files dict has keys representing the various html files.
+	# write them to disk first, then open them with our Selenium driver
+	# and then use it to render them to disk as images. 
+	# Clean up the original files. 
+	
+	for file in html_files:
+		write_file(pathname+file+'.html', html_files[file])
+
+		driver.get(r'file:///'+pathname+file+'.html')
+		height = driver.execute_script('return document.documentElement.scrollHeight')
+		width  = driver.execute_script('return document.documentElement.scrollWidth')
+		driver.set_window_size(width+20, height+450)
+
+		body = driver.find_element(By.TAG_NAME, "body")
+		body.screenshot(pathname+file+'.png')
+
+		os.remove(pathname+file+'.html')
 
 
 def load_cached_data(file_or_alliance=''):

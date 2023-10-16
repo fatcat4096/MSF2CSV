@@ -237,7 +237,9 @@ def process_roster(driver, alliance_info, parse_cache):
 			break
 
 	# If page loaded, pass contents to scraping routines for stat extraction.
-	if len(driver.page_source)>1000000:
+	if len(driver.page_source)<1000000:
+		print ("Failed to load a valid roster -- skipping...")
+	else:
 		member = parse_roster(driver.page_source, alliance_info, parse_cache)
 	
 		# Prevent second download within an hour.

@@ -4,15 +4,105 @@
 Takes the processed alliance / roster data and generate readable output to spec.  
 """
 
+
 import datetime
 import string
 
 # Routines to create color gradient for heat map
 from alliance_info import *
-from gradients import color_scale	
+from generate_css  import *
+from gradients     import color_scale	
+
+
+# Build specific tab output for use in generating PNG graphics.
+def generate_html_files(alliance_info, table, nohist,  output=''):
+
+	default_lanes = [[{'traits': ['Mutant']},
+					  {'traits': ['Bio']},
+					  {'traits': ['Skill']},
+					  {'traits': ['Mystic']},
+					  {'traits': ['Tech']}]]
+
+	html_files = {}
+	
+	# If we have a table, we're generating output for a raid.
+	if table:
+
+		lanes = table.get('lanes',default_lanes)
+		table_name = table.get('name')
+
+		# Special handling if it's a single lane format -- process each section individually.
+		if len(lanes) == 1:
+
+			# Use the standard Tab Label to title the graphic.
+			tab_name = 'ROSTER INFO'
+			if table_name:
+				tab_name = '%s %s' % (table_name.upper(), tab_name)
+			
+			# Generate a label for the History Tab if we have History.
+			hist_tab = ''
+			if len(alliance_info['hist'])>1 and not nohist:
+				hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
+			
+			# Loop through each section, building a file for each section.
+			for section in lanes[0]:
+				html_file = add_css_header()			
+				
+				# Include the label for the main section plus the table.
+				html_file += '<p class="tablink">'+tab_name+'</p>\n'	
+				html_file += generate_lanes(alliance_info, table, [[section]], using_tabs=False)
+
+				# Include the history information if we have it.
+				if hist_tab:
+					html_file += '<p class="tablink">'+hist_tab+'</p>\n'	
+					html_file += generate_lanes(alliance_info, table, [[section]], hist_tab, using_tabs=False)
+
+				# Wrap it up and add it to the collection.
+				html_file += '</body>\n</html>\n'
+				html_files[output+'-%s'%(lanes[0].index(section)+1)] = html_file
+				
+		# If multiple lanes, generate a file for each lane. 
+		else:
+			for lane in lanes:
+
+				# Use the standard Tab Label to title the graphic.
+				lane_num = lanes.index(lane)+1
+				tab_name = 'LANE %i' % (lane_num)
+				if table_name:
+					tab_name = '%s %s' % (table_name.upper(), tab_name)
+
+				# Include the label for the lane plus all the tables.
+				html_file = add_css_header()			
+				html_file += '<p class="tablink">'+tab_name+'</p>\n'	
+				html_file += generate_lanes(alliance_info, table, [lane], using_tabs=False)
+
+				# Wrap it up and add it to the collection.
+				html_file += '</body>\n</html>\n'
+				html_files[output+'-%s'%(lane_num)] = html_file
+		
+	# If not, it's one of the supporting tabs.
+	else:
+		
+		# Start with the CSS Header.
+		html_file = add_css_header()
+
+		# Generate the appropriate midsection
+		if output == 'roster_analysis':
+			html_file += '<p class="tablink">ROSTER ANALYSIS</p>\n'	
+			html_file += generate_roster_analysis(alliance_info, using_tabs=False)
+		# Don't use the tab labels for Alliance Info
+		elif output == 'alliance_info':
+			html_file += generate_alliance_tab(alliance_info, using_tabs=False)
+
+		# Wrap it up and add it to the collection.
+		html_file += '</body>\n</html>\n'
+		html_files[output] = html_file	
+
+	return html_files
+
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
-def generate_html(alliance_info, nohist, table, cached_tabs={}):
+def generate_tabbed_html(alliance_info, table, nohist, cached_tabs={}):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -22,18 +112,15 @@ def generate_html(alliance_info, nohist, table, cached_tabs={}):
 
 	lanes      = table.get('lanes',default_lanes)
 	table_name = table.get('name','')
-	
+
 	# If we're doing a single lane format and we have history, let's generate a historical data tab. 
 	hist_tab = ''
-	if len(lanes) == 1 and len(alliance_info['hist'])>1 and {'power','tier','iso','lvl'}.issuperset(table.get('keys',[])) and not nohist:
+	if len(lanes) == 1 and len(alliance_info['hist'])>1 and not nohist:
 		hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
 
-	# Gotta start somewhere.
-	html_file = '<!doctype html>\n<html lang="en">\n'
+	# Start with the CSS Header.
+	html_file = add_css_header(table_name, len(lanes), hist_tab)
 
-	# Add a header to give us a tabbed interface.
-	html_file += add_tabbed_header(len(lanes), hist_tab, table_name)
-	
 	# Add a tab for each lane. 
 	html_file += generate_lanes(alliance_info, table, lanes)
 
@@ -55,15 +142,15 @@ def generate_html(alliance_info, nohist, table, cached_tabs={}):
 
 	# Finally, add the Javascript to control tabbed display.
 	html_file += add_tabbed_footer()
-	
+		
 	# All done with All Lanes. Close the file.
-	html_file += '</html>\n'
+	html_file += '</body>\n</html>\n'
 
 	return html_file
 
 
 # Generate the contents for each lane.
-def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
+def generate_lanes(alliance_info, table, lanes, hist_tab = '', using_tabs=True, html_file = ''):
 
 	# Use the full Player List if explicit Strike Teams haven't been defined.
 	sort_by = table.get('sort_by','')
@@ -71,10 +158,13 @@ def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
 
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
-		
+
 		# Display each lane in a separate tab.
 		divider_id = ['Hist','Lane'][not hist_tab] + str(lanes.index(lane)+1)
-		html_file += '<div id="%s" class="tabcontent">\n' % (divider_id)
+		
+		# Only include Dividers if using as part of a multi-tab document
+		if using_tabs:
+			html_file += '<div id="%s" class="tabcontent">\n' % (divider_id)
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
@@ -141,7 +231,8 @@ def generate_lanes(alliance_info, table, lanes, hist_tab = '', html_file = ''):
 				html_file += '    <p></p>\n'
 
 		# After Lane content is done, close the div for the Tab implementation.
-		html_file += '</div>\n'
+		if using_tabs:
+			html_file += '</div>\n'
 
 	return html_file
 
@@ -315,9 +406,12 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 
 
 # Generate just the Alliance Tab contents.
-def generate_roster_analysis(alliance_info, html_file=''):
+def generate_roster_analysis(alliance_info, using_tabs=True, html_file=''):
 
-	html_file += '<div id="RosterAnalysis" class="tabcontent">\n'
+	# Only include Dividers if using as part of a multi-tab document
+	if using_tabs:
+		html_file += '<div id="RosterAnalysis" class="tabcontent">\n'
+
 	html_file += '<table>\n'
 
 	# Create the headings for the Alliance Info table.
@@ -567,20 +661,26 @@ def generate_roster_analysis(alliance_info, html_file=''):
 			html_file += '</tr>\n'
 
 	html_file += '</table>\n'
-	html_file += '</div>\n'
+
+	# Only include Dividers if using as part of a multi-tab document
+	if using_tabs:
+		html_file += '</div>\n'
 
 	return html_file
 
 
 # Generate just the Alliance Tab contents.
-def generate_alliance_tab(alliance_info, html_file=''):
+def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 
 	alt_color = extract_color(alliance_info['name'])
 	
 	tot_power = sum([alliance_info['members'][member]['tcp'] for member in alliance_info['members']])
 	avg_power = int(tot_power/len(alliance_info['members']))
 
-	html_file += '<div id="AllianceInfo" class="tabcontent">\n'
+	# Only include Dividers if using as part of a multi-tab document
+	if using_tabs:
+		html_file += '<div id="AllianceInfo" class="tabcontent">\n'
+
 	html_file += '<table style="background:#222;">\n'
 
 	html_file += '<tr>\n</tr>\n'
@@ -594,7 +694,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 	html_file += '<tr style="font-size:18px;color:white;">\n'
 	html_file += ' <td colspan="2">Members<br><span style="font-size:24px;"><b>%i/24</b></span></td>\n' % (len(alliance_info['members']))
 	html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
-	html_file += ' <td colspan="2">Average Collection Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{avg_power:,}')
+	html_file += ' <td colspan="2">Average Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{avg_power:,}')
 	html_file += ' <td colspan="2">Level<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('stark_lvl','80'))
 	html_file += ' <td colspan="2">Trophies<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('trophies','XXX'))
 	html_file += '</tr>\n'
@@ -664,7 +764,7 @@ def generate_alliance_tab(alliance_info, html_file=''):
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0)),   f'{member_stats.get("red",0):,}')
 
 		time_since_last = 4*86400
-		time_value      = 'Never<br>Ask member to sync roster.'
+		time_value      = 'Never<br>Ask member to sync.'
 		if member in alliance_info['members'] and 'processed_chars' in member_stats:
 			time_since_last = datetime.datetime.now() - member_stats['processed_chars']['last_update']
 			time_value = '%s,<br>%s ago' % (member_stats['processed_chars']['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
@@ -675,7 +775,10 @@ def generate_alliance_tab(alliance_info, html_file=''):
 		html_file += ' </tr>\n'
 
 	html_file += '</table>\n'
-	html_file += '</div>\n'
+	
+	# Only include Dividers if using as part of a multi-tab document
+	if using_tabs:
+		html_file += '</div>\n'
 
 	return html_file
 
@@ -789,191 +892,3 @@ def translate_name(value):
 	# Return the translation if available.
 	return tlist.get(value, value)
 
-
-# Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
-def add_tabbed_header(num_lanes, hist_tab, table_name = ''):
-
-		html_file = '''
-<head>
-<title>'''+table_name+''' Info</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;700;900&display=swap" rel="stylesheet">
-<style>
-
-/* Style tab links */
-.tablink {
-  background  : #888;
-  color       : white;
-  float       : left;
-  border      : none;
-  outline     : none;
-  cursor      : pointer;
-  padding     : 14px 16px;
-  font-size   : 24px;
-  font-family : 'Fira Sans Condensed';
-  font-weight : 900;
-  width       : '''+str(int(100/(num_lanes+[3,2][not hist_tab]))) +'''%;	# Adding 1 for Roster Analysis and Alliance Info tabs, 3 if there's also history.
-}
-.tablink:hover {
-  background  : #555;
-}
-.tabcontent {
-  background  : #343734;
-  display     : none;
-  padding     : 70px 20px;
-  height      : 100%;
-}
-
-/* Styles for table cells */
-
-.bold {
-  font-weight : bold;
-  color       : black;
-}
-.alliance_name {
-  font-weight : 700;
-  font-size   : 36pt;
-}
-.title_blue {
-  font-weight : 700;
-  font-size   : 14pt;
-  background  : PowderBlue;
-}
-.title_gray {
-  font-weight : 700;
-  font-size   : 14pt;
-  background  : Gainsboro;
-}
-.header_blue {
-  font-weight : 700;
-  background  : MidnightBlue;
-  color       : white;
-  white-space : nowrap;
-}
-.header_gray {
-  font-weight : 700;
-  background  : Black;
-  color       : white;
-  white-space : nowrap;
-}
-.char_blue {
-  font-weight : 700;
-  background  : SteelBlue;
-  text-shadow : 1px 1px 2px white,
-                0 0 0.8em white, 
-                0 0 0.2em white;
-}
-.char_gray {
-  font-weight : 700;
-  background  : Gray;
-  text-shadow : 1px 1px 2px white,
-                0 0 0.8em white, 
-                0 0 0.2em white;
-}
-.blue {
-  font-weight : 700;
-  background  : PowderBlue;
-  white-space : nowrap;
-  color       : black;
-}
-.name_blue {
-  font-weight : 700;
-  background  : PowderBlue;
-  white-space : nowrap;
-  color       : black;
-  min-width   : 125px;
-}
-.name_blue_alt {
-  font-weight : 700;
-  background  : DeepSkyBlue;
-  white-space : nowrap;
-  color       : black;
-}
-.name_gray {
-  font-weight : 700;
-  background  : Gainsboro;
-  white-space : nowrap;
-  color       : black;
-  min-width   : 125px;
-}
-.name_gray_alt {
-  font-weight : 700;
-  background  : DarkGray;
-  white-space : nowrap;
-  color       : black;
-}
-.subtitle {
-  font-size   : 12pt;
-  font-weight : normal;
-}
-.image {
-  background  : Black;
-}
-.power {
-  font-weight : 700;
-  background  : Maroon;
-  color       : white;
-  min-width   : 60px;
-}
-.hist {
-  background  : #282828;
-  color       : #919191;
-}
-'''
-
-		for num in range(num_lanes):
-			html_file += '#Lane%i {background: #343734;}\n' % (num+1)
-
-		if hist_tab:
-			html_file += '#Hist {background: #343734;}\n'
-
-		html_file += '#AllianceInfo {background: #343734;}\n'	
-
-		html_file += '</style>\n'
-		html_file += '</head>\n'
-		html_file += '<body style="background: #343734; font-family: \'Fira Sans Condensed\', sans-serif; text-align:center;">\n'
-
-		for num in range(num_lanes):
-			tab_name = ['ROSTER INFO', 'LANE %i' % (num+1)][num_lanes>1]
-
-			if table_name:
-				tab_name = '%s %s' % (table_name.upper(), tab_name)
-
-			html_file += '''<button class="tablink" onclick="openPage('Lane%i', this)" %s>%s</button>''' % (num+1,['','id="defaultOpen"'][not num],tab_name) + '\n'
-
-		if hist_tab:
-			html_file += '''<button class="tablink" onclick="openPage('Hist1', this)">%s</button>''' % (hist_tab) + '\n'
-
-		html_file += '''<button class="tablink" onclick="openPage('RosterAnalysis', this)">ROSTER ANALYSIS</button>''' + '\n'
-
-		# And a tab for Alliance Info
-		html_file += '''<button class="tablink" onclick="openPage('AllianceInfo', this)">ALLIANCE INFO</button>''' + '\n'
-
-		return html_file
-
-
-# Quick and dirty Javascript to allow Tabbed implementation for raids with lanes.
-def add_tabbed_footer():
-		return '''
-<script>
-function openPage(pageName,elmnt) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-	tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablink");
-  for (i = 0; i < tablinks.length; i++) {
-	tablinks[i].style.backgroundColor = "";
-  }
-  document.getElementById(pageName).style.display = "block";
-  elmnt.style.backgroundColor = "#343734";
-}
-
-// Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
-</script>
-</body>
-'''
