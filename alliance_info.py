@@ -61,7 +61,7 @@ def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
 
 
 # Split meta chars from other chars. Filter others based on provided traits.
-def get_meta_other_chars(alliance_info, table, section, hist_tab='', max_others=10):
+def get_meta_other_chars(alliance_info, table, section, min_iso, min_tier, max_others, hist_tab=''):
 
 	# Get the list of usable characters
 	char_list = get_char_list (alliance_info)
@@ -75,8 +75,10 @@ def get_meta_other_chars(alliance_info, table, section, hist_tab='', max_others=
 	other_chars = [char for char in char_list if not char in meta_chars]
 
 	# Load up arguments from table, with defaults if necessary.
-	min_iso  = table.get('min_iso', 0)
-	min_tier = table.get('min_tier',0)
+	if not min_iso:
+		min_iso  = table.get('min_iso', 0)
+	if not min_tier:
+		min_tier = table.get('min_tier',0)
 
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info)
@@ -91,24 +93,52 @@ def get_meta_other_chars(alliance_info, table, section, hist_tab='', max_others=
 	# Get extracted_traits from alliance_info
 	extracted_traits = alliance_info['extracted_traits']
 	
-	# Trait filters are additive. Only filter other_chars.
+	# Only filter other_chars.
 	traits = section['traits']
 	if traits:
+		traits_req = table.get('traits_req','any')		# Default is 'any'
+
+		excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
+		traits          = [trait     for trait in traits if trait[:4] != 'Non-']
+
 		for char in other_chars[:]:
+
+			# Skip explicitly named characters.
+			if char in traits:
+				continue
+
+			# Does this char have any of the listed traits?
 			for trait in traits:
-				if trait in extracted_traits and char in extracted_traits[trait]:
-					# Character has at least one of these traits. Leave it in.
+
+				# any == additive (include if any trait is valid)
+				if traits_req == 'any' and char in extracted_traits.get(trait,[]):
 					break
-			# Did we find this char in any of the traits?
-			if trait not in extracted_traits or char not in extracted_traits[trait]:
-				other_chars.remove(char)
 
+				# all == reductive (must have all traits for inclusion)
+				if traits_req == 'all' and char not in extracted_traits.get(trait,[]):
+					break
+
+			# If char isn't in the final trait examined, remove it.
+			if char not in extracted_traits.get(trait,[]):
+				other_chars.remove(char)			
+
+			# Final check, does this character have any EXCLUDED traits?
+			for trait in excluded_traits:
+
+				# Character is from an EXCLUDED group. Remove it.
+				if char in extracted_traits.get(trait,[]) and char in other_chars:
+					other_chars.remove(char)
+	
 	# Filter out any characters which no one has summoned.
-	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])]
-	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])]
+	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
+	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 
-	# Reduce the number of heroes included in Others. 
-	if len(other_chars) > max_others:
+	# If not overridden, pull value from table if it exists.
+	if not max_others:
+		max_others = table.get('max_others',0)
+
+	# If max_others is defined, reduce the number of heroes included in Others. 
+	if max_others and len(other_chars) > max_others:
 
 		# Calculate the cutoff for power.
 		other_pwrs = [sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) for char in other_chars]

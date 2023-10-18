@@ -37,25 +37,25 @@
 
 
 # Active tables are the files which will be generated.
-tables = {'active': ['incur', 'gamma', 'war', 'all']}
+tables = {'active': ['incur', 'gamma', 'dd6', 'war', 'all']}
 
 
 # Meta Heroes for use in Incursion Raid
-tables['incur'] = { 'name': 'Incursion Raid', 'min_tier': 16, 'min_iso': 9, 'strike_teams': 'incur',
+tables['incur'] = { 'name': 'Incursion Raid', 'min_tier': 16, 'min_iso': 9, 'max_others': 10, 'strike_teams': 'incur',
 					'lanes':[ [
 							{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
 							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
 							{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
-							{'traits': ['Tech'], 'meta': ['Kang the Conqueror', 'Doctor Doom', 'Hulkbuster', 'Viv Vision', 'Vision']},
+							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
 							] ]
 					}
 
 # Meta Heroes for use in Gamma Raid
-tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'strike_teams': 'other',
+tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'max_others': 10, 'strike_teams': 'other',
 					'lanes':[ [
 							{'traits': ['Avenger', 'GotG'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
-							{'traits': ['PymTech', 'Infestation', 'Kree'], 'meta': ['Ghost', 'Yellowjacket', 'Minn-Erva', 'Captain Marvel', 'Phyla-Vell']},
+							{'traits': ['PymTech', 'Infestation', 'Kree'], 'meta': ['Black Widow', 'Spider-Man (Big Time)', 'Minn-Erva', 'Captain Marvel', 'Phyla-Vell']},
 							{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
 							{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
 							],[ ### Lane 2 ###
@@ -65,17 +65,28 @@ tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'strike_teams': 'other
 							{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
 							],[ ### Lane 3 ###
 							{'traits': ['Shield', 'Brotherhood'], 'meta': ['Black Widow', 'Captain America', 'Nick Fury', 'Maria Hill', 'Magneto']},
-							{'traits': ['Defender', 'Mercenary', 'HeroesForHire'], 'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
+							{'traits': ['Defender', 'Mercenary', 'HeroesForHire'], 'meta': ['Black Cat', 'Ghost Rider (Robbie)', 'Ms. Marvel (Hard Light)', 'Photon', 'Doctor Strange']},
 							{'traits': ['GotG', 'Xmen', 'Mercenary'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
 							{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
 							{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
 							],[ ### Lane 4 ###
 							{'traits': ['Shield', 'Aim'], 'meta': ['Black Widow', 'Captain America', 'Nick Fury', 'Maria Hill', 'Hawkeye']},
-							{'traits': ['Defender', 'Hydra', 'HeroesForHire'], 'meta': ['Colleen Wing', 'Iron Fist', 'Luke Cage', 'Misty Knight', 'Shang-Chi']},
+							{'traits': ['Defender', 'Hydra', 'HeroesForHire'], 'meta': ['Black Cat', 'Ghost Rider (Robbie)', 'Ms. Marvel (Hard Light)', 'Photon', 'Doctor Strange']},
 							{'traits': ['Shield', 'Wakanda', 'Defender', 'HeroesForHire'], 'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
 							{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
 							] ]
 					}
+
+tables['dd6'] = { 'name': 'Dark Dimension 6', 'sort_by': 'stp', 'min_tier': 18,
+					'lanes':[ [
+							{'traits': ['Non-Legendary', 'Global']},
+							{'traits': ['Non-Legendary', 'Cosmic']},
+							{'traits': ['Non-Legendary', 'City'  ]},
+							{'traits': ['Non-Horseman', 'Legendary']},
+							{'traits': ['Legendary', 'Apocalypse']},
+							] ]
+					}					
+
 
 # Meta Heroes for use in War
 tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
@@ -106,5 +117,5 @@ tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
 					}
 
 # All Characters
-tables['all'] = { 'name': 'All Characters', 'min_iso':9, 'sort_by':'tcp' }
+tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp' }
 

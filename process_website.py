@@ -215,11 +215,11 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			if not find_members_roster(driver, member):
 				continue
 
-		process_roster(driver, alliance_info, parse_cache)
+		process_roster(driver, alliance_info, parse_cache, member)
 
 
 # Parse just the current Roster page.
-def process_roster(driver, alliance_info, parse_cache):
+def process_roster(driver, alliance_info, parse_cache, member=''):
 	# At this point, we're on the right page. Just need to wait for it to load before we parse it.
 	timer = 0
 	
@@ -240,7 +240,7 @@ def process_roster(driver, alliance_info, parse_cache):
 	if len(driver.page_source)<1000000:
 		print ("Failed to load a valid roster -- skipping...")
 	else:
-		member = parse_roster(driver.page_source, alliance_info, parse_cache)
+		member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
 	
 		# Prevent second download within an hour.
 		alliance_info['members'][member]['last_download'] = datetime.datetime.now()

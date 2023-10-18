@@ -18,6 +18,13 @@ def RGB_to_hex(RGB):
 	return "#"+"".join(["0{0:x}".format(v) if v < 16 else
 						 "{0:x}".format(v) for v in RGB])
 
+
+def darken(hex):
+	''' Takes in a hex color and returns the same color
+		taken to 60% brightness. '''
+	return RGB_to_hex([int(.60*x) for x in hex_to_RGB(hex)])
+
+
 def color_dict(gradient):
 	''' Takes in a list of RGB sub-lists and returns dictionary of
 		colors in RGB and hex form for use in a graphing function

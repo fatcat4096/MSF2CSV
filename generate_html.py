@@ -11,11 +11,11 @@ import string
 # Routines to create color gradient for heat map
 from alliance_info import *
 from generate_css  import *
-from gradients     import color_scale	
+from gradients     import color_scale, darken	
 
 
 # Build specific tab output for use in generating PNG graphics.
-def generate_html_files(alliance_info, table, nohist,  output=''):
+def generate_html_files(alliance_info, table, nohist, min_iso, min_tier, max_others, output=''):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -49,13 +49,13 @@ def generate_html_files(alliance_info, table, nohist,  output=''):
 				html_file = add_css_header()			
 				
 				# Include the label for the main section plus the table.
-				html_file += '<p class="tablink">'+tab_name+'</p>\n'	
-				html_file += generate_lanes(alliance_info, table, [[section]], using_tabs=False)
+				html_file += '<p class="tablink">'+tab_name+'</p><br>\n'	
+				html_file += generate_lanes(alliance_info, table, [[section]], min_iso, min_tier, max_others, using_tabs=False)
 
 				# Include the history information if we have it.
 				if hist_tab:
-					html_file += '<p class="tablink">'+hist_tab+'</p>\n'	
-					html_file += generate_lanes(alliance_info, table, [[section]], hist_tab, using_tabs=False)
+					html_file += '<p class="tablink">'+hist_tab+'</p><br>\n'	
+					html_file += generate_lanes(alliance_info, table, [[section]], min_iso, min_tier, max_others, hist_tab, using_tabs=False)
 
 				# Wrap it up and add it to the collection.
 				html_file += '</body>\n</html>\n'
@@ -73,8 +73,8 @@ def generate_html_files(alliance_info, table, nohist,  output=''):
 
 				# Include the label for the lane plus all the tables.
 				html_file = add_css_header()			
-				html_file += '<p class="tablink">'+tab_name+'</p>\n'	
-				html_file += generate_lanes(alliance_info, table, [lane], using_tabs=False)
+				html_file += '<p class="tablink">'+tab_name+'</p><br>\n'	
+				html_file += generate_lanes(alliance_info, table, [lane], min_iso, min_tier, max_others, using_tabs=False)
 
 				# Wrap it up and add it to the collection.
 				html_file += '</body>\n</html>\n'
@@ -88,7 +88,7 @@ def generate_html_files(alliance_info, table, nohist,  output=''):
 
 		# Generate the appropriate midsection
 		if output == 'roster_analysis':
-			html_file += '<p class="tablink">ROSTER ANALYSIS</p>\n'	
+			html_file += '<p class="tablink">ROSTER ANALYSIS</p><br>\n'	
 			html_file += generate_roster_analysis(alliance_info, using_tabs=False)
 		# Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
@@ -102,7 +102,7 @@ def generate_html_files(alliance_info, table, nohist,  output=''):
 
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
-def generate_tabbed_html(alliance_info, table, nohist, cached_tabs={}):
+def generate_tabbed_html(alliance_info, table, nohist, min_iso, min_tier, max_others, cached_tabs={}):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -122,11 +122,11 @@ def generate_tabbed_html(alliance_info, table, nohist, cached_tabs={}):
 	html_file = add_css_header(table_name, len(lanes), hist_tab)
 
 	# Add a tab for each lane. 
-	html_file += generate_lanes(alliance_info, table, lanes)
+	html_file += generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others)
 
 	# Add a historical info tab.
 	if hist_tab:
-		html_file += generate_lanes(alliance_info, table, lanes, hist_tab)
+		html_file += generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others, hist_tab)
 
 	# Same tabs for all documents, so only need to generate them once.
 	cached_ranges= {}
@@ -150,7 +150,7 @@ def generate_tabbed_html(alliance_info, table, nohist, cached_tabs={}):
 
 
 # Generate the contents for each lane.
-def generate_lanes(alliance_info, table, lanes, hist_tab = '', using_tabs=True, html_file = ''):
+def generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others, hist_tab = '', using_tabs=True, html_file = ''):
 
 	# Use the full Player List if explicit Strike Teams haven't been defined.
 	sort_by = table.get('sort_by','')
@@ -169,7 +169,7 @@ def generate_lanes(alliance_info, table, lanes, hist_tab = '', using_tabs=True, 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
 		
-			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, hist_tab)
+			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, min_iso, min_tier, max_others, hist_tab)
 
 			# Start with the Basic Table Label and Colors.
 			table_lbl = '<br>'.join([translate_name(trait) for trait in section['traits']]).upper()
@@ -369,6 +369,10 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 			# Write the stat values for each character.
 			for char_name in char_list:
 
+				# Load up arguments from table, with defaults if necessary.
+				under_min = find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < table.get('min_iso', 0)
+				under_min = find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < table.get('min_tier',0) or under_min
+
 				for key in keys:
 
 					# Get the range of values for this character for all rosters.
@@ -390,7 +394,7 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 					if value == 0 and hist_tab:
 						style = ''
 					else:
-						style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, hist_tab), ['color:black;',''][not hist_tab])
+						style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, under_min, hist_tab), ['color:black;',''][not hist_tab])
 					html_file += '     <td%s%s>%s</td>\n' % (style, ['',other_diffs][key=='power'], [value,'-'][not value])
 
 			# Include the Team Power column.
@@ -801,7 +805,7 @@ def extract_color(alliance_name):
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(min, max, value, stat='power', hist_tab=''):
+def get_value_color(min, max, value, stat='power', under_min=False, hist_tab=''):
 	
 	# Just in case passed a string.
 	value = int(value)
@@ -848,7 +852,13 @@ def get_value_color(min, max, value, stat='power', hist_tab=''):
 	elif scaled_value > max_colors:
 		scaled_value = max_colors
 
-	return color_scale[scaled_value]
+	color = color_scale[scaled_value]
+	
+	# Dim values slightly if under the minimum specified for the report.
+	if under_min and not hist_tab:
+		color = darken(color)
+
+	return color
 	
 
 # Quick and dirty translation to shorter or better names.

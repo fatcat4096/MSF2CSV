@@ -75,7 +75,7 @@ def parse_alliance(contents):
 
 
 # Parse the character file out of MHTML or the page_source directly from the website.
-def parse_roster(contents, alliance_info, parse_cache):
+def parse_roster(contents, alliance_info, parse_cache, member=''):
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	# Start by parsing Player Info from the right panel. We will use this to update alliance_info if not working_from_web.
@@ -84,7 +84,7 @@ def parse_roster(contents, alliance_info, parse_cache):
 	player_info = {}
 
 	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
-	player_info['name'] = remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
+	player_info['name'] = member or remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
 	player_info['image'] = player.find('img').get('src').split('Portrait_')[-1][:-4]
 	player_info['level'] = int(player.find('span').text)
 
