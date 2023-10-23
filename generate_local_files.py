@@ -171,7 +171,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# All Characters
-	tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp' }
+	tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0 }
 
 	new_file += "tables = {'active': " + repr(tables['active']) + "}\n\n\n"
 

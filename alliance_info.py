@@ -61,7 +61,7 @@ def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
 
 
 # Split meta chars from other chars. Filter others based on provided traits.
-def get_meta_other_chars(alliance_info, table, section, min_iso, min_tier, max_others, hist_tab=''):
+def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab=''):
 
 	# Get the list of usable characters
 	char_list = get_char_list (alliance_info)
@@ -75,11 +75,13 @@ def get_meta_other_chars(alliance_info, table, section, min_iso, min_tier, max_o
 	other_chars = [char for char in char_list if not char in meta_chars]
 
 	# Load up arguments from table, with defaults if necessary.
+	min_iso  = table_format.get('min_iso', 0)
 	if not min_iso:
-		min_iso  = table.get('min_iso', 0)
+		min_iso = table.get('min_iso',0)
+	min_tier  = table_format.get('min_tier', 0)
 	if not min_tier:
 		min_tier = table.get('min_tier',0)
-
+ 
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info)
 
@@ -134,6 +136,7 @@ def get_meta_other_chars(alliance_info, table, section, min_iso, min_tier, max_o
 	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 
 	# If not overridden, pull value from table if it exists.
+	max_others  = table_format.get('max_others', 0)
 	if not max_others:
 		max_others = table.get('max_others',0)
 

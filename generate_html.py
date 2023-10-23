@@ -15,7 +15,7 @@ from gradients     import color_scale, darken
 
 
 # Build specific tab output for use in generating PNG graphics.
-def generate_html_files(alliance_info, table, nohist, min_iso, min_tier, max_others, output=''):
+def generate_html_files(alliance_info, table, table_format, output=''):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -28,20 +28,31 @@ def generate_html_files(alliance_info, table, nohist, min_iso, min_tier, max_oth
 	# If we have a table, we're generating output for a raid.
 	if table:
 
-		lanes = table.get('lanes',default_lanes)
+		lanes      = table.get('lanes',default_lanes)
 		table_name = table.get('name')
+		
+		# Alter format to only process a specific lane if requested.
+		only_lane = table_format.get('only_lane',0)
+		if only_lane and only_lane in range(1,len(lanes)+1):
+			lanes = [lanes[only_lane-1]]
+
+		# Alter lanes to only process a specific section if requested.
+		only_section = table_format.get('only_section',0)
+		for lane_idx in range(len(lanes)):
+			if only_section and only_section in range(1,len(lanes[lane_idx])+1):
+				lanes[lane_idx] = [lanes[lane_idx][only_section-1]]
 
 		# Special handling if it's a single lane format -- process each section individually.
 		if len(lanes) == 1:
 
 			# Use the standard Tab Label to title the graphic.
-			tab_name = 'ROSTER INFO'
+			tab_name = ['LANE %i' % only_lane, 'ROSTER INFO'][not only_lane]
 			if table_name:
 				tab_name = '%s %s' % (table_name.upper(), tab_name)
 			
 			# Generate a label for the History Tab if we have History.
 			hist_tab = ''
-			if len(alliance_info['hist'])>1 and not nohist:
+			if len(alliance_info['hist'])>1 and not table_format.get('no_hist'):
 				hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
 			
 			# Loop through each section, building a file for each section.
@@ -50,12 +61,12 @@ def generate_html_files(alliance_info, table, nohist, min_iso, min_tier, max_oth
 				
 				# Include the label for the main section plus the table.
 				html_file += '<p class="tablink">'+tab_name+'</p><br>\n'	
-				html_file += generate_lanes(alliance_info, table, [[section]], min_iso, min_tier, max_others, using_tabs=False)
+				html_file += generate_lanes(alliance_info, table, [[section]], table_format, using_tabs=False)
 
 				# Include the history information if we have it.
 				if hist_tab:
 					html_file += '<p class="tablink">'+hist_tab+'</p><br>\n'	
-					html_file += generate_lanes(alliance_info, table, [[section]], min_iso, min_tier, max_others, hist_tab, using_tabs=False)
+					html_file += generate_lanes(alliance_info, table, [[section]], table_format, hist_tab, using_tabs=False)
 
 				# Wrap it up and add it to the collection.
 				html_file += '</body>\n</html>\n'
@@ -74,7 +85,7 @@ def generate_html_files(alliance_info, table, nohist, min_iso, min_tier, max_oth
 				# Include the label for the lane plus all the tables.
 				html_file = add_css_header()			
 				html_file += '<p class="tablink">'+tab_name+'</p><br>\n'	
-				html_file += generate_lanes(alliance_info, table, [lane], min_iso, min_tier, max_others, using_tabs=False)
+				html_file += generate_lanes(alliance_info, table, [lane], table_format, using_tabs=False)
 
 				# Wrap it up and add it to the collection.
 				html_file += '</body>\n</html>\n'
@@ -102,7 +113,7 @@ def generate_html_files(alliance_info, table, nohist, min_iso, min_tier, max_oth
 
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
-def generate_tabbed_html(alliance_info, table, nohist, min_iso, min_tier, max_others, cached_tabs={}):
+def generate_tabbed_html(alliance_info, table, table_format, cached_tabs={}):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -113,20 +124,31 @@ def generate_tabbed_html(alliance_info, table, nohist, min_iso, min_tier, max_ot
 	lanes      = table.get('lanes',default_lanes)
 	table_name = table.get('name','')
 
+	# Alter format to only process a specific lane if requested.
+	only_lane = table_format.get('only_lane',0)
+	if only_lane and only_lane in range(1,len(lanes)+1):
+		lanes = [lanes[only_lane-1]]
+
+	# Alter lanes to only process a specific section if requested.
+	only_section = table_format.get('only_section',0)
+	for lane_idx in range(len(lanes)):
+		if only_section and only_section in range(1,len(lanes[lane_idx])+1):
+			lanes[lane_idx] = [lanes[lane_idx][only_section-1]]
+
 	# If we're doing a single lane format and we have history, let's generate a historical data tab. 
 	hist_tab = ''
-	if len(lanes) == 1 and len(alliance_info['hist'])>1 and not nohist:
+	if len(lanes) == 1 and len(alliance_info['hist'])>1 and not table_format.get('no_hist'):
 		hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
 
 	# Start with the CSS Header.
 	html_file = add_css_header(table_name, len(lanes), hist_tab)
 
 	# Add a tab for each lane. 
-	html_file += generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others)
+	html_file += generate_lanes(alliance_info, table, lanes, table_format)
 
 	# Add a historical info tab.
 	if hist_tab:
-		html_file += generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others, hist_tab)
+		html_file += generate_lanes(alliance_info, table, lanes, table_format, hist_tab)
 
 	# Same tabs for all documents, so only need to generate them once.
 	cached_ranges= {}
@@ -150,7 +172,9 @@ def generate_tabbed_html(alliance_info, table, nohist, min_iso, min_tier, max_ot
 
 
 # Generate the contents for each lane.
-def generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others, hist_tab = '', using_tabs=True, html_file = ''):
+def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', using_tabs=True):
+
+	html_file = ''
 
 	# Use the full Player List if explicit Strike Teams haven't been defined.
 	sort_by = table.get('sort_by','')
@@ -169,7 +193,7 @@ def generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others, h
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
 		
-			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, min_iso, min_tier, max_others, hist_tab)
+			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format, hist_tab)
 
 			# Start with the Basic Table Label and Colors.
 			table_lbl = '<br>'.join([translate_name(trait) for trait in section['traits']]).upper()
@@ -238,7 +262,7 @@ def generate_lanes(alliance_info, table, lanes, min_iso, min_tier, max_others, h
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
-def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], table_lbl='', stp_list={}, hist_tab = '', html_file = ''):
+def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp_list, hist_tab):
 
 	# Pick a color scheme.
 	if table_lbl.find('OTHERS') == -1:
@@ -266,7 +290,7 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 	for strike_team in strike_teams:
 
 		# Fix any capitalization issues.
-		for idx in range(len(strike_team[:])):
+		for idx in range(len(strike_team)):
 			player_name = strike_team[idx]
 
 			# If can't find, maybe they just got the wrong case? Fix it silently, if so.
@@ -279,7 +303,7 @@ def generate_table(alliance_info, table={}, char_list=[], strike_teams = [], tab
 				strike_team.remove(player_name)
 
 	# Let's get this party started!
-	html_file += '   <table>\n'
+	html_file = '   <table>\n'
 
 	# WRITE THE IMAGES ROW. #############################################
 	html_file += '    <tr class="%s">\n' % (title_cell) 
@@ -471,7 +495,7 @@ def generate_roster_analysis(alliance_info, using_tabs=True, html_file=''):
 	html_file += ' <td class="blue" width="40">7*</td>\n'
 
 	# ISO Levels
-	html_file += ' <td class="blue" width="40">1-4</td>\n'
+	html_file += ' <td class="blue" width="40">0-4</td>\n'
 	html_file += ' <td class="blue" width="40">5</td>\n'
 	html_file += ' <td class="blue" width="40">6-8</td>\n'
 	html_file += ' <td class="blue" width="40">9</td>\n'
@@ -520,7 +544,7 @@ def generate_roster_analysis(alliance_info, using_tabs=True, html_file=''):
 		member_stats = stats.setdefault(member,{})
 		
 		# Don't include stats from heroes that haven't been recruited yet.
-		recruited_chars = [char for char in char_list if alliance_info['members'][member]['processed_chars'][char]['power']!='0']
+		recruited_chars = [char for char in char_list if alliance_info['members'][member]['processed_chars'][char]['power']!=0]
 
 		# Loop through every char
 		for char in recruited_chars:

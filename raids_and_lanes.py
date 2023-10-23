@@ -41,7 +41,7 @@ tables = {'active': ['incur', 'gamma', 'dd6', 'war', 'all']}
 
 
 # Meta Heroes for use in Incursion Raid
-tables['incur'] = { 'name': 'Incursion Raid', 'min_tier': 16, 'min_iso': 9, 'max_others': 10, 'strike_teams': 'incur',
+tables['incur'] = { 'name': 'Incursion Raid', 'min_iso': 9, 'max_others': 10, 'strike_teams': 'incur',
 					'lanes':[ [
 							{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
 							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
@@ -117,5 +117,5 @@ tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
 					}
 
 # All Characters
-tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp' }
+tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0 }
 
