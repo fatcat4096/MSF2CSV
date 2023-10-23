@@ -26,11 +26,11 @@ def generate_csv(alliance_info):
 
 		# Only include entries for recruited characters.
 		for char_name in char_list:
-			if processed_chars[char_name]['lvl'] != '0':
-				iso_class = {'S':'Striker','K':'Skirmisher','H':'Healer','F':'Fortifier','R':'Raider'}[alliance_info['members'][player_name]['other_data']['cls']]
-				favorite  = ['false','true'][alliance_info['members'][player_name]['other_data']['fav']]
+			if processed_chars[char_name]['lvl']:
+				iso_class = ['','Fortifier','Healer','Skirmisher','Raider','Striker'][alliance_info['members'][player_name]['other_data'][char_name]%6]
+				favorite  = ['false','true'][int(alliance_info['members'][player_name]['other_data'][char_name]/6)]
 				
-				bas,abil = divmod(alliance_info['members'][player_name]['abil'],1000)
+				bas,abil = divmod(processed_chars[char_name]['abil'],1000)
 				spc,abil = divmod(abil,100)
 				ult,pas  = divmod(abil,10)
 				abil_stats = [str(abil) for abil in [bas, spc, ult, pas]]

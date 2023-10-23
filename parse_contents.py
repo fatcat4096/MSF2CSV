@@ -131,7 +131,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 		if toon_stats:
 
 			# Is this character a favorite? Using this format for the csv. 
-			favorite = [1,0][char.find('i', attrs = {'class':'is-favorite'}) == None]
+			favorite = [6,0][char.find('i', attrs = {'class':'is-favorite'}) == None]
 
 			# Decode Level and Power
 			stats = toon_stats.findAll('div', attrs = {'class':''})
@@ -182,25 +182,25 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 				iso += 5
 			iso = str(iso)
 
-			iso_class = ''
-			if iso_info.find('gambler') != -1:
-				iso_class = 'R'
-			elif iso_info.find('assassin') != -1:
-				iso_class = 'S'
-			elif iso_info.find('fortify') != -1:
-				iso_class = 'F'
-			elif iso_info.find('skirmish') != -1:
-				iso_class = 'K'
+			iso_class = 0
+			if iso_info.find('fortify') != -1:
+				iso_class = 1
 			elif iso_info.find('restoration') != -1:
-				iso_class = 'H'
+				iso_class = 2
+			elif iso_info.find('skirmish') != -1:
+				iso_class = 3
+			elif iso_info.find('gambler') != -1:
+				iso_class = 4
+			elif iso_info.find('assassin') != -1:
+				iso_class = 5
 
 			processed_chars[char_name] = {'power':int(power), 'lvl':int(level), 'tier':int(tier), 'iso':int(iso), 'yel':int(yelStars), 'red':int(redStars), 'abil':int(bas+spc+ult+pas)}
-			other_data[char_name]      = {'fav':favorite, 'class':iso_class}
+			other_data[char_name]      = favorite+iso_class
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
 			processed_chars[char_name] = {'power':0, 'lvl':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'abil':0}
-			other_data[char_name]      = {'fav':0, 'class':''}
+			other_data[char_name]      = 0
 
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
 		update_parse_cache(processed_chars,char_name,parse_cache)
@@ -215,10 +215,10 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 		
 	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
 	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
-		print (" (skipping -- roster data unchanged)")
+		print ((16-len(player_info['name']))*' ' + ' (skipping -- unchanged)')
 		processed_chars['last_update'] = player['processed_chars']['last_update']
 	else:
-		print (" (Updated!)")
+		print ((16-len(player_info['name']))*' ' + ' (Updated!)')
 		processed_chars['last_update'] = datetime.datetime.now()
 	
 	# Add the 'clean' parsed data to our list of processed players.
