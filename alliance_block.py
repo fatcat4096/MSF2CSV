@@ -65,7 +65,7 @@ def decode_block(block):
 	
 	alliance_info = {'members':{}}
 	
-	parts = block.split(',')
+	parts = block.strip().split(',')
 
 	alliance_info['name']  = parts[0].replace('_',' ').replace('gt;','>').replace('lt;','<')
 	alliance_info['image'] = parts[1]
@@ -105,7 +105,7 @@ def decode_block(block):
 		build_parse_cache(alliance_info, parse_cache)
 	
 	# Start by logging in. 
-	driver = login()
+	driver = login(headless=True)
 
 	# Download and parse each roster, updating each entry
 	member_list = []
@@ -140,8 +140,6 @@ def decode_block(block):
 	
 	# Write the collected roster info to disk in a subdirectory.
 	write_cached_data(alliance_info, get_local_path()+'cached_data')
-
-	return alliance_info
 
 
 # Convert to Base 92 for shorter encoding.

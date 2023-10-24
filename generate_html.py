@@ -11,7 +11,7 @@ import string
 # Routines to create color gradient for heat map
 from alliance_info import *
 from generate_css  import *
-from gradients     import color_scale, darken	
+from gradients     import color_scale, darken, grayscale
 
 
 # Build specific tab output for use in generating PNG graphics.
@@ -390,6 +390,9 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 			html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
 			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_cell_alt][alt_color], player_name.replace('Commander','Cmdr.'))
 
+			# If Member hasn't synced data in more than a week, indicate this fact via Grayscale output.
+			stale_data = (datetime.datetime.now() - alliance_info['members'][player_name]['processed_chars']['last_update']).total_seconds() > 60*60*24*7
+
 			# Write the stat values for each character.
 			for char_name in char_list:
 
@@ -418,12 +421,12 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 					if value == 0 and hist_tab:
 						style = ''
 					else:
-						style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, under_min, hist_tab), ['color:black;',''][not hist_tab])
+						style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, under_min, stale_data, hist_tab), ['color:black;',''][not hist_tab])
 					html_file += '     <td%s%s>%s</td>\n' % (style, ['',other_diffs][key=='power'], [value,'-'][not value])
 
 			# Include the Team Power column.
 			player_stp = stp_list.get(player_name,0)
-			html_file += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(min_all_stps, max_all_stps, player_stp), [player_stp,'-'][not player_stp])
+			html_file += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(min_all_stps, max_all_stps, player_stp, stale_data=stale_data), [player_stp,'-'][not player_stp])
 			html_file += '    </tr>\n'
 		# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
 
@@ -829,7 +832,7 @@ def extract_color(alliance_name):
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(min, max, value, stat='power', under_min=False, hist_tab=''):
+def get_value_color(min, max, value, stat='power', under_min=False, stale_data=False, hist_tab=''):
 	
 	# Just in case passed a string.
 	value = int(value)
@@ -881,6 +884,10 @@ def get_value_color(min, max, value, stat='power', under_min=False, hist_tab='')
 	# Dim values slightly if under the minimum specified for the report.
 	if under_min and not hist_tab:
 		color = darken(color)
+
+	# If data is more than a week old, make grayscale to indicate stale data.
+	if stale_data:
+		color = grayscale(color)
 
 	return color
 	

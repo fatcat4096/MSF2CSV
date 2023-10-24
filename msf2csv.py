@@ -14,20 +14,31 @@ from process_website import *             # Routines to get Roster data from web
 from file_io         import *             # Routines to read and write files to disk.
 from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
+from io              import StringIO      # Allow capture of stdout for return to bot.
 
 
 # If no name specified, default to the alliance for the Login player
 def main(alliance_name='', csv=False, rosters_only=False, prompt=False, export_block=False, import_block='', force='', table_format={}, output=''):
 
+	# Capture stdout to return to bot.
+	if rosters_only or import_block:
+		temp_out = StringIO()
+		sys.stdout = temp_out
+
 	# Parse alliance info from import_block and update rosters from website.
 	if import_block:
-	
+
 		## SHOULD ADD SOME SORT OF VERIFICATION/SANITY CHECK RE FORMAT OF THE BLOCK TO IMPORT TO PREVENT BAD DATA INJECTION
-		return decode_block(import_block)
+		decode_block(import_block)
 
 	# Load roster info directly from cached data or the website.
 	else:
 		alliance_info = get_alliance_info(alliance_name, prompt, force)
+
+	# If we're done, restore sys.stdout and return the captured output
+	if rosters_only or import_block:
+		sys.stdout = sys.__stdout__
+		return temp_stdout.getvalue()
 
 	print ()
 
@@ -56,6 +67,7 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, export_b
 		cached_tabs = {}
 		for table in tables['active']:
 			write_file(filename+table+'.html', generate_tabbed_html(alliance_info, tables[table], table_format, cached_tabs))
+
 
 
 # Parse arguments
@@ -92,15 +104,15 @@ if __name__ == '__main__':
 
 	# Table Formatting flags. 
 	parser.add_argument('--min_iso', type=int,
-						help='minimum ISO level for inclusion in output', default=1)
+						help='minimum ISO level for inclusion in output')
 	parser.add_argument('--min_tier', type=int,
-						help='minimum Gear Tier for inclusion in output', default=1)
+						help='minimum Gear Tier for inclusion in output')
 	parser.add_argument('--max_others', type=int,
-						help='max characters in Others; default is 10, 0 is no max', default=10)
+						help='max characters in Others; default is 10, 0 is no max')
 	parser.add_argument('--only_lane', type=int,
-						help='only requesting one lane of a given table', default=0)
+						help='only requesting one lane of a given table')
 	parser.add_argument('--only_section', type=int,
-						help='only requesting one section of a given lane', default=0)
+						help='only requesting one section of a given lane')
 	parser.add_argument('-n', '--no_hist', action='store_true', 
 						help='exclude history tab from output')
 
@@ -119,6 +131,6 @@ if __name__ == '__main__':
 		force = 'fresh'
 	
 	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'only_lane':args.only_lane, 'only_section':args.only_section, 'no_hist':args.no_hist}
-
+	
 	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, args.export_block, args.import_block, force, table_format, args.output) # Just run myself
 

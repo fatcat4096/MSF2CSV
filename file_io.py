@@ -9,6 +9,9 @@ import os
 import sys
 import re
 import pickle
+import importlib
+import strike_teams as strike_temp
+import raids_and_lanes
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -56,7 +59,6 @@ def write_image_files(pathname, html_files={}, print_path=True):
 	options.add_argument('--log-level=3')
 	options.add_argument('--headless=new')
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
-
 
 	# The html_files dict contains multiple html files
 	for file in html_files:
@@ -159,26 +161,48 @@ def find_cached_data(file_or_alliance=''):
 	file_or_alliance = remove_tags(file_or_alliance)
 	
 	# If a valid MSF filename passed in, use it as the only entry in file_list.
-	if file_or_alliance[-4:] == ('.msf') and os.path.exists(file_or_alliance) and os.path.isfile(file_or_alliance):
+	if file_or_alliance[-4:] == ('.msf') and os.path.isfile(file_or_alliance):
 		file_list = [file_or_alliance]
 
 	# Start our search with a list of all the MSF files in the local directory.
 	else:
+		check_path(file_or_alliance)
 		file_list = [file for file in os.listdir(get_local_path()) if os.path.isfile(file) and 'cached_data' in file and file_or_alliance+'.msf' in file]
 	
 	# If alliance_name provided but didn't find a conclusive result, go deeper 
 	if len(file_list) != 1 and file_or_alliance:
 
-		# Search the cached_data directory if it exists.
-		file_path = get_local_path()+'cached_data'+os.sep
-		if os.path.exists(file_path) and os.path.isdir(file_path):
-			file_list = [file_path+file for file in os.listdir(file_path) if os.path.isfile(file_path+file) and 'cached_data-' in file and file_or_alliance+'.msf' in file]
+		# Search 1) a folder named `alliance_name` and 2) the cached_data directory, if either exists.
+		for file_path in [get_local_path()+file_or_alliance+os.sep, get_local_path()+'cached_data'+os.sep]:
+			if os.path.isdir(file_path):
+				file_list = [file_path+file for file in os.listdir(file_path) if os.path.isfile(file_path+file) and 'cached_data-' in file and file_or_alliance+'.msf' in file]
+				if len(file_list) == 1:
+					break
 	
 	# If a single MSF file was found, use it, otherwise search was inconclusive.
 	if len(file_list) == 1:
 		alliance_info = load_cached_data(file_list[0])
 		
 	return alliance_info
+
+
+def check_path(alliance_name):
+	
+	global strike_teams
+	global tables
+	
+	local_path = get_local_path()
+	
+	if os.path.isfile(local_path+alliance_name+'\\strike_teams.py') or os.path.isfile(local_path+alliance_name+'\\raids_and_lanes.py'):
+		sys.path[0] = local_path+alliance_name
+
+		# Pull Strike Team definitions from a subdirectory if available.
+		importlib.reload(strike_temp)
+		strike_teams = strike_temp.strike_teams
+
+		# Pull Raid and Lane (table) definitions from a subdirectory if available.
+		importlib.reload(raids_and_lanes)
+		tables = raids_and_lanes.tables
 
 
 # Insert the local directory at the front of path to override packaged versions.

@@ -75,11 +75,11 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	other_chars = [char for char in char_list if not char in meta_chars]
 
 	# Load up arguments from table, with defaults if necessary.
-	min_iso  = table_format.get('min_iso', 0)
-	if not min_iso:
+	min_iso  = table_format.get('min_iso')
+	if min_iso is None:
 		min_iso = table.get('min_iso',0)
-	min_tier  = table_format.get('min_tier', 0)
-	if not min_tier:
+	min_tier  = table_format.get('min_tier')
+	if min_tier is None:
 		min_tier = table.get('min_tier',0)
  
 	# Get the list of Alliance Members we will iterate through as rows.	
@@ -136,8 +136,8 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 
 	# If not overridden, pull value from table if it exists.
-	max_others  = table_format.get('max_others', 0)
-	if not max_others:
+	max_others  = table_format.get('max_others')
+	if max_others is None:
 		max_others = table.get('max_others',0)
 
 	# If max_others is defined, reduce the number of heroes included in Others. 

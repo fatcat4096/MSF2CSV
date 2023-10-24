@@ -22,8 +22,16 @@ def RGB_to_hex(RGB):
 def darken(hex):
 	''' Takes in a hex color and returns the same color
 		taken to 60% brightness. '''
-	return RGB_to_hex([int(.70*x) for x in hex_to_RGB(hex)])
+	return RGB_to_hex([int(.65*x) for x in hex_to_RGB(hex)])
 
+
+def grayscale(hex):
+	''' Takes in a hex color and returns the same color
+		taken to 60% brightness. '''
+	r,g,b = hex_to_RGB(hex)
+	bnw = int(r * 0.299 + g * 0.587 + b * 0.114) & 0xff
+	return RGB_to_hex([bnw,bnw,bnw])
+	
 
 def color_dict(gradient):
 	''' Takes in a list of RGB sub-lists and returns dictionary of
@@ -78,7 +86,7 @@ def polylinear_gradient(colors, n):
 
 # Linear gradient from red, to yellow, to green. 
 # Costly to calculate, so only doing it once.
-color_scale = polylinear_gradient(['#FF866F','#F6FF6F','#69FF48'],1000)['hex']
+color_scale = polylinear_gradient(['#FF866F','#F6FF6F','#89EC73'],1000)['hex']
 
 
 
