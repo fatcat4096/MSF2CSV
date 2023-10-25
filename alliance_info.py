@@ -94,7 +94,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	
 	# Get extracted_traits from alliance_info
 	extracted_traits = alliance_info['extracted_traits']
-	
+
 	# Only filter other_chars.
 	traits = section['traits']
 	if traits:
@@ -130,7 +130,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 				# Character is from an EXCLUDED group. Remove it.
 				if char in extracted_traits.get(trait,[]) and char in other_chars:
 					other_chars.remove(char)
-	
+
 	# Filter out any characters which no one has summoned.
 	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
@@ -138,7 +138,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	# If not overridden, pull value from table if it exists.
 	max_others  = table_format.get('max_others')
 	if max_others is None:
-		max_others = table.get('max_others',0)
+		max_others = table.get('max_others')
 
 	# If max_others is defined, reduce the number of heroes included in Others. 
 	if max_others and len(other_chars) > max_others:
@@ -150,6 +150,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 
 		# Trim the other_chars list down to the top max_others in power
 		other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) >= pwr_cutoff]
+
+	# No means no.
+	elif max_others == 0:
+		other_chars = []
 
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:

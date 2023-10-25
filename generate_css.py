@@ -144,7 +144,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
 	# If num_lanes == 0, not using the tabbed interface.
 	if num_lanes:
 		for num in range(num_lanes):
-			tab_name = ['ROSTER INFO', 'LANE %i' % (num+1)][num_lanes>1]
+			tab_name = ['ROSTER INFO', 'LANE %s' % (num+1)][num_lanes>1]
 
 			if table_name:
 				tab_name = '%s %s' % (table_name.upper(), tab_name)

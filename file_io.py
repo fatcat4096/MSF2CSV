@@ -66,7 +66,7 @@ def write_image_files(pathname, html_files={}, print_path=True):
 		driver = webdriver.Chrome(options=options)
 
 		# Start by writing each to disk.
-		write_file(pathname+file+'.html', html_files[file], False)
+		write_file(pathname+file+'.html', html_files[file], print_path=False)
 
 		# Next, open the file with our Selenium driver.
 		driver.get(r'file:///'+pathname+file+'.html')
@@ -166,7 +166,7 @@ def find_cached_data(file_or_alliance=''):
 
 	# Start our search with a list of all the MSF files in the local directory.
 	else:
-		check_path(file_or_alliance)
+		check_import_path(file_or_alliance)
 		file_list = [file for file in os.listdir(get_local_path()) if os.path.isfile(file) and 'cached_data' in file and file_or_alliance+'.msf' in file]
 	
 	# If alliance_name provided but didn't find a conclusive result, go deeper 
@@ -186,14 +186,21 @@ def find_cached_data(file_or_alliance=''):
 	return alliance_info
 
 
-def check_path(alliance_name):
+# Check to see if a subdirectory exists with this alliance_name and if it contains valid python files.
+# If so, change the import path to include this directory and source the files to use their definitions.
+def check_import_path(alliance_name):
 	
 	global strike_teams
 	global tables
 	
 	local_path = get_local_path()
 	
+	# Check to see if a subdirectory exists with this alliance_name and if it contains valid python files 
 	if os.path.isfile(local_path+alliance_name+'\\strike_teams.py') or os.path.isfile(local_path+alliance_name+'\\raids_and_lanes.py'):
+
+		# If so, change the import path to this path
+		# For clarity, this entry was set by us (below) to force use of local strike_teams.py and raids_and_lanes.py when using a frozen executable. 
+		# This change just points our extra / added path entry to the correct location for alliance-specific files.
 		sys.path[0] = local_path+alliance_name
 
 		# Pull Strike Team definitions from a subdirectory if available.

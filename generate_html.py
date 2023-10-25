@@ -46,7 +46,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 		if len(lanes) == 1:
 
 			# Use the standard Tab Label to title the graphic.
-			tab_name = ['LANE %i' % only_lane, 'ROSTER INFO'][not only_lane]
+			tab_name = ['LANE %s' % only_lane, 'ROSTER INFO'][not only_lane]
 			if table_name:
 				tab_name = '%s %s' % (table_name.upper(), tab_name)
 			
@@ -78,7 +78,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 				# Use the standard Tab Label to title the graphic.
 				lane_num = lanes.index(lane)+1
-				tab_name = 'LANE %i' % (lane_num)
+				tab_name = 'LANE %s' % (lane_num)
 				if table_name:
 					tab_name = '%s %s' % (table_name.upper(), tab_name)
 
@@ -574,8 +574,8 @@ def generate_roster_analysis(alliance_info, using_tabs=True, html_file=''):
 	tcc_range    = [alliance_info['members'][member]['tcc'] for member in member_list]
 
 	# Averages
-	stars_range  = [alliance_info['members'][member]['stars'] for member in member_list]
-	red_range    = [alliance_info['members'][member]['red']   for member in member_list]
+	stars_range  = [alliance_info['members'][member].get('stars',0) for member in member_list]
+	red_range    = [alliance_info['members'][member].get('red',0)   for member in member_list]
 	tier_range   = [sum([lvl*stats[member]['tier'][lvl] for lvl in stats[member]['tier']]) for member in member_list]
 	lvl_range    = [sum([lvl*stats[member]['lvl'][lvl]  for lvl in stats[member]['lvl']])  for member in member_list]
 	iso_range    = [sum([lvl*stats[member]['iso'][lvl]  for lvl in stats[member]['iso']])  for member in member_list]
@@ -635,8 +635,8 @@ def generate_roster_analysis(alliance_info, using_tabs=True, html_file=''):
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_info['stars']), round(member_info['stars'] / member_info['tcc'], 2))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_info['red']),   round(member_info['red']   / member_info['tcc'], 2))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_info.get('stars',0)), round(member_info.get('stars',0) / member_info['tcc'], 2))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_info.get('red',0)),   round(member_info.get('red',0)   / member_info['tcc'], 2))
 			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier_range),  max(tier_range),  sum([lvl*member_stats['tier'][lvl] for lvl in member_stats['tier']])), round(sum([lvl*member_stats['tier'][lvl] for lvl in member_stats['tier']]) / member_info['tcc'], 2))
 			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl_range),   max(lvl_range),   sum([lvl*member_stats['lvl' ][lvl] for lvl in member_stats['lvl' ]])), round(sum([lvl*member_stats['lvl' ][lvl] for lvl in member_stats['lvl' ]]) / member_info['tcc'], 2))
 			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso_range),   max(iso_range),   sum([lvl*member_stats['iso' ][lvl] for lvl in member_stats['iso' ]])), round(sum([lvl*member_stats['iso' ][lvl] for lvl in member_stats['iso' ]]) / member_info['tcc'], 2))
