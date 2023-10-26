@@ -16,8 +16,12 @@ except:	print ("Missing strike_teams.py...will be regenerated after alliance_mem
 try:	from raids_and_lanes import *
 except:	print ("Missing raids_and_lanes.py...will be regenerated and used next run.")
 
+import inspect
+
 # Create a new strike_teams.py if an outdated one exists.
-def generate_strike_teams(strike_teams={}):
+def generate_strike_teams(alliance_info):
+	
+	strike_teams = alliance_info['strike_teams']
 	
 	# Create header
 	new_file  = '''# This file contains the Strike Teams used for HTML file output.
@@ -38,7 +42,14 @@ strike_teams = {}
 	new_file += generate_strike_team('other',strike_teams['other'],'Used for Gamma Raids and other output.')
 
 	# Write it to disk.
-	write_file(get_local_path() + "strike_teams.py", new_file)
+
+	# If we're updating a local strike_teams.py, overwrite the existing module.
+	if 'strike_temp' in globals():
+		write_file(inspect.getfile(strike_temp), new_file)
+
+	# Otherwise, just write it into the local path.
+	else:
+		write_file(get_local_path()+'strike_teams.py', new_file)
 		
 
 # Take the strike_team variable and create the text for the team definition in strike_teams.py

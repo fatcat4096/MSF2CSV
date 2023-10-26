@@ -10,8 +10,12 @@ import sys
 import re
 import pickle
 import importlib
-import strike_teams as strike_temp
-import raids_and_lanes
+
+try:	import strike_teams as strike_temp
+except:	pass
+
+try:	import raids_and_lanes
+except:	pass
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -44,7 +48,7 @@ def write_file(filename, content, print_path=True):
 
 	# Default output is UTF-8. Attempt to use it as it's more compatible.
 	try:
-		open(filename, 'w').write(content)
+		open(filename, 'w', encoding='utf-8').write(content)
 	# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
 	except:
 		open(filename, 'w', encoding='utf-16').write(content)	
@@ -204,12 +208,14 @@ def check_import_path(alliance_name):
 		sys.path[0] = local_path+alliance_name
 
 		# Pull Strike Team definitions from a subdirectory if available.
-		importlib.reload(strike_temp)
-		strike_teams = strike_temp.strike_teams
+		if 'strike_temp' in globals():
+			importlib.reload(strike_temp)
+			strike_teams = strike_temp.strike_teams
 
 		# Pull Raid and Lane (table) definitions from a subdirectory if available.
-		importlib.reload(raids_and_lanes)
-		tables = raids_and_lanes.tables
+		if 'raids_and_lanes' in globals():
+			importlib.reload(raids_and_lanes)
+			tables = raids_and_lanes.tables
 
 
 # Insert the local directory at the front of path to override packaged versions.

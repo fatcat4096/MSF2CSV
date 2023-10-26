@@ -81,10 +81,11 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	# Start by parsing Player Info from the right panel. We will use this to update alliance_info if not working_from_web.
 	player = soup.find('div', attrs = {'class':'fixed-wrapper panel-wrapper'})
 
+	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
+	player_name = member or remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
+
 	player_info = {}
 
-	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
-	player_info['name'] = member or remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
 	player_info['image'] = player.find('img').get('src').split('Portrait_')[-1][:-4]
 	player_info['level'] = int(player.find('span').text)
 
@@ -209,16 +210,16 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	processed_chars['tot_power'] = tot_power
 	
 	# Get a little closer to our work. 
-	player = alliance_info['members'].setdefault(player_info['name'],{})
+	player = alliance_info['members'].setdefault(player_name,{})
 
-	print("Parsing %i bytes...found: %s" % (len(contents), player_info['name']), end='')
+	print("Parsing %i bytes...found: %s" % (len(contents), player_name), end='')
 		
 	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
 	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
-		print ((16-len(player_info['name']))*' ' + ' (skipping -- unchanged)')
+		print ((16-len(player_name))*' ' + ' (skipping -- unchanged)')
 		processed_chars['last_update'] = player['processed_chars']['last_update']
 	else:
-		print ((16-len(player_info['name']))*' ' + ' (Updated!)')
+		print ((16-len(player_name))*' ' + ' (Updated!)')
 		processed_chars['last_update'] = datetime.datetime.now()
 	
 	# Add the 'clean' parsed data to our list of processed players.
@@ -235,4 +236,4 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	if 'scripts' not in alliance_info:
 		alliance_info['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
 
-	return player_info['name']
+	return player_name

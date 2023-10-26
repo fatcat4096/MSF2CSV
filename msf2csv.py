@@ -22,8 +22,8 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, export_b
 
 	# Capture stdout to return to bot.
 	if rosters_only or import_block:
-		temp_out = StringIO()
-		sys.stdout = temp_out
+		temp_stdout = StringIO()
+		sys.stdout = temp_stdout
 
 	# Parse alliance info from import_block and update rosters from website.
 	if import_block:
@@ -62,7 +62,7 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, export_b
 		if output in tables['active']+['roster_analysis','alliance_info']:
 			return write_image_files(os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name']+'-', generate_html_files(alliance_info, tables.get(output,{}), table_format, output))
 
-	# Default: Generate all active html files specified in tables.py
+	# Default: Generate all active html files specified in tables
 	else:
 		cached_tabs = {}
 		for table in tables['active']:

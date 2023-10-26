@@ -28,9 +28,7 @@ from alliance_info        import update_history
 
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
-def get_alliance_info(alliance_name='', prompt=False, force=False):
-
-	global strike_teams
+def get_alliance_info(alliance_name='', prompt=False, force=''):
 
 	cached_alliance_info = find_cached_data(alliance_name)
 
@@ -41,9 +39,12 @@ def get_alliance_info(alliance_name='', prompt=False, force=False):
 		if not alliance_name:
 			alliance_name = cached_alliance_info['name']
 			
-		# Verify the cached_data is not too old. 
-		if not force and fresh_cached_data(cached_alliance_info):
+		# If we expect cached data or if it's 'fresh enough' and we aren't forcing 'fresh'. 
+		if force == 'stale' or (force != 'fresh' and fresh_enough(cached_alliance_info)):
 			print ("Using cached_data from file:", cached_alliance_info['file_path'])
+
+			# Update the strike team info if we have valid teams in strike_teams.py
+			update_strike_teams(cached_alliance_info)
 			return cached_alliance_info
 
 	# Login to the website. 
@@ -82,8 +83,11 @@ def get_alliance_info(alliance_name='', prompt=False, force=False):
 		if cached_alliance_info:
 	
 			# If fresh data and no membership changes, let's just use it as-is.
-			if not force and fresh_cached_data(cached_alliance_info) and alliance_info['members'].keys() == cached_alliance_info['members'].keys():
+			if force == 'stale' or (force != 'fresh' and fresh_enough(cached_alliance_info) and alliance_info['members'].keys() == cached_alliance_info['members'].keys()):
 				print ("Using cached_data from file:", cached_alliance_info['file_path'])
+				
+				# Update the strike team info if we have valid teams in strike_teams.py
+				update_strike_teams(cached_alliance_info)
 				return cached_alliance_info	
 
 			# So we have fresh alliance_info and the stale cached information.
@@ -92,12 +96,12 @@ def get_alliance_info(alliance_name='', prompt=False, force=False):
 				if key not in alliance_info:
 					alliance_info[key] = cached_alliance_info[key]
 					
-			# Also copy over additional information inside the member definitions.
+			# Also copy over additional information inside the member definitions. 
 			for member in alliance_info['members']:
-				for key in ['processed_chars','last_download','url']:
-					if key in cached_alliance_info['members'].get(member,{}):
+				for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red']:
+					if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
 						alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
-
+				
 	# If not working_from_website, the cached_alliance_info will be our baseline. 
 	else:
 		alliance_info = cached_alliance_info
@@ -111,22 +115,8 @@ def get_alliance_info(alliance_name='', prompt=False, force=False):
 	# If working from website, use strike team definition . 
 	if working_from_website:
 
-		# Just in case file didn't exist, start by at least creating a structure to store teams in. 
-		if 'strike_teams' not in globals():
-			strike_teams = {}
-
-		# Make sure we have a valid strike_team for Incursion. 
-		updated = get_valid_strike_teams('incur', driver, strike_teams, alliance_info) 
-
-		# Make sure we have a valid strike_team for Incursion. 
-		updated = get_valid_strike_teams('other', driver, strike_teams, alliance_info) or updated 
-
-		# Whatever the final result in strike_teams, stow that away in the alliance info structure for output.
-		alliance_info['strike_teams'] = strike_teams
-		
-		# Generate strike_teams.py if we updated either definition or if this file doesn't exist locally.
-		if updated or not os.path.exists(get_local_path()+'strike_teams.py'):
-			generate_strike_teams(strike_teams)	
+		# Make sure we have a valid strike_team for Incursion and Other. 
+		updated = get_valid_strike_teams(alliance_info) 
 
 	# Update extracted_traits if necessary.
 	add_extracted_traits(alliance_info)
@@ -140,24 +130,9 @@ def get_alliance_info(alliance_name='', prompt=False, force=False):
 	return alliance_info
 
 
-# Load cached_alliance_info and ensure it's valid and fresh. 
-def fresh_cached_data(cached_alliance_info):
-
-	# If it's been less than 24 hours since last update, just return the cached data. 
-	if time.time()-os.path.getmtime(cached_alliance_info['file_path']) < 86400:
-
-		# If defined strike_teams are valid for this cached_data, use them.
-		if 'strike_teams' in globals():
-
-			if valid_strike_team(strike_teams['incur'], cached_alliance_info) and cached_alliance_info['strike_teams']['incur'] != strike_teams['incur']:
-				print ("Updating Incursion strike_team definition from strike_teams.py.")
-				cached_alliance_info['strike_teams']['incur'] = strike_teams['incur']
-
-			if valid_strike_team(strike_teams['other'], cached_alliance_info) and cached_alliance_info['strike_teams']['other'] != strike_teams['other']:
-				print ("Updating Other strike_team definition from strike_teams.py.")
-				cached_alliance_info['strike_teams']['other'] = strike_teams['other']
-
-		return True
+# Has is been less than 24 hours since last update of cached_data?
+def fresh_enough(alliance_info):
+	return time.time()-os.path.getmtime(alliance_info['file_path']) < 86400
 
 
 # Process rosters for every member in alliance_info.
@@ -177,14 +152,6 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 	# Let's iterate through the member names in alliance_info.
 	for member in members:
-		# Start off by checking if it's too soon. 
-		if 'last_download' in members[member]:
-			time_since_last = datetime.datetime.now() - members[member]['last_download']
-			
-			# Less than an hour since last refresh, let's skip it.
-			if not force and (time_since_last.total_seconds() < 3600):
-				print ("Found",member,"but too soon, skipping...")
-				continue
 
 		# Use a cached URL if available.
 		if 'url' in members[member]:
@@ -242,9 +209,6 @@ def process_roster(driver, alliance_info, parse_cache, member=''):
 	else:
 		member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
 	
-		# Prevent second download within an hour.
-		alliance_info['members'][member]['last_download'] = datetime.datetime.now()
-
 		# Cache the URL just in case we can use this later
 		alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
 		
@@ -310,35 +274,129 @@ def find_members_roster(driver, member):
 	return True
 
 
-# Go through a multi-stage process to find a valid strike_team definition to use.
-def get_valid_strike_teams(raid_type, driver, strike_teams, alliance_info):
+# If locally defined strike_teams are valid for this cached_data, use them instead
+# Only change we can make if relying on cached alliance info.
+def update_strike_teams(alliance_info):
 
-	# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
-	if valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
-		# Return FALSE, nothing to update.
-		return False
+	strike_teams_defined = 'strike_teams' in globals()
 
-	print ("%s team definitions in strike_teams.py were not valid." % ({'incur':'Incursion','other':'Gamma'}[raid_type]))
+	# Verify we have global definitions of strike_teams before starting. 
+	if strike_teams_defined:
 
-	# If not there, let's check for one cached in the alliance_info
-	if 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
-		print ("Using cached strike_team definitions from alliance_info.")
-		strike_teams[raid_type] = alliance_info['strike_teams'][raid_type]
-		return True
-		
-	# If not there, just put the member list in generic groups of 8.
-	print ("Valid strike_team defintion not found. Creating default strike_team from member list.")
-	members = list(alliance_info['members'])
-	members.sort(key=str.lower)
+		# Iterate through each defined strike team.
+		for raid_type in strike_teams:
 
-	# Break it up into chunks and add the appropriate dividers.
-	strike_teams[raid_type] = add_strike_team_dividers(members, raid_type)
-	return True
+			# If the strike_team is valid for this alliance, let's use it.
+			if valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
+			
+				# Make some common sense fixes and then update the alliance_info dict.
+				fix_strike_team(strike_teams[raid_type], alliance_info)
+				alliance_info['strike_teams'][raid_type] = strike_teams[raid_type]
+
+	# If no strike_teams.py exists, go ahead and use this info as the basis.
+	if not strike_teams_defined:
+		generate_strike_teams(alliance_info)
 
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
 def valid_strike_team(strike_team, alliance_info):
 	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.66	
+
+
+# Before we take the strike_team.py definition as is, let's fix some common problems.
+def fix_strike_team(strike_team, alliance_info):
+
+	updated = False
+
+	player_names  = list(alliance_info['members'])
+	player_lower  = [name.lower() for name in player_names]
+
+	# Make a copy to keep track of who we've found and who we haven't.
+	still_to_find = player_names[:]
+	not_yet_found = []
+
+	# Start with looking for capitalization issues.
+	for team in strike_team:
+
+		# Fix any capitalization issues.
+		for idx in range(len(team)):
+			player_name = team[idx]
+
+			# If can't find, maybe they just got the wrong case? Fix it silently, if so.
+			if player_name not in player_names and player_name.lower() in player_lower:
+				team[idx] = player_names[player_lower.index(player_name.lower())]
+				updated = True
+
+			# If we found it, remove it from the list to find.
+			if team[idx] in still_to_find:
+				still_to_find.remove(team[idx])
+			# If not a divider, note that we didn't find this one.
+			elif '--' not in team[idx]:
+				not_yet_found.append(team[idx])
+	
+	# After going through everything, if we have only one missing and only 
+	# one option in still_to_find, assume someone left and this is the replacement.
+	if len(still_to_find) == 1 and len(not_yet_found) == 1:
+		old_player_name = not_yet_found[0]
+		new_player_name = still_to_find[0]
+		updated = True
+
+		# Replace the player as necessary.
+		for team in strike_team:
+
+			if old_player_name in team:
+				team[team.index(old_player_name)] = new_player_name
+
+	return updated
+
+
+# Go through a multi-stage process to find a valid strike_team definition to use.
+def get_valid_strike_teams(alliance_info):
+
+	# Just in case file didn't exist, start by at least creating a structure to store teams in. 
+	strike_teams_defined = 'strike_teams' in globals()
+
+	updated = False
+
+	for raid_type in ['incur','other']:
+
+		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
+		# If we update or fix the definition, write it to disk before we're done.
+		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
+			print ("Using strike team definitions from strike_teams.py")
+
+			# Keep track if there are any fixes to make
+			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
+			
+			# Store the result in alliance_info.
+			alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
+
+		# If strike_teams.py is missing or invalid, check for strike_teams cached in the alliance_info
+		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
+			print ("Using cached strike_team definitions from alliance_info.")
+	
+			# Fix any issues. We will just update this info in cached_data.
+			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)
+
+		# No valid strike_team definitions found. Fall back to alphabetical list of members. 
+		else:
+			# If not there, just put the member list in generic groups of 8.
+			print ("Valid strike_team defintion not found. Creating default strike_team from member list.")
+			
+			# Get member_list and sort them.
+			members = list(alliance_info['members'])
+			members.sort(key=str.lower)
+
+			# Break it up into chunks and add the appropriate dividers.
+			alliance_info['strike_teams'][raid_type] = add_strike_team_dividers(members, raid_type)
+
+			# And if we didn't have a locally sourced strike_teams.py, go ahead and write this file to disk.
+			if not strike_teams_defined:
+				updated = True
+	
+	# Generate strike_teams.py if we updated either definition or if this file doesn't exist locally.
+	if updated or not strike_teams_defined:
+		generate_strike_teams(alliance_info)
 
 
 # Add divider definitions in the right places, depending upon the raid_type
