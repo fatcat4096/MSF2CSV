@@ -21,6 +21,7 @@ def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')	
+	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
 	facebook_cred, scopely_cred = get_creds(prompt)
 

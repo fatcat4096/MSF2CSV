@@ -28,7 +28,7 @@ from alliance_info        import update_history
 
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
-def get_alliance_info(alliance_name='', prompt=False, force=''):
+def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 
 	cached_alliance_info = find_cached_data(alliance_name)
 
@@ -48,7 +48,7 @@ def get_alliance_info(alliance_name='', prompt=False, force=''):
 			return cached_alliance_info
 
 	# Login to the website. 
-	driver = login(prompt)
+	driver = login(prompt, headless)
 	
 	# We are in, wait until loaded before starting
 	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))

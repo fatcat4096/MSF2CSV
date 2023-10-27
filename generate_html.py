@@ -70,7 +70,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 				# Wrap it up and add it to the collection.
 				html_file += '</body>\n</html>\n'
-				html_files[output+'-%s'%(lanes[0].index(section)+1)] = html_file
+				html_files[output+'-%s.html' % (len(html_files)+1)] = html_file
 				
 		# If multiple lanes, generate a file for each lane. 
 		else:
@@ -89,7 +89,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 				# Wrap it up and add it to the collection.
 				html_file += '</body>\n</html>\n'
-				html_files[output+'-%s'%(lane_num)] = html_file
+				html_files[output+'-%s.html' % (lane_num)] = html_file
 		
 	# If not, it's one of the supporting tabs.
 	else:
@@ -107,7 +107,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 		# Wrap it up and add it to the collection.
 		html_file += '</body>\n</html>\n'
-		html_files[output] = html_file	
+		html_files[output+'.html'] = html_file	
 
 	return html_files
 

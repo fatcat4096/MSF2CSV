@@ -37,24 +37,38 @@ def get_local_path():
 		path = os.path.dirname(sys.executable)
 
 	return os.path.realpath(path) + os.sep
-	
-	
-def write_file(filename, content, print_path=True):
+
+
+def write_file(pathname, file_content, print_path=True):
+
+	files_generated = []
+
+	if type(file_content) is str:
+		file_content = {'':file_content}
 
 	# Sanitize to remove HTML tags.
-	filename = remove_tags(filename)
-	if print_path:
-		print ("Writing %s" % (filename))
+	pathname = remove_tags(pathname)
 
-	# Default output is UTF-8. Attempt to use it as it's more compatible.
-	try:
-		open(filename, 'w', encoding='utf-8').write(content)
-	# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
-	except:
-		open(filename, 'w', encoding='utf-16').write(content)	
+	for file in file_content:
+
+		filename = pathname+file
+
+		if print_path:
+			print ("Writing %s" % (filename))
+
+		# Default output is UTF-8. Attempt to use it as it's more compatible.
+		try:
+			open(filename, 'w', encoding='utf-8').write(file_content[file])
+		# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
+		except:
+			open(filename, 'w', encoding='utf-16').write(file_content[file])	
+
+		files_generated.append(filename)
+		
+	return files_generated
 
 
-def write_image_files(pathname, html_files={}, print_path=True):
+def html_to_images(html_files=[], print_path=True):
 	
 	files_generated = []
 	
@@ -64,33 +78,32 @@ def write_image_files(pathname, html_files={}, print_path=True):
 	options.add_argument('--headless=new')
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
-	# The html_files dict contains multiple html files
+	# The html_files list contains paths to the html files.
 	for file in html_files:
 		
 		driver = webdriver.Chrome(options=options)
 
-		# Start by writing each to disk.
-		write_file(pathname+file+'.html', html_files[file], print_path=False)
-
-		# Next, open the file with our Selenium driver.
-		driver.get(r'file:///'+pathname+file+'.html')
+		# Start by opening each file with our Selenium driver.
+		driver.get(r'file:///'+file)
 		
 		# Set the height/width of the window accordingly
 		height = driver.execute_script('return document.documentElement.scrollHeight')
 		width  = driver.execute_script('return document.documentElement.scrollWidth')
 		driver.set_window_size(width+20, height+450)
 
+		png_filename = file[:-4]+'png'
+
 		# Report the file being written.
 		if print_path:
-			print ("Writing %s" % (pathname+file+'.png'))		
+			print ("Writing %s" % (png_filename))		
 
 		# Then use Selenium to render these pages to disk as images. 
 		body = driver.find_element(By.TAG_NAME, "body")
-		body.screenshot(pathname+file+'.png')
-		files_generated.append(pathname+file+'.png')
+		body.screenshot(png_filename)
+		files_generated.append(png_filename)
 
 		# Finally, clean up the original files. 
-		os.remove(pathname+file+'.html')
+		os.remove(file)
 
 	return files_generated
 
