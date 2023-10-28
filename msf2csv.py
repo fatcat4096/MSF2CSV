@@ -18,7 +18,7 @@ from io              import StringIO      # Allow capture of stdout for return t
 
 
 # If no name specified, default to the alliance for the Login player
-def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}, output='', images_only=False):
+def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}):
 
 	# Capture stdout to return to bot.
 	if rosters_only or import_block:
@@ -45,6 +45,9 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless
 	# Build a default path and filename. 
 	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + datetime.datetime.now().strftime("-%Y%m%d-")
 
+	output       = table_format.get('output')
+	valid_output = tables['active']+['roster_analysis','alliance_info']
+
 	# Generate Export Block?
 	if export_block:
 		alliance_block = encode_block(alliance_info)
@@ -55,41 +58,32 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless
 	elif csv:
 		 write_file(filename+"original.csv", generate_csv(alliance_info))
 
-	# If images_only, we're going to request output 
-	elif images_only:
-	
-		if output in tables['active']+['roster_analysis','alliance_info']:
+	# Output only specific formats.
+	elif output:
+
+		if output in valid_output:
 		
 			pathname = os.path.dirname(alliance_info['file_path'])+os.sep+alliance_info['name']+'-'
 		
-			html_files = generate_html_files(alliance_info, tables.get(output,{}), table_format, output)
-			html_files = write_file(pathname, html_files, print_path=False)
-			return html_to_images(html_files)
-			
+			html_files = generate_html_files(alliance_info, tables.get(output), table_format)
+
+			# If only_image, we need write the html and then convert them.
+			if table_format.get('only_image'):
+				html_files = write_file(pathname, html_files, print_path=False)
+				html_files = html_to_images(html_files)
+			# If not, just need write the html files out.
+			else:
+				html_files = write_file(pathname, html_files)
+
+			return html_files
 		else:
-			print("--output FORMAT must be one of the following:\n"+str(tables['active']+['roster_analysis','alliance_info']))
+			print("--output FORMAT must be one of the following:\n"+str(valid_output))
 
 	# Default: Generate all active html files specified in tables
 	else:
-		# Output only specific formats.
-		if output:
-			
-			if output in tables['active']+['roster_analysis','alliance_info']:
-
-				pathname = os.path.dirname(alliance_info['file_path'])+os.sep+alliance_info['name']+'-'
-
-				html_files = generate_html_files(alliance_info, tables.get(output,{}), table_format, output)
-				return write_file(pathname, html_files)
-			
-			else:
-				print("--output FORMAT must be one of the following:\n"+str(tables['active']+['roster_analysis','alliance_info']))
-
-		# Otherwise, output every active format.
-		else:
-			cached_tabs = {}
-			for table in tables['active']:
-				write_file(filename+table+'.html', generate_tabbed_html(alliance_info, tables[table], table_format, cached_tabs))
-
+		cached_tabs = {}
+		for output in tables['active']:
+			write_file(filename+output+'.html', generate_tabbed_html(alliance_info, tables.get(output), table_format, cached_tabs))
 
 
 # Parse arguments
@@ -135,18 +129,18 @@ if __name__ == '__main__':
 						help='minimum Gear Tier for inclusion in output')
 	parser.add_argument('--max_others', type=int, metavar='N',
 						help='max characters in Others section; 0 is no max')
-	parser.add_argument('-n', '--no_hist', action='store_true', 
+	parser.add_argument('--no_hist', action='store_true', 
 						help='exclude History info from output')
 	parser.add_argument('--only_lane', type=int, metavar='N',
 						help='only output ONE lane of a given format')
 	parser.add_argument('--only_section', type=int, metavar='N',
 						help='only output ONE section of a given lane')
-
-	# Output a single format? Output images instead?
+	parser.add_argument('--only_image', action='store_true',
+						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')						
 	parser.add_argument('--output', type=str, metavar='FORMAT',
 						help='only output ONE format from the list of active formats', default='')
-	parser.add_argument('--images_only', action='store_true',
-						help='output PNG files instead of HTML, requires -o/--output', default='')						
+	parser.add_argument('--by_section', action='store_true',
+						help='generate one file per section, TRUE for only_image of single lane.')
 	args = parser.parse_args()
 
 	# Rosters_only forces Fresh download of roster data.
@@ -157,11 +151,11 @@ if __name__ == '__main__':
 	# Rosters Only forces Headless operation, Decode Block always operates headlessly
 	headless = args.rosters_only or args.headless
 
-	if args.images_only and not args.output:
-		parser.error ("--images_only requires --output FORMAT to be specified")
+	if args.only_image and not args.output:
+		parser.error ("--only_image requires --output FORMAT to be specified")
 	
 	# Group the Formatting flags into a single argument
-	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'only_lane':args.only_lane, 'only_section':args.only_section, 'no_hist':args.no_hist}
+	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'no_hist':args.no_hist, 'only_lane':args.only_lane, 'only_section':args.only_section, 'only_image':args.only_image, 'output':args.output, 'by_section':args.by_section}
 	
-	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format, args.output, args.images_only) # Just run myself
+	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
 

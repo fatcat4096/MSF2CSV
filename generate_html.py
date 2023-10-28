@@ -25,66 +25,80 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 	html_files = {}
 	
+	output = table_format.get('output')
+	
 	# If we have a table, we're generating output for a raid.
 	if table:
 
 		lanes      = table.get('lanes',default_lanes)
-		table_name = table.get('name')
-		
+		table_name = table.get('name','')
+
+		only_lane    = table_format.get('only_lane',0)
+		only_section = table_format.get('only_section',0)
+		only_image   = table_format.get('only_image',False)
+		by_section   = table_format.get('by_section',False)
+
 		# Alter format to only process a specific lane if requested.
-		only_lane = table_format.get('only_lane',0)
 		if only_lane and only_lane in range(1,len(lanes)+1):
 			lanes = [lanes[only_lane-1]]
 
 		# Alter lanes to only process a specific section if requested.
-		only_section = table_format.get('only_section',0)
 		for lane_idx in range(len(lanes)):
 			if only_section and only_section in range(1,len(lanes[lane_idx])+1):
 				lanes[lane_idx] = [lanes[lane_idx][only_section-1]]
 
-		# Special handling if it's a single lane format -- process each section individually.
-		if len(lanes) == 1:
+		# Special handling if it's by_section or image_only output of a single lane format -- process each section individually.
+		if len(lanes) == 1 and (only_image or by_section):
 
-			# Use the standard Tab Label to title the graphic.
-			tab_name = ['LANE %s' % only_lane, 'ROSTER INFO'][not only_lane]
+			# If the format has multiple lanes, specify which lane. If not, just call it Roster Info
+			tab_name = [f'LANE {only_lane}', 'ROSTER INFO'][not only_lane]
+
+			# Include the table name if it exists.
 			if table_name:
-				tab_name = '%s %s' % (table_name.upper(), tab_name)
-			
+				tab_name = f'{table_name.upper()} {tab_name}'
+		
 			# Generate a label for the History Tab if we have History.
-			hist_tab = ''
-			if len(alliance_info['hist'])>1 and not table_format.get('no_hist'):
-				hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
+			hist_tab = get_hist_tab(alliance_info, lanes, table_format)
 			
 			# Loop through each section, building a file for each section.
 			for section in lanes[0]:
-				html_file = add_css_header()			
+				section_num = [only_section, len(html_files)+1][not only_section]
 				
-				# Include the label for the main section plus the table.
-				html_file += '<p class="tablink">'+tab_name+'</p><br>\n'	
+				# Include the label for the section, then the table.
+				html_file  = add_css_header(table_name)			
+				html_file += add_tab_header(f'{tab_name} SECTION {section_num}') 
 				html_file += generate_lanes(alliance_info, table, [[section]], table_format, using_tabs=False)
 
 				# Include the history information if we have it.
 				if hist_tab:
-					html_file += '<p class="tablink">'+hist_tab+'</p><br>\n'	
+					html_file += add_tab_header(hist_tab)	
 					html_file += generate_lanes(alliance_info, table, [[section]], table_format, hist_tab, using_tabs=False)
 
 				# Wrap it up and add it to the collection.
 				html_file += '</body>\n</html>\n'
-				html_files[output+'-%s.html' % (len(html_files)+1)] = html_file
+				html_files[output+'-%s.html' % (section_num)] = html_file
 				
-		# If multiple lanes, generate a file for each lane. 
+		# Generate a single file for each lane. 
 		else:
 			for lane in lanes:
+			
+				# If there's only one lane because of only_lanes, specify the correct lane number.
+				lane_num = [only_lane, lanes.index(lane)+1][not only_lane]
 
-				# Use the standard Tab Label to title the graphic.
-				lane_num = lanes.index(lane)+1
-				tab_name = 'LANE %s' % (lane_num)
+				# If there are multiple lanes, specify which lane. If not, just call it Roster Info
+				tab_name = [f'LANE {lane_num}', 'ROSTER INFO'][len(lanes) == 1 and not only_lane]
+
+				# Only include the Section label if we're generating just one Section.
+				if only_section:
+					tab_name += f' SECTION {only_section}'
+
+				# Include the table name if it exists.
 				if table_name:
-					tab_name = '%s %s' % (table_name.upper(), tab_name)
+					tab_name = f'{table_name.upper()} {tab_name}'
 
 				# Include the label for the lane plus all the tables.
-				html_file = add_css_header()			
-				html_file += '<p class="tablink">'+tab_name+'</p><br>\n'	
+				html_file  = add_css_header(table_name)			
+				html_file += add_tab_header(tab_name)	
 				html_file += generate_lanes(alliance_info, table, [lane], table_format, using_tabs=False)
 
 				# Wrap it up and add it to the collection.
@@ -95,13 +109,14 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 	else:
 		
 		# Start with the CSS Header.
-		html_file = add_css_header()
+		html_file = add_css_header(table_name)
 
-		# Generate the appropriate midsection
+		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += '<p class="tablink">ROSTER ANALYSIS</p><br>\n'	
+			html_file += add_tab_header('ROSTER ANALYSIS')	
 			html_file += generate_roster_analysis(alliance_info, using_tabs=False)
-		# Don't use the tab labels for Alliance Info
+		
+		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
 			html_file += generate_alliance_tab(alliance_info, using_tabs=False)
 
@@ -124,21 +139,20 @@ def generate_tabbed_html(alliance_info, table, table_format, cached_tabs={}):
 	lanes      = table.get('lanes',default_lanes)
 	table_name = table.get('name','')
 
+	only_lane    = table_format.get('only_lane',0)
+	only_section = table_format.get('only_section',0)
+
 	# Alter format to only process a specific lane if requested.
-	only_lane = table_format.get('only_lane',0)
 	if only_lane and only_lane in range(1,len(lanes)+1):
 		lanes = [lanes[only_lane-1]]
 
 	# Alter lanes to only process a specific section if requested.
-	only_section = table_format.get('only_section',0)
 	for lane_idx in range(len(lanes)):
 		if only_section and only_section in range(1,len(lanes[lane_idx])+1):
 			lanes[lane_idx] = [lanes[lane_idx][only_section-1]]
 
-	# If we're doing a single lane format and we have history, let's generate a historical data tab. 
-	hist_tab = ''
-	if len(lanes) == 1 and len(alliance_info['hist'])>1 and not table_format.get('no_hist'):
-		hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
+	# Generate a label for the History Tab if we have History.
+	hist_tab = get_hist_tab(alliance_info, lanes, table_format)
 
 	# Start with the CSS Header.
 	html_file = add_css_header(table_name, len(lanes), hist_tab)
@@ -151,15 +165,12 @@ def generate_tabbed_html(alliance_info, table, table_format, cached_tabs={}):
 		html_file += generate_lanes(alliance_info, table, lanes, table_format, hist_tab)
 
 	# Same tabs for all documents, so only need to generate them once.
-	cached_ranges= {}
 	if not cached_tabs:
 		cached_tabs['roster_analysis'] = generate_roster_analysis(alliance_info)
 		cached_tabs['alliance_tab']    = generate_alliance_tab(alliance_info)
 
-	# After all Lanes are added, add the Roster Analysis tab.
+	# After all Lanes are added, add the Roster Analysis and Alliance Info tabs.
 	html_file += cached_tabs['roster_analysis']
-
-	# Finally, add the Alliance Info tab.
 	html_file += cached_tabs['alliance_tab']
 
 	# Finally, add the Javascript to control tabbed display.
@@ -169,6 +180,24 @@ def generate_tabbed_html(alliance_info, table, table_format, cached_tabs={}):
 	html_file += '</body>\n</html>\n'
 
 	return html_file
+
+
+# If we're doing a single lane format and we have history, let's generate a historical data tab. 
+def get_hist_tab(alliance_info, lanes, table_format):
+
+	# Default it to empty.
+	hist_tab = ''
+
+	# If this format qualifies for History (and it's no explicitly disabled) generate the tab label.
+	if len(lanes) == 1 and len(alliance_info['hist'])>1 and not table_format.get('no_hist'):
+		hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
+
+	return hist_tab
+
+
+# Just hide the messiness.
+def add_tab_header(content):
+	return '<table>\n<tr><td class="tablink" style="width:100%;">'+content+'</td></tr>\n</table>'
 
 
 # Generate the contents for each lane.

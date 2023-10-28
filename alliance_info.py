@@ -152,7 +152,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 		other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) >= pwr_cutoff]
 
 	# No means no.
-	elif max_others == 0:
+	elif meta_chars and max_others == 0:
 		other_chars = []
 
 	# If only meta specified, just move it to others so we don't have to do anything special.

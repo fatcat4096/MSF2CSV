@@ -91,8 +91,8 @@ tables['dd6'] = { 'name': 'Dark Dimension 6', 'sort_by': 'stp', 'min_tier': 18,
 # Meta Heroes for use in War
 tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
 					'lanes':[ [
-							{'traits': ['Key<br>Villains'], 'meta': ['Apocalypse', 'Dormammu', 'Doctor Doom', 'Kang the Conqueror', 'Super Skrull']},
-							{'traits': ['Pegasus']},
+							{'traits': ['New Avengers'], 'meta': ['Agent Coulson', 'Mockingbird', 'Ronin', 'The Thing', 'Tigra']},
+							{'traits': ['P.E.G.A.S.U.S.'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
 							{'traits': ['MastersOfEvil']},
 							{'traits': ['Knowhere']},
 							{'traits': ['Gamma']},

@@ -334,18 +334,21 @@ def fix_strike_team(strike_team, alliance_info):
 			elif '--' not in team[idx]:
 				not_yet_found.append(team[idx])
 	
-	# After going through everything, if we have only one missing and only 
-	# one option in still_to_find, assume someone left and this is the replacement.
-	if len(still_to_find) == 1 and len(not_yet_found) == 1:
-		old_player_name = not_yet_found[0]
-		new_player_name = still_to_find[0]
+	# After everything, if we have the same number both missing and extra, 
+	# assume we have replaced the missing people with the leftover ones.
+	if len(still_to_find) == len(not_yet_found):
+
 		updated = True
 
-		# Replace the player as necessary.
-		for team in strike_team:
+		# Put each of the new players into the old players spots.
+		for idx in range(len(not_yet_found)):
+			old_player_name = not_yet_found[idx]
+			new_player_name = still_to_find[idx]
 
-			if old_player_name in team:
-				team[team.index(old_player_name)] = new_player_name
+			# Find and replace them one by one.
+			for team in strike_team:
+				if old_player_name in team:
+					team[team.index(old_player_name)] = new_player_name
 
 	return updated
 
