@@ -21,12 +21,12 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
 .title_blue {
   font-weight : 700;
   font-size   : 14pt;
-  background  : PowderBlue;
+  background  : #B0E0E6;
 }
 .title_gray {
   font-weight : 700;
   font-size   : 14pt;
-  background  : Gainsboro;
+  background  : #DCDCDC;
 }
 .header_blue {
   font-weight : 700;
@@ -56,33 +56,59 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
 }
 .blue {
   font-weight : 700;
-  background  : PowderBlue;
+  background  : #B0E0E6;
   white-space : nowrap;
   color       : black;
 }
 .name_blue {
   font-weight : 700;
-  background  : PowderBlue;
+  background  : #B0E0E6;
   white-space : nowrap;
   color       : black;
   min-width   : 125px;
 }
-.name_blue_alt {
+.name_blue_dim {
   font-weight : 700;
-  background  : DeepSkyBlue;
+  background  : #729195;
+  white-space : nowrap;
+  color       : black;
+  min-width   : 125px;
+}
+.name_alt {
+  font-weight : 700;
+  background  : #00BFFF;
+  white-space : nowrap;
+  color       : black;
+}
+.name_alt_dim {
+  font-weight : 700;
+  background  : #007ca5;
   white-space : nowrap;
   color       : black;
 }
 .name_gray {
   font-weight : 700;
-  background  : Gainsboro;
+  background  : #DCDCDC;
   white-space : nowrap;
   color       : black;
   min-width   : 125px;
 }
-.name_gray_alt {
+.name_gray_dim {
   font-weight : 700;
-  background  : DarkGray;
+  background  : #8f8f8f;
+  white-space : nowrap;
+  color       : black;
+  min-width   : 125px;
+}
+.name_galt {
+  font-weight : 700;
+  background  : #A9A9A9;
+  white-space : nowrap;
+  color       : black;
+}
+.name_galt_dim {
+  font-weight : 700;
+  background  : #6d6d6d;
   white-space : nowrap;
   color       : black;
 }

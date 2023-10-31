@@ -66,7 +66,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 				
 				# Include the label for the section, then the table.
 				html_file  = add_css_header(table_name)			
-				html_file += add_tab_header(f'{tab_name} SECTION {section_num}') 
+				html_file += add_tab_header(tab_name) 
 				html_file += generate_lanes(alliance_info, table, [[section]], table_format, using_tabs=False)
 
 				# Include the history information if we have it.
@@ -88,10 +88,6 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 				# If there are multiple lanes, specify which lane. If not, just call it Roster Info
 				tab_name = [f'LANE {lane_num}', 'ROSTER INFO'][len(lanes) == 1 and not only_lane]
 
-				# Only include the Section label if we're generating just one Section.
-				if only_section:
-					tab_name += f' SECTION {only_section}'
-
 				# Include the table name if it exists.
 				if table_name:
 					tab_name = f'{table_name.upper()} {tab_name}'
@@ -109,7 +105,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 	else:
 		
 		# Start with the CSS Header.
-		html_file = add_css_header(table_name)
+		html_file = add_css_header({'roster_analysis':'Roster Analysis','alliance_info':'Alliance Info'}[output])
 
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
@@ -299,14 +295,18 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 		table_header  = 'header_blue'
 		char_cell     = 'char_blue'
 		name_cell     = 'name_blue'
-		name_cell_alt = 'name_blue_alt'
+		name_cell_dim = 'name_blue_dim'
+		name_alt      = 'name_alt'
+		name_alt_dim  = 'name_alt_dim'
 		team_pwr_lbl  = 'Team<br>Power'
 	else:
 		title_cell    = 'title_gray'
 		table_header  = 'header_gray'
 		char_cell     = 'char_gray'
 		name_cell     = 'name_gray'
-		name_cell_alt = 'name_gray_alt'
+		name_cell_dim = 'name_gray_dim'
+		name_alt      = 'name_galt'
+		name_alt_dim  = 'name_galt_dim'
 		team_pwr_lbl  = 'STP<br>(Top 5)'
 
 	# Get the list of Alliance Members we will iterate through as rows.	
@@ -415,9 +415,12 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 				alt_color = not alt_color
 				continue
 
+			# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
+			not_ready = len([char for char in table['under_min'][player_name] if not table['under_min'][player_name][char]]) < 5
+
 			# Player Name, then relevant stats for each character.
 			html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
-			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_cell_alt][alt_color], player_name.replace('Commander','Cmdr.'))
+			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
 			# If Member hasn't synced data in more than a week, indicate this fact via Grayscale output.
 			stale_data = (datetime.datetime.now() - alliance_info['members'][player_name]['processed_chars']['last_update']).total_seconds() > 60*60*24*7
@@ -426,8 +429,7 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 			for char_name in char_list:
 
 				# Load up arguments from table, with defaults if necessary.
-				under_min = find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < table.get('min_iso', 0)
-				under_min = find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < table.get('min_tier',0) or under_min
+				under_min = table['under_min'][player_name][char_name]
 
 				for key in keys:
 

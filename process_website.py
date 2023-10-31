@@ -226,7 +226,7 @@ def find_members_roster(driver, member):
 	member_labels = driver.find_elements(By.TAG_NAME, "H4")
 
 	for member_label in member_labels:
-		if member == member_label.text.replace('[ME]',''):
+		if member == remove_tags(member_label.text.replace('[ME]','')):
 			break
 
 		# This isn't it.
@@ -375,7 +375,7 @@ def get_valid_strike_teams(alliance_info):
 			alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
 
 		# If strike_teams.py is missing or invalid, check for strike_teams cached in the alliance_info
-		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
+		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
 			print ("Using cached strike_team definitions from alliance_info.")
 	
 			# Fix any issues. We will just update this info in cached_data.
@@ -391,7 +391,7 @@ def get_valid_strike_teams(alliance_info):
 			members.sort(key=str.lower)
 
 			# Break it up into chunks and add the appropriate dividers.
-			alliance_info['strike_teams'][raid_type] = add_strike_team_dividers(members, raid_type)
+			alliance_info.setdefault('strike_teams',{})[raid_type] = add_strike_team_dividers(members, raid_type)
 
 			# And if we didn't have a locally sourced strike_teams.py, go ahead and write this file to disk.
 			if not strike_teams_defined:
