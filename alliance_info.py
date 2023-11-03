@@ -12,8 +12,7 @@ import datetime
 def get_char_list(alliance_info):
 
 	# We only keep images for heroes that at least one person has recruited.
-	char_list = list(alliance_info['portraits'])
-	char_list.sort()
+	char_list = sorted(alliance_info['portraits'])
 
 	return char_list
 
@@ -67,8 +66,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	char_list = get_char_list (alliance_info)
 
 	# Meta Chars not subject to min requirements. Filter out only uncollected heroes.
-	meta_chars = section.get('meta',[])
-	meta_chars.sort()
+	meta_chars = sorted(section.get('meta',[]))
 	meta_chars = [char for char in char_list if char in meta_chars]
 
 	# Other is everything left over. 
@@ -141,7 +139,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 		max_others = table.get('max_others')
 
 	# If max_others is defined, reduce the number of heroes included in Others. 
-	if meta_chars and max_others and len(other_chars) > max_others:
+	if max_others and len(other_chars) > max_others:
 
 		# Calculate the cutoff for power.
 		other_pwrs = [sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) for char in other_chars]
@@ -252,12 +250,32 @@ def update_history(alliance_info):
 		if 'processed_chars' in alliance_members[member]:
 			today_info[member] = alliance_members[member]['processed_chars']
 	
+	# Start with today as a reference. 
+	prev_entry = today_info
+
 	# Clean up any old / unnecessary entries in 'hist':
-	for entry in hist:
+	for entry in sorted(hist,reverse=True):
+	
+		# Remove anyone who isn't still in the alliance.
 		for member in list(hist[entry]):
 			if member not in alliance_members:
 				del hist[entry][member]
-	
+
+
+			## NEED TO CHANGE WHERE PARSE_ROSTERS IS STORING THESE AND WHERE THE COMPARISON IS BEING MADE TO BEFORE REMOVING THEM COMPLETELY.
+			# Temp code to clean up junk data in hist entries for old cached_data files. -- REMOVE IN A WEEK OR TWO
+			#else:
+			#	if 'tot_power'   in hist[entry][member]:	del hist[entry][member]['tot_power']
+			#	if 'last_update' in hist[entry][member]:	del hist[entry][member]['last_update']
+
+		# If someone in the alliance isn't in the older hist entry, copy the earliest entry in to normalize hist data.
+		for member in prev_entry:
+			if member not in hist[entry]:
+				hist[entry][member] = prev_entry[member]
+
+		# Change frame of reference to this historical entry as we move backward
+		prev_entry = hist[entry]
+		
 	# Compare today's data vs. the most recent History entry. 
 	# If anything identical to previous entry, point today's entry at the previous entry.
 

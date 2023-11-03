@@ -387,8 +387,7 @@ def get_valid_strike_teams(alliance_info):
 			print ("Valid strike_team defintion not found. Creating default strike_team from member list.")
 			
 			# Get member_list and sort them.
-			members = list(alliance_info['members'])
-			members.sort(key=str.lower)
+			members = sorted(alliance_info['members'],key=str.lower)
 
 			# Break it up into chunks and add the appropriate dividers.
 			alliance_info.setdefault('strike_teams',{})[raid_type] = add_strike_team_dividers(members, raid_type)

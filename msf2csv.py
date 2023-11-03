@@ -43,7 +43,7 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless
 	print ()
 
 	# Build a default path and filename. 
-	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + datetime.datetime.now().strftime("-%Y%m%d-")
+	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + f'{datetime.datetime.now():-%Y%m%d-}'
 
 	output       = table_format.get('output')
 	valid_output = tables['active']+['roster_analysis','alliance_info']
@@ -139,8 +139,8 @@ if __name__ == '__main__':
 						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')						
 	parser.add_argument('--output', type=str, metavar='FORMAT',
 						help='only output ONE format from the list of active formats', default='')
-	parser.add_argument('--by_section', action='store_true',
-						help='generate one file per section, TRUE for only_image of single lane.')
+	parser.add_argument('--sections_per', type=int, metavar='N',
+						help='include N sections per file.')
 	args = parser.parse_args()
 
 	# Rosters_only forces Fresh download of roster data.
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 		parser.error ("--only_image requires --output FORMAT to be specified")
 	
 	# Group the Formatting flags into a single argument
-	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'no_hist':args.no_hist, 'only_lane':args.only_lane, 'only_section':args.only_section, 'only_image':args.only_image, 'output':args.output, 'by_section':args.by_section}
+	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'no_hist':args.no_hist, 'only_lane':args.only_lane, 'only_section':args.only_section, 'only_image':args.only_image, 'output':args.output, 'sections_per':args.sections_per}
 	
 	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
 
