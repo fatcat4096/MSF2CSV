@@ -10,8 +10,7 @@ These are used to de-duplicate entries in the historical data structures of alli
 def build_parse_cache(alliance_info, parse_cache):
 
 	# Let's process these Historical entries in chronological order. 
-	hist_list = list(alliance_info.get('hist',[]))
-	hist_list.sort()
+	hist_list = sorted(alliance_info.get('hist',[]))
 
 	for entry in hist_list:
 

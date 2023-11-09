@@ -38,7 +38,6 @@ def parse_alliance(contents):
 	# Iterate through each entry, building up a member dict with stats for each.
 	for member_row in members_table:
 		member = {}
-
 		# Remove '[ME]' and HTML tags if present.
 		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text.replace('[ME]',''))
 
@@ -142,10 +141,26 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 			# For total roster calculation.
 			tot_power += int(power)
 			
-			# Decode Yellow and Red Stars
+			# Decode Yellow Stars, Red Stars, and Diamonds
 			stars = str(toon_stats.find('span'))
-			redStars = str(stars.count('star-red'))
-			yelStars = str(stars.count('star-red') + stars.count('star-orange'))
+			if not stars:
+				redStars = 7
+				yelStars = 7
+				diamonds = str(toon_stats.find('div',attrs={'class':'diamonds-container'})).count('diamond-filled')
+				if not diamonds:
+					print ("Should never happen.",char_name)
+			else:
+				redStars = str(stars.count('star-red'))
+				yelStars = str(stars.count('fas fa-star star-red') + stars.count('star-orange'))
+
+				# These are 'unrealized' diamonds -- diamonds earned but not usable because char isn't 7R.
+				diamonds = toon_stats.find('div',attrs={'class':'diamond-container'})
+				if not diamonds:
+					diamonds = 0
+				elif not diamonds.text:
+					diamonds = 1
+				else:
+					diamonds = int(diamonds.text)
 			
 			# Decode Abilities
 			abilities = toon_stats.findAll('div', attrs = {'class':'ability-level'})
@@ -206,22 +221,24 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
 		update_parse_cache(processed_chars,char_name,parse_cache)
 
-	# Finally, store calculated total roster power.
-	processed_chars['tot_power'] = tot_power
-	
+	print(f"Parsing {len(contents)} bytes...found: {player_name:17}", end='')
+
 	# Get a little closer to our work. 
 	player = alliance_info['members'].setdefault(player_name,{})
-
-	print("Parsing %i bytes...found: %s" % (len(contents), player_name), end='')
-		
-	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
-	if 'processed_chars' in player and tot_power == player['processed_chars']['tot_power']:
-		print ((16-len(player_name))*' ' + ' (skipping -- unchanged)')
-		processed_chars['last_update'] = player['processed_chars']['last_update']
-	else:
-		print ((16-len(player_name))*' ' + ' (Updated!)')
-		processed_chars['last_update'] = datetime.datetime.now()
 	
+	# Temporary code to fix previous location of tot_power and last_updated -- DELETE THIS IN A COUPLE WEEKS
+	if 'processed_chars' in player and 'tot_power' in player['processed_chars']:
+		player['tot_power']   = player['processed_chars']['tot_power']
+		player['last_update'] = player['processed_chars']['last_update']
+	
+	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
+	if player.get('tot_power') == tot_power:
+		print ('(skipping -- unchanged)')
+	else:
+		print ('(Updated!)')
+		player['tot_power']   = tot_power
+		player['last_update'] = datetime.datetime.now()
+		
 	# Add the 'clean' parsed data to our list of processed players.
 	player['processed_chars'] = processed_chars
 	player['other_data']      = other_data
@@ -235,5 +252,10 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	# If 'scripts' isn't already defined, just grab the URLs for the js scripts on the page. Will be used by extract_traits.
 	if 'scripts' not in alliance_info:
 		alliance_info['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
+
+	# Cleanup for a weird naming bug. 
+	# If member name is unparsable on Alliance Info screen but visible on Roster page, remnant gets left behind.
+	if member != player_name and alliance_info.get(member):
+		del alliance_info[member]
 
 	return player_name

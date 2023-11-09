@@ -261,12 +261,12 @@ def update_history(alliance_info):
 			if member not in alliance_members:
 				del hist[entry][member]
 
-
-			## NEED TO CHANGE WHERE PARSE_ROSTERS IS STORING THESE AND WHERE THE COMPARISON IS BEING MADE TO BEFORE REMOVING THEM COMPLETELY.
-			# Temp code to clean up junk data in hist entries for old cached_data files. -- REMOVE IN A WEEK OR TWO
-			#else:
-			#	if 'tot_power'   in hist[entry][member]:	del hist[entry][member]['tot_power']
-			#	if 'last_update' in hist[entry][member]:	del hist[entry][member]['last_update']
+			##
+			## Temp code to clean up junk data in hist entries for old cached_data files. -- REMOVE IN A WEEK OR TWO
+			##
+			else:
+				if 'tot_power'   in hist[entry][member]:	del hist[entry][member]['tot_power']
+				if 'last_update' in hist[entry][member]:	del hist[entry][member]['last_update']
 
 		# If someone in the alliance isn't in the older hist entry, copy the earliest entry in to normalize hist data.
 		for member in prev_entry:
@@ -300,7 +300,7 @@ def update_history(alliance_info):
 
 	# Keep the oldest entry, plus one per ISO calendar week. Also, purge any entries > 60 days. 
 	for key in hist_list:
-		if (key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(60):
+		if (key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(90):
 			del alliance_info['hist'][key]
 
 

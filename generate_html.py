@@ -105,14 +105,16 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += add_tab_header('ROSTER ANALYSIS')	
-			html_file += generate_roster_analysis(alliance_info, using_tabs=False)
+			html_file += add_tab_header('ROSTER ANALYSIS (Actuals)')	
+			html_file += generate_roster_analysis(alliance_info, stat_type='actual', using_tabs=False)
+			html_file += add_tab_header('ROSTER ANALYSIS (Progressive)')	
+			html_file += generate_roster_analysis(alliance_info, stat_type='progressive', using_tabs=False)
 
 			# Generate a label for the History Tab if we have History.
 			hist_tab = get_hist_tab(alliance_info, table_format)
 			if hist_tab:
 				html_file += add_tab_header(hist_tab)	
-				html_file += generate_roster_analysis(alliance_info, using_tabs=False, hist_tab=hist_tab)
+				html_file += generate_roster_analysis(alliance_info, stat_type='progressive', using_tabs=False, hist_tab=hist_tab)
 		
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
@@ -426,7 +428,7 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
 			# If Member hasn't synced data in more than a week, indicate this fact via Grayscale output.
-			stale_data = (datetime.datetime.now() - alliance_info['members'][player_name]['processed_chars']['last_update']).total_seconds() > 60*60*24*7
+			stale_data = (datetime.datetime.now() - alliance_info['members'][player_name]['last_update']).total_seconds() > 60*60*24*7
 
 			# Write the stat values for each character.
 			for char_name in char_list:
@@ -471,7 +473,7 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 
 
 # Generate just the Alliance Tab contents.
-def generate_roster_analysis(alliance_info, using_tabs=True, hist_tab=''):
+def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual', hist_tab=''):
 
 	html_file=''
 
@@ -489,13 +491,16 @@ def generate_roster_analysis(alliance_info, using_tabs=True, hist_tab=''):
 	html_file += ' <td width="80" rowspan="2">Total<br>Chars</td>\n'
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 	
-	html_file += ' <td width="200" colspan="5">Average #</td>\n'	# All Avg Stats
+	html_file += ' <td width="200" colspan="5">Average</td>\n'	# All Avg Stats
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="160" colspan="4">Stars</td>\n'		# Yel 4-7
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="160" colspan="4">Red Stars</td>\n'	# Red 4-7
+	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red 4-7
+	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
+
+	html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="200" colspan="5">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
@@ -522,31 +527,36 @@ def generate_roster_analysis(alliance_info, using_tabs=True, hist_tab=''):
 	html_file += ' <td class="blue" width="40">ISO</td>\n'
 	
 	# Yellow Stars
-	html_file += ' <td class="blue" width="40">4*</td>\n'
-	html_file += ' <td class="blue" width="40">5*</td>\n'
-	html_file += ' <td class="blue" width="40">6*</td>\n'
-	html_file += ' <td class="blue" width="40">7*</td>\n'
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['1+','4*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['5+','5*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['6+','6*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['7*','7*'][stat_type == 'actual']
 	
 	# Red Stars
-	html_file += ' <td class="blue" width="40">4*</td>\n'
-	html_file += ' <td class="blue" width="40">5*</td>\n'
-	html_file += ' <td class="blue" width="40">6*</td>\n'
-	html_file += ' <td class="blue" width="40">7*</td>\n'
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['1+','4*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['5+','5*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['6+','6*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['7+','7*'][stat_type == 'actual']
+
+	# Diamonds
+	html_file += ' <td class="blue" width="40">1💎</td>\n'
+	html_file += ' <td class="blue" width="40">2💎</td>\n'
+	html_file += ' <td class="blue" width="40">3💎</td>\n'
 
 	# ISO Levels
-	html_file += ' <td class="blue" width="40">0-4</td>\n'
-	html_file += ' <td class="blue" width="40">5</td>\n'
-	html_file += ' <td class="blue" width="40">6-8</td>\n'
-	html_file += ' <td class="blue" width="40">9</td>\n'
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['4','0-4'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">5+</td>\n'
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['6+','6-8'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">9+</td>\n'
 	html_file += ' <td class="blue" width="40">10</td>\n'
 
 	# Gear Tiers
-	html_file += ' <td class="blue" width="40">13</td>\n'
-	html_file += ' <td class="blue" width="40">14</td>\n'
-	html_file += ' <td class="blue" width="40">15</td>\n'
-	html_file += ' <td class="blue" width="40">16</td>\n'
-	html_file += ' <td class="blue" width="40">17</td>\n'
-	html_file += ' <td class="blue" width="40">18</td>\n'
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['13+','13'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['14+','14'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['15+','15'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['16+','16'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['17+','17'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40">%s</td>\n' % ['18' ,'18'][stat_type == 'actual']
 
 	# T4 Abilities
 	html_file += ' <td class="blue" width="40">Bas</td>\n'
@@ -555,75 +565,28 @@ def generate_roster_analysis(alliance_info, using_tabs=True, hist_tab=''):
 	html_file += ' <td class="blue" width="40">Pas</td>\n'
 
 	# Level Ranges
-	html_file += ' <td class="blue" width="50">&lt;65</td>\n'
-	html_file += ' <td class="blue" width="50">66-70</td>\n'
-	html_file += ' <td class="blue" width="50">71-75</td>\n'
-	html_file += ' <td class="blue" width="50">76-80</td>\n'
-	html_file += ' <td class="blue" width="50">81-85</td>\n'
-	html_file += ' <td class="blue" width="50">86-90</td>\n'
-	html_file += ' <td class="blue" width="50">91-95</td>\n'
+	html_file += ' <td class="blue" width="50">%s</td>\n' % ['0-95', '0-65' ][stat_type == 'actual']
+	html_file += ' <td class="blue" width="50">%s</td>\n' % ['66-95','66-70'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="50">%s</td>\n' % ['71-95','71-75'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="50">%s</td>\n' % ['76-95','76-80'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="50">%s</td>\n' % ['81-95','81-85'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="50">%s</td>\n' % ['86-95','86-90'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="50">%s</td>\n' % ['91-95','91-95'][stat_type == 'actual']
 
 	html_file += '</tr>\n'
 	
 	# Start by doing stat analysis.	
-	stats = get_roster_stats(alliance_info, hist_tab)
+	stats = get_roster_stats(alliance_info, stat_type, hist_tab)
 	
 	# Get the list of Alliance Members 
 	member_list = list(alliance_info['hist'][max(alliance_info['hist'])])
 	
-	# Build ranges for each statistic. We will use min() and max() to determine colors
-	tcp_range    = [sum(stats[member]['power']) for member in member_list]
-	stp_range    = [sum(sorted(stats[member]['power'])[-5:]) for member in member_list]
-	tcc_range    = [len(stats[member]['power']) for member in member_list]
-
-	# Averages
-	yel_range    = [stats[member]['tot_yel']  for member in member_list]
-	red_range    = [stats[member]['tot_red']  for member in member_list]
-	tier_range   = [stats[member]['tot_tier'] for member in member_list]
-	lvl_range    = [stats[member]['tot_lvl']  for member in member_list]
-	iso_range    = [stats[member]['tot_iso']  for member in member_list]
-	
-	# Yellow Stars
-	yel4_range   = [stats[member]['yel'].get(4,0) for member in member_list]
-	yel5_range   = [stats[member]['yel'].get(5,0) for member in member_list]
-	yel6_range   = [stats[member]['yel'].get(6,0) for member in member_list]
-	yel7_range   = [stats[member]['yel'].get(7,0) for member in member_list]
-
+	#
 	# Red Stars
-	red4_range   = [stats[member]['red'].get(4,0) for member in member_list]
-	red5_range   = [stats[member]['red'].get(5,0) for member in member_list]
-	red6_range   = [stats[member]['red'].get(6,0) for member in member_list]
+	# DELETE THIS EVENTUALLY. ONLY HERE TO PROP UP DIAMONDS BELOW.
+	#
 	red7_range   = [stats[member]['red'].get(7,0) for member in member_list]
 
-	# ISO Levels
-	iso4_range   = [sum([stats[member]['iso'].get(iso,0) for iso in range(0,5)]) for member in member_list]
-	iso5_range   = [stats[member]['iso'].get(5,0) for member in member_list]
-	iso8_range   = [sum([stats[member]['iso'].get(iso,0) for iso in range(6,9)]) for member in member_list]
-	iso9_range   = [stats[member]['iso'].get(9,0) for member in member_list]
-	iso10_range  = [stats[member]['iso'].get(10,0) for member in member_list]
-
-	# Gear Tiers
-	tier13_range = [stats[member]['tier'].get(13,0) for member in member_list]
-	tier14_range = [stats[member]['tier'].get(14,0) for member in member_list]
-	tier15_range = [stats[member]['tier'].get(15,0) for member in member_list]
-	tier16_range = [stats[member]['tier'].get(16,0) for member in member_list]
-	tier17_range = [stats[member]['tier'].get(17,0) for member in member_list]
-	tier18_range = [stats[member]['tier'].get(18,0) for member in member_list]
-
-	# T4 Abilities
-	bas_range    = [stats[member]['bas'].get(7,0)+stats[member]['bas'].get(8,0) for member in member_list]
-	spc_range    = [stats[member]['spc'].get(7,0)+stats[member]['spc'].get(8,0) for member in member_list]
-	ult_range    = [stats[member]['ult'].get(7,0)+stats[member]['ult'].get(8,0) for member in member_list]
-	pas_range    = [stats[member]['pas'].get(5,0)+stats[member]['pas'].get(6,0) for member in member_list]
-
-	# Level Ranges
-	lvl65_range  = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range( 1,66)]) for member in member_list]
-	lvl70_range  = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range(66,71)]) for member in member_list]
-	lvl75_range  = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range(71,76)]) for member in member_list]
-	lvl80_range  = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range(76,81)]) for member in member_list]
-	lvl85_range  = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range(81,86)]) for member in member_list]
-	lvl90_range  = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range(86,91)]) for member in member_list]
-	lvl95_range  = [sum([stats[member]['lvl'].get(lvl,0) for lvl in range(91,96)]) for member in member_list]
 
 	# Get a sorted list of members to use for this table output.
 	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
@@ -633,72 +596,53 @@ def generate_roster_analysis(alliance_info, using_tabs=True, hist_tab=''):
 	for member in alliance_order:
 			member_info = alliance_info['members'][member]
 			member_stats = stats[member]
-			
-			tcp = sum(member_stats['power'])
-			stp = sum(sorted(member_stats['power'])[-5:])
-			tcc = len(member_stats['power'])
-			
+			stats_range  = stats['range']
+
 			html_file += '<tr>\n'
 			html_file += ' <td class="name_blue">%s</td>\n' % (member)
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range), max(tcp_range), tcp), f'{tcp:,}')
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stp_range), max(stp_range), stp), f'{stp:,}')
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcc_range), max(tcc_range), tcc), f'{tcc:,}')
+			for key in ['tcp','stp','tcc']:
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key]), f'{member_stats[key]:,}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel_range),  max(yel_range),  member_stats['tot_yel' ]), round(member_stats['tot_yel' ] / tcc, 2))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),  max(red_range),  member_stats['tot_red' ]), round(member_stats['tot_red' ] / tcc, 2))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier_range), max(tier_range), member_stats['tot_tier']), round(member_stats['tot_tier'] / tcc, 2))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl_range),  max(lvl_range),  member_stats['tot_lvl' ]), round(member_stats['tot_lvl' ] / tcc, 2))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso_range),  max(iso_range),  member_stats['tot_iso' ]), round(member_stats['tot_iso' ] / tcc, 2))
+			for key in ['yel', 'red', 'tier', 'lvl', 'iso']:
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tot_'+key]), max(stats_range['tot_'+key]), member_stats['tot_'+key]), f'{member_stats["tot_"+key ] / member_stats["tcc"]:.2f}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel4_range),  max(yel4_range),  member_stats['yel'].get(4,0)),  member_stats['yel'].get(4,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel5_range),  max(yel5_range),  member_stats['yel'].get(5,0)),  member_stats['yel'].get(5,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel6_range),  max(yel6_range),  member_stats['yel'].get(6,0)),  member_stats['yel'].get(6,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(yel7_range),  max(yel7_range),  member_stats['yel'].get(7,0)),  member_stats['yel'].get(7,0))
+			for key in range(4,8):
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['yel'][key]), max(stats_range['yel'][key]), member_stats['yel'].get(key,0)), member_stats['yel'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Red Stars                                                                                                                                       
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red4_range),  max(red4_range),  member_stats['red'].get(4,0)),  member_stats['red'].get(4,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red5_range),  max(red5_range),  member_stats['red'].get(5,0)),  member_stats['red'].get(5,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red6_range),  max(red6_range),  member_stats['red'].get(6,0)),  member_stats['red'].get(6,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(7,0)),  member_stats['red'].get(7,0))
+			for key in range(4,8):
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['red'][key]), max(stats_range['red'][key]), member_stats['red'].get(key,0)), member_stats['red'].get(key,0))
+			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+
+			# Diamonds
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(8,0)),  member_stats['red'].get(8,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(9,0)),  member_stats['red'].get(9,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(10,0)),  member_stats['red'].get(10,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# ISO Levels                                                                                                                                      
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso4_range),  max(iso4_range),  sum([member_stats['iso'].get(iso,0) for iso in range(0,5)])), sum([member_stats['iso'].get(iso,0) for iso in range(0,5)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso5_range),  max(iso5_range),  member_stats['iso'].get(5,0)),  member_stats['iso'].get(5,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso8_range),  max(iso8_range),  sum([member_stats['iso'].get(iso,0) for iso in range(6,9)])), sum([member_stats['iso'].get(iso,0) for iso in range(6,9)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso9_range),  max(iso9_range),  member_stats['iso'].get(9,0)),  member_stats['iso'].get(9,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(iso10_range), max(iso10_range), member_stats['iso'].get(10,0)), member_stats['iso'].get(10,0))
+			for key in [4,5,8,9,10]:
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['iso'][key]), max(stats_range['iso'][key]), member_stats['iso'].get(key,0)), member_stats['iso'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier13_range),  max(tier13_range), member_stats['tier'].get(13,0)), member_stats['tier'].get(13,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier14_range),  max(tier14_range), member_stats['tier'].get(14,0)), member_stats['tier'].get(14,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier15_range),  max(tier15_range), member_stats['tier'].get(15,0)), member_stats['tier'].get(15,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier16_range),  max(tier16_range), member_stats['tier'].get(16,0)), member_stats['tier'].get(16,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier17_range),  max(tier17_range), member_stats['tier'].get(17,0)), member_stats['tier'].get(17,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(tier18_range),  max(tier18_range), member_stats['tier'].get(18,0)), member_stats['tier'].get(18,0))
+			for key in range(13,19):
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tier'][key]), max(stats_range['tier'][key]), member_stats['tier'].get(key,0)), member_stats['tier'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(bas_range), max(bas_range), member_stats['bas'].get(7,0)+member_stats['bas'].get(8,0)), member_stats['bas'].get(7,0)+member_stats['bas'].get(8,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(spc_range), max(spc_range), member_stats['spc'].get(7,0)+member_stats['spc'].get(8,0)), member_stats['spc'].get(7,0)+member_stats['spc'].get(8,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(ult_range), max(ult_range), member_stats['ult'].get(7,0)+member_stats['ult'].get(8,0)), member_stats['ult'].get(7,0)+member_stats['ult'].get(8,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(pas_range), max(pas_range), member_stats['pas'].get(5,0)+member_stats['pas'].get(6,0)), member_stats['pas'].get(5,0)+member_stats['pas'].get(6,0))
+			for key in ['bas','spc','ult','pas']:
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key].get(7,0)), member_stats[key].get(7,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl65_range), max(lvl65_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range( 1,66)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range( 1,66)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl70_range), max(lvl70_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(66,71)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(66,71)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl75_range), max(lvl75_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(71,76)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(71,76)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl80_range), max(lvl80_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(76,81)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(76,81)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl85_range), max(lvl85_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(81,86)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(81,86)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl90_range), max(lvl90_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(86,91)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(86,91)]))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(lvl95_range), max(lvl95_range), sum([member_stats['lvl'].get(lvl,0) for lvl in range(91,96)])), sum([member_stats['lvl'].get(lvl,0) for lvl in range(91,96)]))
+			for key in range(65,100,5):
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['lvl'][key]), max(stats_range['lvl'][key]), member_stats['lvl'].get(key,0)), member_stats['lvl'].get(key,0))
 
 			html_file += '</tr>\n'
 
@@ -711,16 +655,14 @@ def generate_roster_analysis(alliance_info, using_tabs=True, hist_tab=''):
 	return html_file
 
 
+# STILL NEED TO WORK ON HISTORICAL PRESENTATION. SHOULD USE PROGRESSIVE STAT CALCULATIONS FOR BOTH TO SUCCESSFULLY COMMUNICATE PROGRESS.
 
-## THIS STUFF NEEDS TO BE FIXED AT SOME POINT. NEED TO BRING MORE CALCULATIONS INTO HERE TO PROPERLY TAKE HISTORY INTO ACCOUNT -- STP AND TCC FOR EXAMPLE. 
-## I JUST DON'T HAVE THE ENERGY TO FIX HISTORY AT THIS POINT AND MY HISTORICAL DATA HAS BAD DATA IN RED/YELLOW STARS SO RESULTS ARE CURRENTLY UNIMPRESSIVE.
-
-def get_roster_stats(alliance_info, hist_tab=''):
+def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 	
 	stats = {}
 	
-	current_rosters = alliance_info['hist'][max(alliance_info['hist'])]
-	oldest_rosters  = alliance_info['hist'][min(alliance_info['hist'])]
+	current_rosters = alliance_info['hist'][max(alliance_info['hist'])].copy()
+	oldest_rosters  = alliance_info['hist'][min(alliance_info['hist'])].copy()
 	
 	# Get the list of Alliance Members 
 	member_list = list(current_rosters)
@@ -749,28 +691,114 @@ def get_roster_stats(alliance_info, hist_tab=''):
 
 			# If hist_tab, we want the difference between current_rosters and the oldest_rosters.
 			if hist_tab:
-				diff_stats = oldest_rosters[member].get(char, null_stats)
+				char_stats = oldest_rosters[member].get(char, null_stats)
+				#diff_stats = oldest_rosters[member].get(char, null_stats)
+
+			# Use for Total / Average # columns -- do this BEFORE normalizing data.
+			for key in ['yel','red','tier','lvl','iso']:
+				member_stats['tot_'+key] = member_stats.get('tot_'+key,0) + char_stats[key] # - diff_stats[key]
+
+			# Normalize the data.
+			# If stat_type = 'actual', combine ISO and LVL columns before tallying
+			# If 'progressive', make each entry count in those below it.
+
+			# If progressive, only report the highest USABLE red star. 
+			if stat_type == 'progressive':
+				if char_stats['red'] > char_stats['yel']:
+					char_stats['red'] = char_stats['yel']
+					#print ('fixing:',member,char,char_stats['red'],char_stats['yel'])
+				if diff_stats['red'] > diff_stats['yel']:
+					diff_stats['red'] = diff_stats['yel']
+			
+			# For either stat_type, combine certain columns for ISO and Level data.
+			if char_stats['lvl']<65:
+				char_stats['lvl'] = 65
+			else:
+				char_stats['lvl'] += 4-(char_stats['lvl']+4)%5			# Round up to nearest multiple of 5.
+
+			if diff_stats['lvl']<65:
+				diff_stats['lvl'] = 65
+			else:
+				diff_stats['lvl'] += 4-(diff_stats['lvl']+4)%5			# Round up to nearest multiple of 5.
+
+			if char_stats['iso']<4:
+				char_stats['iso'] = 4
+			elif char_stats['iso'] in range(6,9):
+				char_stats['iso'] = 8
+				
+			if diff_stats['iso']<4:
+				diff_stats['iso'] = 4
+			elif diff_stats['iso'] in range(6,9):
+				diff_stats['iso'] = 8
 			
 			# Just tally the values in each key. Increment the count of each value found.
-			for key in ['yel', 'red', 'lvl', 'tier', 'iso']:
-				member_stats.setdefault(key,{})[char_stats[key]] = member_stats.get(key,{}).setdefault(char_stats[key],0)+1
-				member_stats.setdefault(key,{})[diff_stats[key]] = member_stats.get(key,{}).setdefault(diff_stats[key],0) - (diff_stats[key]!=0)
+			for key in ['yel', 'lvl', 'red', 'tier', 'iso']:
+				if stat_type == 'progressive':
+					for x in range(4,char_stats[key]+1):
+						member_stats.setdefault(key,{})[x] = member_stats.get(key,{}).setdefault(x,0)+1
+					#for x in range(4,diff_stats[key]+1):
+					#	member_stats.setdefault(key,{})[x] = member_stats.get(key,{}).setdefault(x,0)-1
+				else:
+					member_stats.setdefault(key,{})[char_stats[key]] = member_stats.get(key,{}).setdefault(char_stats[key],0)+1
+					
+				#member_stats.setdefault(key,{})[diff_stats[key]] = member_stats.get(key,{}).setdefault(diff_stats[key],0) - (diff_stats[key]!=0)
 
 			# Abilities have to be treated a little differently. 
 			bas,abil = divmod(char_stats['abil'],1000)
 			spc,abil = divmod(abil,100)
 			ult,pas  = divmod(abil,10)
 			abil_stats = {'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
+			
+			# Normalize skill data: anything T4 and above is included in level 7. 
+			for key in ['bas','spc','ult']:
+				if abil_stats[key] == 8: 
+					abil_stats[key] = 7
+			if abil_stats['pas'] in (5,6):
+				abil_stats['pas'] = 7
 
 			for key in abil_stats:
 				member_stats.setdefault(key,{})[abil_stats[key]] = member_stats.get(key,{}).setdefault(abil_stats[key],0)+1
 
 			# Use for TCP, STP, TCC columns
-			member_stats.setdefault('power',[]).append(char_stats['power']-diff_stats['power'])
+			member_stats.setdefault('power',[]).append(char_stats['power'])
+			#member_stats.setdefault('power',[]).append(char_stats['power']-diff_stats['power'])
 
-			# Use for Total / Average # columns
-			for key in ['yel','red','tier','lvl','iso']:
-				member_stats['tot_'+key] = member_stats.get('tot_'+key,0) + char_stats[key] - diff_stats[key]
+		# Calculate roster-wide statistics
+		member_stats['tcp'] = sum(member_stats['power'])
+		member_stats['stp'] = sum(sorted(member_stats['power'])[-5:])
+		member_stats['tcc'] = len(member_stats['power'])
+
+	# Calculate alliance-wide ranges for each statistic. Use min() and max() to determine colors
+	stats['range'] = {}
+	stats['range']['tcp'] = [stats[member]['tcp'] for member in member_list]
+	stats['range']['stp'] = [stats[member]['stp'] for member in member_list]
+	stats['range']['tcc'] = [stats[member]['tcc'] for member in member_list]
+
+	# Totals (and create dicts for the rest of the ranges)
+	for key in ['yel','red','tier','lvl','iso']:
+		stats['range'][key]  = {}
+		stats['range']['tot_'+key]  = [stats[member]['tot_'+key] for member in member_list]
+	
+	# Yellow and Red Stars
+	for key in range(4,8):
+		stats['range']['yel'][key] = [stats[member]['yel'].get(key,0) for member in member_list]
+		stats['range']['red'][key] = [stats[member]['red'].get(key,0) for member in member_list]
+
+	# ISO Levels
+	for key in range(4,11):
+		stats['range']['iso'][key] = [stats[member]['iso'].get(key,0) for member in member_list]
+
+	# Gear Tiers
+	for key in range(13,19):
+		stats['range']['tier'][key] = [stats[member]['tier'].get(key,0) for member in member_list]
+
+	# Level Ranges
+	for key in range(65,100,5):
+		stats['range']['lvl'][key] = [stats[member]['lvl'].get(key,0) for member in member_list]
+
+	# T4 Abilities
+	for key in ['bas','spc','ult','pas']:
+		stats['range'][key] = [stats[member][key].get(7,0) for member in member_list]
 
 	return stats
 
@@ -874,8 +902,8 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		time_since_last = 4*86400
 		time_value      = 'Never<br>Ask member to sync.'
 		if member in alliance_info['members'] and 'processed_chars' in member_stats:
-			time_since_last = datetime.datetime.now() - member_stats['processed_chars']['last_update']
-			time_value = '%s,<br>%s ago' % (member_stats['processed_chars']['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
+			time_since_last = datetime.datetime.now() - member_stats['last_update']
+			time_value = '%s,<br>%s ago' % (member_stats['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
 			time_since_last = time_since_last.total_seconds()
 		
 		time_color = get_value_color(0, 4*86400, (4*86400)-time_since_last)

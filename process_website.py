@@ -151,7 +151,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 		build_parse_cache(alliance_info, parse_cache)
 
 	# Let's iterate through the member names in alliance_info.
-	for member in members:
+	for member in list(members):
 
 		# Use a cached URL if available.
 		if 'url' in members[member]:
