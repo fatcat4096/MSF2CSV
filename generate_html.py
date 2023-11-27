@@ -245,9 +245,13 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 
 			# Generate stp_list dict for the Other Table calls.
 			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_tab)
-			
+
+			span_data = table_format.get('span')
+			if span_data is None:
+				span_data = table.get('span',False)
+
 			# Special code for Spanning format here. It's a very narrow window of applicability.
-			if other_chars and not meta_chars and len(other_chars) <= 5 and table.get('format') == 'span':
+			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data:
 
 				# If strike_team is just the entire player list, break it up into 3 groups.
 				if len(strike_teams) == 1:
@@ -317,25 +321,7 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 	# Get the list of Alliance Members we will iterate through as rows.	
 	sort_by  = table.get('sort_by', '')
 	player_list = get_player_list (alliance_info, sort_by, stp_list)
-
-	# Clean up the strike_team defs before we begin.
-	player_upper = list(alliance_info['members'])
-	player_lower = [player.lower() for player in player_upper]
-	for strike_team in strike_teams:
-
-		# Fix any capitalization issues.
-		for idx in range(len(strike_team)):
-			player_name = strike_team[idx]
-
-			# If can't find, maybe they just got the wrong case? Fix it silently, if so.
-			if player_name not in player_upper and player_name.lower() in player_lower:
-				strike_team[idx] = player_upper[player_lower.index(player_name.lower())]
-
-		# After fixing case, if no roster available, just remove them from the strike team.
-		for player_name in strike_team[:]:
-			if player_name in player_upper and player_name not in player_list:
-				strike_team.remove(player_name)
-
+	
 	# Let's get this party started!
 	html_file = '   <table>\n'
 

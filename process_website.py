@@ -98,7 +98,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 					
 			# Also copy over additional information inside the member definitions. 
 			for member in alliance_info['members']:
-				for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red']:
+				for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red','tot_power','last_update']:
 					if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
 						alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
 				

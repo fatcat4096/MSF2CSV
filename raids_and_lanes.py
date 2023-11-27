@@ -41,7 +41,10 @@ tables = {'active': ['incur', 'gamma', 'dd6', 'war', 'all']}
 
 
 # Meta Heroes for use in Incursion Raid
-tables['incur'] = { 'name': 'Incursion Raid', 'min_iso': 9, 'max_others': 10, 'strike_teams': 'incur',
+tables['incur'] = { 'name': 'Incursion Raid',
+					'min_iso': 9,
+					'max_others': 10,
+					'strike_teams': 'incur',
 					'lanes':[ [
 							{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
 							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
@@ -52,7 +55,10 @@ tables['incur'] = { 'name': 'Incursion Raid', 'min_iso': 9, 'max_others': 10, 's
 					}
 
 # Meta Heroes for use in Gamma Raid
-tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'max_others': 10, 'strike_teams': 'other',
+tables['gamma'] = { 'name': 'Gamma Raid',
+					'min_tier': 16,
+					'max_others': 10,
+					'strike_teams': 'other',
 					'lanes':[ [
 							{'traits': ['Avenger', 'GotG'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
 							{'traits': ['PymTech', 'Infestation', 'Kree'], 'meta': ['Black Widow', 'Spider-Man (Big Time)', 'Minn-Erva', 'Captain Marvel', 'Phyla-Vell']},
@@ -77,19 +83,23 @@ tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'max_others': 10, 'str
 							] ]
 					}
 
-tables['dd6'] = { 'name': 'Dark Dimension 6', 'sort_by': 'stp', 'min_tier': 18,
+# Meta Heroes for use in Dark Dimension 6
+tables['dd6'] = { 'name': 'Dark Dimension 6',
+					'min_tier': 18,
+					'sort_by': 'stp',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Global']},
 							{'traits': ['Non-Legendary', 'Cosmic']},
-							{'traits': ['Non-Legendary', 'City'  ]},
+							{'traits': ['Non-Legendary', 'City']},
 							{'traits': ['Non-Horseman', 'Legendary']},
 							{'traits': ['Legendary', 'Apocalypse']},
 							] ]
-					}					
-
+					}
 
 # Meta Heroes for use in War
-tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
+tables['war'] = { 'name': 'War',
+					'sort_by': 'stp',
+					'span': True,
 					'lanes':[ [
 							{'traits': ['New Avengers'], 'meta': ['Agent Coulson', 'Mockingbird', 'Ronin', 'The Thing', 'Tigra']},
 							{'traits': ['P.E.G.A.S.U.S.'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
@@ -117,5 +127,8 @@ tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'format': 'span',
 					}
 
 # All Characters
-tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0 }
+tables['all'] = { 'name': 'All Characters',
+					'max_others': 0,
+					'sort_by': 'tcp',
+					}
 

@@ -95,10 +95,6 @@ if __name__ == '__main__':
 	parser.add_argument('file_or_alliance', type=str, nargs='?',
 						help='specify a cached_data file or alliance_name input', default='')
 	
-	## MAYBE HAVE A SEPARATE CALL TO GET AGE OF CACHED_DATA FILE? 
-	## MAYBE HAVE THIS BE PART OF THE RETURN WHEN WE REQUEST WHICH CACHED_DATA WE HAVE RIGHTS TO? 
-	#parser.add_argument('-a', '--age', action='store_true', 
-	#					help='just get age of cached roster data, generate no output')
 	parser.add_argument('-c', '--csv', action='store_true', 
 						help='just generate csv output, no html tables')
 	parser.add_argument('-p' , '--prompt', action='store_true', 
@@ -110,7 +106,7 @@ if __name__ == '__main__':
 
 	# Import or Export Alliance Block info.
 	group2 = parser.add_mutually_exclusive_group()
-	group2.add_argument('-e', '--export_block', action='store_true', 
+	group2.add_argument('--export_block', '-e', action='store_true', 
 						help='export definition block for an Alliance')
 	group2.add_argument('--import_block', type=str, metavar='BLOCK', 
 						help='import definition block for an Alliance')
@@ -136,11 +132,13 @@ if __name__ == '__main__':
 	parser.add_argument('--only_section', type=int, metavar='N',
 						help='only output ONE section of a given lane')
 	parser.add_argument('--only_image', action='store_true',
-						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')						
+						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')					
 	parser.add_argument('--output', type=str, metavar='FORMAT',
 						help='only output ONE format from the list of active formats', default='')
 	parser.add_argument('--sections_per', type=int, metavar='N',
 						help='include N sections per file.')
+	parser.add_argument('--span', action='store_true', default=None,
+						help='use spanning format for output, forces max_others to 0')
 	args = parser.parse_args()
 
 	# Rosters_only forces Fresh download of roster data.
@@ -154,8 +152,11 @@ if __name__ == '__main__':
 	if args.only_image and not args.output:
 		parser.error ("--only_image requires --output FORMAT to be specified")
 	
+	if args.span == True:
+		args.max_others = 0
+	
 	# Group the Formatting flags into a single argument
-	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'no_hist':args.no_hist, 'only_lane':args.only_lane, 'only_section':args.only_section, 'only_image':args.only_image, 'output':args.output, 'sections_per':args.sections_per}
+	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'no_hist':args.no_hist, 'only_lane':args.only_lane, 'only_section':args.only_section, 'only_image':args.only_image, 'output':args.output, 'sections_per':args.sections_per, 'span':args.span}
 	
 	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
 
