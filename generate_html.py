@@ -407,7 +407,7 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 				continue
 
 			# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
-			not_ready = len([char for char in table['under_min'][player_name] if not table['under_min'][player_name][char]]) < 5
+			not_ready = len([char for char in table['under_min'].get(player_name,{}) if not table['under_min'].get(player_name,{}).get(char)]) < 5
 
 			# Player Name, then relevant stats for each character.
 			html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
@@ -585,7 +585,10 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			stats_range  = stats['range']
 
 			html_file += '<tr>\n'
-			html_file += ' <td class="name_blue">%s</td>\n' % (member)
+
+			member_url = 'https://marvelstrikeforce.com/en/player/%s/characters' % (member_info.get('url'))
+			html_file += ' <td class="name_blue"><a style="text-decoration: none; color: black;" href="%s">%s</a></td>\n' % (member_url, member)
+			
 			for key in ['tcp','stp','tcc']:
 				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key]), f'{member_stats[key]:,}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
@@ -872,7 +875,10 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 
 		html_file += ' <tr style="background:%s;">\n' % (member_color)
 		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png"/></td>\n' % (member_stats['image'])
-		html_file += '  <td class="bold">%s</td>\n' % (member)
+
+		member_url = 'https://marvelstrikeforce.com/en/player/%s/characters' % (alliance_info['members'][member].get('url'))
+		html_file += '  <td class="bold"><a style="text-decoration: none; color: black;" href="%s">%s</a></td>\n' % (member_url, member)
+
 		html_file += '  <td>%i</td>\n' % (member_stats['level'])
 		html_file += '  <td>%s</td>\n' % (member_role)
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats.get('tcp',0)),   f'{member_stats.get("tcp",0):,}')
