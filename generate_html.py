@@ -413,8 +413,8 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 			html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
 			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
-			# If Member hasn't synced data in more than a week, indicate this fact via Grayscale output.
-			stale_data = (datetime.datetime.now() - alliance_info['members'][player_name]['last_update']).total_seconds() > 60*60*24*7
+			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
+			stale_data = (alliance_info['members'][player_name].get('tot_power',0)/alliance_info['members'][player_name]['tcp'])<0.99 or (datetime.datetime.now() - alliance_info['members'][player_name]['last_update']).total_seconds() > 60*60*24*7
 
 			# Write the stat values for each character.
 			for char_name in char_list:
@@ -573,7 +573,6 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	#
 	red7_range   = [stats[member]['red'].get(7,0) for member in member_list]
 
-
 	# Get a sorted list of members to use for this table output.
 	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
 	alliance_order = [member for member in alliance_order if member in member_list]
@@ -584,54 +583,57 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			member_stats = stats[member]
 			stats_range  = stats['range']
 
+			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
+			stale_data = (member_info.get('tot_power',0)/member_info['tcp'])<0.99 or (datetime.datetime.now() - member_info['last_update']).total_seconds() > 60*60*24*7
+
 			html_file += '<tr>\n'
 
-			member_url = 'https://marvelstrikeforce.com/en/player/%s/characters' % (member_info.get('url'))
-			html_file += ' <td class="name_blue"><a style="text-decoration: none; color: black;" href="%s">%s</a></td>\n' % (member_url, member)
+			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters"' % (alliance_info['members'][member].get('url',''))
+			html_file += ' <td class="%s"><a style="text-decoration: none; color: black;"%s>%s</a></td>\n' % (['name_blue','name_gray'][stale_data], member_url, member)
 			
 			for key in ['tcp','stp','tcc']:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key]), f'{member_stats[key]:,}')
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key], stale_data=stale_data), f'{member_stats[key]:,}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
 			for key in ['yel', 'red', 'tier', 'lvl', 'iso']:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tot_'+key]), max(stats_range['tot_'+key]), member_stats['tot_'+key]), f'{member_stats["tot_"+key ] / member_stats["tcc"]:.2f}')
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tot_'+key]), max(stats_range['tot_'+key]), member_stats['tot_'+key], stale_data=stale_data), f'{member_stats["tot_"+key ] / member_stats["tcc"]:.2f}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
 			for key in range(4,8):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['yel'][key]), max(stats_range['yel'][key]), member_stats['yel'].get(key,0)), member_stats['yel'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['yel'][key]), max(stats_range['yel'][key]), member_stats['yel'].get(key,0), stale_data=stale_data), member_stats['yel'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Red Stars                                                                                                                                       
 			for key in range(4,8):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['red'][key]), max(stats_range['red'][key]), member_stats['red'].get(key,0)), member_stats['red'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['red'][key]), max(stats_range['red'][key]), member_stats['red'].get(key,0), stale_data=stale_data), member_stats['red'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 
 			# Diamonds
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(8,0)),  member_stats['red'].get(8,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(9,0)),  member_stats['red'].get(9,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(10,0)),  member_stats['red'].get(10,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(8,0), stale_data=stale_data),  member_stats['red'].get(8,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(9,0), stale_data=stale_data),  member_stats['red'].get(9,0))
+			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(10,0), stale_data=stale_data),  member_stats['red'].get(10,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# ISO Levels                                                                                                                                      
 			for key in [4,5,8,9,10]:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['iso'][key]), max(stats_range['iso'][key]), member_stats['iso'].get(key,0)), member_stats['iso'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['iso'][key]), max(stats_range['iso'][key]), member_stats['iso'].get(key,0), stale_data=stale_data), member_stats['iso'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
 			for key in range(13,19):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tier'][key]), max(stats_range['tier'][key]), member_stats['tier'].get(key,0)), member_stats['tier'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tier'][key]), max(stats_range['tier'][key]), member_stats['tier'].get(key,0), stale_data=stale_data), member_stats['tier'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
 			for key in ['bas','spc','ult','pas']:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key].get(7,0)), member_stats[key].get(7,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key].get(7,0), stale_data=stale_data), member_stats[key].get(7,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
 			for key in range(65,100,5):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['lvl'][key]), max(stats_range['lvl'][key]), member_stats['lvl'].get(key,0)), member_stats['lvl'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['lvl'][key]), max(stats_range['lvl'][key]), member_stats['lvl'].get(key,0), stale_data=stale_data), member_stats['lvl'].get(key,0))
 
 			html_file += '</tr>\n'
 
@@ -861,39 +863,43 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	for member in member_list:
 		# Get a little closer to what we're working with.
 		member_stats = alliance_info['members'][member]
+
+		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
+		stale_data = (member_stats.get('tot_power',0)/member_stats['tcp'])<0.99 or (datetime.datetime.now() - member_stats['last_update']).total_seconds() > 60*60*24*7
 		
+		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
+
 		if member in alliance_info['leader']:
 			member_role = 'Leader'
 		elif member in alliance_info['captains']:
 			member_role = 'Captain'
+			member_color = ['#00BFFF','#A9A9A9'][stale_data]		
 		else:
 			member_role = 'Member'
-
-		member_color = {'Leader':  'PowderBlue',
-						'Captain': 'DeepSkyBlue',
-						'Member':  'PowderBlue' }[member_role]
 
 		html_file += ' <tr style="background:%s;">\n' % (member_color)
 		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png"/></td>\n' % (member_stats['image'])
 
-		member_url = 'https://marvelstrikeforce.com/en/player/%s/characters' % (alliance_info['members'][member].get('url'))
-		html_file += '  <td class="bold"><a style="text-decoration: none; color: black;" href="%s">%s</a></td>\n' % (member_url, member)
+		member_url = alliance_info['members'][member].get('url','')
+		if member_url:
+			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters"' % (member_url)
 
+		html_file += '  <td class="bold"><a style="text-decoration: none; color: black;""%s>%s</a></td>\n' % (member_url, member)
 		html_file += '  <td>%i</td>\n' % (member_stats['level'])
 		html_file += '  <td>%s</td>\n' % (member_role)
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats.get('tcp',0)),   f'{member_stats.get("tcp",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stp_range),   max(stp_range),   member_stats.get('stp',0)),   f'{member_stats.get("stp",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range),   member_stats.get('tcc',0)),   f'{member_stats.get("tcc",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats.get('max',0)),   f'{member_stats.get("max",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats.get('arena',0)), f'{member_stats.get("arena",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats.get('blitz',0)), f'{member_stats.get("blitz",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(mvp_range),   max(mvp_range),   member_stats.get('mvp',0)),   f'{member_stats.get("mvp",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats.get('stars',0)), f'{member_stats.get("stars",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0)),   f'{member_stats.get("red",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats.get('tcp',0),   stale_data=stale_data), f'{member_stats.get("tcp",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stp_range),   max(stp_range),   member_stats.get('stp',0),   stale_data=stale_data), f'{member_stats.get("stp",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range),   member_stats.get('tcc',0),   stale_data=stale_data), f'{member_stats.get("tcc",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats.get('max',0),   stale_data=stale_data), f'{member_stats.get("max",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats.get('arena',0), stale_data=stale_data), f'{member_stats.get("arena",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats.get('blitz',0), stale_data=stale_data), f'{member_stats.get("blitz",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(mvp_range),   max(mvp_range),   member_stats.get('mvp',0),   stale_data=stale_data), f'{member_stats.get("mvp",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats.get('stars',0), stale_data=stale_data), f'{member_stats.get("stars",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0),   stale_data=stale_data), f'{member_stats.get("red",0):,}')
 
 		time_since_last = 4*86400
-		time_value      = 'Never<br>Ask member to sync.'
-		if member in alliance_info['members'] and 'processed_chars' in member_stats:
+		time_value      = ['DATA IS STALE<br>Ask member to re-sync.','NEVER<br>Ask member to sync.'][not member_stats.get('last_update')]
+		if member in alliance_info['members'] and 'processed_chars' in member_stats and not stale_data:
 			time_since_last = datetime.datetime.now() - member_stats['last_update']
 			time_value = '%s,<br>%s ago' % (member_stats['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
 			time_since_last = time_since_last.total_seconds()

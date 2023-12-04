@@ -134,9 +134,18 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 			favorite = [6,0][char.find('i', attrs = {'class':'is-favorite'}) == None]
 
 			# Decode Level and Power
+			level = 0
+			power = 0
+
 			stats = toon_stats.findAll('div', attrs = {'class':''})
-			level = stats[0].text.strip().split()[1]
-			power = ''.join(stats[1].text.strip().split(','))
+
+			for stat in stats:
+				if '/' in stat.text or 'MAX' in stat.text:
+					continue
+				elif 'LVL' in stat.text:
+					level = int(re.sub(r"\D", "", stat.text))
+				else:
+					power = int(re.sub(r"\D", "", stat.text))
 
 			# For total roster calculation.
 			tot_power += int(power)
@@ -192,10 +201,13 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 			iso_info = str(char.find('div',attrs={'class','iso-wrapper'}))
 			
 			iso = 0
+			
 			if iso_info.find('-pips-') != -1:
 				iso = int(iso_info.split('-pips-')[1].split('"')[0])
+			
 			if iso_info.find('blue') != -1:
 				iso += 5
+			
 			iso = str(iso)
 
 			iso_class = 0
