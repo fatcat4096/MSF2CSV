@@ -21,19 +21,25 @@ def build_parse_cache(alliance_info, parse_cache):
 
 			for char in member_info:
 
-				# Skip the tot_power and last_updated entries.
+				# Skip the tot_power and last_updated entries.   
+				# THIS IS NO LONGER NEEDED. DELETE IN 2024
 				if type(member_info[char]) is not dict:
 					continue
 
-				# Index everything by power.
-				power = member_info[char]['power']
+				# Include dmd in standard tags.
+				# DELETE IN 2024
+				member_info[char].setdefault('dmd',0)
 
+				# Index everything by power.
+				power = member_info[char].get('power',0)
+					
 				# Convert old format to the new, only needs to be done once.
+				# THIS IS NO LONGER NEEDED. DELETE IN 2024
 				if type(power) is str:
 					for key in member_info[char]:
 						member_info[char][key] = int(member_info[char][key])
 					power = int(power)
-					
+
 				# Get a list of other entries already added at this same power.
 				cached_entries = parse_cache.setdefault(power,[])
 
@@ -54,11 +60,16 @@ def build_parse_cache(alliance_info, parse_cache):
 		for char in processed_chars:
 
 			# Skip the tot_power and last_updated entries.
+			# THIS IS NO LONGER NEEDED. DELETE IN 2024
 			if type(processed_chars[char]) is not dict:
 				continue
 
+			# Include dmd in standard tags.
+			# DELETE IN 2024
+			processed_chars[char].setdefault('dmd',0)
+
 			# Index everything by power.
-			power = processed_chars[char]['power']
+			power = processed_chars[char].get('power',0)
 
 			# Get a list of other entries already added at this same power.
 			cached_entries = parse_cache.setdefault(power,[])
