@@ -414,7 +414,7 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-			stale_data = (alliance_info['members'][player_name].get('tot_power',0)/alliance_info['members'][player_name]['tcp'])<0.99 or (datetime.datetime.now() - alliance_info['members'][player_name]['last_update']).total_seconds() > 60*60*24*7
+			stale_data = (alliance_info['members'][player_name].get('tot_power',0)/alliance_info['members'][player_name]['tcp'])<0.985 or (datetime.datetime.now() - alliance_info['members'][player_name]['last_update']).total_seconds() > 60*60*24*7
 
 			# Write the stat values for each character.
 			for char_name in char_list:
@@ -500,7 +500,6 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 
 	html_file += ' <td width="350" colspan="7">Levels</td>\n'		# <65,66-70,71-75,76-80,81-85,86-90,91-95
 	html_file += '</tr\n'
-	
 
 	# Second Row with subheadings.
 	html_file += '<tr>\n'
@@ -567,12 +566,6 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	# Get the list of Alliance Members 
 	member_list = list(alliance_info['hist'][max(alliance_info['hist'])])
 	
-	#
-	# Red Stars
-	# DELETE THIS EVENTUALLY. ONLY HERE TO PROP UP DIAMONDS BELOW.
-	#
-	red7_range   = [stats[member]['red'].get(7,0) for member in member_list]
-
 	# Get a sorted list of members to use for this table output.
 	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
 	alliance_order = [member for member in alliance_order if member in member_list]
@@ -584,7 +577,7 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			stats_range  = stats['range']
 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-			stale_data = (member_info.get('tot_power',0)/member_info['tcp'])<0.99 or (datetime.datetime.now() - member_info['last_update']).total_seconds() > 60*60*24*7
+			stale_data = (member_info.get('tot_power',0)/member_info['tcp'])<0.985 or (datetime.datetime.now() - member_info['last_update']).total_seconds() > 60*60*24*7
 
 			html_file += '<tr>\n'
 
@@ -611,9 +604,9 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 
 			# Diamonds
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(8,0), stale_data=stale_data),  member_stats['red'].get(8,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(9,0), stale_data=stale_data),  member_stats['red'].get(9,0))
-			html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(red7_range),  max(red7_range),  member_stats['red'].get(10,0), stale_data=stale_data),  member_stats['red'].get(10,0))
+			# Red Stars                                                                                                                                       
+			for key in range(1,4):
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['dmd'][key]), max(stats_range['dmd'][key]), member_stats['dmd'].get(key,0), stale_data=stale_data), member_stats['dmd'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# ISO Levels                                                                                                                                      
@@ -671,7 +664,7 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 		recruited_chars = [char for char in char_list if current_rosters[member][char]['power']]
 
 		# Use this as a comparator to just return current values.
-		null_stats = {'yel':0, 'red':0, 'lvl':0, 'tier':0, 'iso':0, 'abil':0, 'power':0}
+		null_stats = {'yel':0, 'red':0, 'dmd':0, 'lvl':0, 'tier':0, 'iso':0, 'abil':0, 'power':0}
 		diff_stats = null_stats.copy()
 		
 		# Loop through every char
@@ -686,21 +679,25 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 				#diff_stats = oldest_rosters[member].get(char, null_stats)
 
 			# Use for Total / Average # columns -- do this BEFORE normalizing data.
-			for key in ['yel','red','tier','lvl','iso']:
+			for key in ['yel','red','dmd','tier','lvl','iso']:
 				member_stats['tot_'+key] = member_stats.get('tot_'+key,0) + char_stats[key] # - diff_stats[key]
 
 			# Normalize the data.
 			# If stat_type = 'actual', combine ISO and LVL columns before tallying
 			# If 'progressive', make each entry count in those below it.
 
-			# If progressive, only report the highest USABLE red star. 
+			# If progressive, only report the highest USABLE red star and diamonds only valid if 7R.
 			if stat_type == 'progressive':
 				if char_stats['red'] > char_stats['yel']:
 					char_stats['red'] = char_stats['yel']
+				if char_stats['red'] != 7:
+					char_stats['dmd'] = 0
 					#print ('fixing:',member,char,char_stats['red'],char_stats['yel'])
 				if diff_stats['red'] > diff_stats['yel']:
 					diff_stats['red'] = diff_stats['yel']
-			
+				if diff_stats['red'] != 7:
+					diff_stats['dmd'] = 0
+				
 			# For either stat_type, combine certain columns for ISO and Level data.
 			if char_stats['lvl']<65:
 				char_stats['lvl'] = 65
@@ -723,7 +720,7 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 				diff_stats['iso'] = 8
 			
 			# Just tally the values in each key. Increment the count of each value found.
-			for key in ['yel', 'lvl', 'red', 'tier', 'iso']:
+			for key in ['yel', 'lvl', 'red', 'dmd', 'tier', 'iso']:
 				if stat_type == 'progressive':
 					for x in range(4,char_stats[key]+1):
 						member_stats.setdefault(key,{})[x] = member_stats.get(key,{}).setdefault(x,0)+1
@@ -766,7 +763,7 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 	stats['range']['tcc'] = [stats[member]['tcc'] for member in member_list]
 
 	# Totals (and create dicts for the rest of the ranges)
-	for key in ['yel','red','tier','lvl','iso']:
+	for key in ['yel','red','dmd','tier','lvl','iso']:
 		stats['range'][key]  = {}
 		stats['range']['tot_'+key]  = [stats[member]['tot_'+key] for member in member_list]
 	
@@ -774,6 +771,10 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 	for key in range(4,8):
 		stats['range']['yel'][key] = [stats[member]['yel'].get(key,0) for member in member_list]
 		stats['range']['red'][key] = [stats[member]['red'].get(key,0) for member in member_list]
+
+	# Diamonds
+	for key in range(1,4):
+		stats['range']['dmd'][key] = [stats[member]['dmd'].get(key,0) for member in member_list]
 
 	# ISO Levels
 	for key in range(4,11):
@@ -865,7 +866,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		member_stats = alliance_info['members'][member]
 
 		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-		stale_data = (member_stats.get('tot_power',0)/member_stats['tcp'])<0.99 or (datetime.datetime.now() - member_stats['last_update']).total_seconds() > 60*60*24*7
+		stale_data = (member_stats.get('tot_power',0)/member_stats['tcp'])<0.985 or (datetime.datetime.now() - member_stats['last_update']).total_seconds() > 60*60*24*7
 		
 		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
 
@@ -897,16 +898,21 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats.get('stars',0), stale_data=stale_data), f'{member_stats.get("stars",0):,}')
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0),   stale_data=stale_data), f'{member_stats.get("red",0):,}')
 
-		time_since_last = 4*86400
-		time_value      = ['DATA IS STALE<br>Ask member to re-sync.','NEVER<br>Ask member to sync.'][not member_stats.get('last_update')]
-		if member in alliance_info['members'] and 'processed_chars' in member_stats and not stale_data:
-			time_since_last = datetime.datetime.now() - member_stats['last_update']
-			time_value = '%s,<br>%s ago' % (member_stats['last_update'].strftime('%A, %B %d'), str(time_since_last).split('.')[0])
-			time_since_last = time_since_last.total_seconds()
+		if 'last_update' in member_stats:
+			last_update = datetime.datetime.now() - member_stats['last_update']
+			time_color  = get_value_color(4*86400, 0, last_update.total_seconds(), stale_data=stale_data)
+			
+			if stale_data:
+				time_value = '%s, %s days ago<br><b><i>Stale. Please re-sync.</i></b>' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
+			else:
+				time_value = '%s,<br>%s ago' % (member_stats['last_update'].strftime('%A, %B %d'), str(last_update).split('.')[0]) 
+		else:
+			time_color = get_value_color(0, 1, 0)
+			time_value = 'NEVER<br><b><i>Ask member to sync.</i></b>'
 		
-		time_color = get_value_color(0, 4*86400, (4*86400)-time_since_last)
 		html_file += '  <td style="background:%s;">%s</td>\n' % (time_color, time_value)
 		html_file += ' </tr>\n'
+
 
 	html_file += '</table>\n'
 	

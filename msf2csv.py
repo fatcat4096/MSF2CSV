@@ -43,7 +43,7 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless
 	print ()
 
 	# Build a default path and filename. 
-	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + f'{datetime.datetime.now():-%Y%m%d-}'
+	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + '-'
 
 	output       = table_format.get('output')
 	valid_output = tables['active']+['roster_analysis','alliance_info']
@@ -63,7 +63,7 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless
 
 		if output in valid_output:
 		
-			pathname = os.path.dirname(alliance_info['file_path'])+os.sep+alliance_info['name']+'-'
+			pathname = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + '-'
 		
 			html_files = generate_html_files(alliance_info, tables.get(output), table_format)
 

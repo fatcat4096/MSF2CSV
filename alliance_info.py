@@ -95,6 +95,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 
 	# Only filter other_chars.
 	traits = section['traits']
+
 	if traits:
 		traits_req = table.get('traits_req','any')		# Default is 'any'
 
@@ -187,6 +188,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 	dates = list(alliance_info['hist'])
 
 	# Start with the oldest entry in 'hist', looking for this member's stats.
+	# WHILE LOOP ISN'T NECESSARY. DELETE IN 2024.
 	while dates:
 		min_date = min(dates)
 		if player_name in alliance_info['hist'][min_date]:
@@ -228,6 +230,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 			return delta_val, other_diffs
 
 		# Oldest entry didn't have it, go one newer.
+		# WHILE LOOP ISN'T NECESSARY. DELETE IN 2024.
 		dates.remove(min_date)
 
 	# Should not happen. Should always at least find this member in the most recent run.
@@ -261,9 +264,8 @@ def update_history(alliance_info):
 			if member not in alliance_members:
 				del hist[entry][member]
 
-			##
-			## Temp code to clean up junk data in hist entries for old cached_data files. -- REMOVE IN A WEEK OR TWO
-			##
+			## Temp code to clean up junk data in hist entries for old cached_data files.
+			## DELETE IN 2024
 			else:
 				if 'tot_power'   in hist[entry][member]:	del hist[entry][member]['tot_power']
 				if 'last_update' in hist[entry][member]:	del hist[entry][member]['last_update']

@@ -152,15 +152,15 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 			
 			# Decode Yellow Stars, Red Stars, and Diamonds
 			stars = str(toon_stats.find('span'))
-			if not stars:
+			if stars == 'None':
 				redStars = 7
 				yelStars = 7
 				diamonds = str(toon_stats.find('div',attrs={'class':'diamonds-container'})).count('diamond-filled')
 				if not diamonds:
 					print ("Should never happen.",char_name)
 			else:
-				redStars = str(stars.count('star-red'))
-				yelStars = str(stars.count('fas fa-star star-red') + stars.count('star-orange'))
+				redStars = stars.count('star-red')
+				yelStars = stars.count('fas fa-star star-red') + stars.count('star-orange')
 
 				# These are 'unrealized' diamonds -- diamonds earned but not usable because char isn't 7R.
 				diamonds = toon_stats.find('div',attrs={'class':'diamond-container'})
@@ -222,12 +222,12 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 			elif iso_info.find('assassin') != -1:
 				iso_class = 5
 
-			processed_chars[char_name] = {'power':int(power), 'lvl':int(level), 'tier':int(tier), 'iso':int(iso), 'yel':int(yelStars), 'red':int(redStars), 'abil':int(bas+spc+ult+pas)}
+			processed_chars[char_name] = {'power':int(power), 'lvl':int(level), 'tier':int(tier), 'iso':int(iso), 'yel':yelStars, 'red':redStars, 'dmd':0*diamonds, 'abil':int(bas+spc+ult+pas)}
 			other_data[char_name]      = favorite+iso_class
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:
-			processed_chars[char_name] = {'power':0, 'lvl':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'abil':0}
+			processed_chars[char_name] = {'power':0, 'lvl':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'dmd':0, 'abil':0}
 			other_data[char_name]      = 0
 
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
