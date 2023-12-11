@@ -25,7 +25,7 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 	html_files = {}
 	
-	output = table_format.get('output')
+	output = table_format.get('output','query')
 	
 	# If we have a table, we're generating output for a raid.
 	if table:
@@ -105,9 +105,9 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += add_tab_header('ROSTER ANALYSIS (Actuals)')	
+			html_file += add_tab_header('ROSTER ANALYSIS (ACTUALS)')	
 			html_file += generate_roster_analysis(alliance_info, stat_type='actual', using_tabs=False)
-			html_file += add_tab_header('ROSTER ANALYSIS (Progressive)')	
+			html_file += add_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')	
 			html_file += generate_roster_analysis(alliance_info, stat_type='progressive', using_tabs=False)
 
 			# Generate a label for the History Tab if we have History.
@@ -226,7 +226,11 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format, hist_tab)
 
 			# Start with the Basic Table Label and Colors.
-			table_lbl = '<br>'.join([translate_name(trait) for trait in section['traits']]).upper()
+			traits = section.get('traits',[])
+			if type(traits) == str:
+				traits = [traits]
+			
+			table_lbl = '<br>'.join([translate_name(trait).upper() for trait in traits])
 
 			# Let's make it easy on ourselves. Start every section the same way.
 			html_file += '<table>\n <tr>\n  <td>\n'
@@ -407,7 +411,7 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 				continue
 
 			# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
-			not_ready = len([char for char in table['under_min'].get(player_name,{}) if not table['under_min'].get(player_name,{}).get(char)]) < 5
+			not_ready = len([char for char in table['under_min'].get(player_name,{}) if not table['under_min'].get(player_name,{}).get(char)]) < min(len(char_list),5)
 
 			# Player Name, then relevant stats for each character.
 			html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
@@ -604,7 +608,6 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 
 			# Diamonds
-			# Red Stars                                                                                                                                       
 			for key in range(1,4):
 				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['dmd'][key]), max(stats_range['dmd'][key]), member_stats['dmd'].get(key,0), stale_data=stale_data), member_stats['dmd'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
@@ -692,7 +695,6 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 					char_stats['red'] = char_stats['yel']
 				if char_stats['red'] != 7:
 					char_stats['dmd'] = 0
-					#print ('fixing:',member,char,char_stats['red'],char_stats['yel'])
 				if diff_stats['red'] > diff_stats['yel']:
 					diff_stats['red'] = diff_stats['yel']
 				if diff_stats['red'] != 7:
@@ -722,7 +724,7 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 			# Just tally the values in each key. Increment the count of each value found.
 			for key in ['yel', 'lvl', 'red', 'dmd', 'tier', 'iso']:
 				if stat_type == 'progressive':
-					for x in range(4,char_stats[key]+1):
+					for x in range(0,char_stats[key]+1):
 						member_stats.setdefault(key,{})[x] = member_stats.get(key,{}).setdefault(x,0)+1
 					#for x in range(4,diff_stats[key]+1):
 					#	member_stats.setdefault(key,{})[x] = member_stats.get(key,{}).setdefault(x,0)-1

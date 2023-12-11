@@ -94,41 +94,43 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	extracted_traits = alliance_info['extracted_traits']
 
 	# Only filter other_chars.
-	traits = section['traits']
+	traits = section.get('traits',[])
+	if type(traits) is str:
+		traits = [traits]
+		
+	traits_req = table.get('traits_req','any')		# Default is 'any'
 
-	if traits:
-		traits_req = table.get('traits_req','any')		# Default is 'any'
+	excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
+	traits          = [trait     for trait in traits if trait[:4] != 'Non-']
 
-		excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
-		traits          = [trait     for trait in traits if trait[:4] != 'Non-']
+	for char in other_chars[:]:
 
-		for char in other_chars[:]:
+		# Skip explicitly named characters.
+		if char in traits:
+			continue
 
-			# Skip explicitly named characters.
-			if char in traits:
-				continue
+		# Does this char have any of the listed traits?
+		trait = ''
+		for trait in traits:
 
-			# Does this char have any of the listed traits?
-			for trait in traits:
+			# any == additive (include if any trait is valid)
+			if traits_req == 'any' and char in extracted_traits.get(trait,[]):
+				break
 
-				# any == additive (include if any trait is valid)
-				if traits_req == 'any' and char in extracted_traits.get(trait,[]):
-					break
+			# all == reductive (must have all traits for inclusion)
+			if traits_req == 'all' and char not in extracted_traits.get(trait,[]):
+				break
 
-				# all == reductive (must have all traits for inclusion)
-				if traits_req == 'all' and char not in extracted_traits.get(trait,[]):
-					break
+		# If char isn't in the final trait examined, remove it.
+		if char not in extracted_traits.get(trait,[]):
+			other_chars.remove(char)			
 
-			# If char isn't in the final trait examined, remove it.
-			if char not in extracted_traits.get(trait,[]):
-				other_chars.remove(char)			
+		# Final check, does this character have any EXCLUDED traits?
+		for trait in excluded_traits:
 
-			# Final check, does this character have any EXCLUDED traits?
-			for trait in excluded_traits:
-
-				# Character is from an EXCLUDED group. Remove it.
-				if char in extracted_traits.get(trait,[]) and char in other_chars:
-					other_chars.remove(char)
+			# Character is from an EXCLUDED group. Remove it.
+			if char in extracted_traits.get(trait,[]) and char in other_chars:
+				other_chars.remove(char)
 
 	# Filter out any characters which no one has summoned.
 	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
@@ -176,45 +178,62 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 # Find this member's oldest entry in our historical entries.
 def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 
+	other_data = ''
+
 	# Find the current value. 
-	player_info = alliance_info['members'][player_name]['processed_chars'][char_name]
-	current_val = int(player_info[key])
+	char_info = alliance_info['members'][player_name]['processed_chars'][char_name]
+	current_val = int(char_info[key])
 	
-	# If we're not on a history tab, we're done. Just return the current value.
+	# If we're not on a history tab, we're almost done.
 	if not hist_tab:
-		return current_val,''
+	
+		# If we're on a 'power' entry, summarize the other stats for display in a tooltip
+		if key == 'power' and current_val:
+			
+			lvl  = char_info.get('lvl',0)
+			tier = char_info.get('tier',0)
+			iso  = char_info.get('iso',0)
+			yel  = char_info.get('yel',0)
+			red  = char_info.get('red',0)
+			dmd  = char_info.get('dmd',0)
+			abil = char_info.get('abil','n/a')
+
+			data = [f'Lvl: {lvl}t{tier}']
+			data.append(['ISO: %s-%s' % (int((iso-1)/5)+1,(iso-1)%5+1),''][not iso])
+			data.append(f'Stars: {yel}Y' + [f'{red}R',''][not red] + [f'{dmd}D',''][not dmd])
+			data.append(f'Abil: {abil}')
+
+			# Create a tooltip with the noted differences.
+			other_data = ' title="%s"' % ('&#10;'.join(data))
+	
+		return current_val,other_data
 
 	# If we ARE on a history tab. A bit more work to be done.
-	dates = list(alliance_info['hist'])
+	dates = list()
 
-	# Start with the oldest entry in 'hist', looking for this member's stats.
-	# WHILE LOOP ISN'T NECESSARY. DELETE IN 2024.
-	while dates:
-		min_date = min(dates)
-		if player_name in alliance_info['hist'][min_date]:
+	# Start with the oldest entry in 'hist'.
+	min_date = min(alliance_info['hist'])
+	if player_name in alliance_info['hist'][min_date]:
 
-			hist_info   = alliance_info['hist'][min_date][player_name].get(char_name,{})
+		hist_info   = alliance_info['hist'][min_date][player_name].get(char_name,{})
 
-			# get the difference between the oldest value and the current one.
-			delta_val = current_val - int(hist_info.get(key,0))
+		# get the difference between the oldest value and the current one.
+		delta_val = current_val - int(hist_info.get(key,0))
 
-			# If no difference, return nothing. 
-			if not delta_val:
-				return 0,''
-		
-			# If there was a difference, let's make note of what created that difference.
-			diffs = []
-			
+		# If there's a difference and the key is power, we need details for tooltip. 
+		if delta_val and key == 'power':
+
 			# Iterate through all the stats we're currently tracking.
-			for entry in player_info:
-				diff = int(player_info[entry]) - int(hist_info.get(entry,0))
+			diffs = []
+			for entry in char_info:
+				diff = int(char_info[entry]) - int(hist_info.get(entry,0))
 
-				# If there's a difference, note it in the tooltip.
 				if diff:
+					# Straightforward diff for most entries.
 					if entry != 'abil':
 						diffs.append(f'{entry.title()}: {diff:+}')
 
-					# More work to decode the Abilities.
+					# More work to decode the Ability entry.
 					else:
 						bas,abil = divmod(diff,1000)
 						spc,abil = divmod(abil,100)
@@ -226,15 +245,13 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 							if abil_diffs[abil]:
 								diffs.append(f'{abil.title()}: {abil_diffs[abil]:+}')
 
-			other_diffs = [' title="%s"' % (', '.join(diffs)),''][not diffs]
-			return delta_val, other_diffs
+			# Create a tooltip with the noted differences.
+			other_data = [' title="%s"' % ('&#10;'.join(diffs)),''][not diffs]
+		
+		return delta_val, other_data
 
-		# Oldest entry didn't have it, go one newer.
-		# WHILE LOOP ISN'T NECESSARY. DELETE IN 2024.
-		dates.remove(min_date)
-
-	# Should not happen. Should always at least find this member in the most recent run.
-	return 0,''
+	# Should not happen. Missing alliance members should be copied into all historical entries.
+	return 0,other_data
 
 
 # Archive the current run into the 'hist' tag for future analysis.

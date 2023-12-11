@@ -6,7 +6,6 @@ Transform stats from MSF.gg into readable tables with heatmaps.
 
 
 import os
-import datetime
 import argparse
 
 from alliance_block	 import *             # Routines to encode/decode the alliance block.
@@ -18,7 +17,7 @@ from io              import StringIO      # Allow capture of stdout for return t
 
 
 # If no name specified, default to the alliance for the Login player
-def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}):
+def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}, external_table={}):
 
 	# Capture stdout to return to bot.
 	if rosters_only or import_block:
@@ -59,13 +58,13 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless
 		 write_file(filename+"original.csv", generate_csv(alliance_info))
 
 	# Output only specific formats.
-	elif output:
+	elif external_table or output:
 
-		if output in valid_output:
+		if external_table or output in valid_output:
 		
 			pathname = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + '-'
 		
-			html_files = generate_html_files(alliance_info, tables.get(output), table_format)
+			html_files = generate_html_files(alliance_info, external_table or tables.get(output), table_format)
 
 			# If only_image, we need write the html and then convert them.
 			if table_format.get('only_image'):

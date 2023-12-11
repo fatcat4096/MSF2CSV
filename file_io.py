@@ -19,6 +19,7 @@ except:	pass
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from alliance_info import get_char_list
 
 TAG_RE = re.compile(r'<[^>]+>')
 
@@ -167,6 +168,36 @@ def write_cached_data(alliance_info, file_path=''):
 	
 	# Stash the path and filename inside of alliance_info. 
 	alliance_info['file_path'] = file_path + os.sep + file_name
+	
+	# Cache the char_list and trait list from this alliance_info for bot use.
+	char_list = get_char_list(alliance_info)
+	
+	invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
+	traits = [trait for trait in sorted(alliance_info['extracted_traits']) if trait not in invalid_traits]
+
+	pickle.dump((char_list,traits), open(get_local_path() + os.sep + 'cached_lists', 'wb'))
+
+
+def load_char_list():
+	char_list=[]
+
+	file_path = get_local_path() + os.sep + 'cached_lists'
+
+	if os.path.exists(file_path):
+		(char_list,traits) =  pickle.load(open(file_path,'rb'))
+
+	return char_list
+
+
+def load_trait_list():
+	traits=[]
+
+	file_path = get_local_path() + os.sep + 'cached_lists'
+
+	if os.path.exists(file_path):
+		(char_list,traits) =  pickle.load(open(file_path,'rb'))
+
+	return traits
 
 
 # Handle the file list cleanly.
