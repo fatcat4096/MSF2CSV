@@ -120,6 +120,9 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 		elif output == 'alliance_info':
 			html_file += generate_alliance_tab(alliance_info, using_tabs=False)
 
+		# Include scripts to support sorting.
+		html_file += add_sort_scripts()
+
 		# Wrap it up and add it to the collection.
 		html_file += '</body>\n</html>\n'
 		html_files[output+'.html'] = html_file	
@@ -172,6 +175,9 @@ def generate_tabbed_html(alliance_info, table, table_format, cached_tabs={}):
 	# After all Lanes are added, add the Roster Analysis and Alliance Info tabs.
 	html_file += cached_tabs['roster_analysis']
 	html_file += cached_tabs['alliance_tab']
+
+	# Include scripts to support sorting.
+	html_file += add_sort_scripts()
 
 	# Finally, add the Javascript to control tabbed display.
 	html_file += add_tabbed_footer()
@@ -471,14 +477,14 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	if using_tabs:
 		html_file += '<div id="RosterAnalysis" class="tabcontent">\n'
 
-	html_file += '<table>\n'
+	html_file += '<table id="%s">\n' % (stat_type)
 
 	# Create the headings for the Alliance Info table.
 	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
-	html_file += ' <td width="200" rowspan="2">Name</td>\n'            
-	html_file += ' <td width="80" rowspan="2">Total<br>Power</td>\n'
-	html_file += ' <td width="80" rowspan="2">Strongest<br>Team</td>\n'
-	html_file += ' <td width="80" rowspan="2">Total<br>Chars</td>\n'
+	html_file += ' <td width="200" rowspan="2" onclick="sortn(0,\'%s\',2)">Name</td>\n' % (stat_type)          
+	html_file += ' <td width="80" rowspan="2" onclick="sortn(1,\'%s\',2)">Total<br>Power</td>\n' % (stat_type)
+	html_file += ' <td width="80" rowspan="2" onclick="sortn(2,\'%s\',2)">Strongest<br>Team</td>\n' % (stat_type)
+	html_file += ' <td width="80" rowspan="2" onclick="sortn(3,\'%s\',2)">Total<br>Chars</td>\n' % (stat_type)
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 	
 	html_file += ' <td width="200" colspan="5">Average</td>\n'	# All Avg Stats
@@ -503,64 +509,64 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="350" colspan="7">Levels</td>\n'		# <65,66-70,71-75,76-80,81-85,86-90,91-95
-	html_file += '</tr\n'
+	html_file += '</tr>\n'
 
 	# Second Row with subheadings.
 	html_file += '<tr>\n'
 
 	# Averages
-	html_file += ' <td class="blue" width="40">Yel</td>\n'
-	html_file += ' <td class="blue" width="40">Red</td>\n'
-	html_file += ' <td class="blue" width="40">Tier</td>\n'
-	html_file += ' <td class="blue" width="40">Lvl</td>\n'
-	html_file += ' <td class="blue" width="40">ISO</td>\n'
+	html_file += ' <td class="blue" width="40" onclick="sortn(5,\'%s\',2)">Yel</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(6,\'%s\',2)">Red</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(7,\'%s\',2)">Tier</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(8,\'%s\',2)">Lvl</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(9,\'%s\',2)">ISO</td>\n' % (stat_type)
 	
 	# Yellow Stars
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['1+','4*'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['5+','5*'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['6+','6*'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['7*','7*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40" onclick="sortn(11,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(12,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(13,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(14,\'%s\',2)">%s</td>\n' % (stat_type, ['7*','7*'][stat_type == 'actual'])
 	
 	# Red Stars
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['1+','4*'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['5+','5*'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['6+','6*'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['7+','7*'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40" onclick="sortn(16,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(17,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(18,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(19,\'%s\',2)">%s</td>\n' % (stat_type, ['7+','7*'][stat_type == 'actual'])
 
 	# Diamonds
-	html_file += ' <td class="blue" width="40">1💎</td>\n'
-	html_file += ' <td class="blue" width="40">2💎</td>\n'
-	html_file += ' <td class="blue" width="40">3💎</td>\n'
+	html_file += ' <td class="blue" width="40" onclick="sortn(21,\'%s\',2)">1💎</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(22,\'%s\',2)">2💎</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(23,\'%s\',2)">3💎</td>\n' % (stat_type)
 
 	# ISO Levels
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['4','0-4'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">5+</td>\n'
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['6+','6-8'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">9+</td>\n'
-	html_file += ' <td class="blue" width="40">10</td>\n'
+	html_file += ' <td class="blue" width="40" onclick="sortn(25,\'%s\',2)">%s</td>\n' % (stat_type, ['4','0-4'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(26,\'%s\',2)">5+</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(27,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6-8'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(28,\'%s\',2)">9+</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(29,\'%s\',2)">10</td>\n' % (stat_type)
 
 	# Gear Tiers
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['13+','13'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['14+','14'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['15+','15'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['16+','16'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['17+','17'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="40">%s</td>\n' % ['18' ,'18'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="40" onclick="sortn(31,\'%s\',2)">%s</td>\n' % (stat_type, ['13+','13'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(32,\'%s\',2)">%s</td>\n' % (stat_type, ['14+','14'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(33,\'%s\',2)">%s</td>\n' % (stat_type, ['15+','15'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(34,\'%s\',2)">%s</td>\n' % (stat_type, ['16+','16'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(35,\'%s\',2)">%s</td>\n' % (stat_type, ['17+','17'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="40" onclick="sortn(36,\'%s\',2)">%s</td>\n' % (stat_type, ['18' ,'18'][stat_type == 'actual'])
 
 	# T4 Abilities
-	html_file += ' <td class="blue" width="40">Bas</td>\n'
-	html_file += ' <td class="blue" width="40">Spc</td>\n'
-	html_file += ' <td class="blue" width="40">Ult</td>\n'
-	html_file += ' <td class="blue" width="40">Pas</td>\n'
+	html_file += ' <td class="blue" width="40" onclick="sortn(38,\'%s\',2)">Bas</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(39,\'%s\',2)">Spc</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(40,\'%s\',2)">Ult</td>\n' % (stat_type)
+	html_file += ' <td class="blue" width="40" onclick="sortn(41,\'%s\',2)">Pas</td>\n' % (stat_type)
 
 	# Level Ranges
-	html_file += ' <td class="blue" width="50">%s</td>\n' % ['0-95', '0-65' ][stat_type == 'actual']
-	html_file += ' <td class="blue" width="50">%s</td>\n' % ['66-95','66-70'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="50">%s</td>\n' % ['71-95','71-75'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="50">%s</td>\n' % ['76-95','76-80'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="50">%s</td>\n' % ['81-95','81-85'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="50">%s</td>\n' % ['86-95','86-90'][stat_type == 'actual']
-	html_file += ' <td class="blue" width="50">%s</td>\n' % ['91-95','91-95'][stat_type == 'actual']
+	html_file += ' <td class="blue" width="50" onclick="sortn(43,\'%s\',2)">%s</td>\n' % (stat_type, ['0-95', '0-65' ][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="50" onclick="sortn(44,\'%s\',2)">%s</td>\n' % (stat_type, ['66-95','66-70'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="50" onclick="sortn(45,\'%s\',2)">%s</td>\n' % (stat_type, ['71-95','71-75'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="50" onclick="sortn(46,\'%s\',2)">%s</td>\n' % (stat_type, ['76-95','76-80'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="50" onclick="sortn(47,\'%s\',2)">%s</td>\n' % (stat_type, ['81-95','81-85'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="50" onclick="sortn(48,\'%s\',2)">%s</td>\n' % (stat_type, ['86-95','86-90'][stat_type == 'actual'])
+	html_file += ' <td class="blue" width="50" onclick="sortn(49,\'%s\',2)">%s</td>\n' % (stat_type, ['91-95','91-95'][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -817,7 +823,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	if using_tabs:
 		html_file += '<div id="AllianceInfo" class="tabcontent">\n'
 
-	html_file += '<table style="background:#222;">\n'
+	html_file += '<table id="alliance" style="background:#222;">\n'
 
 	html_file += '<tr>\n</tr>\n'
 
@@ -838,18 +844,18 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	# Create the headings for the Alliance Info table.
 	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
 	html_file += ' <td width="60" ></td>\n'
-	html_file += ' <td width="215">Name</td>\n'            
-	html_file += ' <td width="110">Level</td>\n'
-	html_file += ' <td width="110">Role</td>\n'
-	html_file += ' <td width="110">Collection<br>Power</td>\n'
-	html_file += ' <td width="110">Strongest<br>Team</td>\n'
-	html_file += ' <td width="110">Total<br>Collected</td>\n'
-	html_file += ' <td width="110">Max<br>Stars</td>\n'
-	html_file += ' <td width="110">Arena<br>Rank</td>\n'
-	html_file += ' <td width="110">Blitz<br>Wins</td>\n'
-	html_file += ' <td width="110">War<br>MVP</td>\n'
-	html_file += ' <td width="110">Total<br>Stars</td>\n'
-	html_file += ' <td width="110">Total<br>Red</td>\n'
+	html_file += ' <td width="215" onclick="sortn(1,\'alliance\',4)">Name</td>\n'            
+	html_file += ' <td width="110" onclick="sortn(2,\'alliance\',4)">Level</td>\n'
+	html_file += ' <td width="110" onclick="sortn(3,\'alliance\',4)">Role</td>\n'
+	html_file += ' <td width="110" onclick="sortn(4,\'alliance\',4)">Collection<br>Power</td>\n'
+	html_file += ' <td width="110" onclick="sortn(5,\'alliance\',4)">Strongest<br>Team</td>\n'
+	html_file += ' <td width="110" onclick="sortn(6,\'alliance\',4)">Total<br>Collected</td>\n'
+	html_file += ' <td width="110" onclick="sortn(7,\'alliance\',4)">Max<br>Stars</td>\n'
+	html_file += ' <td width="110" onclick="sortn(8,\'alliance\',4)">Arena<br>Rank</td>\n'
+	html_file += ' <td width="110" onclick="sortn(9,\'alliance\',4)">Blitz<br>Wins</td>\n'
+	html_file += ' <td width="110" onclick="sortn(10,\'alliance\',4)">War<br>MVP</td>\n'
+	html_file += ' <td width="110" onclick="sortn(11,\'alliance\',4)">Total<br>Stars</td>\n'
+	html_file += ' <td width="110" onclick="sortn(12,\'alliance\',4)">Total<br>Red</td>\n'
 	html_file += ' <td width="215">Last Updated:</td>\n'
 	html_file += '</tr>\n'
 	
