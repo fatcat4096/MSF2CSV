@@ -481,10 +481,10 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 
 	# Create the headings for the Alliance Info table.
 	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
-	html_file += ' <td width="200" rowspan="2" onclick="sortn(0,\'%s\',2)">Name</td>\n' % (stat_type)          
-	html_file += ' <td width="80" rowspan="2" onclick="sortn(1,\'%s\',2)">Total<br>Power</td>\n' % (stat_type)
-	html_file += ' <td width="80" rowspan="2" onclick="sortn(2,\'%s\',2)">Strongest<br>Team</td>\n' % (stat_type)
-	html_file += ' <td width="80" rowspan="2" onclick="sortn(3,\'%s\',2)">Total<br>Chars</td>\n' % (stat_type)
+	html_file += ' <td width="200" rowspan="2" class="blue_button" onclick="sortn(0,\'%s\',2)">Name</td>\n' % (stat_type)          
+	html_file += ' <td width="80" rowspan="2" class="blue_button" onclick="sortn(1,\'%s\',2)">Total<br>Power</td>\n' % (stat_type)
+	html_file += ' <td width="80" rowspan="2" class="blue_button" onclick="sortn(2,\'%s\',2)">Strongest<br>Team</td>\n' % (stat_type)
+	html_file += ' <td width="80" rowspan="2" class="blue_button" onclick="sortn(3,\'%s\',2)">Total<br>Chars</td>\n' % (stat_type)
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 	
 	html_file += ' <td width="200" colspan="5">Average</td>\n'	# All Avg Stats
@@ -515,58 +515,58 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	html_file += '<tr>\n'
 
 	# Averages
-	html_file += ' <td class="blue" width="40" onclick="sortn(5,\'%s\',2)">Yel</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(6,\'%s\',2)">Red</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(7,\'%s\',2)">Tier</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(8,\'%s\',2)">Lvl</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(9,\'%s\',2)">ISO</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(5,\'%s\',2)">Yel</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(6,\'%s\',2)">Red</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(7,\'%s\',2)">Tier</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(8,\'%s\',2)">Lvl</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(9,\'%s\',2)">ISO</td>\n' % (stat_type)
 	
 	# Yellow Stars
-	html_file += ' <td class="blue" width="40" onclick="sortn(11,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(12,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(13,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(14,\'%s\',2)">%s</td>\n' % (stat_type, ['7*','7*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(11,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(12,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(13,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(14,\'%s\',2)">%s</td>\n' % (stat_type, ['7*','7*'][stat_type == 'actual'])
 	
 	# Red Stars
-	html_file += ' <td class="blue" width="40" onclick="sortn(16,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(17,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(18,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(19,\'%s\',2)">%s</td>\n' % (stat_type, ['7+','7*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(16,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(17,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(18,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(19,\'%s\',2)">%s</td>\n' % (stat_type, ['7+','7*'][stat_type == 'actual'])
 
 	# Diamonds
-	html_file += ' <td class="blue" width="40" onclick="sortn(21,\'%s\',2)">1💎</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(22,\'%s\',2)">2💎</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(23,\'%s\',2)">3💎</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(21,\'%s\',2)">1💎</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(22,\'%s\',2)">2💎</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(23,\'%s\',2)">3💎</td>\n' % (stat_type)
 
 	# ISO Levels
-	html_file += ' <td class="blue" width="40" onclick="sortn(25,\'%s\',2)">%s</td>\n' % (stat_type, ['4','0-4'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(26,\'%s\',2)">5+</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(27,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6-8'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(28,\'%s\',2)">9+</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(29,\'%s\',2)">10</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(25,\'%s\',2)">%s</td>\n' % (stat_type, ['4','0-4'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(26,\'%s\',2)">5+</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(27,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6-8'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(28,\'%s\',2)">9+</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(29,\'%s\',2)">10</td>\n' % (stat_type)
 
 	# Gear Tiers
-	html_file += ' <td class="blue" width="40" onclick="sortn(31,\'%s\',2)">%s</td>\n' % (stat_type, ['13+','13'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(32,\'%s\',2)">%s</td>\n' % (stat_type, ['14+','14'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(33,\'%s\',2)">%s</td>\n' % (stat_type, ['15+','15'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(34,\'%s\',2)">%s</td>\n' % (stat_type, ['16+','16'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(35,\'%s\',2)">%s</td>\n' % (stat_type, ['17+','17'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="40" onclick="sortn(36,\'%s\',2)">%s</td>\n' % (stat_type, ['18' ,'18'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(31,\'%s\',2)">%s</td>\n' % (stat_type, ['13+','13'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(32,\'%s\',2)">%s</td>\n' % (stat_type, ['14+','14'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(33,\'%s\',2)">%s</td>\n' % (stat_type, ['15+','15'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(34,\'%s\',2)">%s</td>\n' % (stat_type, ['16+','16'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(35,\'%s\',2)">%s</td>\n' % (stat_type, ['17+','17'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(36,\'%s\',2)">%s</td>\n' % (stat_type, ['18' ,'18'][stat_type == 'actual'])
 
 	# T4 Abilities
-	html_file += ' <td class="blue" width="40" onclick="sortn(38,\'%s\',2)">Bas</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(39,\'%s\',2)">Spc</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(40,\'%s\',2)">Ult</td>\n' % (stat_type)
-	html_file += ' <td class="blue" width="40" onclick="sortn(41,\'%s\',2)">Pas</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(38,\'%s\',2)">Bas</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(39,\'%s\',2)">Spc</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(40,\'%s\',2)">Ult</td>\n' % (stat_type)
+	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(41,\'%s\',2)">Pas</td>\n' % (stat_type)
 
 	# Level Ranges
-	html_file += ' <td class="blue" width="50" onclick="sortn(43,\'%s\',2)">%s</td>\n' % (stat_type, ['0-95', '0-65' ][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="50" onclick="sortn(44,\'%s\',2)">%s</td>\n' % (stat_type, ['66-95','66-70'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="50" onclick="sortn(45,\'%s\',2)">%s</td>\n' % (stat_type, ['71-95','71-75'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="50" onclick="sortn(46,\'%s\',2)">%s</td>\n' % (stat_type, ['76-95','76-80'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="50" onclick="sortn(47,\'%s\',2)">%s</td>\n' % (stat_type, ['81-95','81-85'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="50" onclick="sortn(48,\'%s\',2)">%s</td>\n' % (stat_type, ['86-95','86-90'][stat_type == 'actual'])
-	html_file += ' <td class="blue" width="50" onclick="sortn(49,\'%s\',2)">%s</td>\n' % (stat_type, ['91-95','91-95'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(43,\'%s\',2)">%s</td>\n' % (stat_type, ['0-95', '0-65' ][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(44,\'%s\',2)">%s</td>\n' % (stat_type, ['66-95','66-70'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(45,\'%s\',2)">%s</td>\n' % (stat_type, ['71-95','71-75'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(46,\'%s\',2)">%s</td>\n' % (stat_type, ['76-95','76-80'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(47,\'%s\',2)">%s</td>\n' % (stat_type, ['81-95','81-85'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(48,\'%s\',2)">%s</td>\n' % (stat_type, ['86-95','86-90'][stat_type == 'actual'])
+	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(49,\'%s\',2)">%s</td>\n' % (stat_type, ['91-95','91-95'][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -591,8 +591,8 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 
 			html_file += '<tr>\n'
 
-			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters"' % (alliance_info['members'][member].get('url',''))
-			html_file += ' <td class="%s"><a style="text-decoration: none; color: black;"%s>%s</a></td>\n' % (['name_blue','name_gray'][stale_data], member_url, member)
+			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters" target="_blank"' % (alliance_info['members'][member].get('url',''))
+			html_file += ' <td class="%s url_button"><a style="text-decoration: none; color: black;"%s>%s</a></td>\n' % (['name_blue','name_gray'][stale_data], member_url, member)
 			
 			for key in ['tcp','stp','tcc']:
 				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key], stale_data=stale_data), f'{member_stats[key]:,}')
@@ -643,6 +643,12 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
+		
+		# Add the progressive form in for the tabbed output as well. :)
+		if stat_type == 'actual':
+			html_file += add_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
+			html_file += generate_roster_analysis(alliance_info, using_tabs=False, stat_type='progressive', hist_tab=False)
+	
 		html_file += '</div>\n'
 
 	return html_file
@@ -843,20 +849,20 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	
 	# Create the headings for the Alliance Info table.
 	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
-	html_file += ' <td width="60" ></td>\n'
-	html_file += ' <td width="215" onclick="sortn(1,\'alliance\',4)">Name</td>\n'            
-	html_file += ' <td width="110" onclick="sortn(2,\'alliance\',4)">Level</td>\n'
-	html_file += ' <td width="110" onclick="sortn(3,\'alliance\',4)">Role</td>\n'
-	html_file += ' <td width="110" onclick="sortn(4,\'alliance\',4)">Collection<br>Power</td>\n'
-	html_file += ' <td width="110" onclick="sortn(5,\'alliance\',4)">Strongest<br>Team</td>\n'
-	html_file += ' <td width="110" onclick="sortn(6,\'alliance\',4)">Total<br>Collected</td>\n'
-	html_file += ' <td width="110" onclick="sortn(7,\'alliance\',4)">Max<br>Stars</td>\n'
-	html_file += ' <td width="110" onclick="sortn(8,\'alliance\',4)">Arena<br>Rank</td>\n'
-	html_file += ' <td width="110" onclick="sortn(9,\'alliance\',4)">Blitz<br>Wins</td>\n'
-	html_file += ' <td width="110" onclick="sortn(10,\'alliance\',4)">War<br>MVP</td>\n'
-	html_file += ' <td width="110" onclick="sortn(11,\'alliance\',4)">Total<br>Stars</td>\n'
-	html_file += ' <td width="110" onclick="sortn(12,\'alliance\',4)">Total<br>Red</td>\n'
-	html_file += ' <td width="215">Last Updated:</td>\n'
+	html_file += ' <td width="60"></td>\n'
+	html_file += ' <td width="215" class="blue_button" onclick="sortn(1,\'alliance\',4)">Name</td>\n'            
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(2,\'alliance\',4)">Level</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(3,\'alliance\',4)">Role</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(4,\'alliance\',4)">Collection<br>Power</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(5,\'alliance\',4)">Strongest<br>Team</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(6,\'alliance\',4)">Total<br>Collected</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(7,\'alliance\',4)">Max<br>Stars</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(8,\'alliance\',4)">Arena<br>Rank</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(9,\'alliance\',4)">Blitz<br>Wins</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(10,\'alliance\',4)">War<br>MVP</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(11,\'alliance\',4)">Total<br>Stars</td>\n'
+	html_file += ' <td width="110" class="blue_button" onclick="sortn(12,\'alliance\',4)">Total<br>Red</td>\n'
+	html_file += ' <td width="215" class="blue_button" onclick="sortn(13,\'alliance\',4)">Last Updated:</td>\n'
 	html_file += '</tr>\n'
 	
 	tcp_range   = [alliance_info['members'][member].get('tcp',0)   for member in member_list]
@@ -879,7 +885,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
 
 		if member in alliance_info['leader']:
-			member_role = 'Leader'
+			member_role = '<a> Leader </a>'
 		elif member in alliance_info['captains']:
 			member_role = 'Captain'
 			member_color = ['#00BFFF','#A9A9A9'][stale_data]		
@@ -891,9 +897,9 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 
 		member_url = alliance_info['members'][member].get('url','')
 		if member_url:
-			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters"' % (member_url)
+			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters" target="_blank"' % (member_url)
 
-		html_file += '  <td class="bold"><a style="text-decoration: none; color: black;""%s>%s</a></td>\n' % (member_url, member)
+		html_file += '  <td class="bold url_button"><a style="text-decoration: none; color: black;""%s>%s</a></td>\n' % (member_url, member)
 		html_file += '  <td>%i</td>\n' % (member_stats['level'])
 		html_file += '  <td>%s</td>\n' % (member_role)
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats.get('tcp',0),   stale_data=stale_data), f'{member_stats.get("tcp",0):,}')
@@ -911,7 +917,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 			time_color  = get_value_color(4*86400, 0, last_update.total_seconds(), stale_data=stale_data)
 			
 			if stale_data:
-				time_value = '%s, %s days ago<br><b><i>Stale. Please re-sync.</i></b>' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
+				time_value = '<b><i> Stale. Please re-sync. </i></b><br>%s, %s days ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
 			else:
 				time_value = '%s,<br>%s ago' % (member_stats['last_update'].strftime('%A, %B %d'), str(last_update).split('.')[0]) 
 		else:

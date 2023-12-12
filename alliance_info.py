@@ -208,9 +208,6 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 	
 		return current_val,other_data
 
-	# If we ARE on a history tab. A bit more work to be done.
-	dates = list()
-
 	# Start with the oldest entry in 'hist'.
 	min_date = min(alliance_info['hist'])
 	if player_name in alliance_info['hist'][min_date]:

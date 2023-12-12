@@ -34,6 +34,17 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   color       : white;
   white-space : nowrap;
 }
+.blue_button:hover {
+  background  : black;
+  cursor      : pointer;  
+}
+.ltb_button:hover {
+  background  : DodgerBlue;
+  cursor      : pointer;  
+}
+.url_button:hover {
+  font-weight : 900;  
+}
 .header_gray {
   font-weight : 700;
   background  : Black;
