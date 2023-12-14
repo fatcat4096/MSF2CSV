@@ -7,6 +7,7 @@ Takes the processed alliance / roster data and generate readable output to spec.
 
 import datetime
 import string
+import copy
 
 # Routines to create color gradient for heat map
 from alliance_info import *
@@ -660,8 +661,8 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 	
 	stats = {}
 	
-	current_rosters = alliance_info['hist'][max(alliance_info['hist'])].copy()
-	oldest_rosters  = alliance_info['hist'][min(alliance_info['hist'])].copy()
+	current_rosters = copy.deepcopy(alliance_info['hist'][max(alliance_info['hist'])])
+	oldest_rosters  = copy.deepcopy(alliance_info['hist'][min(alliance_info['hist'])])
 	
 	# Get the list of Alliance Members 
 	member_list = list(current_rosters)
@@ -689,8 +690,8 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 			char_stats = current_rosters[member][char]
 
 			# If hist_tab, we want the difference between current_rosters and the oldest_rosters.
-			if hist_tab:
-				char_stats = oldest_rosters[member].get(char, null_stats)
+			#if hist_tab:
+				#char_stats = oldest_rosters[member].get(char, null_stats)
 				#diff_stats = oldest_rosters[member].get(char, null_stats)
 
 			# Use for Total / Average # columns -- do this BEFORE normalizing data.
@@ -765,7 +766,6 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 			member_stats.setdefault('power',[]).append(char_stats['power'])
 			#member_stats.setdefault('power',[]).append(char_stats['power']-diff_stats['power'])
 
-		# Calculate roster-wide statistics
 		member_stats['tcp'] = sum(member_stats['power'])
 		member_stats['stp'] = sum(sorted(member_stats['power'])[-5:])
 		member_stats['tcc'] = len(member_stats['power'])
@@ -917,9 +917,9 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 			time_color  = get_value_color(4*86400, 0, last_update.total_seconds(), stale_data=stale_data)
 			
 			if stale_data:
-				time_value = '<b><i> Stale. Please re-sync. </i></b><br>%s, %s days ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
+				time_value = '<b><i> Stale. Please re-sync. </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
 			else:
-				time_value = '%s,<br>%s ago' % (member_stats['last_update'].strftime('%A, %B %d'), str(last_update).split('.')[0]) 
+				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
 		else:
 			time_color = get_value_color(0, 1, 0)
 			time_value = 'NEVER<br><b><i>Ask member to sync.</i></b>'
