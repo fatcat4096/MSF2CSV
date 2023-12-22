@@ -95,6 +95,9 @@ def generate_html_files(alliance_info, table, table_format, output=''):
 					if len(sections) != 1:
 						section_num += f'-{section_idx+len(sections)}'
 
+				# Include scripts to support sorting.
+				html_file += add_sort_scripts()
+
 				html_file += '</body>\n</html>\n'
 				html_files[output+'%s%s.html' % (file_num, section_num)] = html_file
 		
@@ -319,6 +322,8 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 		name_alt      = 'name_alt'
 		name_alt_dim  = 'name_alt_dim'
 		team_pwr_lbl  = 'Team<br>Power'
+		button_hover  = 'blu_btn'
+		
 	else:
 		title_cell    = 'title_gray'
 		table_header  = 'header_gray'
@@ -328,23 +333,38 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 		name_alt      = 'name_galt'
 		name_alt_dim  = 'name_galt_dim'
 		team_pwr_lbl  = 'STP<br>(Top 5)'
+		button_hover  = 'blk_btn'
 
 	# Get the list of Alliance Members we will iterate through as rows.	
 	sort_by  = table.get('sort_by', '')
 	player_list = get_player_list (alliance_info, sort_by, stp_list)
-	
+
+	# Generate a table ID to allow sorting. 
+	table_id = datetime.datetime.now().strftime('%S%f')
+			
 	# Let's get this party started!
-	html_file = '   <table>\n'
+	html_file = '   <table id="%s">\n' % (table_id)
+
+	keys = table.get('keys', ['power','tier','iso'])
+
+	# Include Available and Include ISO Class flags -- Need to also find way to control these via table_format
+	inc_avail = table.get('inc_avail', False) and 'OTHERS' not in table_lbl
+	inc_class = table.get('inc_class', False)
 
 	# WRITE THE IMAGES ROW. #############################################
 	html_file += '    <tr class="%s">\n' % (title_cell) 
 	html_file += '     <td>%s</td>\n' % (table_lbl)
 
-	keys = table.get('keys', ['power','tier','iso'])
+	# Include a column for "# Avail" info if requested.
+	if inc_avail:
+		html_file += '     <td></td>\n'
+
+	# Number of columns under each Character entry.
+	num_cols = len(keys) + inc_class
 
 	# Include Images for each of the Characters.
 	for char in char_list:
-		html_file += '     <td class="image" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt="" width="100"></td>\n' % (len(keys), alliance_info['portraits'][char])
+		html_file += '     <td class="image" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt="" width="100"></td>\n' % (num_cols, alliance_info['portraits'][char])
 
 	# Include a Team Power column.
 	html_file += '     <td></td>\n'
@@ -354,20 +374,38 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 	# WRITE THE CHARACTER NAMES ROW. ####################################
 	html_file += '    <tr class="%s">\n' % (char_cell)
 	
-	if len(keys)>1 and len(strike_teams)>1:
+	if num_cols>1 and len(strike_teams)>1:
 		html_file += '     <th>Alliance<br>Member</th>\n'
+		
+		# Include header if "# Avail" info requested.
+		if inc_avail:
+			html_file += '     <td>Avail<br>Char</td>\n'
 	else:
-		## TO DO: DECIDE WHETHER TO INCLUDE THE LOGO (BELOW) OR NOT.
-		html_file += '     <td></td>\n'  #<img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt="" width="125">
+		html_file += '     <td></td>\n'
+
+		# Include a column for "# Avail" info if requested.
+		if inc_avail:
+			html_file += '     <td></td>\n'
 
 	# Include Names of the included characters.
 	for char in char_list:
-		html_file += '     <th colspan="%i" width="100">%s</th>\n' % (len(keys), translate_name(char))
+		html_file += '     <th colspan="%i" width="100">%s</th>\n' % (num_cols, translate_name(char))
 
 	# Include the Team Power column.
 	html_file += '     <th></th>\n' 
 	html_file += '    </tr>\n'
 	# DONE WITH THE CHARACTER NAMES ROW. ################################
+
+	# Initialize this count. Will add to it with each strike_team section.
+	row_idx = 3
+
+	# Find min/max for meta/strongest team power in the Alliance
+	# This will be used for color calculation for the Team Power column.
+	stp_range = [stp_list[player_name] for player_name in player_list]
+
+	# Find max available heroes. Anything under 5 is forced to red.
+	if inc_avail:
+		max_avail = max([len([char for char in table['under_min'].get(player,{}) if not table['under_min'].get(player,{}).get(char)]) for player in player_list])
 
 	# Iterate through each Strike Team.
 	for strike_team in strike_teams:
@@ -377,31 +415,12 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 		if not strike_team:
 			continue
 
-		# Find min/max for meta/strongest team power in the Alliance
-		# This will be used for color calculation for the Team Power column.
-		all_stps = [stp_list[player_name] for player_name in player_list]
-		min_all_stps = min(all_stps)
-		max_all_stps = max(all_stps)
-
-		# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
-		# (only if more than one item requested)
-		if len(keys)>1 or len(strike_teams)>1:
-			html_file += '    <tr class="%s">\n' % table_header
-			
-			if len(strike_teams)>1:
-				html_file += '     <td>STRIKE TEAM %i</td>\n' % (strike_teams.index(strike_team)+1)
-			else:
-				html_file += '     <td>Alliance<br>Member</td>\n'
-
-			# Insert stat headings for each included Character.
-			for char in char_list:
-				for key in keys:
-					html_file += '     <td>%s</td>\n' % {'lvl':'Level'}.get(key,key.title())
-
-			# Insert the Team Power column.
-			html_file += '     <td class="power">%s</td>\n' % (team_pwr_lbl)
-			html_file += '    </tr>\n'
-		# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
+		# Start by composing the data rows for the Strike Team. 
+		# We need the length of this block to sort the right 
+		# number of lines when clicking on table headers. 
+		
+		st_rows = 0
+		st_html = ''
 
 		# Last minute sort if proscribed by the table format.
 		if sort_by:
@@ -418,14 +437,19 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 				continue
 
 			# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
-			not_ready = len([char for char in table['under_min'].get(player_name,{}) if not table['under_min'].get(player_name,{}).get(char)]) < min(len(char_list),5)
+			num_avail = len([char for char in table['under_min'].get(player_name,{}) if not table['under_min'].get(player_name,{}).get(char)])
+			not_ready = num_avail < min(len(char_list),5)
 
 			# Player Name, then relevant stats for each character.
-			html_file += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
-			html_file += '     <th class="%s">%s</th>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
+			st_html += '    <tr%s>\n' % [' class="hist"',''][not hist_tab]
+			st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
 			stale_data = (alliance_info['members'][player_name].get('tot_power',0)/alliance_info['members'][player_name]['tcp'])<0.985 or (datetime.datetime.now() - alliance_info['members'][player_name]['last_update']).total_seconds() > 60*60*24*7
+
+			# Include "# Avail" info if requested.
+			if inc_avail:
+				st_html += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], stale_data), num_avail)
 
 			# Write the stat values for each character.
 			for char_name in char_list:
@@ -437,31 +461,91 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 
 					# Get the range of values for this character for all rosters.
 					# If historical, we want the diff between the current values and the values in the oldest record
-					key_vals = [find_value_or_diff(alliance_info, player, char_name, key, hist_tab)[0] for player in player_list]
+					key_range = [find_value_or_diff(alliance_info, player, char_name, key, hist_tab)[0] for player in player_list]
 
-					min_val = min(key_vals)
-					max_val = max(key_vals)
-
-					# Only look up the value if we have a roster.
-					value = 0
+					# Only look up the key_val if we have a roster.
+					key_val = 0
 					other_diffs = ''
 					if player_name in player_list:
 					
-						# Standard lookup. Get the value for this character stat from this player's roster.
+						# Standard lookup. Get the key_val for this character stat from this player's roster.
 						# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
-						value,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab)
+						key_val,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab)
 
-					if value == 0 and hist_tab:
+					if key_val == 0 and hist_tab:
 						style = ''
 					else:
-						style = ' style="background:%s;%s"' % (get_value_color(min_val, max_val, value, key, under_min, stale_data, hist_tab), ['color:black;',''][not hist_tab])
-					html_file += '     <td%s%s>%s</td>\n' % (style, ['',other_diffs][key=='power'], [value,'-'][not value])
+						style = ' style="background:%s;%s"' % (get_value_color_ext(min(key_range), max(key_range), key_val, stale_data, key, under_min, hist_tab), ['color:black;',''][not hist_tab])
+					st_html += '     <td%s%s>%s</td>\n' % (style, ['',other_diffs][key=='power'], [key_val,'-'][not key_val])
+
+				# Include ISO class information if requested
+				if inc_class:
+					# Get the ISO Class in use for this member's toon.
+					iso_code  = alliance_info['members'][player_name]['other_data'][char_name]%6
+					
+					# Translate it to a code to specify the correct CSS URI.
+					iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
+					
+					# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
+					all_iso_codes = [alliance_info['members'][player]['other_data'][char_name]%6 for player in player_list]
+					all_iso_codes = [code for code in all_iso_codes if code]
+					
+					# Calculate a confidence for this code based on the tally of all codes in use.
+					iso_conf  = int((all_iso_codes.count(iso_code)/len(all_iso_codes))*100)
+
+					# Include the graphic via CSS and use the confidence for background color.
+					st_html += '     <td class="%s" style="background-color:%s;"></td>\n' % (iso_class, get_value_color_ext(0, 100, [iso_conf,0][not iso_class], stale_data))
 
 			# Include the Team Power column.
 			player_stp = stp_list.get(player_name,0)
-			html_file += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(min_all_stps, max_all_stps, player_stp, stale_data=stale_data), [player_stp,'-'][not player_stp])
-			html_file += '    </tr>\n'
+			st_html += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(stp_range, player_stp, stale_data), [player_stp,'-'][not player_stp])
+			st_html += '    </tr>\n'
+			
+			# Increment the count of data rows by one.
+			st_rows += 1
 		# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
+		
+		# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
+		# (only if more than one item requested)
+		if num_cols>1 or len(strike_teams)>1:
+			html_file += '    <tr class="%s">\n' % table_header
+
+			# Simplify inclusion of the sort function code
+			sort_func = 'onclick="sortx(%s,\'%s\',%s,%s)"' % ('%s', table_id, row_idx, st_rows)
+
+			if len(strike_teams)>1:
+				st_num = strike_teams.index(strike_team)+1
+				html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {st_num}</td>\n'
+			else:
+				html_file += f'     <td class="{button_hover}" {sort_func % 0}>Alliance<br>Member</td>\n'
+
+			# Include header if "# Avail" info requested.
+			if inc_avail:
+				html_file += f'     <td class="{button_hover}" {sort_func % 1}>Avail<br>Char</td>\n'
+
+			col_idx = 1 + inc_avail
+
+			# Insert stat headings for each included Character.
+			for char in char_list:
+				for key in keys:
+					html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>{key.title()}</td>\n'
+					col_idx += 1
+
+				# Include a header for ISO Class info if requested.
+				if inc_class:
+					html_file += '     <td>Cls</td>\n'
+					col_idx += 1
+			
+			# Insert the Team Power column.
+			html_file += f'     <td class="red_btn" {sort_func % col_idx}>{team_pwr_lbl}</td>\n'
+			html_file += '    </tr>\n'
+			
+			row_idx += 1
+		# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
+
+		# Add in the block of Strike Team Data Rows.
+		html_file += st_html
+		row_idx   += st_rows
 
 	# Close the Table, we are done with this chunk.
 	html_file += '   </table>\n'
@@ -478,14 +562,19 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	if using_tabs:
 		html_file += '<div id="RosterAnalysis" class="tabcontent">\n'
 
-	html_file += '<table id="%s">\n' % (stat_type)
+	# Generate a table ID to allow sorting. 
+	table_id = datetime.datetime.now().strftime('%S%f')
+	html_file += '<table id="%s">\n' % (table_id)
+
+	# Simplify inclusion of the sort function code
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("blu_btn", '%s', table_id)
 
 	# Create the headings for the Alliance Info table.
 	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
-	html_file += ' <td width="200" rowspan="2" class="blue_button" onclick="sortn(0,\'%s\',2)">Name</td>\n' % (stat_type)          
-	html_file += ' <td width="80" rowspan="2" class="blue_button" onclick="sortn(1,\'%s\',2)">Total<br>Power</td>\n' % (stat_type)
-	html_file += ' <td width="80" rowspan="2" class="blue_button" onclick="sortn(2,\'%s\',2)">Strongest<br>Team</td>\n' % (stat_type)
-	html_file += ' <td width="80" rowspan="2" class="blue_button" onclick="sortn(3,\'%s\',2)">Total<br>Chars</td>\n' % (stat_type)
+	html_file += f' <td width="200" rowspan="2" {sort_func % 0}>Name</td>\n'          
+	html_file += f' <td width="80" rowspan="2" {sort_func % 1}>Total<br>Power</td>\n'
+	html_file += f' <td width="80" rowspan="2" {sort_func % 2}>Strongest<br>Team</td>\n'
+	html_file += f' <td width="80" rowspan="2" {sort_func % 3}>Total<br>Chars</td>\n'
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 	
 	html_file += ' <td width="200" colspan="5">Average</td>\n'	# All Avg Stats
@@ -515,59 +604,62 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	# Second Row with subheadings.
 	html_file += '<tr>\n'
 
+	# Simplify inclusion of the sort function code
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltb_btn", '%s', table_id)
+
 	# Averages
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(5,\'%s\',2)">Yel</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(6,\'%s\',2)">Red</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(7,\'%s\',2)">Tier</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(8,\'%s\',2)">Lvl</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(9,\'%s\',2)">ISO</td>\n' % (stat_type)
+	html_file += f' <td {sort_func % 5}>Yel</td>\n'
+	html_file += f' <td {sort_func % 6}>Red</td>\n'
+	html_file += f' <td {sort_func % 7}>Tier</td>\n'
+	html_file += f' <td {sort_func % 8}>Lvl</td>\n'
+	html_file += f' <td {sort_func % 9}>ISO</td>\n'
 	
 	# Yellow Stars
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(11,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(12,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(13,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(14,\'%s\',2)">%s</td>\n' % (stat_type, ['7*','7*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 11}>%s</td>\n' % (['1+','4*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 12}>%s</td>\n' % (['5+','5*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 13}>%s</td>\n' % (['6+','6*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 14}>%s</td>\n' % (['7*','7*'][stat_type == 'actual'])
 	
 	# Red Stars
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(16,\'%s\',2)">%s</td>\n' % (stat_type, ['1+','4*'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(17,\'%s\',2)">%s</td>\n' % (stat_type, ['5+','5*'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(18,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6*'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(19,\'%s\',2)">%s</td>\n' % (stat_type, ['7+','7*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 16}>%s</td>\n' % (['1+','4*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 17}>%s</td>\n' % (['5+','5*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 18}>%s</td>\n' % (['6+','6*'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
 
 	# Diamonds
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(21,\'%s\',2)">1💎</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(22,\'%s\',2)">2💎</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(23,\'%s\',2)">3💎</td>\n' % (stat_type)
+	html_file += f' <td {sort_func % 21}>1💎</td>\n'
+	html_file += f' <td {sort_func % 22}>2💎</td>\n'
+	html_file += f' <td {sort_func % 23}>3💎</td>\n'
 
 	# ISO Levels
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(25,\'%s\',2)">%s</td>\n' % (stat_type, ['4','0-4'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(26,\'%s\',2)">5+</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(27,\'%s\',2)">%s</td>\n' % (stat_type, ['6+','6-8'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(28,\'%s\',2)">9+</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(29,\'%s\',2)">10</td>\n' % (stat_type)
+	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['4','0-4'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 26}>5+</td>\n'
+	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['6+','6-8'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 28}>9+</td>\n'
+	html_file += f' <td {sort_func % 29}>10</td>\n'
 
 	# Gear Tiers
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(31,\'%s\',2)">%s</td>\n' % (stat_type, ['13+','13'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(32,\'%s\',2)">%s</td>\n' % (stat_type, ['14+','14'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(33,\'%s\',2)">%s</td>\n' % (stat_type, ['15+','15'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(34,\'%s\',2)">%s</td>\n' % (stat_type, ['16+','16'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(35,\'%s\',2)">%s</td>\n' % (stat_type, ['17+','17'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(36,\'%s\',2)">%s</td>\n' % (stat_type, ['18' ,'18'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['13+','13'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['14+','14'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['15+','15'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 34}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 35}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 36}>%s</td>\n' % (['18' ,'18'][stat_type == 'actual'])
 
 	# T4 Abilities
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(38,\'%s\',2)">Bas</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(39,\'%s\',2)">Spc</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(40,\'%s\',2)">Ult</td>\n' % (stat_type)
-	html_file += ' <td class="blue ltb_button" width="40" onclick="sortn(41,\'%s\',2)">Pas</td>\n' % (stat_type)
+	html_file += f' <td {sort_func % 38}>Bas</td>\n'
+	html_file += f' <td {sort_func % 39}>Spc</td>\n'
+	html_file += f' <td {sort_func % 40}>Ult</td>\n'
+	html_file += f' <td {sort_func % 41}>Pas</td>\n'
 
 	# Level Ranges
-	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(43,\'%s\',2)">%s</td>\n' % (stat_type, ['0-95', '0-65' ][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(44,\'%s\',2)">%s</td>\n' % (stat_type, ['66-95','66-70'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(45,\'%s\',2)">%s</td>\n' % (stat_type, ['71-95','71-75'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(46,\'%s\',2)">%s</td>\n' % (stat_type, ['76-95','76-80'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(47,\'%s\',2)">%s</td>\n' % (stat_type, ['81-95','81-85'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(48,\'%s\',2)">%s</td>\n' % (stat_type, ['86-95','86-90'][stat_type == 'actual'])
-	html_file += ' <td class="blue ltb_button" width="50" onclick="sortn(49,\'%s\',2)">%s</td>\n' % (stat_type, ['91-95','91-95'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['0-95', '0-65' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['66-95','66-70'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['71-95','71-75'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['76-95','76-80'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['81-95','81-85'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 48}>%s</td>\n' % (['86-95','86-90'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 49}>%s</td>\n' % (['91-95','91-95'][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -593,50 +685,50 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			html_file += '<tr>\n'
 
 			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters" target="_blank"' % (alliance_info['members'][member].get('url',''))
-			html_file += ' <td class="%s url_button"><a style="text-decoration: none; color: black;"%s>%s</a></td>\n' % (['name_blue','name_gray'][stale_data], member_url, member)
+			html_file += ' <td class="%s url_btn"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (['name_blue','name_gray'][stale_data], member_url, member)
 			
 			for key in ['tcp','stp','tcc']:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key], stale_data=stale_data), f'{member_stats[key]:,}')
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range[key], member_stats[key], stale_data), f'{member_stats[key]:,}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
 			for key in ['yel', 'red', 'tier', 'lvl', 'iso']:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tot_'+key]), max(stats_range['tot_'+key]), member_stats['tot_'+key], stale_data=stale_data), f'{member_stats["tot_"+key ] / member_stats["tcc"]:.2f}')
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['tot_'+key], member_stats['tot_'+key], stale_data), f'{member_stats["tot_"+key ] / member_stats["tcc"]:.2f}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
 			for key in range(4,8):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['yel'][key]), max(stats_range['yel'][key]), member_stats['yel'].get(key,0), stale_data=stale_data), member_stats['yel'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['yel'][key], member_stats['yel'].get(key,0), stale_data), member_stats['yel'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Red Stars                                                                                                                                       
 			for key in range(4,8):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['red'][key]), max(stats_range['red'][key]), member_stats['red'].get(key,0), stale_data=stale_data), member_stats['red'].get(key,0))
-			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['red'][key], member_stats['red'].get(key,0), stale_data), member_stats['red'].get(key,0))
+			html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# Diamonds
 			for key in range(1,4):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['dmd'][key]), max(stats_range['dmd'][key]), member_stats['dmd'].get(key,0), stale_data=stale_data), member_stats['dmd'].get(key,0))
-			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
-																																							  
-			# ISO Levels                                                                                                                                      
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats['dmd'].get(key,0), stale_data), member_stats['dmd'].get(key,0))
+			html_file += ' <td></td>\n' 										# Vertical Divider                             
+
+			# ISO Levels                                                                                                       
 			for key in [4,5,8,9,10]:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['iso'][key]), max(stats_range['iso'][key]), member_stats['iso'].get(key,0), stale_data=stale_data), member_stats['iso'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['iso'][key], member_stats['iso'].get(key,0), stale_data), member_stats['iso'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
 			for key in range(13,19):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['tier'][key]), max(stats_range['tier'][key]), member_stats['tier'].get(key,0), stale_data=stale_data), member_stats['tier'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['tier'][key], member_stats['tier'].get(key,0), stale_data), member_stats['tier'].get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
 			for key in ['bas','spc','ult','pas']:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range[key]), max(stats_range[key]), member_stats[key].get(7,0), stale_data=stale_data), member_stats[key].get(7,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range[key], member_stats[key].get(7,0), stale_data), member_stats[key].get(7,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
 			for key in range(65,100,5):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(min(stats_range['lvl'][key]), max(stats_range['lvl'][key]), member_stats['lvl'].get(key,0), stale_data=stale_data), member_stats['lvl'].get(key,0))
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['lvl'][key], member_stats['lvl'].get(key,0), stale_data), member_stats['lvl'].get(key,0))
 
 			html_file += '</tr>\n'
 
@@ -829,7 +921,9 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	if using_tabs:
 		html_file += '<div id="AllianceInfo" class="tabcontent">\n'
 
-	html_file += '<table id="alliance" style="background:#222;">\n'
+	# Generate a table ID to allow sorting. 
+	table_id = datetime.datetime.now().strftime('%S%f')
+	html_file += '<table id="%s" style="background:#222;">\n' % (table_id)
 
 	html_file += '<tr>\n</tr>\n'
 
@@ -846,23 +940,26 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	html_file += ' <td colspan="2">Level<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('stark_lvl','80'))
 	html_file += ' <td colspan="2">Trophies<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('trophies','XXX'))
 	html_file += '</tr>\n'
-	
+
+	# Simplify inclusion of the sort function code
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',4)"' % ("blu_btn", '%s', table_id)
+
 	# Create the headings for the Alliance Info table.
 	html_file += '<tr class="header_blue" style="font-size:14pt;">\n'
 	html_file += ' <td width="60"></td>\n'
-	html_file += ' <td width="215" class="blue_button" onclick="sortn(1,\'alliance\',4)">Name</td>\n'            
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(2,\'alliance\',4)">Level</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(3,\'alliance\',4)">Role</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(4,\'alliance\',4)">Collection<br>Power</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(5,\'alliance\',4)">Strongest<br>Team</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(6,\'alliance\',4)">Total<br>Collected</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(7,\'alliance\',4)">Max<br>Stars</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(8,\'alliance\',4)">Arena<br>Rank</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(9,\'alliance\',4)">Blitz<br>Wins</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(10,\'alliance\',4)">War<br>MVP</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(11,\'alliance\',4)">Total<br>Stars</td>\n'
-	html_file += ' <td width="110" class="blue_button" onclick="sortn(12,\'alliance\',4)">Total<br>Red</td>\n'
-	html_file += ' <td width="215" class="blue_button" onclick="sortn(13,\'alliance\',4)">Last Updated:</td>\n'
+	html_file += f' <td width="215" {sort_func % 1}>Name</td>\n'            
+	html_file += f' <td width="110" {sort_func % 2}>Level</td>\n'
+	html_file += f' <td width="110" {sort_func % 3}>Role</td>\n'
+	html_file += f' <td width="110" {sort_func % 4}>Collection<br>Power</td>\n'
+	html_file += f' <td width="110" {sort_func % 5}>Strongest<br>Team</td>\n'
+	html_file += f' <td width="110" {sort_func % 6}>Total<br>Collected</td>\n'
+	html_file += f' <td width="110" {sort_func % 7}>Max<br>Stars</td>\n'
+	html_file += f' <td width="110" {sort_func % 8}>Arena<br>Rank</td>\n'
+	html_file += f' <td width="110" {sort_func % 9}>Blitz<br>Wins</td>\n'
+	html_file += f' <td width="110" {sort_func % 10}>War<br>MVP</td>\n'
+	html_file += f' <td width="110" {sort_func % 11}>Total<br>Stars</td>\n'
+	html_file += f' <td width="110" {sort_func % 12}>Total<br>Red</td>\n'
+	html_file += f' <td width="215" {sort_func % 13}>Last Updated:</td>\n'
 	html_file += '</tr>\n'
 	
 	tcp_range   = [alliance_info['members'][member].get('tcp',0)   for member in member_list]
@@ -899,29 +996,29 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		if member_url:
 			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters" target="_blank"' % (member_url)
 
-		html_file += '  <td class="bold url_button"><a style="text-decoration: none; color: black;""%s>%s</a></td>\n' % (member_url, member)
+		html_file += '  <td class="bold url_btn"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (member_url, member)
 		html_file += '  <td>%i</td>\n' % (member_stats['level'])
 		html_file += '  <td>%s</td>\n' % (member_role)
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(tcp_range),   max(tcp_range),   member_stats.get('tcp',0),   stale_data=stale_data), f'{member_stats.get("tcp",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stp_range),   max(stp_range),   member_stats.get('stp',0),   stale_data=stale_data), f'{member_stats.get("stp",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(tcc_range)-5, max(tcc_range),   member_stats.get('tcc',0),   stale_data=stale_data), f'{member_stats.get("tcc",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(max_range),   max(max_range),   member_stats.get('max',0),   stale_data=stale_data), f'{member_stats.get("max",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max(arena_range), min(arena_range), member_stats.get('arena',0), stale_data=stale_data), f'{member_stats.get("arena",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(blitz_range), max(blitz_range), member_stats.get('blitz',0), stale_data=stale_data), f'{member_stats.get("blitz",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(mvp_range),   max(mvp_range),   member_stats.get('mvp',0),   stale_data=stale_data), f'{member_stats.get("mvp",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(stars_range), max(stars_range), member_stats.get('stars',0), stale_data=stale_data), f'{member_stats.get("stars",0):,}')
-		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(min(red_range),   max(red_range),   member_stats.get('red',0),   stale_data=stale_data), f'{member_stats.get("red",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   stale_data), f'{member_stats.get("tcp",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(stp_range,   member_stats.get('stp',0),   stale_data), f'{member_stats.get("stp",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color_ext(max(tcc_range)-5, max(tcc_range),   member_stats.get('tcc',0),   stale_data), f'{member_stats.get("tcc",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(max_range,   member_stats.get('max',0),   stale_data), f'{member_stats.get("max",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color_ext(max(arena_range), min(arena_range), member_stats.get('arena',0), stale_data), f'{member_stats.get("arena",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(blitz_range, member_stats.get('blitz',0), stale_data), f'{member_stats.get("blitz",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(mvp_range,   member_stats.get('mvp',0),   stale_data), f'{member_stats.get("mvp",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(stars_range, member_stats.get('stars',0), stale_data), f'{member_stats.get("stars",0):,}')
+		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(red_range,   member_stats.get('red',0),   stale_data), f'{member_stats.get("red",0):,}')
 
 		if 'last_update' in member_stats:
 			last_update = datetime.datetime.now() - member_stats['last_update']
-			time_color  = get_value_color(4*86400, 0, last_update.total_seconds(), stale_data=stale_data)
+			time_color  = get_value_color_ext(4*86400, 0, last_update.total_seconds(), stale_data)
 			
 			if stale_data:
 				time_value = '<b><i> Stale. Please re-sync. </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
 			else:
 				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
 		else:
-			time_color = get_value_color(0, 1, 0)
+			time_color = get_value_color_ext(0, 1, 0)
 			time_value = 'NEVER<br><b><i>Ask member to sync.</i></b>'
 		
 		html_file += '  <td style="background:%s;">%s</td>\n' % (time_color, time_value)
@@ -955,7 +1052,10 @@ def extract_color(alliance_name):
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(min, max, value, stat='power', under_min=False, stale_data=False, hist_tab=''):
+def get_value_color(val_range, value, stale_data):
+	return get_value_color_ext(min(val_range), max(val_range), value, stale_data)
+
+def get_value_color_ext(min, max, value, stale_data=False, stat='power', under_min=False, hist_tab=''):
 	
 	# Just in case passed a string.
 	value = int(value)
