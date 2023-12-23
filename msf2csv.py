@@ -118,6 +118,10 @@ if __name__ == '__main__':
 						help='prevent download of Alliance roster data, regardless of timing')
 
 	# Table Formatting flags. 
+	parser.add_argument('--inc_avail', action='store_true', 
+						help='include # of avail chars, per min_iso and min_tier in output')
+	parser.add_argument('--inc_class', action='store_true', 
+						help='include ISO Class information and confidence in output')
 	parser.add_argument('--min_iso', type=int, metavar='N',
 						help='minimum ISO level for inclusion in output')
 	parser.add_argument('--min_tier', type=int, metavar='N',
@@ -155,7 +159,18 @@ if __name__ == '__main__':
 		args.max_others = 0
 	
 	# Group the Formatting flags into a single argument
-	table_format = {'min_iso':args.min_iso, 'min_tier':args.min_tier, 'max_others':args.max_others, 'no_hist':args.no_hist, 'only_lane':args.only_lane, 'only_section':args.only_section, 'only_image':args.only_image, 'output':args.output, 'sections_per':args.sections_per, 'span':args.span}
+	table_format = {'inc_avail'    : args.inc_avail,
+					'inc_class'    : args.inc_class,
+					'min_iso'      : args.min_iso,
+					'min_tier'     : args.min_tier,
+					'max_others'   : args.max_others,
+					'no_hist'      : args.no_hist,
+					'only_lane'    : args.only_lane,
+					'only_section' : args.only_section,
+					'only_image'   : args.only_image,
+					'output'       : args.output,
+					'sections_per' : args.sections_per,
+					'span'         : args.span}
 	
 	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
 

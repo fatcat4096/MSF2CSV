@@ -118,18 +118,18 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 
 
 	# Meta Heroes for use in Incursion Raid
-	tables['incur'] = { 'name': 'Incursion Raid', 'min_iso': 9, 'max_others': 10, 'strike_teams': 'incur',
+	tables['incur'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 10, 'strike_teams': 'incur',
 						'lanes':[ [
-								{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
-								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
-								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
+								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Archangel', 'Apocalypse']},
+								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
+								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 								] ]
 						}
 
 	# Meta Heroes for use in Gamma Raid
-	tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'max_others': 10, 'strike_teams': 'other',
+	tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'max_others': 10, 'strike_teams': 'other', 'inc_avail': True,
 						'lanes':[ [
 								{'traits': ['Avenger', 'GotG'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
 								{'traits': ['PymTech', 'Infestation', 'Kree'], 'meta': ['Black Widow', 'Spider-Man (Big Time)', 'Minn-Erva', 'Captain Marvel', 'Phyla-Vell']},
@@ -154,7 +154,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								] ]
 						}
 
-	tables['dd6'] = { 'name': 'Dark Dimension 6', 'sort_by': 'stp', 'min_tier': 18,
+	tables['dd6'] = { 'name': 'Dark Dimension 6', 'sort_by': 'stp', 'min_tier': 18, 'inc_avail': True,
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global']},
 								{'traits': ['Non-Legendary', 'Cosmic']},
@@ -193,7 +193,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# All Characters
-	tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0 }
+	tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0, 'inc_class': True }
 
 	new_file += "tables = {'active': " + repr(tables['active']) + "}\n\n\n"
 
@@ -210,7 +210,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 		new_file += "tables['%s'] = { 'name': '%s',\n" % (raid_type, tables[raid_type]['name'])
 
 		# Generic keys, if specified.
-		for key in ['min_tier','min_iso','max_others','strike_teams','keys','sort_by','span']:
+		for key in ['min_tier','min_iso','max_others','strike_teams','keys','sort_by','span', 'inc_avail', 'inc_class']:
 			if key in tables[raid_type]:
 				new_file += "\t\t\t\t\t'%s': %s,\n" % (key, repr(tables[raid_type][key]))
 

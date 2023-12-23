@@ -251,7 +251,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 
 				stp_list = get_stp_list(alliance_info, meta_chars, hist_tab)
 
-				html_file += generate_table(alliance_info, table, meta_chars, strike_teams, meta_lbl, stp_list, hist_tab)
+				html_file += generate_table(alliance_info, table, table_format, meta_chars, strike_teams, meta_lbl, stp_list, hist_tab)
 				html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
 				# Differentiate Others Section from Meta Section
@@ -288,12 +288,12 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 				# Generate 3 tables, spanning the page.
 				for strike_team in strike_temp:
 					# Pass in only a single chunk of 8 players three separate times.
-					html_file += generate_table(alliance_info, table, other_chars, strike_team, table_lbl, stp_list, hist_tab)
+					html_file += generate_table(alliance_info, table, table_format, other_chars, strike_team, table_lbl, stp_list, hist_tab)
 					html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
 			# We are NOT spanning. Standard table generation.
 			else:
-				html_file += generate_table(alliance_info, table, other_chars, strike_teams, table_lbl, stp_list, hist_tab)
+				html_file += generate_table(alliance_info, table, table_format, other_chars, strike_teams, table_lbl, stp_list, hist_tab)
 
 			# End every section the same way.
 			html_file += '  </td>\n </tr>\n</table>\n'
@@ -310,7 +310,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
-def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp_list, hist_tab):
+def generate_table(alliance_info, table, table_format, char_list, strike_teams, table_lbl, stp_list, hist_tab):
 
 	# Pick a color scheme.
 	if table_lbl.find('OTHERS') == -1:
@@ -347,9 +347,14 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 
 	keys = table.get('keys', ['power','tier','iso'])
 
-	# Include Available and Include ISO Class flags -- Need to also find way to control these via table_format
-	inc_avail = table.get('inc_avail', False) and 'OTHERS' not in table_lbl
-	inc_class = table.get('inc_class', False)
+	# Include Available and Include ISO Class flags
+	# Get value from table_format/table, with defaults if necessary.
+	inc_avail  = table_format.get('inc_avail') and 'OTHERS' not in table_lbl
+	if inc_avail is None:
+		inc_avail = table.get('inc_avail', False) and 'OTHERS' not in table_lbl
+	inc_class  = table_format.get('inc_class')
+	if inc_class is None:
+		inc_class = table.get('inc_class',False)
 
 	# WRITE THE IMAGES ROW. #############################################
 	html_file += '    <tr class="%s">\n' % (title_cell) 
@@ -377,15 +382,15 @@ def generate_table(alliance_info, table, char_list, strike_teams, table_lbl, stp
 	if num_cols>1 and len(strike_teams)>1:
 		html_file += '     <th>Alliance<br>Member</th>\n'
 		
-		# Include header if "# Avail" info requested.
-		if inc_avail:
-			html_file += '     <td>Avail<br>Char</td>\n'
-	else:
-		html_file += '     <td></td>\n'
-
 		# Include a column for "# Avail" info if requested.
 		if inc_avail:
 			html_file += '     <td></td>\n'
+	else:
+		html_file += '     <td></td>\n'
+
+		# Include a header if "# Avail" info requested.
+		if inc_avail:
+			html_file += '     <td>Avail<br>Char</td>\n'
 
 	# Include Names of the included characters.
 	for char in char_list:

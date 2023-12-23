@@ -4,6 +4,7 @@
 Log on to MSF.gg and return a driver to use for parsing.
 """
 
+import time
 import getpass
 import keyring
 
@@ -81,6 +82,55 @@ def get_creds(prompt):
 # Auto Login via Scopely authentication using cached credentials.
 def scopely_login(driver, scopely_user, scopely_pass):
 	try:
+		login = []
+		# Once member labels have populated, we're ready.
+		while not login:
+			login = driver.find_elements(By.ID, "scopely-login")
+			time.sleep(0.5)
+
+		login[0].click()
+		
+		login_field = []
+		# Once member labels have populated, we're ready.
+		while not login_field:
+			login_field = driver.find_elements(By.CLASS_NAME, "ant-input")
+			time.sleep(0.5)
+
+		login_field[0].send_keys(scopely_user)
+		
+		login_button = []
+		# Once member labels have populated, we're ready.
+		while not login_button:
+			login_button = driver.find_elements(By.CLASS_NAME, "submitButton")
+			time.sleep(0.5)
+
+		login_button[0].click()
+		
+		use_password = []
+		# Once member labels have populated, we're ready.
+		while not use_password:
+			use_password = driver.find_elements(By.CLASS_NAME, "link")
+			time.sleep(0.5)
+
+		use_password[0].click()
+		
+		pass_field = []
+		# Once member labels have populated, we're ready.
+		while not pass_field:
+			pass_field = driver.find_elements(By.CLASS_NAME, "password-with-toggle")
+			time.sleep(0.5)
+
+		pass_field[0].send_keys(scopely_pass)
+		
+		login_button = []
+		# Once member labels have populated, we're ready.
+		while not login_button:
+			login_button = driver.find_elements(By.CLASS_NAME, "button")
+			time.sleep(0.5)
+
+		login_button[0].click()
+
+		'''
 		wait = WebDriverWait(driver, 10)
 	
 		# Click on the Scopely Login button.
@@ -104,6 +154,7 @@ def scopely_login(driver, scopely_user, scopely_pass):
 
 		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'button')))
 		login_button.click()
+'''
 
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
