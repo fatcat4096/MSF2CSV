@@ -634,9 +634,9 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
 
 	# Diamonds
-	html_file += f' <td {sort_func % 21}>1\N{gem stone}</td>\n'
-	html_file += f' <td {sort_func % 22}>2\N{gem stone}</td>\n'
-	html_file += f' <td {sort_func % 23}>3\N{gem stone}</td>\n'
+	html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
+	html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
+	html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
 
 	# ISO Levels
 	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['4','0-4'][stat_type == 'actual'])
