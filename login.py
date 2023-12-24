@@ -52,9 +52,13 @@ def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/
 
 
 # Check for saved credentials. If none saved, ask if would like to cache them.
-def get_creds(prompt):
-	facebook_cred = keyring.get_credential('facebook','')
-	scopely_cred  = keyring.get_credential('scopely','')
+def get_creds(prompt, facebook_cred = None, scopely_cred = None):
+	facebook_login = keyring.get_password('facebook','login')
+	if facebook_login:
+		facebook_cred = keyring.get_credential('facebook',facebook_login)
+	scopely_login = keyring.get_password('scopely','login')
+	if scopely_login:
+		scopely_cred  = keyring.get_credential('scopely',scopely_login)
 
 	# Check for prompt flag or presence of 'noprompt' file. 
 	if prompt or not (facebook_cred or scopely_cred):
@@ -66,15 +70,17 @@ def get_creds(prompt):
 			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
 
 				# Prompt for each login / pass and store in keyring.
-				login = input("Facebook Login: ")
-				keyring.set_password('facebook', login, getpass.getpass(prompt="Facebook Password:"))
+				facebook_login = input("Facebook Login: ")
+				keyring.set_password('facebook', 'login', facebook_login)
+				keyring.set_password('facebook', facebook_login, getpass.getpass(prompt="Facebook Password:"))
 			else:
-				login = input("Scopely Login: ")
-				keyring.set_password('scopely', login, getpass.getpass(prompt="Scopely Password:"))
+				scopely_login = input("Scopely Login: ")
+				keyring.set_password('scopely', 'login', scopely_login)
+				keyring.set_password('scopely', scopely_login, getpass.getpass(prompt="Scopely Password:"))
 
 			# Reload both credentials before proceeding.
-			facebook_cred = keyring.get_credential('facebook','')
-			scopely_cred  = keyring.get_credential('scopely','')
+			facebook_cred = keyring.get_credential('facebook',facebook_login)
+			scopely_cred  = keyring.get_credential('scopely',scopely_login)
 
 	return facebook_cred, scopely_cred
 
@@ -82,55 +88,6 @@ def get_creds(prompt):
 # Auto Login via Scopely authentication using cached credentials.
 def scopely_login(driver, scopely_user, scopely_pass):
 	try:
-		login = []
-		# Once member labels have populated, we're ready.
-		while not login:
-			login = driver.find_elements(By.ID, "scopely-login")
-			time.sleep(0.5)
-
-		login[0].click()
-		
-		login_field = []
-		# Once member labels have populated, we're ready.
-		while not login_field:
-			login_field = driver.find_elements(By.CLASS_NAME, "ant-input")
-			time.sleep(0.5)
-
-		login_field[0].send_keys(scopely_user)
-		
-		login_button = []
-		# Once member labels have populated, we're ready.
-		while not login_button:
-			login_button = driver.find_elements(By.CLASS_NAME, "submitButton")
-			time.sleep(0.5)
-
-		login_button[0].click()
-		
-		use_password = []
-		# Once member labels have populated, we're ready.
-		while not use_password:
-			use_password = driver.find_elements(By.CLASS_NAME, "link")
-			time.sleep(0.5)
-
-		use_password[0].click()
-		
-		pass_field = []
-		# Once member labels have populated, we're ready.
-		while not pass_field:
-			pass_field = driver.find_elements(By.CLASS_NAME, "password-with-toggle")
-			time.sleep(0.5)
-
-		pass_field[0].send_keys(scopely_pass)
-		
-		login_button = []
-		# Once member labels have populated, we're ready.
-		while not login_button:
-			login_button = driver.find_elements(By.CLASS_NAME, "button")
-			time.sleep(0.5)
-
-		login_button[0].click()
-
-		'''
 		wait = WebDriverWait(driver, 10)
 	
 		# Click on the Scopely Login button.
@@ -154,7 +111,6 @@ def scopely_login(driver, scopely_user, scopely_pass):
 
 		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'button')))
 		login_button.click()
-'''
 
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")

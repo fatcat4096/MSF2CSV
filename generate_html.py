@@ -349,9 +349,11 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 
 	# Include Available and Include ISO Class flags
 	# Get value from table_format/table, with defaults if necessary.
+
 	inc_avail  = table_format.get('inc_avail') and 'OTHERS' not in table_lbl
 	if inc_avail is None:
 		inc_avail = table.get('inc_avail', False) and 'OTHERS' not in table_lbl
+
 	inc_class  = table_format.get('inc_class')
 	if inc_class is None:
 		inc_class = table.get('inc_class',False)
@@ -390,7 +392,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 
 		# Include a header if "# Avail" info requested.
 		if inc_avail:
-			html_file += '     <td>Avail<br>Char</td>\n'
+			html_file += '     <td></td>\n'
 
 	# Include Names of the included characters.
 	for char in char_list:
@@ -632,9 +634,9 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
 
 	# Diamonds
-	html_file += f' <td {sort_func % 21}>1💎</td>\n'
-	html_file += f' <td {sort_func % 22}>2💎</td>\n'
-	html_file += f' <td {sort_func % 23}>3💎</td>\n'
+	html_file += f' <td {sort_func % 21}>1\N{gem stone}</td>\n'
+	html_file += f' <td {sort_func % 22}>2\N{gem stone}</td>\n'
+	html_file += f' <td {sort_func % 23}>3\N{gem stone}</td>\n'
 
 	# ISO Levels
 	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['4','0-4'][stat_type == 'actual'])

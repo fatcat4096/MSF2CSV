@@ -118,9 +118,9 @@ if __name__ == '__main__':
 						help='prevent download of Alliance roster data, regardless of timing')
 
 	# Table Formatting flags. 
-	parser.add_argument('--inc_avail', action='store_true', 
+	parser.add_argument('--inc_avail', action='store_true', default=None,
 						help='include # of avail chars, per min_iso and min_tier in output')
-	parser.add_argument('--inc_class', action='store_true', 
+	parser.add_argument('--inc_class', action='store_true', default=None,
 						help='include ISO Class information and confidence in output')
 	parser.add_argument('--min_iso', type=int, metavar='N',
 						help='minimum ISO level for inclusion in output')
