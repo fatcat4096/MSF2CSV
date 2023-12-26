@@ -4,6 +4,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
 <html lang="en">
 <head>
 <title>'''+table_name+''' Info</title>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

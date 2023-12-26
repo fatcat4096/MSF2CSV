@@ -141,6 +141,18 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	if max_others is None:
 		max_others = table.get('max_others')
 
+	# Calculate info for an under_min section, hide it in table for later use. 
+	table['under_min'] = {}
+
+	# Before filtering further, while we have visibility for the entire section...
+	for player_name in player_list:
+		for char_name in meta_chars+other_chars:
+
+			# ...calculate whether entry is under the min requirements for use in this raid/mode .
+			under_min =              find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < min_iso
+			under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
+			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
+
 	# If max_others is defined, reduce the number of heroes included in Others. 
 	if max_others and len(other_chars) > max_others:
 
@@ -159,18 +171,6 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:
 		other_chars, meta_chars = meta_chars, other_chars
-
-	# Calculate info for an under_min section, hide it in table for later use. 
-	table['under_min'] = {}
-
-	# While we have visibility for the entire section...
-	for player_name in player_list:
-		for char_name in meta_chars+other_chars:
-
-			# ...calculate whether entry is under the min requirements for use in this raid/mode .
-			under_min =              find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < min_iso
-			under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
-			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
 	return meta_chars, other_chars
 
