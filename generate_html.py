@@ -216,9 +216,21 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 
 	html_file = ''
 
+	# Determine if we are requesting a subset of the strike_team,
+	# or for strike_teams to be ignored (only_team == 0) 
+	only_team = table_format.get('only_team')
+	if only_team == 0 and not table_format.get('sort_by'):
+		table_format['sort_by'] = 'stp'
+	
+	# Sort player list if requested.
+	sort_by  = table_format.get('sort_by')
+	if not sort_by:
+		sort_by  = table.get('sort_by')
+
 	# Use the full Player List if explicit Strike Teams haven't been defined.
-	sort_by = table.get('sort_by','')
-	strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'), [get_player_list(alliance_info, sort_by)])
+	strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'))
+	if not strike_teams or only_team == 0:
+		strike_teams = [get_player_list(alliance_info, sort_by)]
 
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
@@ -265,10 +277,10 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 				span_data = table.get('span',False)
 
 			# Special code for Spanning format here. It's a very narrow window of applicability.
-			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data:
+			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not only_team:
 
 				# If strike_team is just the entire player list, break it up into 3 groups.
-				if len(strike_teams) == 1:
+				if len(strike_teams) == 1 or only_team == 0:
 					
 					# Need to do a new sort for strike_teams if sort_by is STP.
 					if sort_by == 'stp':
@@ -335,8 +347,12 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 		team_pwr_lbl  = 'STP<br>(Top 5)'
 		button_hover  = 'blk_btn'
 
+	# Sort player list if requested.
+	sort_by  = table_format.get('sort_by')
+	if not sort_by:
+		sort_by  = table.get('sort_by', '')
+
 	# Get the list of Alliance Members we will iterate through as rows.	
-	sort_by  = table.get('sort_by', '')
 	player_list = get_player_list (alliance_info, sort_by, stp_list)
 
 	# Generate a table ID to allow sorting. 
@@ -417,9 +433,15 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	# Iterate through each Strike Team.
 	for strike_team in strike_teams:
 
+		team_num = strike_teams.index(strike_team)+1
+
+		# Determine if we are requesting a subset of the strike_team,
+		# or for strike_teams to be ignored (only_team == 0) 
+		only_team = table_format.get('only_team')
+
 		# Add this to allow us to pass in fake Strike_Team definitions so that the correct "Strike Team #" label gets generated. 
 		# This is primarily for Spanning output, where one strike team is generated per table.
-		if not strike_team:
+		if not strike_team or (only_team and only_team != team_num):
 			continue
 
 		# Start by composing the data rows for the Strike Team. 
@@ -521,8 +543,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 			sort_func = 'onclick="sortx(%s,\'%s\',%s,%s)"' % ('%s', table_id, row_idx, st_rows)
 
 			if len(strike_teams)>1:
-				st_num = strike_teams.index(strike_team)+1
-				html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {st_num}</td>\n'
+				html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>\n'
 			else:
 				html_file += f'     <td class="{button_hover}" {sort_func % 0}>Alliance<br>Member</td>\n'
 
@@ -1158,7 +1179,11 @@ def translate_name(value):
 				"Xmen": "X-Men",
 				"YoungAvenger": "Young<br>Avengers",
 				"Captain America (WWII)": "Capt. America (WWII)",
-				"Captain America (Sam)": "Capt. America (Sam)"}
+				"Captain America (Sam)": "Capt. America (Sam)",
+				"Ms. Marvel (Hard Light)": "Ms. Marvel<br>(Hard Light)",
+				"Iron Man (Infinity War)":"Iron Man<br>(Infinity War)",
+				"Ironheart (MKII)": "Ironheart<br>(MKII)"}
+				
 
 	# Return the translation if available.
 	return tlist.get(value, value)

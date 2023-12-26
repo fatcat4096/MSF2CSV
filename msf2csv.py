@@ -134,12 +134,16 @@ if __name__ == '__main__':
 						help='only output ONE lane of a given format')
 	parser.add_argument('--only_section', type=int, metavar='N',
 						help='only output ONE section of a given lane')
+	parser.add_argument('--only_team', type=int, metavar='N', choices=[0, 1, 2, 3],
+						help='only output info for one strike team, 0 is ignore strike teams')
 	parser.add_argument('--only_image', action='store_true',
 						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')					
 	parser.add_argument('--output', type=str, metavar='FORMAT',
 						help='only output ONE format from the list of active formats', default='')
 	parser.add_argument('--sections_per', type=int, metavar='N',
 						help='include N sections per file.')
+	parser.add_argument('--sort_by', type=str, metavar='SORT', choices=['stp','tcp'],
+						help="ignore strike teams, sort players by 'stp' or 'tcp'")
 	parser.add_argument('--span', action='store_true', default=None,
 						help='use spanning format for output, forces max_others to 0')
 	args = parser.parse_args()
@@ -167,9 +171,11 @@ if __name__ == '__main__':
 					'no_hist'      : args.no_hist,
 					'only_lane'    : args.only_lane,
 					'only_section' : args.only_section,
+					'only_team'    : args.only_team,
 					'only_image'   : args.only_image,
 					'output'       : args.output,
 					'sections_per' : args.sections_per,
+					'sort_by'      : args.sort_by,
 					'span'         : args.span}
 	
 	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself

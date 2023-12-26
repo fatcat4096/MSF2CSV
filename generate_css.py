@@ -73,6 +73,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   white-space : nowrap;
 }
 .char_blue {
+  height  : 40px;
   font-weight : 700;
   background  : SteelBlue;
   text-shadow : 1px 1px 2px white,
@@ -80,6 +81,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
                 0 0 0.2em white;
 }
 .char_gray {
+  height  : 40px;
   font-weight : 700;
   background  : Gray;
   text-shadow : 1px 1px 2px white,
