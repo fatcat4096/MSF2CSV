@@ -7,6 +7,7 @@ Log on to MSF.gg and return a driver to use for parsing.
 import time
 import getpass
 import keyring
+import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -53,12 +54,17 @@ def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/
 
 # Check for saved credentials. If none saved, ask if would like to cache them.
 def get_creds(prompt, facebook_cred = None, scopely_cred = None):
-	facebook_login = keyring.get_password('facebook','login')
+
+	# If frozen, work in the same directory as the executable.
+	app_format = ['python','frozen'][getattr(sys, 'frozen', False)]
+
+	facebook_login = keyring.get_password(f'msf2csv.facebook.{app_format}', 'msfgg.facebook.login')
 	if facebook_login:
-		facebook_cred = keyring.get_credential('facebook',facebook_login)
-	scopely_login = keyring.get_password('scopely','login')
+		facebook_cred = keyring.get_credential(f'msf2csv.facebook.{app_format}', facebook_login)
+
+	scopely_login = keyring.get_password(f'msf2csv.scopely.{app_format}','msfgg.scopely.login')
 	if scopely_login:
-		scopely_cred  = keyring.get_credential('scopely',scopely_login)
+		scopely_cred  = keyring.get_credential(f'msf2csv.scopely.{app_format}',scopely_login)
 
 	# Check for prompt flag or presence of 'noprompt' file. 
 	if prompt or not (facebook_cred or scopely_cred):
@@ -71,16 +77,18 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 
 				# Prompt for each login / pass and store in keyring.
 				facebook_login = input("Facebook Login: ")
-				keyring.set_password('facebook', 'login', facebook_login)
-				keyring.set_password('facebook', facebook_login, getpass.getpass(prompt="Facebook Password:"))
+				keyring.set_password(f'msf2csv.facebook.{app_format}', 'msfgg.facebook.login', facebook_login)
+				keyring.set_password(f'msf2csv.facebook.{app_format}', facebook_login, getpass.getpass(prompt="Facebook Password:"))
+
+				# Load the credential before returning.
+				facebook_cred = keyring.get_credential(f'msf2csv.facebook.{app_format}',facebook_login)
 			else:
 				scopely_login = input("Scopely Login: ")
-				keyring.set_password('scopely', 'login', scopely_login)
-				keyring.set_password('scopely', scopely_login, getpass.getpass(prompt="Scopely Password:"))
+				keyring.set_password(f'msf2csv.scopely.{app_format}', 'msfgg.scopely.login', scopely_login)
+				keyring.set_password(f'msf2csv.scopely.{app_format}', scopely_login, getpass.getpass(prompt="Scopely Password:"))
 
-			# Reload both credentials before proceeding.
-			facebook_cred = keyring.get_credential('facebook',facebook_login)
-			scopely_cred  = keyring.get_credential('scopely',scopely_login)
+				# Load the credential before returning.
+				scopely_cred = keyring.get_credential(f'msf2csv.scopely.{app_format}',scopely_login)
 
 	return facebook_cred, scopely_cred
 
