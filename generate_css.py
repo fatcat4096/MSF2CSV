@@ -170,6 +170,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   font-family : 'Fira Sans Condensed';
   font-weight : 900;
   width       : '''+str(int(100/(num_lanes+[3,2][not hist_tab]))) +'''%;	/* Adding 2 for Roster Analysis and Alliance Info tabs, 3 if there's also history. */
+  min-width   : 350px;
 }
 .tablink:hover {
   background  : #555;
@@ -179,6 +180,39 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   display     : none;
   padding     : 70px 20px;
   height      : 100%;
+}
+.tt {
+  position: relative;
+}
+.tt .ttt {
+  visibility: hidden;
+  width: 100px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  top: 150%;
+  left: 50%;
+  margin-left: -50px;
+  opacity: 0;
+  transition: opacity 1s;
+}
+.tt .ttt::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent black transparent;
+}
+.tt:hover .ttt {
+  visibility: visible;
+  opacity: 1;
 }
 .skirmisher {
   background:
