@@ -37,18 +37,31 @@
 
 
 # Active tables are the files which will be generated.
-tables = {'active': ['incur', 'gamma', 'dd6', 'war', 'all']}
+tables = {'active': ['incur', 'incur2', 'gamma', 'dd6', 'war', 'all']}
 
-# Meta Heroes for use in Incursion 2 Raid
-tables['incur'] = { 'name': 'Incursion 2 Raid',
+# Meta Heroes for use in Incursion Raid
+tables['incur'] = { 'name': 'Incursion Raid',
 					'min_iso': 9,
 					'max_others': 10,
 					'strike_teams': 'incur',
-					'keys': ['power','lvl','tier','iso'],
+					'lanes':[ [
+							{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
+							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
+							{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
+							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
+							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
+							] ]
+					}
+
+# Meta Heroes for use in Incursion 2 Raid
+tables['incur2'] = { 'name': 'Incursion 2 Raid',
+					'min_iso': 9,
+					'max_others': 10,
+					'strike_teams': 'incur2',
 					'lanes':[ [
 							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
-							{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Archangel', 'Apocalypse']},
+							{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Archangel', 'Apocalypse','Forge']},
 							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
 							{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 							] ]
@@ -58,7 +71,7 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 tables['gamma'] = { 'name': 'Gamma Raid',
 					'min_tier': 16,
 					'max_others': 10,
-					'strike_teams': 'other',
+					'strike_teams': 'gamma',
 					'inc_avail': True,
 					'lanes':[ [
 							{'traits': ['Avenger', 'GotG'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
@@ -89,6 +102,7 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 					'min_tier': 18,
 					'sort_by': 'stp',
 					'inc_avail': True,
+					'sort_char_by': 'avail',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Global']},
 							{'traits': ['Non-Legendary', 'Cosmic']},
@@ -133,6 +147,6 @@ tables['all'] = { 'name': 'All Characters',
 					'max_others': 0,
 					'sort_by': 'tcp',
 					'inc_class': True,
-					'keys': ['power','tier','iso']
+					'keys': ['power','tier','iso'],
 					}
 

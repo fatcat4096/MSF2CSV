@@ -289,6 +289,10 @@ def add_sort_scripts():
 <script>
 function strip(html){
    let doc = new DOMParser().parseFromString(html, 'text/html');
+   var tooltips = doc.getElementsByClassName("ttt");
+   while(tooltips.length > 0){
+     tooltips[0].remove();
+   }
    return doc.body.textContent || "";
 }
 
@@ -318,36 +322,36 @@ function sortx(n,table_name,header_lines,rows_to_sort) {
       shouldSwitch = false;
       /* Get the two elements you want to compare,
       one from current row and one from the next: */
-      x = rows[i].getElementsByTagName("TD")[n];
-      y = rows[i + 1].getElementsByTagName("TD")[n];
+      x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML);
+      y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML);
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
       if (dir == "asc") {
-		if (isNaN(x.innerHTML) || isNaN(y.innerHTML)) {
+		if (isNaN(x) || isNaN(y)) {
           // Use string comparison for alpha elements.
-          if (strip(x.innerHTML.toLowerCase()) > strip(y.innerHTML.toLowerCase())) {
+          if (x.toLowerCase() > y.toLowerCase()) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;
           }
 		} else {
           // Use numeric comparison for numbers.
-          if (Number(x.innerHTML) > Number(y.innerHTML)) {
+          if (Number(x) > Number(y)) {
             shouldSwitch = true;
             break;
           }
 		}
       } else if (dir == "desc") {
-		if (isNaN(x.innerHTML) || isNaN(y.innerHTML)) {
+		if (isNaN(x) || isNaN(y)) {
           // Use string comparison for alpha elements.
-          if (strip(x.innerHTML.toLowerCase()) < strip(y.innerHTML.toLowerCase())) {
+          if (x.toLowerCase() < y.toLowerCase()) {
             // If so, mark as a switch and break the loop:
             shouldSwitch = true;
             break;
           }
 		} else {
           // Use numeric comparison for numbers.
-          if (Number(x.innerHTML) < Number(y.innerHTML)) {
+          if (Number(x) < Number(y)) {
             shouldSwitch = true;
             break;
           }

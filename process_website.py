@@ -112,11 +112,12 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	# Close the Selenium session.
 	driver.close()
 
-	# If working from website, use strike team definition . 
-	if working_from_website:
+	# Make sure we have a valid strike_team for Incursion and Other. 
+	updated = get_valid_strike_teams(alliance_info) 
 
-		# Make sure we have a valid strike_team for Incursion and Other. 
-		updated = get_valid_strike_teams(alliance_info) 
+	# Generate strike_teams.py if we updated strike team definitions or if this file doesn't exist locally.
+	if working_from_website and (updated or not 'strike_teams' in globals()):
+		generate_strike_teams(alliance_info)
 
 	# Update extracted_traits if necessary.
 	add_extracted_traits(alliance_info)
@@ -275,8 +276,10 @@ def find_members_roster(driver, member):
 
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
-# Only change we can make if relying on cached alliance info.
 def update_strike_teams(alliance_info):
+
+	# Update strike team definitions to include 'gamma' and 'incur2'.
+	migrate_strike_teams(alliance_info)
 
 	strike_teams_defined = 'strike_teams' in globals()
 
@@ -293,10 +296,84 @@ def update_strike_teams(alliance_info):
 				fix_strike_team(strike_teams[raid_type], alliance_info)
 				alliance_info['strike_teams'][raid_type] = strike_teams[raid_type]
 
-	# If no strike_teams.py exists, go ahead and use this info as the basis.
+	# If no valid strike_teams.py exists, use this info as the basis.
 	if not strike_teams_defined:
 		generate_strike_teams(alliance_info)
 
+
+# Go through a multi-stage process to find a valid strike_team definition to use.
+def get_valid_strike_teams(alliance_info):
+
+	# Just in case file didn't exist, start by at least creating a structure to store teams in. 
+	strike_teams_defined = 'strike_teams' in globals()
+
+	# Update strike team definitions to include 'gamma' and 'incur2'.
+	updated = migrate_strike_teams(alliance_info)
+
+	for raid_type in ['incur','incur2','gamma']:
+
+		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
+		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
+			print (f"Using {raid_type} strike team definitions from strike_teams.py")
+
+			# If we update or fix the definition, write it to disk before we're done.
+			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
+			
+			# Store the result in alliance_info.
+			alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
+
+		# If strike_teams.py is missing or invalid, check for strike_teams cached in the alliance_info
+		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
+			print (f"Using cached {raid_type} strike_team definitions from alliance_info.")
+	
+			# Fix any issues. We will just update this info in cached_data.
+			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)
+
+		# No valid strike_team definitions found. Fall back to alphabetical list of members. 
+		else:
+			# If not there, just put the member list in generic groups of 8.
+			print (f"Valid {raid_type} strike_team defintion not found. Creating default strike_team from member list.")
+			
+			# Get member_list and sort them.
+			members = sorted(alliance_info['members'],key=str.lower)
+
+			# Break it up into chunks and add the appropriate dividers.
+			alliance_info.setdefault('strike_teams',{})[raid_type] = add_strike_team_dividers(members, raid_type)
+
+			# And if we didn't have a locally sourced strike_teams.py, go ahead and write this file to disk.
+			if not strike_teams_defined:
+				updated = True
+	
+	return updated
+
+
+# Update strike teams to include 'gamma' and 'incur2' 
+def migrate_strike_teams(alliance_info):
+
+	updated = False
+
+	# Update old format strike team definitions. Key off of the presence of 'other'.
+	if 'strike_teams' in globals() and 'other' in strike_teams:
+
+		strike_teams['gamma'] = strike_teams.pop('other')
+
+		# Copy 'incur' into 'incur2' with proper dividers.
+		strike_teams['incur2'] = add_strike_team_dividers([member for member in sum(strike_teams['incur'],[]) if '--' not in member], 'incur2')
+
+		# Since we changed strike_teams.py, return updated = True so calling routine will write the updated file to disk.
+		updated = True
+	
+	# Update the alliance_info structure as well, just in case it's all we've got.
+	if 'strike_teams' in alliance_info and 'other' in alliance_info['strike_teams']:
+
+		# Create 'gamma' from the 'other' definition.
+		alliance_info['strike_teams']['gamma'] = alliance_info['strike_teams'].pop('other')
+
+		# Copy 'incur' into 'incur2' with proper dividers.
+		alliance_info['strike_teams']['incur2'] = add_strike_team_dividers([member for member in sum(alliance_info['strike_teams']['incur'],[]) if '--' not in member], 'incur2')
+
+	return updated
+		
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
 def valid_strike_team(strike_team, alliance_info):
@@ -353,54 +430,6 @@ def fix_strike_team(strike_team, alliance_info):
 	return updated
 
 
-# Go through a multi-stage process to find a valid strike_team definition to use.
-def get_valid_strike_teams(alliance_info):
-
-	# Just in case file didn't exist, start by at least creating a structure to store teams in. 
-	strike_teams_defined = 'strike_teams' in globals()
-
-	updated = False
-
-	for raid_type in ['incur','other']:
-
-		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
-		# If we update or fix the definition, write it to disk before we're done.
-		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
-			print ("Using strike team definitions from strike_teams.py")
-
-			# Keep track if there are any fixes to make
-			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
-			
-			# Store the result in alliance_info.
-			alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
-
-		# If strike_teams.py is missing or invalid, check for strike_teams cached in the alliance_info
-		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
-			print ("Using cached strike_team definitions from alliance_info.")
-	
-			# Fix any issues. We will just update this info in cached_data.
-			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)
-
-		# No valid strike_team definitions found. Fall back to alphabetical list of members. 
-		else:
-			# If not there, just put the member list in generic groups of 8.
-			print ("Valid strike_team defintion not found. Creating default strike_team from member list.")
-			
-			# Get member_list and sort them.
-			members = sorted(alliance_info['members'],key=str.lower)
-
-			# Break it up into chunks and add the appropriate dividers.
-			alliance_info.setdefault('strike_teams',{})[raid_type] = add_strike_team_dividers(members, raid_type)
-
-			# And if we didn't have a locally sourced strike_teams.py, go ahead and write this file to disk.
-			if not strike_teams_defined:
-				updated = True
-	
-	# Generate strike_teams.py if we updated either definition or if this file doesn't exist locally.
-	if updated or not strike_teams_defined:
-		generate_strike_teams(alliance_info)
-
-
 # Add divider definitions in the right places, depending upon the raid_type
 def add_strike_team_dividers(strike_team, raid_type):
 
@@ -409,15 +438,15 @@ def add_strike_team_dividers(strike_team, raid_type):
 
 	for team in strike_team:
 
-		# Automatically use 2-3-3 lanes if Incursion.
-		if raid_type == "incur":
+		# Automatically use 2-3-3 lanes if Incursion 1.x.
+		if raid_type == 'incur':
 			if len(team) > 2:
 				team.insert(2,'----')
 			if len(team) > 6:
 				team.insert(6,'----')
 
-		# Put a divider in the middle to reflect left/right symmetry for Greek raids.
-		elif raid_type == "other":
+		# Put a divider in the middle to reflect left/right symmetry of raid.
+		elif raid_type in ['incur2','gamma']:
 			if len(team) > 4:
 				team.insert(4,'----')
 

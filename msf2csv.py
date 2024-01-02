@@ -144,6 +144,8 @@ if __name__ == '__main__':
 						help='include N sections per file.')
 	parser.add_argument('--sort_by', type=str, metavar='SORT', choices=['stp','tcp'],
 						help="ignore strike teams, sort players by 'stp' or 'tcp'")
+	parser.add_argument('--sort_char_by', type=str, metavar='SORT', choices=['alpha','power','avail'],
+						help="sort chars by 'alpha' (default), 'power', or 'avail'.")
 	parser.add_argument('--span', action='store_true', default=None,
 						help='use spanning format for output, forces max_others to 0')
 	args = parser.parse_args()
@@ -176,6 +178,7 @@ if __name__ == '__main__':
 					'output'       : args.output,
 					'sections_per' : args.sections_per,
 					'sort_by'      : args.sort_by,
+					'sort_char_by' : args.sort_char_by,
 					'span'         : args.span}
 	
 	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself

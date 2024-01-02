@@ -525,8 +525,10 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 						iso_conf  = int((all_iso_codes.count(iso_code)/len(all_iso_codes))*100)
 
 					# Include the graphic via CSS and use the confidence for background color.
-					st_html += '     <td class="%s tt" style="background-color:%s;"><span class="ttt">%s</span></td>\n' % (iso_class, get_value_color_ext(0, 100, [iso_conf,0][not iso_class], stale_data, under_min=under_min), iso_class.title())
-
+					if iso_class:
+						st_html += '     <td class="%s tt" style="background-color:%s;"><span class="ttt"><b>%s:</b><br>%s</span></td>\n' % (iso_class, get_value_color_ext(0, 100, iso_conf, stale_data, under_min=under_min), iso_class.title(), f'{iso_conf}%')
+					else:
+						st_html += '     <td style="background:#282828;color:#919191;">-</td>\n'
 			# Include the Team Power column.
 			player_stp = stp_list.get(player_name,0)
 			st_html += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color(stp_range, player_stp, stale_data), [player_stp,'-'][not player_stp])

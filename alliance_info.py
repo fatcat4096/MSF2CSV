@@ -136,11 +136,6 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 
-	# If not overridden, pull value from table if it exists.
-	max_others  = table_format.get('max_others')
-	if max_others is None:
-		max_others = table.get('max_others')
-
 	# Calculate info for an under_min section, hide it in table for later use. 
 	table['under_min'] = {}
 
@@ -153,25 +148,51 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 			under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
 			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
-	# If max_others is defined, reduce the number of heroes included in Others. 
-	if max_others and len(other_chars) > max_others:
-
-		# Calculate the cutoff for power.
-		other_pwrs = [sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) for char in other_chars]
-		other_pwrs.sort()
-		pwr_cutoff = other_pwrs[len(other_pwrs)-max_others]
-
-		# Trim the other_chars list down to the top max_others in power
-		other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list]) >= pwr_cutoff]
+	# If not overridden, pull value from table if it exists.
+	max_others  = table_format.get('max_others')
+	if max_others is None:
+		max_others = table.get('max_others', len(other_chars))
 
 	# No means no.
-	elif meta_chars and max_others == 0:
+	if meta_chars and max_others == 0:
 		other_chars = []
 
+	# Sort the character list by something other than alphabetically?
+	sort_char_by = table_format.get('sort_char_by')
+	if sort_char_by is None:
+		sort_char_by = table.get('sort_char_by','alpha')
+
+	# Default sort is 'alpha'. If max_others/min_iso/min_tier, will force to 'avail'
+	if max_others or min_iso or min_tier:
+		sort_char_by == 'avail'
+
+	# This section sorts other_chars by power or availability, not by name.
+	if sort_char_by in ['power','avail'] or max_others:
+
+		# Number of people who have summoned a character.
+		dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] != 0 for player in player_list]) for char in other_chars}
+
+		# Average power of this char across all rosters who have summoned.
+		dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])/max(dict_count[char],1)) for char in other_chars}
+
+		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
+		dict_ready = {}
+		if sort_char_by == 'avail':
+			dict_ready = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in player_list]) for char in other_chars}
+		
+		# If sort_by 'power', dict_ready is ignored.
+		dict_score = {f"{dict_ready.get(char,0):03}{dict_power[char]:010}":char for char in other_chars}
+
+		# If max_others is defined, reduce the number of heroes included in Others. 
+		other_chars = [dict_score[score] for score in sorted(dict_score, reverse=True)][:max_others]
+
+	if sort_char_by == 'alpha':
+		other_chars.sort()
+		
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:
 		other_chars, meta_chars = meta_chars, other_chars
-
+	
 	return meta_chars, other_chars
 
 
@@ -199,7 +220,8 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 			abil = char_info.get('abil','n/a')
 
 			data = [f'<b>Lvl:</b> {lvl}t{tier}']
-			data.append(['<b>ISO:</b> %s-%s' % (int((iso-1)/5)+1,(iso-1)%5+1),''][not iso])
+			if iso:
+				data.append('<b>ISO:</b> %s-%s' % (int((iso-1)/5)+1,(iso-1)%5+1))
 			data.append(f'<b>Stars:</b> {yel}Y' + [f'{red}R',''][not red] + [f'{dmd}D',''][not dmd])
 			data.append(f'<b>Abil:</b> {abil}')
 
