@@ -1,6 +1,6 @@
 # This file contains the Strike Teams used for HTML file output.
 #
-# Move entries between strike teams and reorder players within strike teams. 
+# Move entries between strike teams and reorder players within strike teams.
 # Include lane dividers, i.e. "----" to indicate which players are in which lanes/clusters.
 #
 # Also, you can add entries in strike_teams dict and use them in output in msf2csv.py.
@@ -13,15 +13,15 @@ strike_teams = {}
 # Used for Incursion Raid output.
 strike_teams["incur"] = [
 [### Strike team 1 ###]
-	"Joey",
+	"mgmf",
 	"Commander Zoster",
 	"----",
 	"sjhughes",
-	"Ȗẓὗмᾄќἷ Ἷṩ ϐᾄƈќ!",
+	"Bolivar",
 	"Jutch",
 	"----",
 	"DrFett",
-	"mgmf",
+	"Joey",
 	"Daner",
 ],
 [### Strike team 2 ###]
@@ -30,10 +30,10 @@ strike_teams["incur"] = [
 	"----",
 	"BigDiesel",
 	"Flashie",
-	"Kenny Powers",
+	"silentwitness",
 	"----",
 	"FatCat",
-	"keithchyiu",
+	"CrazyMunch",
 	"FabiooBessa",
 ],
 [### Strike team 3 ###]
@@ -49,8 +49,44 @@ strike_teams["incur"] = [
 	"Zairyuu",
 ]]
 
+# Used for Incursion 2 Raid output.
+strike_teams["incur2"] = [
+[### Strike team 1 ###]
+	"mgmf",
+	"Commander Zoster",
+	"sjhughes",
+	"Bolivar",
+	"----",
+	"Jutch",
+	"DrFett",
+	"Joey",
+	"Daner",
+],
+[### Strike team 2 ###]
+	"HeadHunter2838",
+	"Shammy",
+	"BigDiesel",
+	"Flashie",
+	"----",
+	"silentwitness",
+	"FatCat",
+	"CrazyMunch",
+	"FabiooBessa",
+],
+[### Strike team 3 ###]
+	"Zen Master",
+	"RadicalEvil",
+	"BIZARNAGE",
+	"Snicky",
+	"----",
+	"Unclad",
+	"EXfieldy",
+	"Incredibad",
+	"Zairyuu",
+]]
+
 # Used for Gamma Raids and other output.
-strike_teams["other"] = [
+strike_teams["gamma"] = [
 [### Strike team 1 ###]
 	"sjhughes",
 	"Commander Zoster",
@@ -59,17 +95,17 @@ strike_teams["other"] = [
 	"----",
 	"Joey",
 	"FatCat",
-	"Ȗẓὗмᾄќἷ Ἷṩ ϐᾄƈќ!",
+	"Bolivar",
 	"DrFett",
 ],
 [### Strike team 2 ###]
-	"keithchyiu",
+	"CrazyMunch",
 	"FabiooBessa",
 	"Shammy",
 	"EXfieldy",
 	"----",
 	"HeadHunter2838",
-	"Kenny Powers",
+	"silentwitness",
 	"BigDiesel",
 	"mgmf",
 ],

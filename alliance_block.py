@@ -49,7 +49,7 @@ def encode_block(alliance_info):
 	block += member_urls
 
 	# Encode the strike teams
-	for team in ['incur','other']:
+	for team in ['incur','incur2','gamma']:
 		encoded_team = ''
 		for member in sum(alliance_info['strike_teams'][team],[]):
 			if member in member_list:
@@ -80,8 +80,9 @@ def decode_block(block):
 	
 	# These are the encoded Strike Teams
 	encoded_strike_teams = {}
-	encoded_strike_teams['incur'] = parts[-2]
-	encoded_strike_teams['other'] = parts[-1]
+	encoded_strike_teams['incur'] = parts[-3]
+	encoded_strike_teams['incur2'] = parts[-2]
+	encoded_strike_teams['gamma'] = parts[-1]
 	
 	# Once we've parsed all the parts of the block, let's see if there's "cached_data-" + alliance_name + ".msf" file locally. 
 	cached_alliance_info = load_cached_data(alliance_info['name'])
