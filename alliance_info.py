@@ -157,16 +157,13 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	if meta_chars and max_others == 0:
 		other_chars = []
 
-	# Sort the character list by something other than alphabetically?
+	# Default sort is still 'alpha'.
 	sort_char_by = table_format.get('sort_char_by')
 	if sort_char_by is None:
 		sort_char_by = table.get('sort_char_by','alpha')
 
-	# Default sort is 'alpha'. If max_others/min_iso/min_tier, will force to 'avail'
-	if max_others or min_iso or min_tier:
-		sort_char_by == 'avail'
-
 	# This section sorts other_chars by power or availability, not by name.
+	# If max_others, this order is also used to select which we keep. 
 	if sort_char_by in ['power','avail'] or max_others:
 
 		# Number of people who have summoned a character.
@@ -176,19 +173,20 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 		dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])/max(dict_count[char],1)) for char in other_chars}
 
 		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
+		# If we have min_iso/min_tier criteria, also use this to sort/filter the character list.
 		dict_ready = {}
-		if sort_char_by == 'avail':
+		if sort_char_by == 'avail' or min_iso or min_tier:
 			dict_ready = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in player_list]) for char in other_chars}
 		
 		# If sort_by 'power', dict_ready is ignored.
-		dict_score = {f"{dict_ready.get(char,0):03}{dict_power[char]:010}":char for char in other_chars}
+		dict_score = {f'{dict_ready.get(char,0):03}{dict_power[char]:010}':char for char in other_chars}
 
 		# If max_others is defined, reduce the number of heroes included in Others. 
 		other_chars = [dict_score[score] for score in sorted(dict_score, reverse=True)][:max_others]
 
 	if sort_char_by == 'alpha':
 		other_chars.sort()
-		
+
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:
 		other_chars, meta_chars = meta_chars, other_chars

@@ -170,7 +170,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   font-family : 'Fira Sans Condensed';
   font-weight : 900;
   width       : '''+str(int(100/(num_lanes+[3,2][not hist_tab]))) +'''%;	/* Adding 2 for Roster Analysis and Alliance Info tabs, 3 if there's also history. */
-  min-width   : 350px;
 }
 .tablink:hover {
   background  : #555;
