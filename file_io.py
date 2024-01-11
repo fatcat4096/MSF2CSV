@@ -7,6 +7,7 @@ Routines for reading/writing files and cached_data to disk.
 
 import os
 import sys
+import time
 import re
 import pickle
 import importlib
@@ -198,6 +199,20 @@ def load_trait_list():
 		(char_list,traits) =  pickle.load(open(file_path,'rb'))
 
 	return traits
+
+
+# Has it been less than 24 hours since last update of cached_data?
+def fresh_enough(alliance_info):
+
+	# If a name of an alliance is passed in, find the relevant alliance_info instead.
+	if type(alliance_info) is str:
+		alliance_info = find_cached_data(alliance_info)
+		
+	# Base case, couldn't find a matching cached_data for this alliance.
+	if not alliance_info:
+		return False
+
+	return time.time()-os.path.getmtime(alliance_info['file_path']) < 86400
 
 
 # Handle the file list cleanly.

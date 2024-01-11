@@ -115,28 +115,28 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 # Active tables are the files which will be generated.
 '''
 
-	tables = {'active': ['incur', 'incur2', 'gamma', 'dd6', 'war', 'all']}
+	tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'war', 'all']}
 
-
-	# Meta Heroes for use in Incursion Raid
-	tables['incur'] = { 'name': 'Incursion Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'strike_teams': 'incur',
-						'lanes':[ [
-								{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
-								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
-								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
-								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
-								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
-								] ]
-						}
 
 	# Meta Heroes for use in Incursion 2 Raid
-	tables['incur2'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'strike_teams': 'incur2',
+	tables['incur'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'strike_teams': 'incur2',
 						'lanes':[ [
 								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
 								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Archangel', 'Apocalypse']},
 								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
 								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
+								] ]
+						}
+
+	# Meta Heroes for use in Incursion 1.x Raid
+	tables['old_incur'] = { 'name': 'Incursion 1.x Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'strike_teams': 'incur',
+						'lanes':[ [
+								{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
+								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
+								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
+								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
+								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
 								] ]
 						}
 
@@ -176,31 +176,32 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								] ]
 						}
 
-	# Meta Heroes for use in War
-	tables['war'] = { 'name': 'War', 'sort_by': 'stp', 'span': True,
+	# Meta Heroes for use in Teams
+	tables['teams'] = { 'name': 'Teams', 'sort_by': 'stp', 'span': True,
 						'lanes':[ [
+								{'traits': ['AForce']},
+								{'traits': ['Bifrost']},
+								{'traits': ['Dark<br>Hunters<br>+<br>Quicksilver'], 'meta': ['Doctor Voodoo', 'Elsa Bloodstone', 'Ghost Rider', 'Morbius', 'Quicksilver']},
+								{'traits': ['Darkhold']},
+								{'traits': ['DarkHunter']},
+								{'traits': ['Deathseed']},
+								{'traits': ['Eternal']},
+								{'traits': ['Gamma']},
+								{'traits': ['Infestation']},
+								{'traits': ['InfinityWatch']},
+								{'traits': ['Invaders'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
+								{'traits': ['Knowhere']},
+								{'traits': ['MastersOfEvil']},
 								{'traits': ['New Avengers'], 'meta': ['Agent Coulson', 'Mockingbird', 'Ronin', 'The Thing', 'Tigra']},
 								{'traits': ['P.E.G.A.S.U.S.'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
-								{'traits': ['MastersOfEvil']},
-								{'traits': ['Knowhere']},
-								{'traits': ['Gamma']},
-								{'traits': ['Unlimited']},
-								{'traits': ['Deathseed']},
-								{'traits': ['Darkhold']},
+								{'traits': ['TangledWeb']},
 								{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
-								{'traits': ['AForce']},
+								{'traits': ['Undying']},
+								{'traits': ['Unlimited']},
 								{'traits': ['WarDog']},
 								{'traits': ['WeaponX']},
-								{'traits': ['InfinityWatch']},
-								{'traits': ['DarkHunter']},
-								{'traits': ['Dark<br>Hunters<br>+<br>Quicksilver'], 'meta': ['Doctor Voodoo', 'Elsa Bloodstone', 'Ghost Rider', 'Morbius', 'Quicksilver']},
-								{'traits': ['Undying']},
-								{'traits': ['TangledWeb']},
-								{'traits': ['Eternal']},
-								{'traits': ['Invaders'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
-								{'traits': ['Bifrost']},
-								{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},
-								{'traits': ['Infestation']},
+								{'traits': ['X-treme X-men'], 'meta': ['Cyclops', 'Forge', 'Gambit', 'Nightcrawler', 'Sunspot']},
+								{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
 								] ]
 						}
 

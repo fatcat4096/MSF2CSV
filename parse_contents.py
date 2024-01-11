@@ -91,6 +91,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	player_stats = player.find('div', attrs = {'class':'player-stats'}).findAll('span')
 
 	mvp_missing = player.text.find('MVP') == -1
+	red_missing = player.text.find('Total Red') == -1
 
 	player_info['tcp']   =  int(re.sub(r"\D", "", player_stats[0].text))
 	player_info['stp']   =  int(re.sub(r"\D", "", player_stats[1].text))
@@ -99,9 +100,9 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	player_info['max']   =  int(re.sub(r"\D", "", player_stats[4-mvp_missing].text))
 	player_info['arena'] =  int(re.sub(r"\D", "", player_stats[5-mvp_missing].text))
 	
-	player_info['blitz'] =  int(re.sub(r"\D", "", player_stats[-3].text))
-	player_info['stars'] =  int(re.sub(r"\D", "", player_stats[-2].text))
-	player_info['red']   =  int(re.sub(r"\D", "", player_stats[-1].text))
+	player_info['blitz'] =  int(re.sub(r"\D", "", player_stats[-3+red_missing*2].text))
+	player_info['stars'] = [int(re.sub(r"\D", "", player_stats[-2].text)),0][red_missing]
+	player_info['red']   = [int(re.sub(r"\D", "", player_stats[-1].text)),0][red_missing]
 
 	processed_chars  = {}
 	other_data       = {}
@@ -233,8 +234,6 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
 		update_parse_cache(processed_chars,char_name,parse_cache)
 
-	print(f"Parsing {len(contents)} bytes...found: {player_name:17}", end='')
-
 	# Get a little closer to our work. 
 	player = alliance_info['members'].setdefault(player_name,{})
 	
@@ -242,15 +241,12 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	if 'processed_chars' in player and 'tot_power' in player['processed_chars']:
 		player['tot_power']   = player['processed_chars']['tot_power']
 		player['last_update'] = player['processed_chars']['last_update']
-	
-	# Keep the old 'last_update' if the calculated tot_power hasn't changed.
-	if player.get('tot_power') == tot_power:
-		print ('(skipping -- unchanged)')
-	else:
-		print ('(Updated!)')
+
+	# Update 'last_update' if the calculated tot_power has changed.
+	if player.get('tot_power') != tot_power:
 		player['tot_power']   = tot_power
 		player['last_update'] = datetime.datetime.now()
-		
+
 	# Add the 'clean' parsed data to our list of processed players.
 	player['processed_chars'] = processed_chars
 	player['other_data']      = other_data

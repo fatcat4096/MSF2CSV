@@ -6,10 +6,7 @@ Logs into website and updates data from Alliance Information if not
 """
 
 import datetime
-import os
-import sys
 import time
-
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -24,7 +21,7 @@ from file_io              import *
 from login                import login
 from extract_traits       import add_extracted_traits
 from parse_cache          import build_parse_cache
-from alliance_info        import update_history
+from alliance_info        import update_history, is_stale
 
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
@@ -40,7 +37,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 			alliance_name = cached_alliance_info['name']
 			
 		# If we expect cached data or if it's 'fresh enough' and we aren't forcing 'fresh'. 
-		if force == 'stale' or (force != 'fresh' and fresh_enough(cached_alliance_info)):
+		if force == 'stale' or (not force and fresh_enough(cached_alliance_info)):
 			print ("Using cached_data from file:", cached_alliance_info['file_path'])
 
 			# Update the strike team info if we have valid teams in strike_teams.py
@@ -83,7 +80,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 		if cached_alliance_info:
 	
 			# If fresh data and no membership changes, let's just use it as-is.
-			if force == 'stale' or (force != 'fresh' and fresh_enough(cached_alliance_info) and alliance_info['members'].keys() == cached_alliance_info['members'].keys()):
+			if force == 'stale' or (not force and fresh_enough(cached_alliance_info) and alliance_info['members'].keys() == cached_alliance_info['members'].keys()):
 				print ("Using cached_data from file:", cached_alliance_info['file_path'])
 				
 				# Update the strike team info if we have valid teams in strike_teams.py
@@ -106,17 +103,34 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	else:
 		alliance_info = cached_alliance_info
 
+	# Make note of when we begin.
+	start_time = datetime.datetime.now()
+
 	# Work the website or cached URLs to update alliance_info 
 	process_rosters(driver, alliance_info, working_from_website, force)
 
 	# Close the Selenium session.
 	driver.close()
 
+	# And make note of when we end.
+	time_now = datetime.datetime.now()
+	print ('\nTotal time: %s seconds.' % ((time_now - start_time).seconds))
+
+	# Get a little closer to our work. 
+	members = alliance_info['members']
+
+	# Quick report of our findings.
+	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
+	stale = len([member for member in members if is_stale(members[member])])
+	
+	print (f'{updated} new, {len(members)-updated} no diff, {stale} stale')
+
 	# Make sure we have a valid strike_team for Incursion and Other. 
 	updated = get_valid_strike_teams(alliance_info) 
 
 	# Generate strike_teams.py if we updated strike team definitions or if this file doesn't exist locally.
-	if working_from_website and (updated or not 'strike_teams' in globals()):
+	if working_from_website and (updated or 'strike_teams' not in globals()):
+		print ('working_from_website:',working_from_website,'updated:',updated,"'strike_teams' not in globals():",'strike_teams' not in globals())
 		generate_strike_teams(alliance_info)
 
 	# Update extracted_traits if necessary.
@@ -131,11 +145,6 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	return alliance_info
 
 
-# Has is been less than 24 hours since last update of cached_data?
-def fresh_enough(alliance_info):
-	return time.time()-os.path.getmtime(alliance_info['file_path']) < 86400
-
-
 # Process rosters for every member in alliance_info.
 def process_rosters(driver, alliance_info, working_from_website, force):
 	# Grab the Alliance Info url for future reference.
@@ -143,6 +152,9 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
+
+	# If we're being called from Discord, provide the truncated output.
+	short_form = force == "rosters_only"
 
 	# Use this cache to optimize our cached_data output.
 	parse_cache = {}
@@ -164,16 +176,16 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			#print ("Using cached URL to download",member)
 			driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % members[member]['url'])
 
-			print ('Cached URL....',end='')
+			# If we're being called from Discord, provide the truncated output.
+			source = ['Cached URL   ','URL - '][short_form]
 			
 		# Cached URL is the ONLY option if not working_from_website
 		elif not working_from_website:
-			print ("Skipping",member,"-- no cached URL available.")
+			print ("No cached URL available -- skipping",member)
 			continue
 
 		# Otherwise, find an active roster button for this member
 		else:
-			print ('Roster Link...',end='')
 
 			# Start off by getting back to the Alliance page if we're not already on it.
 			if driver.current_url != alliance_url:
@@ -183,7 +195,27 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			if not find_members_roster(driver, member):
 				continue
 
-		process_roster(driver, alliance_info, parse_cache, member)
+			# If we're being called from Discord, provide the truncated output.
+			source = ['Roster Link  ','WEB - '][short_form]
+
+		# Note when we began processing
+		start_time = datetime.datetime.now()
+		
+		member = process_roster(driver, alliance_info, parse_cache, member)
+
+		# Did we find an updated roster? 
+		last_update = members[member].get('last_update')
+		updated = last_update and last_update < start_time
+
+		found = [f'Parsing {len(driver.page_source):7} bytes   Found: ',''][short_form]+f'{member:17}'
+
+		if updated:
+			time_since = datetime.datetime.now() - last_update
+			result =  [f'(last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago{["",", Stale"][is_stale(members[member])]})',f'{time_since.days:>2}d'][short_form]
+		else:
+			result = ['(Updated!)','NEW'][short_form]
+
+		print(f'{source}{found}{result}')
 
 
 # Parse just the current Roster page.
@@ -204,16 +236,17 @@ def process_roster(driver, alliance_info, parse_cache, member=''):
 		elif timer == 10:
 			break
 
-	# If page loaded, pass contents to scraping routines for stat extraction.
+	# If page is less than a megabyte, there's likely an issue.
 	if len(driver.page_source)<1000000:
-		print ("Failed to load a valid roster -- skipping...")
-	else:
-		member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
+		print ("Invalid roster - please examine",member)
+
+	# If page loaded, pass contents to scraping routines for stat extraction.
+	member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
 	
-		# Cache the URL just in case we can use this later
-		alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
+	# Cache the URL just in case we can use this later
+	alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
 		
-		return member
+	return member
 
 
 # Get back to the Alliance page, then search to find the member's name and the related Roster button.
@@ -235,7 +268,7 @@ def find_members_roster(driver, member):
 	
 	# This shouldn't happen. Should always be able to find Member on screen.
 	if not member_label:
-		print ("Couldn't find label for member",member,"-- skipping...")
+		print ("Couldn't find label - skipping",member)
 		return False
 
 	# Find the roster button in same row as the Member name and click on it. 
@@ -250,7 +283,7 @@ def find_members_roster(driver, member):
 
 	# Abort if we couldn't find the button, or found it and it's not active.
 	if not button or not button.is_enabled():
-		print ("Active roster button not found for member",member,"-- skipping...")
+		print ("Button not found - skipping",member)
 		return False
 
 	# Scroll so this button is visible. Subtracting 200 because it's scrolling TOO FAR DOWN.
@@ -269,7 +302,7 @@ def find_members_roster(driver, member):
 			button.click()
 		# If second exception, exit with False and move on.
 		except:
-			print ("Click raised exception twice for ",member,"-- skipping...")
+			print ("Exception raised 2x - skipping",member)
 			return False
 	
 	return True
@@ -314,7 +347,7 @@ def get_valid_strike_teams(alliance_info):
 
 		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
-			print (f"Using {raid_type} strike team definitions from strike_teams.py")
+			#print (f"Using {raid_type} strike team definitions from strike_teams.py")
 
 			# If we update or fix the definition, write it to disk before we're done.
 			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
@@ -324,7 +357,7 @@ def get_valid_strike_teams(alliance_info):
 
 		# If strike_teams.py is missing or invalid, check for strike_teams cached in the alliance_info
 		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
-			print (f"Using cached {raid_type} strike_team definitions from alliance_info.")
+			#print (f"Using cached {raid_type} strike_team definitions from alliance_info.")
 	
 			# Fix any issues. We will just update this info in cached_data.
 			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)
@@ -413,7 +446,7 @@ def fix_strike_team(strike_team, alliance_info):
 	
 	# After everything, if we have the same number both missing and extra, 
 	# assume we have replaced the missing people with the leftover ones.
-	if len(still_to_find) == len(not_yet_found):
+	if still_to_find and len(still_to_find) == len(not_yet_found):
 
 		updated = True
 

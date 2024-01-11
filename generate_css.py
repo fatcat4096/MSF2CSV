@@ -99,52 +99,56 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   background  : #B0E0E6;
   white-space : nowrap;
   color       : black;
-  min-width   : 125px;
+  min-width   : 130px;
 }
 .name_blue_dim {
   font-weight : 700;
   background  : #729195;
   white-space : nowrap;
   color       : black;
-  min-width   : 125px;
+  min-width   : 130px;
 }
 .name_alt {
   font-weight : 700;
   background  : #00BFFF;
   white-space : nowrap;
   color       : black;
+  min-width   : 130px;
 }
 .name_alt_dim {
   font-weight : 700;
   background  : #007ca5;
   white-space : nowrap;
   color       : black;
+  min-width   : 130px;
 }
 .name_gray {
   font-weight : 700;
   background  : #DCDCDC;
   white-space : nowrap;
   color       : black;
-  min-width   : 125px;
+  min-width   : 130px;
 }
 .name_gray_dim {
   font-weight : 700;
   background  : #8f8f8f;
   white-space : nowrap;
   color       : black;
-  min-width   : 125px;
+  min-width   : 130px;
 }
 .name_galt {
   font-weight : 700;
   background  : #A9A9A9;
   white-space : nowrap;
   color       : black;
+  min-width   : 130px;
 }
 .name_galt_dim {
   font-weight : 700;
   background  : #6d6d6d;
   white-space : nowrap;
   color       : black;
+  min-width   : 130px;
 }
 .subtitle {
   font-size   : 12pt;
@@ -247,6 +251,18 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
     no-repeat
     center center;
     background-size: 16px 16px;
+}
+.nam {
+  min-width   : 130px;
+}
+.tot {
+  min-width   : 80px;
+}
+.col {
+  min-width   : 32px;
+}
+.lvl {
+  min-width   : 42px;
 }
 
 '''

@@ -17,10 +17,10 @@ from io              import StringIO      # Allow capture of stdout for return t
 
 
 # If no name specified, default to the alliance for the Login player
-def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}, external_table={}):
+def main(alliance_name='', csv=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}, external_table={}):
 
 	# Capture stdout to return to bot.
-	if rosters_only or import_block:
+	if force == 'rosters_only' or import_block:
 		temp_stdout = StringIO()
 		sys.stdout = temp_stdout
 
@@ -35,8 +35,9 @@ def main(alliance_name='', csv=False, rosters_only=False, prompt=False, headless
 		alliance_info = get_alliance_info(alliance_name, prompt, force, headless)
 
 	# If we're done, restore sys.stdout and return the captured output
-	if rosters_only or import_block:
+	if force == 'rosters_only' or import_block:
 		sys.stdout = sys.__stdout__
+		print (temp_stdout.getvalue())
 		return temp_stdout.getvalue()
 
 	print ()
@@ -98,8 +99,6 @@ if __name__ == '__main__':
 						help='just generate csv output, no html tables')
 	parser.add_argument('-p' , '--prompt', action='store_true', 
 						help='prompt and store credentials')
-	parser.add_argument('-r', '--rosters_only', action='store_true', 
-						help='just update cached data from web, no output (forces headless)')
 	parser.add_argument('--headless', action='store_true', 
 						help='hide web browser driver during roster processing')
 
@@ -116,20 +115,22 @@ if __name__ == '__main__':
 						help='force download of Alliance roster data, regardless of timing')
 	group1.add_argument('-s', '--stale', action='store_true',
 						help='prevent download of Alliance roster data, regardless of timing')
+	group1.add_argument('-r', '--rosters_only', action='store_true', 
+						help='force download of Alliance roster data, no output (forces headless)')
 
 	# Table Formatting flags. 
 	parser.add_argument('--inc_avail', action='store_true', default=None,
 						help='include # of avail chars, per min_iso and min_tier in output')
 	parser.add_argument('--inc_class', action='store_true', default=None,
 						help='include ISO Class information and confidence in output')
+	parser.add_argument('--inc_hist', action='store_true', 
+						help='include History info with output')
 	parser.add_argument('--min_iso', type=int, metavar='N',
 						help='minimum ISO level for inclusion in output')
 	parser.add_argument('--min_tier', type=int, metavar='N',
 						help='minimum Gear Tier for inclusion in output')
 	parser.add_argument('--max_others', type=int, metavar='N',
 						help='max characters in Others section; 0 is no max')
-	parser.add_argument('--no_hist', action='store_true', 
-						help='exclude History info from output')
 	parser.add_argument('--only_lane', type=int, metavar='N',
 						help='only output ONE lane of a given format')
 	parser.add_argument('--only_section', type=int, metavar='N',
@@ -142,35 +143,36 @@ if __name__ == '__main__':
 						help='only output ONE format from the list of active formats', default='')
 	parser.add_argument('--sections_per', type=int, metavar='N',
 						help='include N sections per file.')
-	parser.add_argument('--sort_by', type=str, metavar='SORT', choices=['stp','tcp'],
-						help="ignore strike teams, sort players by 'stp' or 'tcp'")
+	parser.add_argument('--sort_by', type=str, metavar='SORT', choices=['alpha','stp','tcp'],
+						help="ignore strike teams, sort players by 'alpha', 'stp', or 'tcp'")
 	parser.add_argument('--sort_char_by', type=str, metavar='SORT', choices=['alpha','power','avail'],
 						help="sort chars by 'alpha' (default), 'power', or 'avail'.")
 	parser.add_argument('--span', action='store_true', default=None,
 						help='use spanning format for output, forces max_others to 0')
 	args = parser.parse_args()
 
-	# Rosters_only forces Fresh download of roster data.
-	force = ['','fresh','stale'][args.fresh-args.stale]
-	if args.rosters_only:
+	# There can be only one.
+	force = ''
+	if args.fresh:
 		force = 'fresh'
+	elif args.stale:
+		force = 'stale'
+	elif args.rosters_only:
+		force = 'rosters_only'
 	
-	# Rosters Only forces Headless operation, Decode Block always operates headlessly
+	# Rosters Only forces Headless operation, Import Block always operates headlessly
 	headless = args.rosters_only or args.headless
 
 	if args.only_image and not args.output:
 		parser.error ("--only_image requires --output FORMAT to be specified")
 	
-	if args.span == True:
-		args.max_others = 0
-	
 	# Group the Formatting flags into a single argument
 	table_format = {'inc_avail'    : args.inc_avail,
 					'inc_class'    : args.inc_class,
+					'inc_hist'     : args.inc_hist,
 					'min_iso'      : args.min_iso,
 					'min_tier'     : args.min_tier,
 					'max_others'   : args.max_others,
-					'no_hist'      : args.no_hist,
 					'only_lane'    : args.only_lane,
 					'only_section' : args.only_section,
 					'only_team'    : args.only_team,
@@ -181,5 +183,5 @@ if __name__ == '__main__':
 					'sort_char_by' : args.sort_char_by,
 					'span'         : args.span}
 	
-	main(args.file_or_alliance, args.csv, args.rosters_only, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
+	main(args.file_or_alliance, args.csv, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
 

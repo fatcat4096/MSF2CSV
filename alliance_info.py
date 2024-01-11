@@ -35,7 +35,7 @@ def get_player_list(alliance_info, sort_by='', stp_list={}):
 		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x]['tcp'])
 
 	# Default sort: alphabetical, ignoring case
-	if not sort_by:
+	if not sort_by or sort_by == 'alpha':
 		player_list.sort(key=str.lower)
 
 	return player_list
@@ -148,8 +148,12 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 			under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
 			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
-	# If not overridden, pull value from table if it exists.
-	max_others  = table_format.get('max_others')
+	# If span format requested, override max_others.
+	if table_format.get('span') or table.get('span'):
+		max_others = 0
+	# If not overridden, pull value from table_format or table.
+	else:
+		max_others  = table_format.get('max_others')
 	if max_others is None:
 		max_others = table.get('max_others', len(other_chars))
 
@@ -181,8 +185,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 		# If sort_by 'power', dict_ready is ignored.
 		dict_score = {f'{dict_ready.get(char,0):03}{dict_power[char]:010}':char for char in other_chars}
 
-		# If max_others is defined, reduce the number of heroes included in Others. 
-		other_chars = [dict_score[score] for score in sorted(dict_score, reverse=True)][:max_others]
+		# If max_others is defined, reduce the number of heroes included in Others.
+		other_chars = [dict_score[score] for score in sorted(dict_score, reverse=True)]
+		if max_others:
+			other_chars = other_chars[:max_others]
 
 	if sort_char_by == 'alpha':
 		other_chars.sort()
@@ -190,7 +196,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	# If only meta specified, just move it to others so we don't have to do anything special.
 	if meta_chars and not other_chars:
 		other_chars, meta_chars = meta_chars, other_chars
-	
+
 	return meta_chars, other_chars
 
 
@@ -341,3 +347,14 @@ def update_history(alliance_info):
 			del alliance_info['hist'][key]
 
 
+# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
+def is_stale(member_info):
+	
+	# Using the inverse to avoid a divide by zero if roster unavailable.
+	percentage_growth = member_info.get('tot_power',0)/member_info['tcp']
+
+	# Time since last roster sync 
+	last_update = 'last_update' in member_info and (datetime.datetime.now() - member_info['last_update']).total_seconds()
+	
+	# If either is true, flag it as stale.
+	return percentage_growth < 0.985 or last_update > 60*60*24*7
