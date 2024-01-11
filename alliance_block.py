@@ -110,10 +110,22 @@ def decode_block(block):
 
 	# Download and parse each roster, updating each entry
 	member_list = []
+	rosters_output = []
 	for member_url in member_urls:
 		driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % member_url)
+
+		# Note when we began processing
+		start_time = datetime.datetime.now()
+
 		member_name = process_roster(driver, alliance_info, parse_cache)
 		member_list.append(member_name)
+
+		# Did we find an updated roster? 
+		last_update = alliance_info['members'][member_name].get('last_update')
+		not_updated = last_update and last_update < start_time
+
+		rosters_output.append(f'WEB - {member_name:17}'+['NEW',f'{(datetime.datetime.now() - last_update).days:>2}d'][not_updated])
+		print (rosters_output[-1])
 
 	# Close the Selenium session.
 	driver.close()
@@ -125,7 +137,7 @@ def decode_block(block):
 	# Translate the Strike Teams from the encoded format.
 	strike_teams = alliance_info.setdefault('strike_teams',{})
 	
-	for raid_type in ['incur','other']:
+	for raid_type in ['incur','incur2','gamma']:
 		strike_team = []
 		for encoded_member in encoded_strike_teams[raid_type]:
 			strike_team.append(member_list[ENCODING.index(encoded_member)])
@@ -141,6 +153,8 @@ def decode_block(block):
 	
 	# Write the collected roster info to disk in a subdirectory.
 	write_cached_data(alliance_info, get_local_path()+'cached_data')
+
+	return '\n'.join(rosters_output)
 
 
 # Convert to Base 92 for shorter encoding.

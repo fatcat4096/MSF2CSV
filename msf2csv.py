@@ -13,32 +13,24 @@ from process_website import *             # Routines to get Roster data from web
 from file_io         import *             # Routines to read and write files to disk.
 from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
-from io              import StringIO      # Allow capture of stdout for return to bot.
 
 
 # If no name specified, default to the alliance for the Login player
 def main(alliance_name='', csv=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}, external_table={}):
 
-	# Capture stdout to return to bot.
-	if force == 'rosters_only' or import_block:
-		temp_stdout = StringIO()
-		sys.stdout = temp_stdout
-
 	# Parse alliance info from import_block and update rosters from website.
 	if import_block:
 
 		## SHOULD ADD SOME SORT OF VERIFICATION/SANITY CHECK RE FORMAT OF THE BLOCK TO IMPORT TO PREVENT BAD DATA INJECTION
-		decode_block(import_block)
+		alliance_info = decode_block(import_block)
 
 	# Load roster info directly from cached data or the website.
 	else:
 		alliance_info = get_alliance_info(alliance_name, prompt, force, headless)
 
-	# If we're done, restore sys.stdout and return the captured output
+	# If we're done, the captured output is being returned as 'alliance_info'
 	if force == 'rosters_only' or import_block:
-		sys.stdout = sys.__stdout__
-		print (temp_stdout.getvalue())
-		return temp_stdout.getvalue()
+		return alliance_info
 
 	print ()
 

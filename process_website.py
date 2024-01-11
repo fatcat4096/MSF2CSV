@@ -98,7 +98,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 				for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red','tot_power','last_update']:
 					if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
 						alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
-				
+	
 	# If not working_from_website, the cached_alliance_info will be our baseline. 
 	else:
 		alliance_info = cached_alliance_info
@@ -107,14 +107,15 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	start_time = datetime.datetime.now()
 
 	# Work the website or cached URLs to update alliance_info 
-	process_rosters(driver, alliance_info, working_from_website, force)
+	rosters_output = process_rosters(driver, alliance_info, working_from_website, force)
 
 	# Close the Selenium session.
 	driver.close()
 
 	# And make note of when we end.
 	time_now = datetime.datetime.now()
-	print ('\nTotal time: %s seconds.' % ((time_now - start_time).seconds))
+	rosters_output.append('\nTotal time: %s seconds.' % ((time_now - start_time).seconds))
+	print (rosters_output[-1])
 
 	# Get a little closer to our work. 
 	members = alliance_info['members']
@@ -123,14 +124,14 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
 	stale = len([member for member in members if is_stale(members[member])])
 	
-	print (f'{updated} new, {len(members)-updated} no diff, {stale} stale')
+	rosters_output.append(f'{updated} new, {len(members)-updated} no diff, {stale} stale')
+	print (rosters_output[-1])
 
 	# Make sure we have a valid strike_team for Incursion and Other. 
 	updated = get_valid_strike_teams(alliance_info) 
 
 	# Generate strike_teams.py if we updated strike team definitions or if this file doesn't exist locally.
 	if working_from_website and (updated or 'strike_teams' not in globals()):
-		print ('working_from_website:',working_from_website,'updated:',updated,"'strike_teams' not in globals():",'strike_teams' not in globals())
 		generate_strike_teams(alliance_info)
 
 	# Update extracted_traits if necessary.
@@ -142,7 +143,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	# Write the collected roster info to disk in a subdirectory.
 	write_cached_data(alliance_info)
 
-	return alliance_info
+	return [alliance_info,'\n'.join(rosters_output)][force == 'rosters_only']
 
 
 # Process rosters for every member in alliance_info.
@@ -154,7 +155,8 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 	members = alliance_info['members']
 
 	# If we're being called from Discord, provide the truncated output.
-	short_form = force == "rosters_only"
+	rosters_only   = force == "rosters_only"
+	rosters_output = []
 
 	# Use this cache to optimize our cached_data output.
 	parse_cache = {}
@@ -177,7 +179,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % members[member]['url'])
 
 			# If we're being called from Discord, provide the truncated output.
-			source = ['Cached URL   ','URL - '][short_form]
+			source = ['Cached URL   ','URL - '][rosters_only]
 			
 		# Cached URL is the ONLY option if not working_from_website
 		elif not working_from_website:
@@ -196,7 +198,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 				continue
 
 			# If we're being called from Discord, provide the truncated output.
-			source = ['Roster Link  ','WEB - '][short_form]
+			source = ['Roster Link  ','WEB - '][rosters_only]
 
 		# Note when we began processing
 		start_time = datetime.datetime.now()
@@ -205,17 +207,20 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
-		updated = last_update and last_update < start_time
+		not_updated = last_update and last_update < start_time
 
-		found = [f'Parsing {len(driver.page_source):7} bytes   Found: ',''][short_form]+f'{member:17}'
+		found = [f'Parsing {len(driver.page_source):7} bytes   Found: ',''][rosters_only]+f'{member:17}'
 
-		if updated:
+		if not_updated:
 			time_since = datetime.datetime.now() - last_update
-			result =  [f'(last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago{["",", Stale"][is_stale(members[member])]})',f'{time_since.days:>2}d'][short_form]
+			result =  [f'(last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago{["",", Stale"][is_stale(members[member])]})',f'{time_since.days:>2}d'][rosters_only]
 		else:
-			result = ['(Updated!)','NEW'][short_form]
+			result = ['(Updated!)','NEW'][rosters_only]
 
-		print(f'{source}{found}{result}')
+		rosters_output.append(f'{source}{found}{result}')
+		print(rosters_output[-1])
+
+	return rosters_output
 
 
 # Parse just the current Roster page.
