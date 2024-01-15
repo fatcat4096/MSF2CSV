@@ -115,22 +115,22 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 # Active tables are the files which will be generated.
 '''
 
-	tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'war', 'all_chars']}
+	tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'teams', 'all_chars']}
 
 
 	# Meta Heroes for use in Incursion 2 Raid
-	tables['incur'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'strike_teams': 'incur2',
+	tables['incur'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur2',
 						'lanes':[ [
 								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
-								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Archangel', 'Apocalypse']},
+								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot']},
 								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
 								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 								] ]
 						}
 
 	# Meta Heroes for use in Incursion 1.x Raid
-	tables['old_incur'] = { 'name': 'Incursion 1.x Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'strike_teams': 'incur',
+	tables['old_incur'] = { 'name': 'Incursion 1.x Raid', 'min_iso': 9, 'max_others': 10, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur',
 						'lanes':[ [
 								{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
 								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
@@ -206,7 +206,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# All Characters
-	tables['all_chars'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0, 'inc_class': True }
+	tables['all_chars'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0, 'inc_class': True, 'keys': ['power','tier','iso'] }
 
 	new_file += "tables = {'active': " + repr(tables['active']) + "}\n\n\n"
 
