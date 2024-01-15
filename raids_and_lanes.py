@@ -37,7 +37,7 @@
 
 
 # Active tables are the files which will be generated.
-tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'teams', 'all']}
+tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'teams', 'all_chars']}
 
 # Meta Heroes for use in Incursion 2 Raid
 tables['incur'] = { 'name': 'Incursion 2 Raid',
@@ -148,7 +148,7 @@ tables['teams'] = { 'name': 'Teams',
 					}
 
 # All Characters
-tables['all'] = { 'name': 'All Characters',
+tables['all_chars'] = { 'name': 'All Characters',
 					'max_others': 0,
 					'sort_by': 'tcp',
 					'inc_class': True,

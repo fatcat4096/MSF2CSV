@@ -115,7 +115,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 # Active tables are the files which will be generated.
 '''
 
-	tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'war', 'all']}
+	tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'war', 'all_chars']}
 
 
 	# Meta Heroes for use in Incursion 2 Raid
@@ -206,7 +206,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# All Characters
-	tables['all'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0, 'inc_class': True }
+	tables['all_chars'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0, 'inc_class': True }
 
 	new_file += "tables = {'active': " + repr(tables['active']) + "}\n\n\n"
 

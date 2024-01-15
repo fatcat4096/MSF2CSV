@@ -37,8 +37,9 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	# Build a default path and filename. 
 	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + '-'
 
-	output       = table_format.get('output')
-	valid_output = tables['active']+['roster_analysis','alliance_info']
+	output        = table_format.get('output')
+	output_format = table_format.get('output_format','tabbed')
+	valid_output  = tables['active']+['roster_analysis','alliance_info']
 
 	# Generate Export Block?
 	if export_block:
@@ -50,17 +51,22 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	elif csv:
 		 write_file(filename+"original.csv", generate_csv(alliance_info))
 
-	# Output only specific formats.
+	# Output only a specific report.
 	elif external_table or output:
 
 		if external_table or output in valid_output:
 		
 			pathname = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + '-'
 		
-			html_files = generate_html_files(alliance_info, external_table or tables.get(output), table_format)
+			# If requesting tabbed output, this is our destination.
+			if output_format == 'tabbed' and output in tables['active']:
+				html_files = {output+'.html': generate_tabbed_html(alliance_info, tables.get(output), table_format)}
+			# Otherwise, we need to generate the single tabbed entry.
+			else:
+				html_files = generate_html(alliance_info, external_table or tables.get(output), table_format)
 
-			# If only_image, we need write the html and then convert them.
-			if table_format.get('only_image'):
+			# If 'image' was requested, we need to convert the HTML files to PNG images.
+			if output_format == 'image':
 				html_files = write_file(pathname, html_files, print_path=False)
 				html_files = html_to_images(html_files)
 			# If not, just need write the html files out.
@@ -71,7 +77,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 		else:
 			print("--output FORMAT must be one of the following:\n"+str(valid_output))
 
-	# Default: Generate all active html files specified in tables
+	# Default: If not output specified, generate tabbed html output for every 'active' format.
 	else:
 		cached_tabs = {}
 		for output in tables['active']:
@@ -155,25 +161,36 @@ if __name__ == '__main__':
 	# Rosters Only forces Headless operation, Import Block always operates headlessly
 	headless = args.rosters_only or args.headless
 
+	# If image requested, but no output specified, raise error.
 	if args.only_image and not args.output:
 		parser.error ("--only_image requires --output FORMAT to be specified")
+	# If image requested, format is explicitly 'image'
+	elif args.only_image:
+		output_format = 'image'
+	# If output is specified, but only_image is not, format is single page HTML. 
+	elif args.output:
+		output_format = 'html'
+	# If no output explicitly specified, generate tabbed HTML file.
+	else:
+		output_format = 'tabbed'
 	
 	# Group the Formatting flags into a single argument
-	table_format = {'inc_avail'    : args.inc_avail,
-					'inc_class'    : args.inc_class,
-					'inc_hist'     : args.inc_hist,
-					'min_iso'      : args.min_iso,
-					'min_tier'     : args.min_tier,
-					'max_others'   : args.max_others,
-					'only_lane'    : args.only_lane,
-					'only_section' : args.only_section,
-					'only_team'    : args.only_team,
-					'only_image'   : args.only_image,
-					'output'       : args.output,
-					'sections_per' : args.sections_per,
-					'sort_by'      : args.sort_by,
-					'sort_char_by' : args.sort_char_by,
-					'span'         : args.span}
+	table_format = {'inc_avail'     : args.inc_avail,
+					'inc_class'     : args.inc_class,
+					'inc_hist'      : args.inc_hist,
+					'min_iso'       : args.min_iso,
+					'min_tier'      : args.min_tier,
+					'max_others'    : args.max_others,
+					'only_lane'     : args.only_lane,
+					'only_section'  : args.only_section,
+					'only_team'     : args.only_team,
+					'only_image'    : args.only_image,
+					'output'        : args.output,
+					'output_format' : output_format,
+					'sections_per'  : args.sections_per,
+					'sort_by'       : args.sort_by,
+					'sort_char_by'  : args.sort_char_by,
+					'span'          : args.span}
 	
 	main(args.file_or_alliance, args.csv, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
 

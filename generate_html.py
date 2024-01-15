@@ -16,7 +16,7 @@ from gradients     import color_scale, darken, grayscale
 
 
 # Build specific tab output for use in generating PNG graphics.
-def generate_html_files(alliance_info, table, table_format, output=''):
+def generate_html(alliance_info, table, table_format, output=''):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -1036,13 +1036,16 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 			
 			if stale_data:
 				time_value = '<b><i> Stale. Please re-sync. </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
+				#time_value = '<b><i> Stale. Please re-sync. </i></b> %s, %sd ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
 			else:
 				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
+				#time_value = f'%s{str(int(last_update.seconds/3600)): >2}h ago, %s' % ([f'{last_update.days}d',''][not last_update.days], member_stats['last_update'].strftime('%a, %b %d')) 
 		else:
 			time_color = get_value_color_ext(0, 1, 0)
 			time_value = 'NEVER<br><b><i>Ask member to sync.</i></b>'
 		
 		html_file += '  <td style="background:%s;">%s</td>\n' % (time_color, time_value)
+		#html_file += '  <td style="background:%s;min-width:200px;">%s</td>\n' % (time_color, time_value)
 		html_file += ' </tr>\n'
 
 
