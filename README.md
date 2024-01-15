@@ -17,7 +17,7 @@ Feel free to provide feedback, questions, comments, etc. My username is "fatcat4
 * The files to output and Lane/Section defintions are in Raids_and_lanes.py. Remove files you don't need from the active list. Change Min_iso and Min_tier to match the level of raid you're running. Change the displayed keys if you like. If this file is broken or deleted, it will be regenerated using default parameters.
 * NOTE: If building a frozen version of this script to distribute, EXCLUDE both raids_and_lanes.py and strike_teams.py from the package. These will both be auto-generated in the same directory as the EXE on first run and the results will be editable by end users, e.g.:
 <code>pyinstaller msf2csv.py --onefile --exclude-module strike_teams --exclude-module raids_and_lanes</code>
-For MacOS, you must also specify a target architecture of universal2 to allow the executable to run on both Intel and ARM/M1/M2-based Macs, e.g.:
+* For MacOS, you must also specify a target architecture of universal2 to allow the executable to run on both Intel and ARM/M1/M2-based Macs, e.g.:
 <code>pyinstaller msf2csv.py --onefile --exclude-module strike_teams --exclude-module raids_and_lanes --target-architecture unversal2</code>
 
 # Usage:
