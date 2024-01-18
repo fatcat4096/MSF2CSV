@@ -73,7 +73,7 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 		if prompt or input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
 
 			# Ask which login they would like to use.
-			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
+			if input("Welcome to MSF2CSV!\n\nWould you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
 
 				# Prompt for each login / pass and store in keyring.
 				facebook_login = input("Facebook Login: ")

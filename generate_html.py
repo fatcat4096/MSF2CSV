@@ -247,12 +247,20 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 		
 			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format, hist_tab)
 
-			# Start with the Basic Table Label and Colors.
-			traits = section.get('traits',[])
-			if type(traits) == str:
-				traits = [traits]
+			# If no explicit label defined for the section...
+			table_lbl = section.get('label','').upper()
+			if not table_lbl:
+
+				# Make a table label based on the included traits.
+				traits = section.get('traits',[])
+				if type(traits) == str:
+					traits = [traits]
 			
-			table_lbl = '<br>'.join([translate_name(trait).upper() for trait in traits])
+				# Truncate Table Label after 4 entries, if more than 4, use first 3 plus "AND MORE"
+				traits = [translate_name(trait).upper() for trait in traits] 
+				if len(traits) > 4:
+					traits = traits[:3] + ['AND MORE']
+				table_lbl = '<br>'.join(traits)
 
 			# Let's make it easy on ourselves. Start every section the same way.
 			html_file += '<table>\n <tr>\n  <td>\n'
@@ -1166,6 +1174,7 @@ def translate_name(value):
 				"Mercenary": "Mercs",
 				"NewAvenger": "New<br>Avengers",
 				"NewWarrior": "New<br>Warriors",
+				"Pegasus": "PEGASUS",
 				"PymTech": "Pym Tech",
 				"Ravager": "Ravagers",
 				"SecretAvenger": "Secret<br>Avengers",
@@ -1180,6 +1189,7 @@ def translate_name(value):
 				"XFactor": "X-Factor",
 				"Xforce": "X-Force",
 				"Xmen": "X-Men",
+				"XTreme": "X-Treme X-Men",
 				"YoungAvenger": "Young<br>Avengers",
 				"Captain America (WWII)": "Capt. America (WWII)",
 				"Captain America (Sam)": "Capt. America (Sam)",

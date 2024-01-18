@@ -133,7 +133,6 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 				other_chars.remove(char)
 
 	# Filter out any characters which no one has summoned.
-	meta_chars  = [char for char in meta_chars  if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
 
 	# Calculate info for an under_min section, hide it in table for later use. 

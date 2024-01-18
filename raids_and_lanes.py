@@ -43,8 +43,8 @@ tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'teams', 'all_chars']
 tables['incur'] = { 'name': 'Incursion 2 Raid',
 					'min_iso': 9,
 					'max_others': 10,
-					'sort_char_by': 'avail',
 					'strike_teams': 'incur2',
+					'sort_char_by': 'avail',
 					'keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
 							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
@@ -56,11 +56,11 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 					}
 
 # Meta Heroes for use in Incursion 1.x Raid
-tables['old_incur'] = { 'name': 'Incursion 1 Raid',
+tables['old_incur'] = { 'name': 'Incursion 1.x Raid',
 					'min_iso': 9,
 					'max_others': 10,
-					'sort_char_by': 'avail',
 					'strike_teams': 'incur',
+					'sort_char_by': 'avail',
 					'lanes':[ [
 							{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
 							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
@@ -108,11 +108,11 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'lanes':[ [
-							{'traits': ['Non-Legendary', 'Global']},
-							{'traits': ['Non-Legendary', 'Cosmic']},
-							{'traits': ['Non-Legendary', 'City']},
-							{'traits': ['Non-Horseman', 'Legendary']},
-							{'traits': ['Legendary', 'Apocalypse']},
+							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
+							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
+							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
+							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary Non-Horseman'},
+							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary + Apoc'},
 							] ]
 					}
 
@@ -120,38 +120,40 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 tables['teams'] = { 'name': 'Teams',
 					'sort_by': 'stp',
 					'span': True,
-					'lanes':[ [
+					'lanes':[ [  
+							# Said 'no' to AxMen, BA, F4, Inhumans, Rebirth, Shadowland, Uncanny, X-Factor, X-Force     Removed Rebirth, Bifrost, Pegasus, and Invader as redundant.
 							{'traits': ['AForce']},
-							{'traits': ['Bifrost']},
-							{'traits': ['Dark<br>Hunters<br>+<br>Quicksilver'], 'meta': ['Doctor Voodoo', 'Elsa Bloodstone', 'Ghost Rider', 'Morbius', 'Quicksilver']},
+							{'traits': ['BlackOrder','Thanos']},
 							{'traits': ['Darkhold']},
 							{'traits': ['DarkHunter']},
 							{'traits': ['Deathseed']},
-							{'traits': ['Eternal']},
+							{'traits': ['Eternal','Undying']},
 							{'traits': ['Gamma']},
+							{'traits': ['HeroesForHire']},
+							{'traits': ['Hive Mind'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Super Skrull']},
 							{'traits': ['Infestation']},
 							{'traits': ['InfinityWatch']},
-							{'traits': ['Invaders'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 							{'traits': ['Knowhere']},
 							{'traits': ['MastersOfEvil']},
-							{'traits': ['New Avengers'], 'meta': ['Agent Coulson', 'Mockingbird', 'Ronin', 'The Thing', 'Tigra']},
-							{'traits': ['P.E.G.A.S.U.S.'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
-							{'traits': ['TangledWeb']},
+							{'traits': ['NewAvenger']},
+							{'traits': ['NewWarrior']},
+							{'traits': ['SecretDefender']},
+							{'traits': ['SuperiorSix']},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
-							{'traits': ['Undying']},
 							{'traits': ['Unlimited']},
 							{'traits': ['WarDog']},
 							{'traits': ['WeaponX']},
-							{'traits': ['X-treme X-men'], 'meta': ['Cyclops', 'Forge', 'Gambit', 'Nightcrawler', 'Sunspot']},
+							{'traits': ['XTreme']},
 							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
+							{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars'},	
 							] ]
 					}
 
-# All Characters
+# Meta Heroes for use in All Characters
 tables['all_chars'] = { 'name': 'All Characters',
 					'max_others': 0,
+					'keys': ['power','tier','iso'],
 					'sort_by': 'tcp',
 					'inc_class': True,
-					'keys': ['power','tier','iso'],
 					}
 

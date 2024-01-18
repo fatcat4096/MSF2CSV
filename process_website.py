@@ -32,12 +32,8 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	# If we loaded a cached_data file, need to check when updated last. 
 	if cached_alliance_info:
 
-		# If we didn't pass in an alliance_name but found a single MSF file, define alliance_name now
-		if not alliance_name:
-			alliance_name = cached_alliance_info['name']
-			
 		# If we expect cached data or if it's 'fresh enough' and we aren't forcing 'fresh'. 
-		if force == 'stale' or (not force and fresh_enough(cached_alliance_info)):
+		if force == 'stale' or (not force and not prompt and fresh_enough(cached_alliance_info)):
 			print ("Using cached_data from file:", cached_alliance_info['file_path'])
 
 			# Update the strike team info if we have valid teams in strike_teams.py
@@ -265,7 +261,7 @@ def find_members_roster(driver, member):
 	member_labels = driver.find_elements(By.TAG_NAME, "H4")
 
 	for member_label in member_labels:
-		if member == remove_tags(member_label.text.replace('[ME]','')):
+		if member == member_label.text.replace('[ME]',''):
 			break
 
 		# This isn't it.
@@ -317,7 +313,7 @@ def find_members_roster(driver, member):
 def update_strike_teams(alliance_info):
 
 	# Update strike team definitions to include 'gamma' and 'incur2'.
-	migrate_strike_teams(alliance_info)
+	updated = migrate_strike_teams(alliance_info)
 
 	strike_teams_defined = 'strike_teams' in globals()
 
@@ -329,10 +325,16 @@ def update_strike_teams(alliance_info):
 
 			# If the strike_team is valid for this alliance, let's use it.
 			if valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
-			
+
 				# Make some common sense fixes and then update the alliance_info dict.
-				fix_strike_team(strike_teams[raid_type], alliance_info)
-				alliance_info['strike_teams'][raid_type] = strike_teams[raid_type]
+				updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
+				if alliance_info['strike_teams'][raid_type] != strike_teams[raid_type]:
+					alliance_info['strike_teams'][raid_type] = strike_teams[raid_type]
+					updated = True
+
+	# If a change was made, update the cached_data file.
+	if updated:
+		write_cached_data(alliance_info)
 
 	# If no valid strike_teams.py exists, use this info as the basis.
 	if not strike_teams_defined:

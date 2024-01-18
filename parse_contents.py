@@ -38,8 +38,8 @@ def parse_alliance(contents):
 	# Iterate through each entry, building up a member dict with stats for each.
 	for member_row in members_table:
 		member = {}
-		# Remove '[ME]' and HTML tags if present.
-		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text.replace('[ME]',''))
+		# Remove '[ME]' if present.
+		member_name = member_row.find('td', attrs={'class':'player'}).text.replace('[ME]','')
 
 		member['level'] = int(member_row.find('td', attrs={'class':'avatar'}).text.strip())
 		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src').split('Portrait_')[-1][:-4]

@@ -166,42 +166,45 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								] ]
 						}
 
+	# Meta Heroes for use in DD6 report
 	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'sort_by': 'stp', 'sort_char_by': 'avail','inc_avail': True, 
 						'lanes':[ [
-								{'traits': ['Non-Legendary', 'Global']},
-								{'traits': ['Non-Legendary', 'Cosmic']},
-								{'traits': ['Non-Legendary', 'City'  ]},
-								{'traits': ['Non-Horseman', 'Legendary']},
-								{'traits': ['Legendary', 'Apocalypse']},
+								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
+								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
+								{'traits': ['Non-Legendary', 'City'],     'label':'City'},
+								{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary Non-Horseman'},
+								{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary + Apoc'},
 								] ]
 						}
 
 	# Meta Heroes for use in Teams
 	tables['teams'] = { 'name': 'Teams', 'sort_by': 'stp', 'span': True,
 						'lanes':[ [
+								# Said 'no' to AxMen, BA, F4, Inhumans, Rebirth, Shadowland, Uncanny, X-Factor, X-Force     Removed Rebirth, Bifrost, Pegasus, and Invader as redundant.
 								{'traits': ['AForce']},
-								{'traits': ['Bifrost']},
-								{'traits': ['Dark<br>Hunters<br>+<br>Quicksilver'], 'meta': ['Doctor Voodoo', 'Elsa Bloodstone', 'Ghost Rider', 'Morbius', 'Quicksilver']},
+								{'traits': ['BlackOrder','Thanos']},
 								{'traits': ['Darkhold']},
 								{'traits': ['DarkHunter']},
 								{'traits': ['Deathseed']},
-								{'traits': ['Eternal']},
+								{'traits': ['Eternal','Undying']},
 								{'traits': ['Gamma']},
+								{'traits': ['HeroesForHire']},
+								{'traits': ['Hive Mind'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Super Skrull']},
 								{'traits': ['Infestation']},
 								{'traits': ['InfinityWatch']},
-								{'traits': ['Invaders'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 								{'traits': ['Knowhere']},
 								{'traits': ['MastersOfEvil']},
-								{'traits': ['New Avengers'], 'meta': ['Agent Coulson', 'Mockingbird', 'Ronin', 'The Thing', 'Tigra']},
-								{'traits': ['P.E.G.A.S.U.S.'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
-								{'traits': ['TangledWeb']},
+								{'traits': ['NewAvenger']},
+								{'traits': ['NewWarrior']},
+								{'traits': ['SecretDefender']},
+								{'traits': ['SuperiorSix']},
 								{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
-								{'traits': ['Undying']},
 								{'traits': ['Unlimited']},
 								{'traits': ['WarDog']},
 								{'traits': ['WeaponX']},
-								{'traits': ['X-treme X-men'], 'meta': ['Cyclops', 'Forge', 'Gambit', 'Nightcrawler', 'Sunspot']},
+								{'traits': ['XTreme']},
 								{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
+								{'traits': ['Horseman','Mythic','Black Cat','Quicksilver','Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars'},	
 								] ]
 						}
 
@@ -233,10 +236,9 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 
 			for lane in tables[raid_type]['lanes']:
 				for section in lane:
-					meta = ''
-					if section.get('meta'):
-						meta = ", 'meta': %s" % repr(section['meta'])
-					new_file += "\t\t\t\t\t\t\t{'traits': %s%s},\n" % (repr(section['traits']), meta)
+					meta  = [f", 'meta': {repr(section.get('meta'))}",''][not section.get('meta')]
+					label = [f", 'label': {repr(section.get('label'))}",''][not section.get('label')]
+					new_file += "\t\t\t\t\t\t\t{'traits': %s%s%s},\n" % (repr(section['traits']), meta, label)
 					
 				if lane == tables[raid_type]['lanes'][-1]:
 					new_file += "\t\t\t\t\t\t\t] ]\n"
