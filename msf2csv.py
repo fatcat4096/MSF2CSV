@@ -5,7 +5,7 @@ Transform stats from MSF.gg into readable tables with heatmaps.
 """
 
 
-import os
+import os, sys
 import argparse
 
 from alliance_block	 import *             # Routines to encode/decode the alliance block.
@@ -35,11 +35,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	print ()
 
 	# Build a default path and filename. 
-	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'output' + os.sep
-	filename = pathname + alliance_info['name'] + '-'
-	
-	if not os.path.exists(pathname):
-		os.makedirs(pathname)
+	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'output' + os.sep + alliance_info['name'] + '-'
 
 	output        = table_format.get('output')
 	output_format = table_format.get('output_format','tabbed')
@@ -48,12 +44,12 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	# Generate Export Block?
 	if export_block:
 		alliance_block = encode_block(alliance_info)
-		write_file(filename+'block.txt', alliance_block)
+		write_file(pathname+'block.txt', alliance_block)
 		print ("Encoded Alliance for SIGMA Bot:",alliance_block)
 
 	# Generate CSV?
 	elif csv:
-		 write_file(filename+"original.csv", generate_csv(alliance_info))
+		 write_file(pathname+"original.csv", generate_csv(alliance_info))
 
 	# Output only a specific report.
 	elif external_table or output:
@@ -69,11 +65,11 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 
 			# If 'image' was requested, we need to convert the HTML files to PNG images.
 			if output_format == 'image':
-				html_files = write_file(filename, html_files, print_path=False)
+				html_files = write_file(pathname, html_files, print_path=False)
 				html_files = html_to_images(html_files)
 			# If not, just need write the html files out.
 			else:
-				html_files = write_file(filename, html_files)
+				html_files = write_file(pathname, html_files)
 
 			return html_files
 		else:
@@ -83,7 +79,11 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	else:
 		cached_tabs = {}
 		for output in tables['active']:
-			write_file(filename+output+'.html', generate_tabbed_html(alliance_info, tables.get(output), table_format, cached_tabs))
+			write_file(pathname+output+'.html', generate_tabbed_html(alliance_info, tables.get(output), table_format, cached_tabs))
+
+	# If running Frozen executable, stop here before dismissing dialog box. 
+	if getattr(sys, 'frozen', False):
+		input ('\nSUCCESS! The reports listed above have been generated.')	
 
 
 # Parse arguments

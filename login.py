@@ -27,11 +27,6 @@ def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 	options.add_experimental_option("prefs", {"profile.cookie_controls_mode" : 0})
 
-	# If this is the first launch of a frozen executable, go ahead and prompt for login.
-	strike_teams_present = 'strike_teams' in globals()
-	if not strike_teams_present:
-		prompt = True
-
 	facebook_cred, scopely_cred = get_creds(prompt)
 
 	# If login/password are provided, run this as a headless server.
@@ -73,19 +68,24 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 	if scopely_login:
 		scopely_cred  = keyring.get_credential(f'msf2csv.scopely.{app_format}',scopely_login)
 
+	# If this is the first launch of a frozen executable, go ahead and prompt for login.
+	first_launch = 'strike_teams' not in globals()
+			
 	# Check for prompt flag or presence of 'noprompt' file. 
-	if prompt or not (facebook_cred or scopely_cred):
-
+	if prompt or first_launch or not (facebook_cred or scopely_cred):
+	
+		print ('\nWelcome to MSF2CSV!\n')
+	
 		# If prompt flag not used, ask if person would like to cache their credentials
 		if prompt or input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
 
 			# Ask which login they would like to use.
-			if input("\nWelcome to MSF2CSV!\n\nWould you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
+			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
 
 				# Prompt for each login / pass and store in keyring.
 				facebook_login = input("Facebook Login: ")
 				keyring.set_password(f'msf2csv.facebook.{app_format}', 'msfgg.facebook.login', facebook_login)
-				keyring.set_password(f'msf2csv.facebook.{app_format}', facebook_login, getpass.getpass(prompt="Facebook Password:"))
+				keyring.set_password(f'msf2csv.facebook.{app_format}', facebook_login, getpass.getpass(prompt="Facebook Password: "))
 
 				# Load the credential before returning.
 				facebook_cred = keyring.get_credential(f'msf2csv.facebook.{app_format}',facebook_login)
@@ -94,7 +94,7 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 				keyring.set_password(f'msf2csv.scopely.{app_format}', 'msfgg.scopely.login', scopely_login)
 
 				# Setting a default value to flag if password isn't used.
-				scopely_pass = getpass.getpass(prompt="Scopely Password (leave blank if using e-mail link):") or 'wait-for-email'
+				scopely_pass = getpass.getpass(prompt="Scopely Password (leave blank if using e-mail link): ") or 'wait-for-email'
 				keyring.set_password(f'msf2csv.scopely.{app_format}', scopely_login, scopely_pass)
 
 				# Load the credential before returning.
