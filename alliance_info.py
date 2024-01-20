@@ -21,7 +21,7 @@ def get_char_list(alliance_info):
 def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 	# Only include members that actually have processed_char information attached.
-	player_list = [member for member in alliance_info['members'] if 'processed_chars' in alliance_info['members'][member]]
+	player_list = sorted(alliance_info['members'], key=str.lower)
 
 	# If Sort Order specified, sort player_list in the correct order. 
 	if sort_by == 'stp':
@@ -33,10 +33,6 @@ def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 	if sort_by == 'tcp':
 		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x]['tcp'])
-
-	# Default sort: alphabetical, ignoring case
-	if not sort_by or sort_by == 'alpha':
-		player_list.sort(key=str.lower)
 
 	return player_list
 
@@ -205,8 +201,8 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 	other_data = ''
 
 	# Find the current value. 
-	char_info = alliance_info['members'][player_name]['processed_chars'][char_name]
-	current_val = int(char_info[key])
+	char_info = alliance_info['members'][player_name].get('processed_chars',{}).get(char_name,{})
+	current_val = int(char_info.get(key,0))
 	
 	# If we're not on a history tab, we're almost done.
 	if not hist_tab:

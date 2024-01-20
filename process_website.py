@@ -175,7 +175,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % members[member]['url'])
 
 			# If we're being called from Discord, provide the truncated output.
-			source = ['Cached URL   ','URL - '][rosters_only]
+			source = ['Cached URL   ',''][rosters_only]
 			
 		# Cached URL is the ONLY option if not working_from_website
 		elif not working_from_website:
@@ -205,15 +205,16 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 		last_update = members[member].get('last_update')
 		not_updated = last_update and last_update < start_time
 
-		found = [f'Parsing {len(driver.page_source):7} bytes   Found: ',''][rosters_only]+f'{member:17}'
+		found = (f'Parsing {len(driver.page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
+		stale = ('',', Stale')[is_stale(members[member])]
 
 		if not_updated:
 			time_since = datetime.datetime.now() - last_update
-			result =  [f'(last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago{["",", Stale"][is_stale(members[member])]})',f'{time_since.days:>2}d'][rosters_only]
+			result =  [f'(last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago)',f'{time_since.days:>2}d'][rosters_only]
 		else:
 			result = ['(Updated!)','NEW'][rosters_only]
 
-		rosters_output.append(f'{source}{found}{result}')
+		rosters_output.append(f'{source}{found}{result}{stale}')
 		print(rosters_output[-1])
 
 	return rosters_output

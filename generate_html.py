@@ -369,7 +369,10 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	# Let's get this party started!
 	html_file = '   <table id="%s">\n' % (table_id)
 
-	keys = table.get('keys', ['power','tier','iso'])
+	# Get keys from table_format/table, with defaults if necessary.
+	keys = table_format.get('inc_keys')
+	if keys is None:
+		keys = table.get('keys', ['power','tier','iso'])
 
 	# Include Available and Include ISO Class flags
 	# Get value from table_format/table, with defaults if necessary.
@@ -518,13 +521,13 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 				# Include ISO class information if requested
 				if inc_class:
 					# Get the ISO Class in use for this member's toon.
-					iso_code  = alliance_info['members'][player_name]['other_data'][char_name]%6
+					iso_code  = alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)%6
 					
 					# Translate it to a code to specify the correct CSS URI.
 					iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
 					
 					# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
-					all_iso_codes = [alliance_info['members'][player]['other_data'][char_name]%6 for player in player_list]
+					all_iso_codes = [alliance_info['members'][player].get('other_data',{}).get(char_name,0)%6 for player in player_list]
 					all_iso_codes = [code for code in all_iso_codes if code]
 					
 					# Calculate a confidence for this code based on the tally of all codes in use.

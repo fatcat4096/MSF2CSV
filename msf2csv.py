@@ -35,7 +35,11 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	print ()
 
 	# Build a default path and filename. 
-	filename = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + '-'
+	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'output' + os.sep
+	filename = pathname + alliance_info['name'] + '-'
+	
+	if not os.path.exists(pathname):
+		os.makedirs(pathname)
 
 	output        = table_format.get('output')
 	output_format = table_format.get('output_format','tabbed')
@@ -56,8 +60,6 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 
 		if external_table or output in valid_output:
 		
-			pathname = os.path.dirname(alliance_info['file_path']) + os.sep + alliance_info['name'] + '-'
-		
 			# If requesting tabbed output, this is our destination.
 			if output_format == 'tabbed' and output in tables['active']:
 				html_files = {output+'.html': generate_tabbed_html(alliance_info, tables.get(output), table_format)}
@@ -67,11 +69,11 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 
 			# If 'image' was requested, we need to convert the HTML files to PNG images.
 			if output_format == 'image':
-				html_files = write_file(pathname, html_files, print_path=False)
+				html_files = write_file(filename, html_files, print_path=False)
 				html_files = html_to_images(html_files)
 			# If not, just need write the html files out.
 			else:
-				html_files = write_file(pathname, html_files)
+				html_files = write_file(filename, html_files)
 
 			return html_files
 		else:

@@ -58,6 +58,10 @@ def write_file(pathname, file_content, print_path=True):
 		if print_path:
 			print ("Writing %s" % (filename))
 
+		# Verify enclosing directory exists, if not, create it.
+		if not os.path.exists(os.path.dirname(pathname)):
+			os.makedirs(os.path.dirname(pathname))
+
 		# Default output is UTF-8. Attempt to use it as it's more compatible.
 		try:
 			open(filename, 'w', encoding='utf-8').write(file_content[file])
@@ -176,7 +180,8 @@ def write_cached_data(alliance_info, file_path=''):
 	invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
 	traits = [trait for trait in sorted(alliance_info['extracted_traits']) if trait not in invalid_traits]
 
-	pickle.dump((char_list,traits), open(get_local_path() + os.sep + 'cached_lists', 'wb'))
+	# Disable this for now. We aren't using cached_lists because of Discord limitations.
+	#pickle.dump((char_list,traits), open(get_local_path() + os.sep + 'cached_lists', 'wb'))
 
 
 def load_char_list():

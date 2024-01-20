@@ -16,6 +16,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 
+from generate_local_files import *
 
 # Login to the website. Return the Selenium Driver object.
 def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/alliance/members'):
@@ -24,12 +25,18 @@ def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')	
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
+	options.add_experimental_option("prefs", {"profile.cookie_controls_mode" : 0})
+
+	# If this is the first launch of a frozen executable, go ahead and prompt for login.
+	strike_teams_present = 'strike_teams' in globals()
+	if not strike_teams_present:
+		prompt = True
 
 	facebook_cred, scopely_cred = get_creds(prompt)
 
 	# If login/password are provided, run this as a headless server.
 	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
-	if headless: #scopely_cred or facebook_cred:
+	if headless:
 		options.add_argument('--headless=new')
 
 	driver = webdriver.Chrome(options=options)
@@ -73,7 +80,7 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 		if prompt or input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
 
 			# Ask which login they would like to use.
-			if input("Welcome to MSF2CSV!\n\nWould you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
+			if input("\nWelcome to MSF2CSV!\n\nWould you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
 
 				# Prompt for each login / pass and store in keyring.
 				facebook_login = input("Facebook Login: ")
@@ -83,9 +90,12 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 				# Load the credential before returning.
 				facebook_cred = keyring.get_credential(f'msf2csv.facebook.{app_format}',facebook_login)
 			else:
-				scopely_login = input("Scopely Login: ")
+				scopely_login = input("Scopely Login (e-mail address): ")
 				keyring.set_password(f'msf2csv.scopely.{app_format}', 'msfgg.scopely.login', scopely_login)
-				keyring.set_password(f'msf2csv.scopely.{app_format}', scopely_login, getpass.getpass(prompt="Scopely Password:"))
+
+				# Setting a default value to flag if password isn't used.
+				scopely_pass = getpass.getpass(prompt="Scopely Password (leave blank if using e-mail link):") or 'wait-for-email'
+				keyring.set_password(f'msf2csv.scopely.{app_format}', scopely_login, scopely_pass)
 
 				# Load the credential before returning.
 				scopely_cred = keyring.get_credential(f'msf2csv.scopely.{app_format}',scopely_login)
@@ -108,6 +118,11 @@ def scopely_login(driver, scopely_user, scopely_pass):
 				
 		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'submitButton')))
 		login_button.click()
+
+		# If user is relying on access e-mail from Scopely, then no password is used.
+		# Return control to the user and allow them to click on the link in the e-mail to complete login.
+		if scopely_pass == 'wait-for-email':
+			return
 
 		# Enter password instead of using e-mailed link.
 		use_password = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'link')))
