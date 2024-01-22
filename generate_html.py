@@ -633,8 +633,8 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red 4-7
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
-	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
+	#html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
+	#html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="200" colspan="5">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
 	html_file += ' <td width="2" rowspan="2"></td>\n' 				# Vertical Divider
@@ -674,9 +674,9 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
 
 	# Diamonds
-	html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
-	html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
-	html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
+	#html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
+	#html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
+	#html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
 
 	# ISO Levels
 	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['4+','0-4'][stat_type == 'actual'])
@@ -757,9 +757,9 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# Diamonds
-			for key in range(1,4):
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), stale_data), member_stats.get('dmd',{}).get(key,0))
-			html_file += ' <td></td>\n' 										# Vertical Divider                             
+			#for key in range(1,4):
+			#	html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), stale_data), member_stats.get('dmd',{}).get(key,0))
+			#html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
 			for key in [4,5,8,9,10]:
@@ -840,17 +840,16 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 			for key in ['yel','red','dmd','tier','lvl','iso']:
 				member_stats['tot_'+key] = member_stats.get('tot_'+key,0) + char_stats[key] # - diff_stats[key]
 
+			# If progressive, only report the highest USABLE red star and diamonds only valid if 7R.
+			if char_stats['red'] > char_stats['yel']:
+				char_stats['red'] = char_stats['yel']
+			if char_stats['red'] != 7:
+				char_stats['dmd'] = 0
+ 				
 			# Normalize the data.
 			# If stat_type = 'actual', combine ISO and LVL columns before tallying
 			# If 'progressive', make each entry count in those below it.
 
-			# If progressive, only report the highest USABLE red star and diamonds only valid if 7R.
-			if stat_type == 'progressive':
-				if char_stats['red'] > char_stats['yel']:
-					char_stats['red'] = char_stats['yel']
-				if char_stats['red'] != 7:
-					char_stats['dmd'] = 0
- 				
 			# For either stat_type, combine certain columns for ISO and Level data.
 			if char_stats['lvl'] < 74 and stat_type == 'actual':
 				char_stats['lvl'] = 70
@@ -862,7 +861,6 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 			elif char_stats['iso'] in range(6,9) and stat_type == 'actual':
 				char_stats['iso'] = 8
 
-			
 			# Just tally the values in each key. Increment the count of each value found.
 			for key in ['yel', 'lvl', 'red', 'dmd', 'tier', 'iso']:
 				if stat_type == 'progressive':

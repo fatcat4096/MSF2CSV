@@ -25,7 +25,6 @@ def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')	
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
-	options.add_experimental_option("prefs", {"profile.cookie_controls_mode" : 0})
 
 	facebook_cred, scopely_cred = get_creds(prompt)
 
@@ -44,12 +43,17 @@ def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/
 	# If Scopely login not defined, use Facebook login instead.
 	elif facebook_cred:
 		facebook_login(driver, facebook_cred.username, facebook_cred.password)
-		
+	
 	# Waiting while you login manually, automatically, or approve login via 2FA.
 	try:
 		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-roster')))
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
+
+	# Click on the Accept Cookies button if it is presented. This dialog prevents roster processing.
+	accept_cookies_btn = driver.find_elements(By.ID,'onetrust-accept-btn-handler')
+	if accept_cookies_btn:
+		accept_cookies_btn[0].click()
 
 	return driver
 

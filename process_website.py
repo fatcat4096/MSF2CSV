@@ -45,7 +45,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	
 	# We are in, wait until loaded before starting
 	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
-
+	
 	# Pull alliance information from this Alliance Info screen
 	website_alliance_info  = parse_alliance(driver.page_source) 
 
@@ -118,9 +118,9 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 
 	# Quick report of our findings.
 	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
-	stale = len([member for member in members if is_stale(members[member])])
+	stale   = len([member for member in members if is_stale(members[member])])
 	
-	rosters_output.append(f'{updated} new, {len(members)-updated} no diff, {stale} stale')
+	rosters_output.append(f'{updated} new, {len(members)-updated} no diff, {stale} old')
 	print (rosters_output[-1])
 
 	# Make sure we have a valid strike_team for Incursion and Other. 
@@ -206,13 +206,13 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 		not_updated = last_update and last_update < start_time
 
 		found = (f'Parsing {len(driver.page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
-		stale = ('',', Stale')[is_stale(members[member])]
+		stale = ('',', Old')[is_stale(members[member])]
 
 		if not_updated:
 			time_since = datetime.datetime.now() - last_update
-			result =  [f'(last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago)',f'{time_since.days:>2}d'][rosters_only]
+			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{time_since.days:>2}d'][rosters_only]
 		else:
-			result = ['(Updated!)','NEW'][rosters_only]
+			result = ['Updated','NEW'][rosters_only]
 
 		rosters_output.append(f'{source}{found}{result}{stale}')
 		print(rosters_output[-1])

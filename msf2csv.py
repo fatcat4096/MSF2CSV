@@ -35,7 +35,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	print ()
 
 	# Build a default path and filename. 
-	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'output' + os.sep + alliance_info['name'] + '-'
+	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'reports' + os.sep + alliance_info['name'] + '-'
 
 	output        = table_format.get('output')
 	output_format = table_format.get('output_format','tabbed')
@@ -45,7 +45,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 	if export_block:
 		alliance_block = encode_block(alliance_info)
 		write_file(pathname+'block.txt', alliance_block)
-		print ("Encoded Alliance for SIGMA Bot:",alliance_block)
+		print ("Encoded Alliance for MSFRosterBot:",alliance_block)
 
 	# Generate CSV?
 	elif csv:
