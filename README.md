@@ -18,7 +18,7 @@ Feel free to provide feedback, questions, comments, etc. My username is "fatcat4
 * NOTE: If building a frozen version of this script to distribute, EXCLUDE both raids_and_lanes.py and strike_teams.py from the package. These will both be auto-generated in the same directory as the EXE on first run and the results will be editable by end users, e.g.:
 <code>pyinstaller msf2csv.py --onefile --exclude-module strike_teams --exclude-module raids_and_lanes</code>
 * For MacOS, you must also specify a target architecture of universal2 to allow the executable to run on both Intel and ARM/M1/M2-based Macs, e.g.:
-<code>pyinstaller msf2csv.py --onefile --exclude-module strike_teams --exclude-module raids_and_lanes --target-architecture unversal2</code>
+<code>pyinstaller msf2csv.py --onefile --exclude-module strike_teams --exclude-module raids_and_lanes --target-architecture universal2</code>
 
 # Usage:
 * At first run, the script will prompt you as to whether you want to store your credentials for Login. These credentials will be stored locally in KeyRing and used only for MSF.gg login.
