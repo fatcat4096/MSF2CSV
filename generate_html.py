@@ -485,7 +485,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 			st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-			stale_data = is_stale(alliance_info['members'][player_name])
+			stale_data = is_stale(alliance_info, player_name)
 
 			# Include "# Avail" info if requested.
 			if inc_avail:
@@ -730,7 +730,7 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			stats_range  = stats['range']
 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-			stale_data = is_stale(member_info)
+			stale_data = is_stale(alliance_info, member)
 
 			html_file += '<tr>\n'
 
@@ -888,9 +888,9 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 			# Use for TCP, STP, TCC columns
 			member_stats.setdefault('power',[]).append(char_stats['power'])
 
-		member_stats['tcp'] = sum(member_stats.get('power',[]))
-		member_stats['stp'] = sum(sorted(member_stats.get('power',[]))[-5:])
-		member_stats['tcc'] = len(member_stats.get('power',[]))
+		member_stats['tcp'] = alliance_info['members'].get(member,{}).get('tcp') or sum(member_stats.get('power',[]))
+		member_stats['stp'] = alliance_info['members'].get(member,{}).get('stp') or sum(sorted(member_stats.get('power',[]))[-5:])
+		member_stats['tcc'] = alliance_info['members'].get(member,{}).get('tcc') or len(member_stats.get('power',[]))
 
 	# Calculate alliance-wide ranges for each statistic. Use min() and max() to determine colors
 	stats['range'] = {}
@@ -1007,7 +1007,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		member_stats = alliance_info['members'][member]
 
 		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-		stale_data = (member_stats.get('tot_power',0)/member_stats['tcp'])<0.985 or (datetime.datetime.now() - member_stats['last_update']).total_seconds() > 60*60*24*7
+		stale_data = is_stale(alliance_info, member)
 		
 		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
 
@@ -1026,7 +1026,11 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		if member_url:
 			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters" target="_blank"' % (member_url)
 
-		html_file += '  <td class="bold url_btn"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (member_url, member)
+		member_discord = alliance_info['members'][member].get('discord','')
+		if member_discord:
+			member_discord = f"<br>@{member_discord.get('name','')}"
+
+		html_file += '  <td class="bold url_btn"><a style="text-decoration:none; color:black;"%s>%s%s</a></td>\n' % (member_url, member, member_discord)
 		html_file += '  <td>%i</td>\n' % (member_stats['level'])
 		html_file += '  <td>%s</td>\n' % (member_role)
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   stale_data), f'{member_stats.get("tcp",0):,}')

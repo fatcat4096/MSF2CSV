@@ -38,8 +38,8 @@ def parse_alliance(contents):
 	# Iterate through each entry, building up a member dict with stats for each.
 	for member_row in members_table:
 		member = {}
-		# Remove '[ME]' if present.
-		member_name = member_row.find('td', attrs={'class':'player'}).text.replace('[ME]','')
+		# Remove '[ME]' and HTML tags if present.
+		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text.replace('[ME]',''))
 
 		member['level'] = int(member_row.find('td', attrs={'class':'avatar'}).text.strip())
 		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src').split('Portrait_')[-1][:-4]
@@ -81,7 +81,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	player = soup.find('div', attrs = {'class':'fixed-wrapper panel-wrapper'})
 
 	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
-	player_name = member or remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
+	player_name = remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
 
 	player_info = {}
 
@@ -263,7 +263,10 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 
 	# Cleanup for a weird naming bug. 
 	# If member name is unparsable on Alliance Info screen but visible on Roster page, remnant gets left behind.
-	if member != player_name and alliance_info.get(member):
-		del alliance_info[member]
+	if member != player_name and alliance_info['members'].get(member):
+		for key in alliance_info['members'][member]:
+			if key not in alliance_info['members'][player_name]:
+				alliance_info['members'][player_name][key] = alliance_info['members'][member][key]
+		del alliance_info['members'][member]
 
 	return player_name

@@ -118,9 +118,9 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 
 	# Quick report of our findings.
 	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
-	stale   = len([member for member in members if is_stale(members[member])])
+	stale   = len([member for member in members if is_stale(alliance_info, member)])
 	
-	rosters_output.append(f'{updated} new, {len(members)-updated} no diff, {stale} old')
+	rosters_output.append(f'{updated} new, {len(members)-updated} old, {stale} stale')
 	print (rosters_output[-1])
 
 	# Make sure we have a valid strike_team for Incursion and Other. 
@@ -193,8 +193,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 			if not find_members_roster(driver, member):
 				continue
 
-			# If we're being called from Discord, provide the truncated output.
-			source = ['Roster Link  ','WEB - '][rosters_only]
+			source = 'Roster Link  '
 
 		# Note when we began processing
 		start_time = datetime.datetime.now()
@@ -206,7 +205,7 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 		not_updated = last_update and last_update < start_time
 
 		found = (f'Parsing {len(driver.page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
-		stale = ('',', Old')[is_stale(members[member])]
+		stale = ('','/Stale')[is_stale(alliance_info, member)]
 
 		if not_updated:
 			time_since = datetime.datetime.now() - last_update
@@ -262,7 +261,7 @@ def find_members_roster(driver, member):
 	member_labels = driver.find_elements(By.TAG_NAME, "H4")
 
 	for member_label in member_labels:
-		if member == member_label.text.replace('[ME]',''):
+		if member == remove_tags(member_label.text.replace('[ME]','')):
 			break
 
 		# This isn't it.
@@ -478,17 +477,24 @@ def add_strike_team_dividers(strike_team, raid_type):
 	strike_team = [strike_team[:8], strike_team[8:16], strike_team[16:]]
 
 	for team in strike_team:
-
-		# Automatically use 2-3-3 lanes if Incursion 1.x.
-		if raid_type == 'incur':
-			if len(team) > 2:
-				team.insert(2,'----')
-			if len(team) > 6:
-				team.insert(6,'----')
-
-		# Put a divider in the middle to reflect left/right symmetry of raid.
-		elif raid_type in ['incur2','gamma']:
-			if len(team) > 4:
-				team.insert(4,'----')
+		insert_dividers(team, raid_type)
 
 	return strike_team
+
+
+# Handle an individual team. 
+def insert_dividers(team, raid_type):
+
+	# Automatically use 2-3-3 lanes if Incursion 1.x.
+	if raid_type == 'incur':
+		if len(team) > 2:
+			team.insert(2,'----')
+		if len(team) > 6:
+			team.insert(6,'----')
+
+	# Put a divider in the middle to reflect left/right symmetry of raid.
+	elif raid_type in ['incur2','gamma']:
+		if len(team) > 4:
+			team.insert(4,'----')
+			
+	return team

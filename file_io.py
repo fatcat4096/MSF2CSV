@@ -27,7 +27,12 @@ TAG_RE = re.compile(r'<[^>]+>')
 
 # Sanitize Alliance Names and player names of any HTML tags.
 def remove_tags(text):
-    return TAG_RE.sub('', text)
+
+	# Cleaned text is without HTML tags. Also removing hashtags.
+	cleaned = TAG_RE.sub('', text.replace('#',''))
+
+	# If nothing remains, then < > was decorative, return the original entry.
+	return cleaned or text
 	
 
 def get_local_path():
@@ -53,7 +58,7 @@ def write_file(pathname, file_content, print_path=True):
 
 	for file in file_content:
 
-		filename = pathname+file
+		filename = remove_tags(pathname+file)
 
 		if print_path:
 			print ("Writing %s" % (filename))
@@ -147,7 +152,7 @@ def load_cached_data(file_or_alliance=''):
 	return cached_data
 
 
-def write_cached_data(alliance_info, file_path=''):
+def write_cached_data(alliance_info, file_path='', timestamp='update'):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
 	if not file_path:
@@ -166,13 +171,26 @@ def write_cached_data(alliance_info, file_path=''):
 		os.makedirs(file_path)
 	
 	# Construct the file name
-	file_name = 'cached_data-'+remove_tags(alliance_info['name'])+'.msf'
+	file_path += os.sep + 'cached_data-'+remove_tags(alliance_info['name'])+'.msf'
+	
+	# If we don't want to indicate this file has changed, save the current timestamp.
+	if timestamp != 'update':
+		ctime = os.path.getctime(file_path)
+		mtime = os.path.getmtime(file_path)
 	
 	# Write the .msf file. 
-	pickle.dump(alliance_info,open(file_path + os.sep + file_name, 'wb'))
+	pickle.dump(alliance_info,open(file_path, 'wb'))
+
+	# Need to keep original timestamp? (change unrelated to roster data)
+	if timestamp == 'keep':
+		os.utime(file_path, (ctime, mtime))
+	# Need to backdate the modification? (Force a refresh on next request)
+	elif timestamp == 'back':
+		day_old = time.time() - 60*60*24
+		os.utime(file_path, (ctime, day_old))
 	
 	# Stash the path and filename inside of alliance_info. 
-	alliance_info['file_path'] = file_path + os.sep + file_name
+	alliance_info['file_path'] = file_path
 	
 	# Cache the char_list and trait list from this alliance_info for bot use.
 	char_list = get_char_list(alliance_info)
