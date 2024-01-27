@@ -328,8 +328,8 @@ def update_strike_teams(alliance_info):
 
 				# Make some common sense fixes and then update the alliance_info dict.
 				updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
-				if alliance_info['strike_teams'][raid_type] != strike_teams[raid_type]:
-					alliance_info['strike_teams'][raid_type] = strike_teams[raid_type]
+				if alliance_info.get('strike_teams',{}).get(raid_type) != strike_teams[raid_type]:
+					alliance_info.get('strike_teams',{})[raid_type] = strike_teams[raid_type]
 					updated = True
 
 	# If a change was made, update the cached_data file.

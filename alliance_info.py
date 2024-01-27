@@ -12,7 +12,7 @@ import datetime
 def get_char_list(alliance_info):
 
 	# We only keep images for heroes that at least one person has recruited.
-	char_list = sorted(alliance_info['portraits'])
+	char_list = sorted(alliance_info.get('portraits',{}))
 
 	return char_list
 
@@ -32,7 +32,7 @@ def get_player_list(alliance_info, sort_by='', stp_list={}):
 			player_list = sorted(player_list, key=lambda x: -stp_list[x])
 
 	if sort_by == 'tcp':
-		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x]['tcp'])
+		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
 
 	return player_list
 
@@ -87,7 +87,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 		other_chars = [char for char in other_chars if max([find_value_or_diff(alliance_info, player, char, 'tier')[0] for player in player_list]) >= min_tier]
 
 	# Get extracted_traits from alliance_info
-	extracted_traits = alliance_info['extracted_traits']
+	extracted_traits = alliance_info.get('extracted_traits',{})
 
 	# Only filter other_chars.
 	traits = section.get('traits',[])
@@ -343,13 +343,20 @@ def update_history(alliance_info):
 
 
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
-def is_stale(member_info):
+def is_stale(alliance_info, member_name):
+	
+	# Load thresholds, if they're explicitly defined.
+	max_growth = alliance_info.get('settings',{}).get('percent_growth', 1.5)
+	max_age    = alliance_info.get('settings',{}).get('older_than', 7)
+
+	# Get a little closer to our work. 
+	member_info = alliance_info['members'][member_name]
 	
 	# Using the inverse to avoid a divide by zero if roster unavailable.
-	percentage_growth = member_info.get('tot_power',0)/member_info['tcp']
+	percent_growth = member_info.get('tot_power',0)/member_info.get('tcp',1)
 
 	# Time since last roster sync 
 	last_update = 'last_update' in member_info and (datetime.datetime.now() - member_info['last_update']).total_seconds()
 	
 	# If either is true, flag it as stale.
-	return percentage_growth < 0.985 or last_update > 60*60*24*7
+	return percent_growth < (1-(max_growth/100)) or last_update > 60*60*24*max_age

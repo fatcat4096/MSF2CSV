@@ -199,7 +199,7 @@ def get_hist_tab(alliance_info, table_format, lanes=[], tabbed=False):
 	hist_tab = ''
 
 	# If this format qualifies for History and it's being requested, generate the tab label.
-	if len(alliance_info['hist'])>1 and table_format.get('inc_hist'):
+	if 'hist' in alliance_info and len(alliance_info['hist'])>1 and table_format.get('inc_hist'):
 		if (tabbed and len(lanes) == 1) or (not tabbed and table_format.get('only_section') or table_format.get('sections_per') == 1):
 			hist_tab = "CHANGES SINCE %s" % min(alliance_info['hist'])
 
@@ -228,7 +228,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 		sort_by  = table.get('sort_by')
 
 	# Use the full Player List if explicit Strike Teams haven't been defined.
-	strike_teams = alliance_info['strike_teams'].get(table.get('strike_teams'))
+	strike_teams = alliance_info.get('strike_teams',{}).get(table.get('strike_teams'))
 	if not strike_teams or only_team == 0:
 		strike_teams = [get_player_list(alliance_info, sort_by)]
 
@@ -717,16 +717,20 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 	stats = get_roster_stats(alliance_info, stat_type, hist_tab)
 	
 	# Get the list of Alliance Members 
-	member_list = list(alliance_info['hist'][max(alliance_info['hist'])])
+	member_list = []
+	hist_info = alliance_info.get('hist')
 	
+	if hist_info:
+		member_list = list(hist_info[max(hist_info)])
+		
 	# Get a sorted list of members to use for this table output.
-	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
+	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 	alliance_order = [member for member in alliance_order if member in member_list]
 
 	# Iterate through each row for members in the table.
 	for member in alliance_order:
 			member_info = alliance_info['members'][member]
-			member_stats = stats[member]
+			member_stats = stats.get(member,{})
 			stats_range  = stats['range']
 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
@@ -738,7 +742,7 @@ def generate_roster_analysis(alliance_info, using_tabs=True, stat_type='actual',
 			html_file += ' <td class="%s url_btn"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (['name_blue','name_gray'][stale_data], member_url, member)
 			
 			for key in ['tcp','stp','tcc']:
-				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range[key], member_stats[key], stale_data), f'{member_stats[key]:,}')
+				html_file += ' <td style="background:%s;">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,0), stale_data), f'{member_stats[key]:,}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
@@ -803,8 +807,14 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 	
 	stats = {}
 	
-	current_rosters = copy.deepcopy(alliance_info['hist'][max(alliance_info['hist'])])
-	oldest_rosters  = copy.deepcopy(alliance_info['hist'][min(alliance_info['hist'])])
+	hist_info = alliance_info.get('hist',{})
+	
+	current_rosters = {}
+	oldest_rosters  = {}
+	
+	if hist_info:
+		current_rosters = copy.deepcopy(hist_info[max(hist_info)])
+		oldest_rosters  = copy.deepcopy(hist_info[min(hist_info)])
 	
 	# Get the list of Alliance Members 
 	member_list = list(current_rosters)
@@ -830,11 +840,6 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 		
 			# Get a little closer to our work.
 			char_stats = current_rosters[member][char]
-
-			# If hist_tab, we want the difference between current_rosters and the oldest_rosters.
-			#if hist_tab:
-				#char_stats = oldest_rosters[member].get(char, null_stats)
-				#diff_stats = oldest_rosters[member].get(char, null_stats)
 
 			# Use for Total / Average # columns -- do this BEFORE normalizing data.
 			for key in ['yel','red','dmd','tier','lvl','iso']:
@@ -935,13 +940,13 @@ def get_roster_stats(alliance_info, stat_type, hist_tab=''):
 def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 
 	# Start by sorting members by TCP.
-	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x]['tcp'], reverse=True)
+	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 	
 	# Build up the list of Alliance Members in the order we will present them.
-	member_list =  [alliance_info['leader']] + alliance_info['captains']
+	member_list =  [alliance_info['leader']] + alliance_info.get('captains',[])
 	member_list += [member for member in alliance_order if member not in member_list]
 
-	tot_power = sum([alliance_info['members'][member]['tcp'] for member in alliance_info['members']])
+	tot_power = sum([alliance_info['members'][member].get('tcp',0) for member in alliance_info['members']])
 	avg_power = int(tot_power/len(alliance_info['members']))
 
 	# See if name includes a color tag.
@@ -960,7 +965,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	html_file += '<tr style="font-size:18px;color:white;">\n'
 	html_file += ' <td colspan="2" rowspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>'
 	html_file += ' <td colspan="10" class="alliance_name"%s>%s</td>' % (alt_color, alliance_info['name'].upper())
-	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></td>\n' % (alliance_info['image'])
+	html_file += ' <td colspan="2"  rowspan="2"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></td>\n' % (alliance_info.get('image','EMBLEM_6_dd63d11b'))
 	html_file += '</tr>\n'
 
 	html_file += '<tr style="font-size:18px;color:white;">\n'
@@ -968,7 +973,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	html_file += ' <td colspan="2">Total Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{tot_power:,}')
 	html_file += ' <td colspan="2">Average Power<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (f'{avg_power:,}')
 	html_file += ' <td colspan="2">Level<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('stark_lvl','80'))
-	html_file += ' <td colspan="2">Trophies<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('trophies','XXX'))
+	html_file += ' <td colspan="2">Trophies<br><span style="font-size:24px;"><b>%s</b></span></td>\n' % (alliance_info.get('trophies','n/a'))
 	html_file += '</tr>\n'
 
 	# Simplify inclusion of the sort function code
@@ -1013,14 +1018,14 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 
 		if member in alliance_info['leader']:
 			member_role = '<a> Leader </a>'
-		elif member in alliance_info['captains']:
+		elif member in alliance_info.get('captains',[]):
 			member_role = 'Captain'
 			member_color = ['#00BFFF','#A9A9A9'][stale_data]		
 		else:
 			member_role = 'Member'
 
 		html_file += ' <tr style="background:%s;">\n' % (member_color)
-		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png"/></td>\n' % (member_stats['image'])
+		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png"/></td>\n' % (member_stats.get('image','ShieldDmg_Defense_3dea00f7'))
 
 		member_url = alliance_info['members'][member].get('url','')
 		if member_url:
@@ -1031,7 +1036,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 			member_discord = f"<br>@{member_discord.get('name','')}"
 
 		html_file += '  <td class="bold url_btn"><a style="text-decoration:none; color:black;"%s>%s%s</a></td>\n' % (member_url, member, member_discord)
-		html_file += '  <td>%i</td>\n' % (member_stats['level'])
+		html_file += '  <td>%s</td>\n' % (member_stats.get('level','n/a'))
 		html_file += '  <td>%s</td>\n' % (member_role)
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   stale_data), f'{member_stats.get("tcp",0):,}')
 		html_file += '  <td style="background:%s;">%s</td>\n' % (get_value_color(stp_range,   member_stats.get('stp',0),   stale_data), f'{member_stats.get("stp",0):,}')
