@@ -20,8 +20,21 @@ import inspect
 
 # Create a new strike_teams.py if an outdated one exists.
 def generate_strike_teams(alliance_info):
-	
-	strike_teams = alliance_info['strike_teams']
+
+	strike_teams = alliance_info.setdefault('strike_teams',{})
+
+	for raid_type in ('incur','incur2','gamma'):
+
+		if not strike_teams.get(raid_type):
+
+			# If not there, just put the member list in generic groups of 8.
+			print (f"Valid {raid_type} strike_team definition not found. Creating default strike_team from member list.")
+			
+			# Get member_list and sort them.
+			members = sorted(alliance_info['members'],key=str.lower)
+
+			# Break it up into chunks and add the appropriate dividers.
+			strike_teams[raid_type] = add_strike_team_dividers(members, raid_type)
 	
 	# Create header
 	new_file  = '''# This file contains the Strike Teams used for HTML file output.

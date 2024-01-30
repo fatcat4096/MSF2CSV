@@ -261,12 +261,24 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	if 'scripts' not in alliance_info:
 		alliance_info['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
 
-	# Cleanup for a weird naming bug. 
-	# If member name is unparsable on Alliance Info screen but visible on Roster page, remnant gets left behind.
-	if member != player_name and alliance_info['members'].get(member):
-		for key in alliance_info['members'][member]:
-			if key not in alliance_info['members'][player_name]:
-				alliance_info['members'][player_name][key] = alliance_info['members'][member][key]
-		del alliance_info['members'][member]
+	# If a new member name has been found during Roster parse, 
+	if member != player_name:
+
+		# Copy any existing information from the old 'members' entry to the new one.
+		if alliance_info['members'].get(member):
+			for key in alliance_info['members'][member]:
+				if key not in alliance_info['members'][player_name]:
+					alliance_info['members'][player_name][key] = alliance_info['members'][member][key]
+
+			# Finish by deleting the outdated entry.
+			del alliance_info['members'][member]
+
+		# Also update any matching definitions in 'Leaders' and 'Captains'
+		if alliance_info['leader'] == member:
+			alliance_info['leader'] = player_name
+		
+		if member in alliance_info.get('captains',[]):
+			member_idx = alliance_info['captains'].index(member)
+			alliance_info['captains'][member_idx] = player_name
 
 	return player_name

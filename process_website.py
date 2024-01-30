@@ -237,13 +237,13 @@ def process_roster(driver, alliance_info, parse_cache, member=''):
 		elif timer == 10:
 			break
 
+	# If page loaded, pass contents to scraping routines for stat extraction.
+	member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
+	
 	# If page is less than a megabyte, there's likely an issue.
 	if len(driver.page_source)<1000000:
 		print ("Invalid roster - please examine",member)
 
-	# If page loaded, pass contents to scraping routines for stat extraction.
-	member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
-	
 	# Cache the URL just in case we can use this later
 	alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
 		
@@ -350,7 +350,7 @@ def get_valid_strike_teams(alliance_info):
 	# Update strike team definitions to include 'gamma' and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
 
-	for raid_type in ['incur','incur2','gamma']:
+	for raid_type in ('incur','incur2','gamma'):
 
 		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
@@ -369,21 +369,6 @@ def get_valid_strike_teams(alliance_info):
 			# Fix any issues. We will just update this info in cached_data.
 			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)
 
-		# No valid strike_team definitions found. Fall back to alphabetical list of members. 
-		else:
-			# If not there, just put the member list in generic groups of 8.
-			print (f"Valid {raid_type} strike_team defintion not found. Creating default strike_team from member list.")
-			
-			# Get member_list and sort them.
-			members = sorted(alliance_info['members'],key=str.lower)
-
-			# Break it up into chunks and add the appropriate dividers.
-			alliance_info.setdefault('strike_teams',{})[raid_type] = add_strike_team_dividers(members, raid_type)
-
-			# And if we didn't have a locally sourced strike_teams.py, go ahead and write this file to disk.
-			if not strike_teams_defined:
-				updated = True
-	
 	return updated
 
 

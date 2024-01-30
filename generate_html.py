@@ -216,19 +216,22 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 
 	html_file = ''
 
-	# Determine if we are requesting a subset of the strike_team,
-	# or for strike_teams to be ignored (only_team == 0) 
-	only_team = table_format.get('only_team')
-	if only_team == 0 and not table_format.get('sort_by'):
-		table_format['sort_by'] = 'stp'
+	# Grab specified strike teams if available. 
+	strike_teams = alliance_info.get('strike_teams',{}).get(table.get('strike_teams'))
 	
+	# If no strike team definitions are specified / found or 
+	# If only_team == 0 (ignore strike_teams) **AND**
+	# no sort_by has been specified, force sort_by to 'stp'
+	only_team = table_format.get('only_team')
+	if (not strike_teams or only_team == 0) and not table_format.get('sort_by'):
+		table_format['sort_by'] = 'stp'
+
 	# Sort player list if requested.
 	sort_by  = table_format.get('sort_by')
 	if not sort_by:
 		sort_by  = table.get('sort_by')
 
-	# Use the full Player List if explicit Strike Teams haven't been defined.
-	strike_teams = alliance_info.get('strike_teams',{}).get(table.get('strike_teams'))
+	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
 	if not strike_teams or only_team == 0:
 		strike_teams = [get_player_list(alliance_info, sort_by)]
 
