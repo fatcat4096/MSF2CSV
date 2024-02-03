@@ -274,11 +274,15 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 			del alliance_info['members'][member]
 
 		# Also update any matching definitions in 'Leaders' and 'Captains'
-		if alliance_info['leader'] == member:
+		if alliance_info.get('leader') == member:
 			alliance_info['leader'] = player_name
 		
 		if member in alliance_info.get('captains',[]):
 			member_idx = alliance_info['captains'].index(member)
 			alliance_info['captains'][member_idx] = player_name
+
+		# Include Alliance Name in the replacement for solo player report
+		if alliance_info.get('name') == member:
+			alliance_info['name'] = player_name
 
 	return player_name

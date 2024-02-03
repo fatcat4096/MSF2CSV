@@ -37,7 +37,7 @@
 
 
 # Active tables are the files which will be generated.
-tables = {'active': ['incur', 'old_incur', 'gamma', 'dd6', 'teams', 'all_chars']}
+tables = {}
 
 # Meta Heroes for use in Incursion 2 Raid
 tables['incur'] = { 'name': 'Incursion 2 Raid',
@@ -50,7 +50,8 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
 							{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot']},
-							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
+							{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Super Skrull']},
+							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent'], 'label':'Bio<br>(Rebirth)'},
 							{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 							] ]
 					}
@@ -111,8 +112,8 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
 							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
-							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary Non-Horseman'},
-							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary + Apoc'},
+							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
+							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
 							] ]
 					}
 
@@ -130,13 +131,13 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Eternal','Undying']},
 							{'traits': ['Gamma']},
 							{'traits': ['HeroesForHire']},
-							{'traits': ['Hive Mind'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Super Skrull']},
 							{'traits': ['Infestation']},
 							{'traits': ['InfinityWatch']},
 							{'traits': ['Knowhere']},
 							{'traits': ['MastersOfEvil']},
 							{'traits': ['NewAvenger']},
 							{'traits': ['NewWarrior']},
+							{'traits': ['Rebirth'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
 							{'traits': ['SecretDefender']},
 							{'traits': ['SuperiorSix']},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},

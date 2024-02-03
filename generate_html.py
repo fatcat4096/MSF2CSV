@@ -216,8 +216,13 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 
 	html_file = ''
 
+	# Which strike_teams should we use?
+	strike_teams = table_format.get('strike_teams')
+	if strike_teams == None:
+		strike_teams = table.get('strike_teams')
+
 	# Grab specified strike teams if available. 
-	strike_teams = alliance_info.get('strike_teams',{}).get(table.get('strike_teams'))
+	strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
 	
 	# If no strike team definitions are specified / found or 
 	# If only_team == 0 (ignore strike_teams) **AND**
@@ -946,7 +951,11 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 	
 	# Build up the list of Alliance Members in the order we will present them.
-	member_list =  [alliance_info['leader']] + alliance_info.get('captains',[])
+	member_list =  []
+	if alliance_info.get('leader'):
+		member_list = [alliance_info.get('leader')]
+	
+	member_list += alliance_info.get('captains',[])
 	member_list += [member for member in alliance_order if member not in member_list]
 
 	tot_power = sum([alliance_info['members'][member].get('tcp',0) for member in alliance_info['members']])
@@ -1019,7 +1028,7 @@ def generate_alliance_tab(alliance_info, using_tabs=True, html_file=''):
 		
 		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
 
-		if member in alliance_info['leader']:
+		if member in alliance_info.get('leader',[]):
 			member_role = '<a> Leader </a>'
 		elif member in alliance_info.get('captains',[]):
 			member_role = 'Captain'

@@ -16,7 +16,7 @@ from generate_csv    import generate_csv  # Routines to generate the original cs
 
 
 # If no name specified, default to the alliance for the Login player
-def main(alliance_name='', csv=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}, external_table={}):
+def main(alliance_name='', csv=False, prompt=False, headless=False, export_block=False, import_block='', force='', table_format={}, external_table={}, roster_url='', external_driver=None):
 
 	# Parse alliance info from import_block and update rosters from website.
 	if import_block:
@@ -24,9 +24,51 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 		## SHOULD ADD SOME SORT OF VERIFICATION/SANITY CHECK RE FORMAT OF THE BLOCK TO IMPORT TO PREVENT BAD DATA INJECTION
 		alliance_info = decode_block(import_block)
 
+
+	##
+	## Just a junker placeholder until I come back and do it right. 
+	##
+	
+	if roster_url:
+		roster_url = roster_url.split('/')[-2]
+		alliance_info = find_cached_data(roster_url)
+		if not alliance_info:
+			driver = external_driver or login()
+
+			# Start with the Alliance that's asking.
+			alliance_info = find_cached_data('SIGMA Infamously Strange')
+			alliance_info['members'][roster_url] = {'url': roster_url}
+			
+			# Get original list of members
+			original_members = list(alliance_info['members'])
+			
+			# Grab roster info for this Army of One.
+			rosters_output = process_rosters(driver, alliance_info, only_new=True) 
+			
+			# Determine who was added
+			new_member = [member for member in alliance_info.get('members',{}) if member not in original_members][0]
+			alliance_info['name'] = new_member
+
+			new_strike = [[new_member]]
+			
+			# Update the Strike Teams to only include this member.
+			alliance_info['strike_teams'] = {'custom':new_strike}
+
+			# Write cached data
+			write_cached_data(alliance_info, file_name=roster_url)
+			
+		# Create required structures
+		pathname = get_local_path()
+		cached_tabs = {}
+		# Request output for this Member
+		for output in tables:
+			table_format = {'strike_teams':'custom', 'span':False, 'output_format': 'image', 'inc_avail':True, 'inc_pos':True}
+			write_file(f'{pathname}{alliance_info["name"]}-{output}.html', generate_tabbed_html(alliance_info, tables.get(output), table_format, cached_tabs))
+		return
+	
 	# Load roster info directly from cached data or the website.
 	else:
-		alliance_info = get_alliance_info(alliance_name, prompt, force, headless)
+		alliance_info = get_alliance_info(alliance_name, prompt, force, headless, external_driver)
 
 	# If we're done, the captured output is being returned as 'alliance_info'
 	if force == 'rosters_only' or import_block:
@@ -39,7 +81,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 
 	output        = table_format.get('output')
 	output_format = table_format.get('output_format','tabbed')
-	valid_output  = tables['active']+['roster_analysis','alliance_info']
+	valid_output  = list(tables)+['roster_analysis','alliance_info']
 
 	# Generate Export Block?
 	if export_block:
@@ -57,7 +99,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 		if external_table or output in valid_output:
 		
 			# If requesting tabbed output, this is our destination.
-			if output_format == 'tabbed' and output in tables['active']:
+			if output_format == 'tabbed' and output in tables:
 				html_files = {output+'.html': generate_tabbed_html(alliance_info, tables.get(output), table_format)}
 			# Otherwise, we need to generate the single tabbed entry.
 			else:
@@ -75,10 +117,10 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 		else:
 			print("--output FORMAT must be one of the following:\n"+str(valid_output))
 
-	# Default: If not output specified, generate tabbed html output for every 'active' format.
+	# Default: If not output specified, generate tabbed html output for every defined format.
 	else:
 		cached_tabs = {}
-		for output in tables['active']:
+		for output in tables:
 			write_file(pathname+output+'.html', generate_tabbed_html(alliance_info, tables.get(output), table_format, cached_tabs))
 
 	# If running Frozen executable, stop here before dismissing dialog box. 
@@ -140,7 +182,7 @@ if __name__ == '__main__':
 	parser.add_argument('--only_image', action='store_true',
 						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')					
 	parser.add_argument('--output', type=str, metavar='FORMAT',
-						help='only output ONE format from the list of active formats', default='')
+						help='only output ONE format from the list of formats', default='')
 	parser.add_argument('--sections_per', type=int, metavar='N',
 						help='include N sections per file.')
 	parser.add_argument('--sort_by', type=str, metavar='SORT', choices=['alpha','stp','tcp'],
@@ -149,6 +191,8 @@ if __name__ == '__main__':
 						help="sort chars by 'alpha' (default), 'power', or 'avail'.")
 	parser.add_argument('--span', action='store_true', default=None,
 						help='use spanning format for output, forces max_others to 0')
+	parser.add_argument('--url', type=str, default=None,
+						help='roster URL for solo report output')						
 	args = parser.parse_args()
 
 	# There can be only one.
@@ -194,5 +238,5 @@ if __name__ == '__main__':
 					'sort_char_by'  : args.sort_char_by,
 					'span'          : args.span}
 	
-	main(args.file_or_alliance, args.csv, args.prompt, headless, args.export_block, args.import_block, force, table_format) # Just run myself
+	main(args.file_or_alliance, args.csv, args.prompt, headless, args.export_block, args.import_block, force, table_format, roster_url=args.url) # Just run myself
 

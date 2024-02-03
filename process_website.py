@@ -25,7 +25,7 @@ from alliance_info        import update_history, is_stale
 
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
-def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
+def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, external_driver=None):
 
 	cached_alliance_info = find_cached_data(alliance_name)
 
@@ -40,8 +40,8 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 			update_strike_teams(cached_alliance_info)
 			return cached_alliance_info
 
-	# Login to the website. 
-	driver = login(prompt, headless)
+	# Login to the website.
+	driver = external_driver or login(prompt, headless)
 	
 	# We are in, wait until loaded before starting
 	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
@@ -106,7 +106,8 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 	rosters_output = process_rosters(driver, alliance_info, working_from_website, force)
 
 	# Close the Selenium session.
-	driver.close()
+	if not external_driver:
+		driver.close()
 
 	# And make note of when we end.
 	time_now = datetime.datetime.now()
@@ -143,7 +144,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False):
 
 
 # Process rosters for every member in alliance_info.
-def process_rosters(driver, alliance_info, working_from_website, force):
+def process_rosters(driver, alliance_info, working_from_website=False, force='', only_new=False):
 	# Grab the Alliance Info url for future reference.
 	alliance_url   = driver.current_url
 
@@ -163,6 +164,10 @@ def process_rosters(driver, alliance_info, working_from_website, force):
 
 	# Let's iterate through the member names in alliance_info.
 	for member in list(members):
+
+		# If only_new and we have more than just a URL defined, skip.
+		if only_new and 'processed_chars' in members[member]:
+			continue
 
 		# Use a cached URL if available.
 		if 'url' in members[member]:
@@ -227,14 +232,14 @@ def process_roster(driver, alliance_info, parse_cache, member=''):
 	# Page loads in sections, will be > 1MB after roster information loads.
 	while len(driver.page_source)<1000000:
 		# Still loading
-		time.sleep(1)
-		timer += 1
+		time.sleep(0.25)
+		timer += 0.25
 		
 		# Call refresh if load failed to complete after 5 seconds.
-		if timer == 5:
+		if timer == 4.0:
 			driver.refresh()
-		# Just give up after 10 seconds.
-		elif timer == 10:
+		# Just give up after 8 seconds.
+		elif timer > 8.0:
 			break
 
 	# If page loaded, pass contents to scraping routines for stat extraction.
