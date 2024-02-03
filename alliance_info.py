@@ -68,23 +68,11 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	# Other is everything left over. 
 	other_chars = [char for char in char_list if not char in meta_chars]
 
-	# Load up arguments from table, with defaults if necessary.
-	min_iso  = table_format.get('min_iso')
-	if min_iso is None:
-		min_iso = table.get('min_iso',0)
-	min_tier  = table_format.get('min_tier')
-	if min_tier is None:
-		min_tier = table.get('min_tier',0)
- 
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info)
 
-	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
-	if min_iso:
-		other_chars = [char for char in other_chars if max([find_value_or_diff(alliance_info, player, char, 'iso')[0] for player in player_list]) >= min_iso]
-
-	if min_tier:
-		other_chars = [char for char in other_chars if max([find_value_or_diff(alliance_info, player, char, 'tier')[0] for player in player_list]) >= min_tier]
+	# Filter out anyone less than the min_iso / min_tier
+	other_chars = remove_min_iso_tier(alliance_info, table_format, table, player_list, other_chars)
 
 	# Get extracted_traits from alliance_info
 	extracted_traits = alliance_info.get('extracted_traits',{})
@@ -93,7 +81,8 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	traits = section.get('traits',[])
 	if type(traits) is str:
 		traits = [traits]
-		
+
+	# Options are 'any' and 'all'. Not currently being used.
 	traits_req = table.get('traits_req','any')		# Default is 'any'
 
 	excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
@@ -134,6 +123,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	# Calculate info for an under_min section, hide it in table for later use. 
 	table['under_min'] = {}
 
+	# Load up arguments from table, with defaults if necessary.
+	min_iso  = get_table_value(table_format,table,'min_iso',0)
+	min_tier = get_table_value(table_format,table,'min_tier',0)
+
 	# Before filtering further, while we have visibility for the entire section...
 	for player_name in player_list:
 		for char_name in meta_chars+other_chars:
@@ -148,18 +141,14 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 		max_others = 0
 	# If not overridden, pull value from table_format or table.
 	else:
-		max_others  = table_format.get('max_others')
-	if max_others is None:
-		max_others = table.get('max_others', len(other_chars))
+		max_others  = get_table_value(table_format, table, 'max_others', len(other_chars))
 
 	# No means no.
 	if meta_chars and max_others == 0:
 		other_chars = []
 
 	# Default sort is still 'alpha'.
-	sort_char_by = table_format.get('sort_char_by')
-	if sort_char_by is None:
-		sort_char_by = table.get('sort_char_by','alpha')
+	sort_char_by = get_table_value(table_format, table,'sort_char_by','alpha')
 
 	# This section sorts other_chars by power or availability, not by name.
 	# If max_others, this order is also used to select which we keep. 
@@ -193,6 +182,22 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 		other_chars, meta_chars = meta_chars, other_chars
 
 	return meta_chars, other_chars
+
+
+def remove_min_iso_tier(alliance_info, table_format, table, player_list, char_list):
+
+	# Load up arguments from table, with defaults if necessary.
+	min_iso  = get_table_value(table_format,table,'min_iso',0)
+	min_tier = get_table_value(table_format,table,'min_tier',0)
+ 
+	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
+	if min_iso:
+		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'iso')[0] for player in player_list]) >= min_iso]
+
+	if min_tier:
+		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'tier')[0] for player in player_list]) >= min_tier]
+
+	return char_list
 
 
 # Find this member's oldest entry in our historical entries.
@@ -360,3 +365,18 @@ def is_stale(alliance_info, member_name):
 	
 	# If either is true, flag it as stale.
 	return percent_growth < (1-(max_growth/100)) or last_update > 60*60*24*max_age
+
+
+# All settings, we build up the same way
+def get_table_value(table_format, table, key, default=None):
+
+	# Check for a custom value in table_format
+	value = table_format.get(key)
+
+	# If none provided, look for a value in table definition
+	if value is None:
+	
+		# If not specified, use a default value.
+		value = table.get(key,default)
+	
+	return value

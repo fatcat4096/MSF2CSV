@@ -45,7 +45,7 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 					'max_others': 10,
 					'strike_teams': 'incur2',
 					'sort_char_by': 'avail',
-					'keys': ['power','lvl','tier','iso'],
+					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
 							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
@@ -153,8 +153,8 @@ tables['teams'] = { 'name': 'Teams',
 # Meta Heroes for use in All Characters
 tables['all_chars'] = { 'name': 'All Characters',
 					'max_others': 0,
-					'keys': ['power','tier','iso'],
 					'sort_by': 'tcp',
+					'inc_keys': ['power','tier','iso'],
 					'inc_class': True,
 					}
 

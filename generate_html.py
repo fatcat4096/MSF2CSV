@@ -217,9 +217,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 	html_file = ''
 
 	# Which strike_teams should we use?
-	strike_teams = table_format.get('strike_teams')
-	if strike_teams == None:
-		strike_teams = table.get('strike_teams')
+	strike_teams = get_table_value(table_format, table, 'strike_teams')
 
 	# Grab specified strike teams if available. 
 	strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
@@ -232,9 +230,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 		table_format['sort_by'] = 'stp'
 
 	# Sort player list if requested.
-	sort_by  = table_format.get('sort_by')
-	if not sort_by:
-		sort_by  = table.get('sort_by')
+	sort_by = get_table_value(table_format, table, 'sort_by')
 
 	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
 	if not strike_teams or only_team == 0:
@@ -288,9 +284,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 			# Generate stp_list dict for the Other Table calls.
 			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_tab)
 
-			span_data = table_format.get('span')
-			if span_data is None:
-				span_data = table.get('span',False)
+			span_data = get_table_value(table_format, table, 'span', False)
 
 			# Special code for Spanning format here. It's a very narrow window of applicability.
 			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not only_team:
@@ -315,6 +309,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 
 				# Generate 3 tables, spanning the page.
 				for strike_team in strike_temp:
+
 					# Pass in only a single chunk of 8 players three separate times.
 					html_file += generate_table(alliance_info, table, table_format, other_chars, strike_team, table_lbl, stp_list, hist_tab)
 					html_file += '  </td>\n  <td><br></td>\n  <td>\n'
@@ -341,32 +336,28 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_tab = '', usi
 def generate_table(alliance_info, table, table_format, char_list, strike_teams, table_lbl, stp_list, hist_tab):
 
 	# Pick a color scheme.
-	if table_lbl.find('OTHERS') == -1:
+	if 'OTHERS' not in table_lbl:
 		title_cell    = 'title_blue'
 		table_header  = 'header_blue'
-		char_cell     = 'char_blue'
 		name_cell     = 'name_blue'
 		name_cell_dim = 'name_blue_dim'
 		name_alt      = 'name_alt'
 		name_alt_dim  = 'name_alt_dim'
-		team_pwr_lbl  = 'Team<br>Power'
+		team_pwr_lbl  = 'STP'
 		button_hover  = 'blu_btn'
 		
 	else:
 		title_cell    = 'title_gray'
 		table_header  = 'header_gray'
-		char_cell     = 'char_gray'
 		name_cell     = 'name_gray'
 		name_cell_dim = 'name_gray_dim'
 		name_alt      = 'name_galt'
 		name_alt_dim  = 'name_galt_dim'
-		team_pwr_lbl  = 'STP<br>(Top 5)'
+		team_pwr_lbl  = 'STP'
 		button_hover  = 'blk_btn'
 
 	# Sort player list if requested.
-	sort_by  = table_format.get('sort_by')
-	if not sort_by:
-		sort_by  = table.get('sort_by', '')
+	sort_by = get_table_value(table_format, table, 'sort_by', '')
 
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info, sort_by, stp_list)
@@ -378,24 +369,22 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	html_file = '   <table id="%s">\n' % (table_id)
 
 	# Get keys from table_format/table, with defaults if necessary.
-	keys = table_format.get('inc_keys')
-	if keys is None:
-		keys = table.get('keys', ['power','tier','iso'])
+	keys = get_table_value(table_format, table, 'inc_keys', ['power','tier','iso'])
 
 	# Include Available and Include ISO Class flags
 	# Get value from table_format/table, with defaults if necessary.
 
-	inc_avail  = table_format.get('inc_avail') and 'OTHERS' not in table_lbl
-	if inc_avail is None:
-		inc_avail = table.get('inc_avail', False) and 'OTHERS' not in table_lbl
-
-	inc_class  = table_format.get('inc_class')
-	if inc_class is None:
-		inc_class = table.get('inc_class',False)
+	inc_avail = get_table_value(table_format, table, 'inc_avail', False) and 'OTHERS' not in table_lbl
+	inc_pos   = get_table_value(table_format, table, 'inc_pos',   False) and 'OTHERS' not in table_lbl
+	inc_class = get_table_value(table_format, table, 'inc_class', False)
 
 	# WRITE THE IMAGES ROW. #############################################
 	html_file += '    <tr class="%s">\n' % (title_cell) 
 	html_file += '     <td>%s</td>\n' % (table_lbl)
+
+	# Include a column for "# Pos" info if requested.
+	if inc_pos:
+		html_file += '     <td></td>\n'
 
 	# Include a column for "# Avail" info if requested.
 	if inc_avail:
@@ -404,39 +393,22 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	# Number of columns under each Character entry.
 	num_cols = len(keys) + inc_class
 
+	# See if we need to pare the included characters even further.
+	using_players = [player for player in sum(strike_teams, []) if player in player_list]
+	using_chars = remove_min_iso_tier(alliance_info, table_format, table, using_players, char_list[:])			# DON'T DO THIS IF 'META' IN TABLE_LBL
+
+	# If there are no characters in this table, don't generate a table.
+	if not using_chars:
+		return ''
+
 	# Include Images for each of the Characters.
-	for char in char_list:
-		html_file += '     <td class="image" colspan="%i"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt="" width="100"></td>\n' % (num_cols, alliance_info['portraits'][char])
+	for char in using_chars:
+		html_file += '     <td class="image" colspan="%i"><div class="container"><img src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt="" width="100"><div class="centered">%s</div></div></td>\n' % (num_cols, alliance_info['portraits'][char], translate_name(char))
 
 	# Include a Team Power column.
 	html_file += '     <td></td>\n'
 	html_file += '    </tr>\n'
 	# DONE WITH THE IMAGES ROW. #########################################
-
-	# WRITE THE CHARACTER NAMES ROW. ####################################
-	html_file += '    <tr class="%s">\n' % (char_cell)
-	
-	if num_cols>1 and len(strike_teams)>1:
-		html_file += '     <th>Alliance<br>Member</th>\n'
-		
-		# Include a column for "# Avail" info if requested.
-		if inc_avail:
-			html_file += '     <td></td>\n'
-	else:
-		html_file += '     <td></td>\n'
-
-		# Include a header if "# Avail" info requested.
-		if inc_avail:
-			html_file += '     <td></td>\n'
-
-	# Include Names of the included characters.
-	for char in char_list:
-		html_file += '     <th colspan="%i" width="100">%s</th>\n' % (num_cols, translate_name(char))
-
-	# Include the Team Power column.
-	html_file += '     <th></th>\n' 
-	html_file += '    </tr>\n'
-	# DONE WITH THE CHARACTER NAMES ROW. ################################
 
 	# Initialize this count. Will add to it with each strike_team section.
 	row_idx = 3
@@ -495,12 +467,17 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
 			stale_data = is_stale(alliance_info, player_name)
 
+			# Include "# Pos" info if requested.
+			if inc_pos:
+				pos_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
+				st_html += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, stale_data), pos_num)
+
 			# Include "# Avail" info if requested.
 			if inc_avail:
 				st_html += '     <td class="bold" style="background:%s;">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], stale_data), num_avail)
 
 			# Write the stat values for each character.
-			for char_name in char_list:
+			for char_name in using_chars:
 
 				# Load up arguments from table, with defaults if necessary.
 				under_min = table['under_min'][player_name][char_name]
@@ -568,16 +545,22 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 			if len(strike_teams)>1:
 				html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>\n'
 			else:
-				html_file += f'     <td class="{button_hover}" {sort_func % 0}>Alliance<br>Member</td>\n'
+				html_file += f'     <td class="{button_hover}" {sort_func % 0}>Member</td>\n'
+
+			col_idx = 1
+
+			# Include header if "# Pos" info requested.
+			if inc_pos:
+				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>&nbsp;Rank&nbsp;</td>\n'
+				col_idx += 1
 
 			# Include header if "# Avail" info requested.
 			if inc_avail:
-				html_file += f'     <td class="{button_hover}" {sort_func % 1}>Avail<br>Char</td>\n'
-
-			col_idx = 1 + inc_avail
+				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>&nbsp;Avail&nbsp;</td>\n'
+				col_idx += 1
 
 			# Insert stat headings for each included Character.
-			for char in char_list:
+			for char in using_chars:
 				for key in keys:
 					html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>{key.title()}</td>\n'
 					col_idx += 1

@@ -30,7 +30,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
 }
 .header_blue {
   font-weight : 700;
-  background  : MidnightBlue;
+  background  : #336FA0;
   color       : white;
   white-space : nowrap;
 }
@@ -53,6 +53,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   background  : DarkRed;
   color       : white;
   min-width   : 60px;
+  height      : 30px;
 }
 .red_btn:hover {
   background  : Red;
@@ -70,22 +71,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   background  : Black;
   color       : white;
   white-space : nowrap;
-}
-.char_blue {
-  height  : 40px;
-  font-weight : 700;
-  background  : SteelBlue;
-  text-shadow : 1px 1px 2px white,
-                0 0 0.8em white, 
-                0 0 0.2em white;
-}
-.char_gray {
-  height  : 40px;
-  font-weight : 700;
-  background  : Gray;
-  text-shadow : 1px 1px 2px white,
-                0 0 0.8em white, 
-                0 0 0.2em white;
 }
 .blue {
   font-weight : 700;
@@ -263,7 +248,29 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
 .lvl {
   min-width   : 42px;
 }
-
+.container {
+  position: relative;
+  text-align: center;
+  color: white;
+  width: 100px;
+}
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2px;
+  width : 100%;
+  transform: translate(0%, -1000%);  
+  color: black;
+  font-size   : 16px;
+  font-weight : 700;
+  text-shadow : 1px 1px 2px white,
+                -1px 1px 2px white,
+                1px -1px 2px white,
+                -1px -1px 2px white,
+                0 0 0.8em white, 
+                0 0 0.2em white;  
+}
 '''
 	# Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
 	for num in range(num_lanes):

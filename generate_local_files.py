@@ -223,7 +223,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# All Characters
-	tables['all_chars'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0, 'inc_class': True, 'keys': ['power','tier','iso'] }
+	tables['all_chars'] = { 'name': 'All Characters', 'sort_by':'tcp', 'max_others':0, 'inc_class': True, 'inc_keys': ['power','tier','iso'] }
 
 	new_file += "tables = {'active': " + repr(tables['active']) + "}\n\n\n"
 
@@ -240,7 +240,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 		new_file += "tables['%s'] = { 'name': '%s',\n" % (raid_type, tables[raid_type]['name'])
 
 		# Generic keys, if specified.
-		for key in ['min_tier', 'min_iso', 'max_others', 'strike_teams', 'keys', 'sort_by', 'sort_char_by', 'span', 'inc_avail', 'inc_class']:
+		for key in ['min_tier', 'min_iso', 'max_others', 'strike_teams', 'sort_by', 'sort_char_by', 'span', 'inc_keys', 'inc_avail', 'inc_class']:
 			if key in tables[raid_type]:
 				new_file += "\t\t\t\t\t'%s': %s,\n" % (key, repr(tables[raid_type][key]))
 
