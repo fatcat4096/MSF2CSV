@@ -44,7 +44,8 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 			
 			# Grab roster info for this Army of One.
 			rosters_output = process_rosters(driver, alliance_info, only_new=True) 
-			
+			update_history(alliance_info)			
+
 			# Determine who was added
 			new_member = [member for member in alliance_info.get('members',{}) if member not in original_members][0]
 			alliance_info['name'] = new_member
@@ -54,7 +55,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 			# Update the Strike Teams to only include this member.
 			alliance_info['strike_teams'] = {'custom':new_strike}
 
-			# Write cached data
+			# Write cached data -- DON'T DO THIS IN THE FINAL VERSION. 
 			write_cached_data(alliance_info, file_name=roster_url)
 			
 		# Create required structures
@@ -62,7 +63,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, export_block
 		cached_tabs = {}
 		# Request output for this Member
 		for output in tables:
-			table_format = {'strike_teams':'custom', 'span':False, 'output_format': 'image', 'inc_avail':True, 'inc_pos':True}
+			table_format = {'strike_teams':'custom', 'span':False, 'inc_pos':True}
 			write_file(f'{pathname}{alliance_info["name"]}-{output}.html', generate_tabbed_html(alliance_info, tables.get(output), table_format, cached_tabs))
 		return
 	

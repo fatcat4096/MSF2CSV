@@ -16,12 +16,14 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
 }
 .alliance_name {
   font-weight : 700;
-  font-size   : 36pt;
+  font-size   : 48pt;
 }
 .title_blue {
   font-weight : 700;
   font-size   : 14pt;
-  background  : #B0E0E6;
+  color : white;
+  background : #202020;
+  /* background  : #B0E0E6; */
 }
 .title_gray {
   font-weight : 700;
@@ -139,7 +141,8 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   font-weight : normal;
 }
 .image {
-  background  : Black;
+  background  : #202020;
+  width       : 100px;
 }
 .hist {
   background  : #282828;
@@ -252,8 +255,13 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   position: relative;
   text-align: center;
   color: white;
-  width: 100px;
+  width: 100%;
 }
+/*.container:hover {
+  transform: scale(1.25);
+  transition: all .3s ease;
+  vertical-align: middle;
+}*/
 .centered {
   display: flex;
   justify-content: center;
@@ -261,15 +269,14 @@ def add_css_header(table_name='', num_lanes=0, hist_tab=''):
   height: 2px;
   width : 100%;
   transform: translate(0%, -1000%);  
-  color: black;
   font-size   : 16px;
   font-weight : 700;
-  text-shadow : 1px 1px 2px white,
-                -1px 1px 2px white,
-                1px -1px 2px white,
-                -1px -1px 2px white,
-                0 0 0.8em white, 
-                0 0 0.2em white;  
+  text-shadow : 2px 2px 2px black,
+                -2px 2px 2px black,
+                2px -2px 2px black,
+                -2px -2px 2px black, 
+                0 0 0.8em black, 
+                0 0 0.2em black;  
 }
 '''
 	# Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
@@ -343,8 +350,8 @@ function sortx(n,table_name,header_lines,rows_to_sort) {
       shouldSwitch = false;
       /* Get the two elements you want to compare,
       one from current row and one from the next: */
-      x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML);
-      y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML);
+      x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "");
+      y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "");
       /* Check if the two rows should switch place,
       based on the direction, asc or desc: */
       if (dir == "asc") {

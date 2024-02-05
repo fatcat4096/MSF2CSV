@@ -18,31 +18,43 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from generate_local_files import *
 
-# Login to the website. Return the Selenium Driver object.
-def login(prompt=False, headless=False, url = 'https://marvelstrikeforce.com/en/alliance/members'):
+def get_driver(headless=False):
 
+	# Build the driver
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')	
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
-	facebook_cred, scopely_cred = get_creds(prompt)
-
-	# If login/password are provided, run this as a headless server.
-	# If no passwords are provided, the user will need to Interactively log on to allow the rest of the process to run.
+	# If headless requested, run this as a headless server.
 	if headless:
 		options.add_argument('--headless=new')
 
-	driver = webdriver.Chrome(options=options)
+	return webdriver.Chrome(options=options)
+
+
+# Login to the website. Return the Selenium Driver object.
+def login(prompt=False, headless=False, external_driver=None, url = 'https://marvelstrikeforce.com/en/alliance/members'):
+
+	# Take care of our lazy clients
+	driver = external_driver or get_driver(headless)
+
+	# Start at the alliance_info page.
 	driver.get(url)
 
-	# Default to Scopely Login, does not require 2FA.
-	if scopely_cred:
-		scopely_login(driver, scopely_cred.username, scopely_cred.password)
+	# If a new driver, still need to login:
+	if not external_driver:
 
-	# If Scopely login not defined, use Facebook login instead.
-	elif facebook_cred:
-		facebook_login(driver, facebook_cred.username, facebook_cred.password)
+		# Start by checking to see if we have / need credentials.
+		facebook_cred, scopely_cred = get_creds(prompt)
+
+		# Default to Scopely Login, does not require 2FA.
+		if scopely_cred:
+			scopely_login(driver, scopely_cred.username, scopely_cred.password)
+
+		# If Scopely login not defined, use Facebook login instead.
+		elif facebook_cred:
+			facebook_login(driver, facebook_cred.username, facebook_cred.password)
 	
 	# Waiting while you login manually, automatically, or approve login via 2FA.
 	try:

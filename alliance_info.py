@@ -8,6 +8,23 @@ Routines used to work with alliance_info, to pull information out or maintain th
 import datetime
 
 
+
+def get_hist_date(alliance_info, table_format):
+	hist_date = None
+
+	# If this alliance_info qualifies for History and it's being requested, return the matching date.
+	if 'hist' in alliance_info and len(alliance_info['hist'])>1 and table_format.get('inc_hist'):
+
+		# Requested date is passed in the inc_hist tag.
+		hist_date = table_format.get('inc_hist')
+
+		# If requested date doesn't exist, jsut return the oldest date.
+		if hist_date not in alliance_info['hist']:
+			hist_date = min(alliance_info['hist'])
+
+	return hist_date
+
+
 # Bring back a sorted list of characters from alliance_info
 def get_char_list(alliance_info):
 
@@ -38,7 +55,7 @@ def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
-def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
+def get_stp_list(alliance_info, char_list, hist_date='', team_pwr_dict={}):
 	
 	# Get the list of Alliance Members 
 	player_list = get_player_list (alliance_info)
@@ -46,7 +63,7 @@ def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
 	for player_name in player_list:
 
 		# Build a list of all character powers.
-		all_char_pwr = [find_value_or_diff(alliance_info, player_name, char_name,'power', hist_tab)[0] for char_name in char_list]
+		all_char_pwr = [find_value_or_diff(alliance_info, player_name, char_name,'power', hist_date)[0] for char_name in char_list]
 		all_char_pwr.sort()
 
 		# And sum up the Top 5 power entries for STP.
@@ -56,7 +73,7 @@ def get_stp_list(alliance_info, char_list, hist_tab='', team_pwr_dict={}):
 
 
 # Split meta chars from other chars. Filter others based on provided traits.
-def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab=''):
+def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Get the list of usable characters
 	char_list = get_char_list (alliance_info)
@@ -154,11 +171,13 @@ def get_meta_other_chars(alliance_info, table, section, table_format, hist_tab='
 	# If max_others, this order is also used to select which we keep. 
 	if sort_char_by in ['power','avail'] or max_others:
 
+		hist_date = get_hist_date(alliance_info, table_format)
+
 		# Number of people who have summoned a character.
-		dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] != 0 for player in player_list]) for char in other_chars}
+		dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] != 0 for player in player_list]) for char in other_chars}
 
 		# Average power of this char across all rosters who have summoned.
-		dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_tab)[0] for player in player_list])/max(dict_count[char],1)) for char in other_chars}
+		dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] for player in player_list])/max(dict_count[char],1)) for char in other_chars}
 
 		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
 		# If we have min_iso/min_tier criteria, also use this to sort/filter the character list.
@@ -201,7 +220,7 @@ def remove_min_iso_tier(alliance_info, table_format, table, player_list, char_li
 
 
 # Find this member's oldest entry in our historical entries.
-def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
+def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=''):
 
 	other_data = ''
 
@@ -210,7 +229,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 	current_val = int(char_info.get(key,0))
 	
 	# If we're not on a history tab, we're almost done.
-	if not hist_tab:
+	if not hist_date:
 	
 		# If we're on a 'power' entry, summarize the other stats for display in a tooltip
 		if key == 'power' and current_val:
@@ -235,10 +254,12 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_tab=''):
 		return current_val,other_data
 
 	# Start with the oldest entry in 'hist'.
-	min_date = min(alliance_info['hist'])
-	if player_name in alliance_info['hist'][min_date]:
+	if hist_date not in alliance_info['hist']:
+		hist_date = min(alliance_info['hist'])
+		
+	if player_name in alliance_info['hist'][hist_date]:
 
-		hist_info   = alliance_info['hist'][min_date][player_name].get(char_name,{})
+		hist_info   = alliance_info['hist'][hist_date][player_name].get(char_name,{})
 
 		# get the difference between the oldest value and the current one.
 		delta_val = current_val - int(hist_info.get(key,0))

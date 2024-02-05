@@ -7,6 +7,8 @@ Logs into website and updates data from Alliance Information if not
 
 import datetime
 import time
+import sys
+import traceback
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -18,7 +20,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from parse_contents       import *
 from generate_local_files import *
 from file_io              import *
-from login                import login
+from login                import get_driver, login
 from extract_traits       import add_extracted_traits
 from parse_cache          import build_parse_cache
 from alliance_info        import update_history, is_stale
@@ -40,14 +42,36 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 			update_strike_teams(cached_alliance_info)
 			return cached_alliance_info
 
-	# Login to the website.
-	driver = external_driver or login(prompt, headless)
+	# Add an error check to catch issues with stale Driver.
+	try:
+		# Start by logging into the website.
+		driver = login(prompt, external_driver=external_driver)
 	
-	# We are in, wait until loaded before starting
-	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
+		# We are in, wait until loaded before starting
+		WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
+		
+		# Pull alliance information from this Alliance Info screen
+		website_alliance_info  = parse_alliance(driver.page_source)
 	
-	# Pull alliance information from this Alliance Info screen
-	website_alliance_info  = parse_alliance(driver.page_source) 
+	# Driver-related issues should have raised an error by now.
+	except BaseException as exc:
+		# Get current system exception
+		exc_type, exc_value, exc_tb = sys.exc_info()
+
+		# Extract unformatter stack traces 
+		stack_trace= ["File : %s , Line : %d, Func.Name : %s, Message : %s" % tuple(trace) for trace in traceback.extract_tb(exc_tb)]
+
+		print (f'Exception type : {exc_type.__name__}')
+		print (f'Exception message : {exc_value}')
+		print (f'Stack trace :\n%s') % '\n'.join(stack_trace)
+		
+		print (f'Error message : {exc}')
+
+		if driver:
+			page_source = BeautifulSoup(driver.page_source, 'html.parser').prettify()
+			file_name = get_local_path() + f'page_source-{"{:%Y-%m-%d-%H:%M}".format(datetime.datetime.now())}.html'
+			write_file(file_name, page_source)
+			driver.close()
 
 	# If no alliance_name specified, we are defaulting to use whatever the login's alliance is.
 	if not alliance_name:
@@ -210,7 +234,9 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 		not_updated = last_update and last_update < start_time
 
 		found = (f'Parsing {len(driver.page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
-		stale = ('','/Stale')[is_stale(alliance_info, member)]
+		stale = ''
+		if is_stale(alliance_info, member):
+			stale = '/Stale' if alliance_info['members'][member].get('tot_power') else '/EMPTY'
 
 		if not_updated:
 			time_since = datetime.datetime.now() - last_update
@@ -245,10 +271,6 @@ def process_roster(driver, alliance_info, parse_cache, member=''):
 	# If page loaded, pass contents to scraping routines for stat extraction.
 	member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
 	
-	# If page is less than a megabyte, there's likely an issue.
-	if len(driver.page_source)<1000000:
-		print ("Invalid roster - please examine",member)
-
 	# Cache the URL just in case we can use this later
 	alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
 		
