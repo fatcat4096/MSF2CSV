@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;700;900&display=swap" rel="stylesheet">	
+	
+	<title>MSF2CSV Samples</title>
+	<style>
+		body {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+			margin: 0;
+			background-color: #343734;
+		}
+
+		.button-container {
+			display: flex;
+			gap: 20px;
+		}
+
+		.tile {
+			width: 150px;
+			height: 150px;
+			background-color: #3498db;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			border-radius: 10px;
+			cursor: pointer;
+			transition: all 0.3s ease-in-out;
+		}
+
+		.tile:hover {
+			background-color: #2980b9;
+			transform	: scale(1.10);
+		}
+
+		.tile a {
+			text-decoration: none;
+			color: #ffffff;
+			font-size	: 24px;
+			font-family : 'Fira Sans Condensed';
+			font-weight : 900;
+			text-align	: center;
+		}
+
+		.header {
+			position:relative;
+			font-family : 'Fira Sans Condensed';
+			color: #ffffff;
+			font-weight : 900;
+			font-size	: 48pt;
+			text-align	: center;
+		}
+
+	</style>
+</head>
+
+<body>
+	<div class="button-container">
+		<div class="tile" onclick="handleClick('https://fatcat4096.github.io/MSF2CSV/Samples/Sample-incur.html')">
+			<a href="https://fatcat4096.github.io/MSF2CSV/Samples/Sample-incur.html" target="_blank">Incursion<br>2</a>
+		</div>
+		<div class="tile" onclick="handleClick('https://fatcat4096.github.io/MSF2CSV/Samples/Sample-old_incur.html')">
+			<a href="https://fatcat4096.github.io/MSF2CSV/Samples/Sample-old_incur.html" target="_blank">Incursion<br>(Old)</a>
+		</div>
+		<div class="tile" onclick="handleClick('https://fatcat4096.github.io/MSF2CSV/Samples/Sample-dd6.html')">
+			<a href="https://fatcat4096.github.io/MSF2CSV/Samples/Sample-dd6.html" target="_blank">DD6</a>
+		</div>
+		<div class="tile" onclick="handleClick('https://fatcat4096.github.io/MSF2CSV/Samples/Sample-gamma.html')">
+			<a href="https://fatcat4096.github.io/MSF2CSV/Samples/Sample-gamma.html" target="_blank">Gamma</a>
+		</div>
+		<div class="tile" onclick="handleClick('https://fatcat4096.github.io/MSF2CSV/Samples/Sample-teams.html')">
+			<a href="https://fatcat4096.github.io/MSF2CSV/Samples/Sample-teams.html" target="_blank">Teams</a>
+		</div>
+		<div class="tile" onclick="handleClick('https://fatcat4096.github.io/MSF2CSV/Samples/Sample-all_chars.html')">
+			<a href="https://fatcat4096.github.io/MSF2CSV/Samples/Sample-all_chars.html" target="_blank">All<br>Chars</a>
+		</div>
+	</div>
+
+	<script>
+		function handleClick(url) {
+			window.location.href = url;
+		}
+	</script>
+</body>
+</html>
