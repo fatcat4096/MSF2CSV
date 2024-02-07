@@ -42,7 +42,7 @@ tables = {}
 # Meta Heroes for use in Incursion 2 Raid
 tables['incur'] = { 'name': 'Incursion 2 Raid',
 					'min_iso': 9,
-					'max_others': 10,
+					'max_others': 5,
 					'strike_teams': 'incur2',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
@@ -59,7 +59,7 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 # Meta Heroes for use in Incursion 1.x Raid
 tables['old_incur'] = { 'name': 'Incursion 1.x Raid',
 					'min_iso': 9,
-					'max_others': 10,
+					'max_others': 5,
 					'strike_teams': 'incur',
 					'sort_char_by': 'avail',
 					'lanes':[ [
@@ -74,7 +74,7 @@ tables['old_incur'] = { 'name': 'Incursion 1.x Raid',
 # Meta Heroes for use in Gamma Raid
 tables['gamma'] = { 'name': 'Gamma Raid',
 					'min_tier': 16,
-					'max_others': 10,
+					'max_others': 5,
 					'strike_teams': 'gamma',
 					'sort_char_by': 'avail',
 					'inc_avail': True,

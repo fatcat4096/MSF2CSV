@@ -131,6 +131,10 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 
 		if toon_stats:
 
+			# Equipped pieces. This info is outside toon_stats, but won't process unless toon_stats exists.
+			pieces = char.findAll('i', attrs = {'style':'position: absolute; left: 0px; top: 3px;'})
+			equipped = int(''.join([('0','1')['check-square' in str(piece)] for piece in pieces]),2) << 4
+
 			# Is this character a favorite? Using this format for the csv. 
 			favorite = [6,0][char.find('i', attrs = {'class':'is-favorite'}) == None]
 
@@ -160,8 +164,8 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 				if not diamonds:
 					print ("Should never happen.",char_name)
 			else:
-				redStars = stars.count('star-red')
 				yelStars = stars.count('fas fa-star star-red') + stars.count('star-orange')
+				redStars = min(stars.count('star-red'),yelStars)
 
 				# These are 'unrealized' diamonds -- diamonds earned but not usable because char isn't 7R.
 				diamonds = toon_stats.find('div',attrs={'class':'diamond-container'})
@@ -224,7 +228,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 				iso_class = 5
 
 			processed_chars[char_name] = {'power':int(power), 'lvl':int(level), 'tier':int(tier), 'iso':int(iso), 'yel':yelStars, 'red':redStars, 'dmd':0*diamonds, 'abil':int(bas+spc+ult+pas)}
-			other_data[char_name]      = favorite+iso_class
+			other_data[char_name]      = (favorite+iso_class) | equipped
 
 		# Entries for Heroes not yet collected, no name on final entry for page.
 		elif char_name:

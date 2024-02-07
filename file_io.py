@@ -201,8 +201,8 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', file_name
 	invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
 	traits = [trait for trait in sorted(alliance_info.get('extracted_traits',{})) if trait not in invalid_traits]
 
-	# Disable this for now. We aren't using cached_lists because of Discord limitations.
-	#pickle.dump((char_list,traits), open(get_local_path() + os.sep + 'cached_lists', 'wb'))
+	# Caching traits and char lists for Discord autocomplete.
+	pickle.dump((char_list,traits), open(get_local_path() + os.sep + 'cached_lists', 'wb'))
 
 
 def load_char_list():
