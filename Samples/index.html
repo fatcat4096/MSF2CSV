@@ -23,11 +23,13 @@
 		.button-container {
 			display: flex;
 			gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
 		}
 
 		.tile {
-			width: 150px;
-			height: 150px;
+            width: calc(50% - 30px); /* 33.33% width for each tile with 10px gap in between */
+            height: 200px;
 			background-color: #3498db;
 			display: flex;
 			justify-content: center;
