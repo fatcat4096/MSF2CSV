@@ -510,9 +510,11 @@ function toTable(from_elem,to_elem) {
 	document.getElementById(to_panel.id).style.display = "block";
 	to_table.scrollIntoView();
 
-	// Find the img class and add a onclick call to goBack.
-	var img = to_table.querySelectorAll('.img');
-	img[0].onclick = function () { toTable(this, from_table.id); };
+	// If we've gone to the ByChar page, find the img class and add a onclick call to goBack.
+	if (to_elem[0] == "a") {
+		var img = to_table.querySelectorAll('.img');
+		img[0].onclick = function () { toTable(this, from_table.id); };
+	}
 }
 </script>
 '''

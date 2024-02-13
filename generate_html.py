@@ -255,7 +255,13 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
+
+			last_section = lane.index(section) == len(lane)-1
 		
+			if table_format.get('ignore_meta') and 'meta' in section:
+				section = copy.deepcopy(section)
+				del section['meta']
+
 			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
 
 			# If no explicit label defined for the section...
@@ -335,7 +341,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			html_file += '  </td>\n </tr>\n</table>\n'
 
 			# If not the final section, add a divider row. 
-			if lane.index(section) != len(lane)-1:
+			if not last_section:
 				html_file += '    <p></p>\n'
 
 		# After Lane content is done, close the div for the Tab implementation.
@@ -545,7 +551,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 						# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
 						key_val,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, hist_date)
 
-					need_tt = key=='power' and not linked_hist
+					need_tt = key=='power' and key_val != 0 and not linked_hist
 
 					if key_val == 0 and hist_date:
 						style = ''
@@ -890,7 +896,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 		member_stats = stats.setdefault(member,{})
 		
 		# Don't include stats from heroes that haven't been recruited yet.
-		recruited_chars = [char for char in char_list if current_rosters[member][char]['power']]
+		recruited_chars = [char for char in char_list if current_rosters[member].get(char,{}).get('power')]
 
 		# Use this as a comparator to just return current values.
 		null_stats = {'yel':0, 'red':0, 'dmd':0, 'lvl':0, 'tier':0, 'iso':0, 'abil':0, 'power':0}
@@ -1189,9 +1195,10 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 		# Small space between the two tables.
 		html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
-		# Generate the right table with historical information.
-		table_lbl += f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
-		html_file += generate_table(alliance_info, table, table_format, [char], [member_list], table_lbl, stp_list, html_cache, hist_date, linked_hist=True)
+		# Generate the right table with historical information if available.
+		if hist_date:
+			table_lbl += f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
+			html_file += generate_table(alliance_info, table, table_format, [char], [member_list], table_lbl, stp_list, html_cache, hist_date, linked_hist=True)
 			
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'

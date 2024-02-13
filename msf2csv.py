@@ -39,7 +39,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, force='', ta
 			update_history(alliance_info)			
 
 			# Determine who was added
-			new_member = [member for member in alliance_info.get('members',{}) if member not in original_members][0]
+			new_member = [member for member in alliance_info['members'] if alliance_info['members'][member].get('url') == roster_url][0]
 			alliance_info['name'] = new_member
 
 			new_strike = [[new_member]]
