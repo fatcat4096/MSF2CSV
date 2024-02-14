@@ -21,13 +21,10 @@ def parse_alliance(contents):
 
 	# Parse the basic alliance info
 	alliance['name']      = str(soup.find('span', attrs = {'class':'alliance-name'}).contents[0])
-	alliance['trophies']  = soup.find('div',  attrs = {'class':'war-trophies'}).text.strip()
 	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('ALLIANCEICON_')[-1][:-4]
 
 	# Parse the alliance stats.
 	alliance_stats = soup.findAll('div', attrs = {'class':'level-item'})
-	
-	alliance['stark_lvl'] = alliance_stats[1].text.split()[-1]
 	
 	# Parse each row of the members table, extracting stats for each member.
 	members_table = soup.find('tbody').findAll('tr', attrs={'draggable':'false'})
@@ -133,7 +130,9 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 
 			# Equipped pieces. This info is outside toon_stats, but won't process unless toon_stats exists.
 			pieces = char.findAll('i', attrs = {'style':'position: absolute; left: 0px; top: 3px;'})
-			equipped = int(''.join([('0','1')['check-square' in str(piece)] for piece in pieces]),2) << 4
+			equipped = 0
+			if pieces:
+				pieces = int(''.join([('0','1')['check-square' in str(piece)] for piece in pieces]),2) << 4
 
 			# Is this character a favorite? Using this format for the csv. 
 			favorite = [6,0][char.find('i', attrs = {'class':'is-favorite'}) == None]

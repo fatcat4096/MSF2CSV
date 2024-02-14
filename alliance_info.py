@@ -153,12 +153,15 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 			under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
 			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
-	# If span format requested, override max_others.
+	# Start by pulling value from table_format or table.
+	max_others  = get_table_value(table_format, table, 'max_others', len(other_chars))
+
+	# If span format requested, override max_others if necessary.
 	if table_format.get('span') or table.get('span'):
-		max_others = 0
-	# If not overridden, pull value from table_format or table.
-	else:
-		max_others  = get_table_value(table_format, table, 'max_others', len(other_chars))
+		if meta_chars:
+			max_others = 0
+		elif max_others > 5:
+			max_others = 5
 
 	# No means no.
 	if meta_chars and max_others == 0:
@@ -208,6 +211,11 @@ def remove_min_iso_tier(alliance_info, table_format, table, player_list, char_li
 	# Load up arguments from table, with defaults if necessary.
 	min_iso  = get_table_value(table_format,table,'min_iso',0)
 	min_tier = get_table_value(table_format,table,'min_tier',0)
+ 
+	# Remove? Shouldn't be necessary.
+	#if not player_list:
+	#	print ('player_list was empty.',char_list)
+	#	return char_list
  
 	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
 	if min_iso:

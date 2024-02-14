@@ -23,7 +23,7 @@ def generate_strike_teams(alliance_info):
 
 	strike_teams = alliance_info.setdefault('strike_teams',{})
 
-	for raid_type in ('incur','incur2','gamma'):
+	for raid_type in ('incur','gamma'):
 
 		if not strike_teams.get(raid_type):
 
@@ -34,7 +34,7 @@ def generate_strike_teams(alliance_info):
 			members = sorted(alliance_info['members'],key=str.lower)
 
 			# Break it up into chunks and add the appropriate dividers.
-			strike_teams[raid_type] = add_strike_team_dividers(members, raid_type)
+			strike_teams[raid_type] = [members[:8], members[8:16], members[16:]]
 	
 	# Create header
 	new_file  = '''# This file contains the Strike Teams used for HTML file output.
@@ -52,7 +52,6 @@ strike_teams = {}
 
 	# Create each strike_team definition.
 	new_file += generate_strike_team('incur', strike_teams['incur'], 'Used for Incursion Raid output.')
-	new_file += generate_strike_team('incur2',strike_teams['incur2'],'Used for Incursion 2 Raid output.')
 	new_file += generate_strike_team('gamma', strike_teams['gamma'], 'Used for Gamma Raids and other output.')
 
 	# Write it to disk.
@@ -132,7 +131,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 
 
 	# Meta Heroes for use in Incursion 2 Raid
-	tables['incur'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 5, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur2',
+	tables['incur'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 5, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur',
 						'lanes':[ [
 								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
@@ -144,7 +143,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in Incursion 1.x Raid
-	tables['old_incur'] = { 'name': 'Incursion 1.x Raid', 'min_iso': 9, 'max_others': 5, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur',
+	tables['old_incur'] = { 'name': 'Incursion 1.x Raid', 'min_iso': 9, 'max_others': 5, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur', 'inc_dividers':'incur',
 						'lanes':[ [
 								{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
 								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
@@ -240,7 +239,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 		new_file += "tables['%s'] = { 'name': '%s',\n" % (raid_type, tables[raid_type]['name'])
 
 		# Generic keys, if specified.
-		for key in ['min_tier', 'min_iso', 'max_others', 'strike_teams', 'sort_by', 'sort_char_by', 'span', 'inc_keys', 'inc_avail', 'inc_class']:
+		for key in ['min_tier', 'min_iso', 'max_others', 'strike_teams', 'inc_dividers', 'sort_by', 'sort_char_by', 'span', 'inc_keys', 'inc_avail', 'inc_class']:
 			if key in tables[raid_type]:
 				new_file += "\t\t\t\t\t'%s': %s,\n" % (key, repr(tables[raid_type][key]))
 

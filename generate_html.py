@@ -228,7 +228,12 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 	# Grab specified strike teams if available. 
 	strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
-	
+
+	# Insert dividers as necessary
+	inc_dividers = get_table_value(table_format, table, 'inc_dividers', 'other')
+	if inc_dividers and strike_teams:
+		strike_teams = insert_dividers(strike_teams, inc_dividers)
+
 	# If no strike team definitions are specified / found or 
 	# If only_team == 0 (ignore strike_teams) **AND**
 	# no sort_by has been specified, force sort_by to 'stp'
@@ -258,10 +263,6 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 			last_section = lane.index(section) == len(lane)-1
 		
-			if table_format.get('ignore_meta') and 'meta' in section:
-				section = copy.deepcopy(section)
-				del section['meta']
-
 			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
 
 			# If no explicit label defined for the section...
@@ -282,6 +283,8 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			# Let's make it easy on ourselves. Start every section the same way.
 			html_file += '<table>\n <tr>\n  <td>\n'
 
+			max_others = get_table_value(table_format, table, 'max_others')
+
 			# Only building meta table if we have meta_chars defined.
 			if meta_chars:
 				meta_lbl = table_lbl+'<br><span class="sub">META</span>'
@@ -299,6 +302,10 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			# even if they've been swapped to the Others section.
 			elif section.get('meta'):
 				table_lbl += '<br><span class="sub">META</span>'
+
+			# If Others, and max_others specified, indicate this.
+			elif max_others:
+				table_lbl += f'<br><span class="sub">TOP {len(other_chars)}</span>'
 
 			# Generate stp_list dict for the Other Table calls.
 			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
@@ -373,8 +380,6 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 		name_alt_dim  = 'ngaltd'
 		button_hover  = 'blkb'
 
-
-
 	# Sort player list if requested.
 	sort_by = get_table_value(table_format, table, 'sort_by', '')
 
@@ -392,9 +397,6 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	# If there are no characters in this table, don't generate a table.
 	if not using_chars:
 		return ''
-
-
-
 
 	# Generate a table ID to allow sorting. 
 	
@@ -655,12 +657,6 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	html_file += '   </table>\n'
 
 	return html_file
-
-
-
-
-
-
 
 
 # Generate just the Alliance Tab contents.
@@ -1231,6 +1227,29 @@ def extract_color(alliance_name):
 	return alt_color
 
 
+# Insert dividers based on the type of team. 
+def insert_dividers(strike_teams, raid_type):
+
+	# Start with a copy, just to be safe.
+	strike_teams = copy.deepcopy(strike_teams)
+
+	for team in strike_teams:
+
+		# Use 2-3-3 lanes if Incursion 1.x.
+		if raid_type == 'incur':
+			if len(team) > 2:
+				team.insert(2,'----')
+			if len(team) > 6:
+				team.insert(6,'----')
+
+		# Put a divider in the middle to reflect left/right symmetry of raids.
+		else:
+			if len(team) > 4:
+				team.insert(4,'----')
+
+	return strike_teams
+	
+
 # Translate value to a color from the Heat Map gradient.
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=''):
 	min_val = min(val_range)
@@ -1241,6 +1260,7 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 			min_val = min(new_range)
 	
 	return get_value_color_ext(min_val, max(val_range), value, html_cache, stale_data, stat, under_min, hist_date)
+
 
 def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):
 	

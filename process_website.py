@@ -339,7 +339,7 @@ def find_members_roster(driver, member):
 # If locally defined strike_teams are valid for this cached_data, use them instead
 def update_strike_teams(alliance_info):
 
-	# Update strike team definitions to include 'gamma' and 'incur2'.
+	# Update strike team definitions to remove dividers and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
 
 	strike_teams_defined = 'strike_teams' in globals()
@@ -374,10 +374,10 @@ def get_valid_strike_teams(alliance_info):
 	# Just in case file didn't exist, start by at least creating a structure to store teams in. 
 	strike_teams_defined = 'strike_teams' in globals()
 
-	# Update strike team definitions to include 'gamma' and 'incur2'.
+	# Update strike team definitions to remove dividers and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
 
-	for raid_type in ('incur','incur2','gamma'):
+	for raid_type in ('incur','gamma'):
 
 		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
@@ -399,30 +399,39 @@ def get_valid_strike_teams(alliance_info):
 	return updated
 
 
-# Update strike teams to include 'gamma' and 'incur2' 
+# Update strike teams to remove dividers and 'incur2' 
 def migrate_strike_teams(alliance_info):
 
 	updated = False
 
-	# Update old format strike team definitions. Key off of the presence of 'other'.
-	if 'strike_teams' in globals() and 'other' in strike_teams:
+	# Update old format strike team definitions. Key off of the presence of 'incur2'.
+	if 'strike_teams' in globals() and 'incur2' in strike_teams:
 
-		strike_teams['gamma'] = strike_teams.pop('other')
+		# Move 'incur2' into 'incur' to start.
+		strike_teams['incur'] = strike_teams.pop('incur2')
 
-		# Copy 'incur' into 'incur2' with proper dividers.
-		strike_teams['incur2'] = add_strike_team_dividers([member for member in sum(strike_teams['incur'],[]) if '--' not in member], 'incur2')
+		# Remove dividers from both strike teams. We will add dividers at run time.
+		for raid_type in strike_teams:
+			for idx in range(len(strike_teams[raid_type])):
+				strike_teams[raid_type][idx] = [member for member in strike_teams[raid_type][idx] if '--' not in member]
 
 		# Since we changed strike_teams.py, return updated = True so calling routine will write the updated file to disk.
 		updated = True
 	
 	# Update the alliance_info structure as well, just in case it's all we've got.
-	if 'strike_teams' in alliance_info and 'other' in alliance_info['strike_teams']:
+	if 'strike_teams' in alliance_info and 'incur2' in alliance_info['strike_teams']:
 
-		# Create 'gamma' from the 'other' definition.
-		alliance_info['strike_teams']['gamma'] = alliance_info['strike_teams'].pop('other')
+		# Move 'incur2' into 'incur' to start.
+		alliance_info['strike_teams']['incur'] = alliance_info['strike_teams'].pop('incur2')
+		
+		# Remove dividers from both strike teams. We will add dividers at run time.
+		for raid_type in alliance_info['strike_teams']:
+			for idx in range(len(alliance_info['strike_teams'][raid_type])):
+				alliance_info['strike_teams'][raid_type][idx] = [member for member in alliance_info['strike_teams'][raid_type][idx] if '--' not in member]
 
-		# Copy 'incur' into 'incur2' with proper dividers.
-		alliance_info['strike_teams']['incur2'] = add_strike_team_dividers([member for member in sum(alliance_info['strike_teams']['incur'],[]) if '--' not in member], 'incur2')
+		if 'trophies' in alliance_info:
+			del alliance_info['trophies']
+			del alliance_info['stark_lvl']
 
 	return updated
 		
@@ -482,31 +491,3 @@ def fix_strike_team(strike_team, alliance_info):
 	return updated
 
 
-# Add divider definitions in the right places, depending upon the raid_type
-def add_strike_team_dividers(strike_team, raid_type):
-
-	# Break it up into chunks for each team.
-	strike_team = [strike_team[:8], strike_team[8:16], strike_team[16:]]
-
-	for team in strike_team:
-		insert_dividers(team, raid_type)
-
-	return strike_team
-
-
-# Handle an individual team. 
-def insert_dividers(team, raid_type):
-
-	# Automatically use 2-3-3 lanes if Incursion 1.x.
-	if raid_type == 'incur':
-		if len(team) > 2:
-			team.insert(2,'----')
-		if len(team) > 6:
-			team.insert(6,'----')
-
-	# Put a divider in the middle to reflect left/right symmetry of raid.
-	elif raid_type in ['incur2','gamma']:
-		if len(team) > 4:
-			team.insert(4,'----')
-			
-	return team
