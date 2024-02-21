@@ -190,6 +190,16 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								] ]
 						}
 
+	# Meta Heroes for use in Dark Dimension 5
+	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'sort_by': 'stp', 'sort_char_by': 'avail', 'inc_avail': True,
+						'lanes':[ [
+								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
+								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
+								{'traits': ['Non-Legendary', 'City'],     'label':'City'},
+								{'traits': ['Legendary']},
+								] ]
+						}
+
 	# Meta Heroes for use in Teams
 	tables['teams'] = { 'name': 'Teams', 'sort_by': 'stp', 'span': True,
 						'lanes':[ [

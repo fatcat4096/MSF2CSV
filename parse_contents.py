@@ -77,13 +77,17 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	# Start by parsing Player Info from the right panel. We will use this to update alliance_info if not working_from_web.
 	player = soup.find('div', attrs = {'class':'fixed-wrapper panel-wrapper'})
 
+	# Did we actually arrive at a valid Roster Page?
+	player_name = player.find('div', attrs = {'class':'player-name'})
+	if not player_name:
+		return
+		
 	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
-	player_name = remove_tags(player.find('div', attrs = {'class':'player-name'}).text)
+	player_name = remove_tags(player_name.text)
 
 	player_info = {}
 
 	player_info['image'] = player.find('img').get('src').split('Portrait_')[-1][:-4]
-	player_info['level'] = int(player.find('span').text)
 
 	player_stats = player.find('div', attrs = {'class':'player-stats'}).findAll('span')
 
@@ -237,14 +241,12 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
 		update_parse_cache(processed_chars,char_name,parse_cache)
 
+	# Calculate level based on character leveling.
+	player_info['level'] = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars])
+
 	# Get a little closer to our work. 
 	player = alliance_info['members'].setdefault(player_name,{})
 	
-	# Temporary code to fix previous location of tot_power and last_updated -- DELETE THIS IN A COUPLE WEEKS
-	if 'processed_chars' in player and 'tot_power' in player['processed_chars']:
-		player['tot_power']   = player['processed_chars']['tot_power']
-		player['last_update'] = player['processed_chars']['last_update']
-
 	# Update 'last_update' if the calculated tot_power has changed.
 	if player.get('tot_power') != tot_power:
 		player['tot_power']   = tot_power

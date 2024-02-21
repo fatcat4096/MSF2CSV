@@ -42,37 +42,15 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 			update_strike_teams(cached_alliance_info)
 			return cached_alliance_info
 
-	# Add an error check to catch issues with stale Driver.
-	try:
-		# Start by logging into the website.
-		driver = login(prompt, external_driver=external_driver)
+	# Start by logging into the website.
+	driver = login(prompt, headless, external_driver=external_driver)
+
+	# We are in, wait until loaded before starting
+	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
 	
-		# We are in, wait until loaded before starting
-		WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
-		
-		# Pull alliance information from this Alliance Info screen
-		website_alliance_info  = parse_alliance(driver.page_source)
+	# Pull alliance information from this Alliance Info screen
+	website_alliance_info  = parse_alliance(driver.page_source)
 	
-	# Driver-related issues should have raised an error by now.
-	except BaseException as exc:
-		# Get current system exception
-		exc_type, exc_value, exc_tb = sys.exc_info()
-
-		# Extract unformatter stack traces 
-		stack_trace= ["File : %s , Line : %d, Func.Name : %s, Message : %s" % tuple(trace) for trace in traceback.extract_tb(exc_tb)]
-
-		print (f'Exception type : {exc_type.__name__}')
-		print (f'Exception message : {exc_value}')
-		print (f'Stack trace :\n%s') % '\n'.join(stack_trace)
-		
-		print (f'Error message : {exc}')
-
-		if driver:
-			page_source = BeautifulSoup(driver.page_source, 'html.parser').prettify()
-			file_name = get_local_path() + f'page_source-{"{:%Y-%m-%d-%H:%M}".format(datetime.datetime.now())}.html'
-			write_file(file_name, page_source)
-			driver.close()
-
 	# If no alliance_name specified, we are defaulting to use whatever the login's alliance is.
 	if not alliance_name:
 		alliance_name = website_alliance_info['name']
@@ -228,6 +206,10 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 		start_time = datetime.datetime.now()
 		
 		member = process_roster(driver, alliance_info, parse_cache, member)
+		
+		# Failsafe if invalid data provided
+		if not member:
+			continue
 
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
@@ -272,7 +254,8 @@ def process_roster(driver, alliance_info, parse_cache, member=''):
 	member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
 	
 	# Cache the URL just in case we can use this later
-	alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
+	if member:
+		alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
 		
 	return member
 
@@ -339,25 +322,30 @@ def find_members_roster(driver, member):
 # If locally defined strike_teams are valid for this cached_data, use them instead
 def update_strike_teams(alliance_info):
 
+	strike_teams_defined = 'strike_teams' in globals()
+
 	# Update strike team definitions to remove dividers and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
 
-	strike_teams_defined = 'strike_teams' in globals()
+	# Iterate through each defined strike team.
+	for raid_type in ('incur','gamma'):
 
-	# Verify we have global definitions of strike_teams before starting. 
-	if strike_teams_defined:
+		# If the global definition of strike_team is valid for this alliance, let's use it. 
+		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
 
-		# Iterate through each defined strike team.
-		for raid_type in strike_teams:
+			# Make some common sense fixes and then update the alliance_info dict.
+			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
 
-			# If the strike_team is valid for this alliance, let's use it.
-			if valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
+			# Only 'updated' if we changed the cached value.
+			if alliance_info.get('strike_teams',{}).get(raid_type) != strike_teams[raid_type]:
+				alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
+				updated = True
 
-				# Make some common sense fixes and then update the alliance_info dict.
-				updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
-				if alliance_info.get('strike_teams',{}).get(raid_type) != strike_teams[raid_type]:
-					alliance_info.get('strike_teams',{})[raid_type] = strike_teams[raid_type]
-					updated = True
+		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
+		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
+	
+			# Fix any issues. We will just update this info in cached_data.
+			updated = fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info) or updated
 
 	# If a change was made, update the cached_data file.
 	if updated:
@@ -371,7 +359,6 @@ def update_strike_teams(alliance_info):
 # Go through a multi-stage process to find a valid strike_team definition to use.
 def get_valid_strike_teams(alliance_info):
 
-	# Just in case file didn't exist, start by at least creating a structure to store teams in. 
 	strike_teams_defined = 'strike_teams' in globals()
 
 	# Update strike team definitions to remove dividers and 'incur2'.
@@ -381,7 +368,6 @@ def get_valid_strike_teams(alliance_info):
 
 		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
-			#print (f"Using {raid_type} strike team definitions from strike_teams.py")
 
 			# If we update or fix the definition, write it to disk before we're done.
 			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
@@ -391,7 +377,6 @@ def get_valid_strike_teams(alliance_info):
 
 		# If strike_teams.py is missing or invalid, check for strike_teams cached in the alliance_info
 		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
-			#print (f"Using cached {raid_type} strike_team definitions from alliance_info.")
 	
 			# Fix any issues. We will just update this info in cached_data.
 			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)

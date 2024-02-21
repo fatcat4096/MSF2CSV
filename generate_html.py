@@ -390,7 +390,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	using_chars = char_list[:]
 	
 	# Pare any missing heroes if these aren't Meta entries.
-	if 'META' not in table_lbl:
+	if 'META' not in table_lbl and len(using_chars) > 5:
 		using_players = [player for player in sum(strike_teams, []) if player in player_list]
 		using_chars = remove_min_iso_tier(alliance_info, table_format, table, using_players, using_chars)			
 
@@ -1146,7 +1146,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 	# Get the list of usable characters for analysis.
 	char_list = sorted(html_cache.get('chars',{}))
 	if not char_list:
-		char_list = get_char_list(alliance_info)
+		char_list = table_format.get('inc_chars',get_char_list(alliance_info))
 
 	table = {}
 
@@ -1252,14 +1252,15 @@ def insert_dividers(strike_teams, raid_type):
 
 # Translate value to a color from the Heat Map gradient.
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=''):
-	min_val = min(val_range)
+	min_val = min(val_range) if val_range else 0
+	max_val = max(val_range) if val_range else 0
 
 	if not min_val:
 		new_range = [x for x in val_range if x != 0]
 		if new_range:
 			min_val = min(new_range)
 	
-	return get_value_color_ext(min_val, max(val_range), value, html_cache, stale_data, stat, under_min, hist_date)
+	return get_value_color_ext(min_val, max_val, value, html_cache, stale_data, stat, under_min, hist_date)
 
 
 def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):

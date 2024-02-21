@@ -118,6 +118,20 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 							] ]
 					}
 
+# Meta Heroes for use in Dark Dimension 5
+tables['dd5'] = { 'name': 'Dark Dimension 5',
+					'min_tier': 16,
+					'sort_by': 'stp',
+					'sort_char_by': 'avail',
+					'inc_avail': True,
+					'lanes':[ [
+							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
+							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
+							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
+							{'traits': ['Legendary']},
+							] ]
+					}
+
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
 					'sort_by': 'stp',
@@ -125,6 +139,9 @@ tables['teams'] = { 'name': 'Teams',
 					'lanes':[ [  
 							# Said 'no' to AxMen, BA, F4, Inhumans, Rebirth, Shadowland, Uncanny, X-Factor, X-Force     Removed Rebirth, Bifrost, Pegasus, and Invader as redundant.
 							{'traits': ['AForce']},
+							{'traits': ['Astonishing']},
+							{'traits': ['Bifrost']},
+							{'traits': ['BionicAvenger']},
 							{'traits': ['BlackOrder','Thanos']},
 							{'traits': ['Darkhold']},
 							{'traits': ['DarkHunter']},
@@ -134,13 +151,18 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['HeroesForHire']},
 							{'traits': ['Infestation']},
 							{'traits': ['InfinityWatch']},
+							{'traits': ['Invader']},
 							{'traits': ['Knowhere']},
 							{'traits': ['MastersOfEvil']},
 							{'traits': ['NewAvenger']},
 							{'traits': ['NewWarrior']},
+							{'traits': ['Pegasus']},
+							{'traits': ['PymTech']},
 							{'traits': ['Rebirth'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
 							{'traits': ['SecretDefender']},
+							{'traits': ['Shadowland']},
 							{'traits': ['SuperiorSix']},
+							{'traits': ['Uncanny']},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
 							{'traits': ['Unlimited']},
 							{'traits': ['WarDog']},

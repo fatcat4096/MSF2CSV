@@ -15,7 +15,7 @@ from generate_csv    import generate_csv  # Routines to generate the original cs
 
 
 # If no name specified, default to the alliance for the Login player
-def main(alliance_name='', csv=False, prompt=False, headless=False, force='', table_format={}, external_table={}, roster_url='', external_driver=None):
+def main(alliance_name='', csv=False, prompt=False, headless=False, force='', table_format={}, roster_url='', external_driver=None):
 
 	##
 	## Just a junker placeholder until I come back and do it right. 
@@ -71,9 +71,10 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, force='', ta
 	# Build a default path and filename. 
 	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'reports' + os.sep + alliance_info['name'] + '-'
 
-	output        = table_format.get('output')
-	output_format = table_format.get('output_format','tabbed')
-	valid_output  = list(tables)+['roster_analysis','alliance_info', 'by_char']
+	output         = table_format.get('output')
+	external_table = table_format.get('external_table')
+	output_format  = table_format.get('output_format','tabbed')
+	valid_output   = list(tables)+['roster_analysis','alliance_info', 'by_char']
 
 	# Generate CSV?
 	if csv:
