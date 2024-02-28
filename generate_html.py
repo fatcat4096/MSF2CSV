@@ -411,247 +411,256 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	# Let's get this party started!
 	html_file = '   <table id="%s">\n' % (table_id)
 
-	# WRITE THE IMAGES ROW. #############################################
-	html_file += '    <tr class="%s">\n' % (title_cell) 
-	html_file += '     <td>%s</td>\n' % (table_lbl)
+	# SEE IF WE NEED MULTIPLE LINES. WE MAY NEED TO BREAK UP USING_CHARS INTO CHUNKS.
+	line_wrap = 10
 
-	# Include Available, Include Position, and Include ISO Class flags
-	# Get value from table_format/table, with defaults if necessary.
+	# Initialize the row count. Will add to it with each strike_team section.
+	row_idx = 1
 
-	inc_avail = get_table_value(table_format, table, 'inc_avail', False) and 'OTHERS' not in table_lbl
-	inc_pos   = get_table_value(table_format, table, 'inc_pos',   False) and 'OTHERS' not in table_lbl
-	inc_class = get_table_value(table_format, table, 'inc_class', False) and not hist_date
+	while using_chars:
+		line_chars, using_chars = using_chars[:line_wrap],using_chars[line_wrap:]
 
-	# Include a column for "# Pos" info if requested.
-	if inc_pos:
-		html_file += '     <td></td>\n'
+		# WRITE THE IMAGES ROW. #############################################
+		html_file += '    <tr class="%s">\n' % (title_cell) 
+		html_file += '     <td>%s</td>\n' % (table_lbl)
 
-	# Include a column for "# Avail" info if requested.
-	if inc_avail:
-		html_file += '     <td></td>\n'
+		# Include Available, Include Position, and Include ISO Class flags
+		# Get value from table_format/table, with defaults if necessary.
 
-	# Get keys from table_format/table, with defaults if necessary.
-	keys = get_table_value(table_format, table, 'inc_keys', ['power','tier','iso'])
+		inc_avail = get_table_value(table_format, table, 'inc_avail', False) and 'OTHERS' not in table_lbl
+		inc_pos   = get_table_value(table_format, table, 'inc_pos',   False) and 'OTHERS' not in table_lbl
+		inc_class = get_table_value(table_format, table, 'inc_class', False) and not hist_date
 
-	# Number of columns under each Character entry.
-	num_cols = len(keys) + inc_class
+		# Include a column for "# Pos" info if requested.
+		if inc_pos:
+			html_file += '     <td></td>\n'
 
-	# Include Images for each of the Characters.
-	for char in using_chars:
-		url = f"https://assets.marvelstrikeforce.com/imgs/Portrait_{alliance_info['portraits'][char]}.png"
+		# Include a column for "# Avail" info if requested.
+		if inc_avail:
+			html_file += '     <td></td>\n'
 
-		# Default value to start
-		onclick = ''
+		# Get keys from table_format/table, with defaults if necessary.
+		keys = get_table_value(table_format, table, 'inc_keys', ['power','tier','iso'])
 
-		# We are doing a ByChar table in a tabbed file, link back to the report tabs.
-		if linked_hist and anchor:
-			# Finally, connect back to the info in the raid.
-			onclick =  ' onclick="toTable(this,\'%s\')"' % (anchor.get('from')) 
+		# Number of columns under each Character entry.
+		num_cols = len(keys) + inc_class
 
-		# If we don't have linked_hist, then we're on the reports tab.
-		elif not linked_hist:
+		# Include Images for each of the Characters.
+		for char in line_chars:
+			url = f"https://assets.marvelstrikeforce.com/imgs/Portrait_{alliance_info['portraits'][char]}.png"
 
-			# Create new anchor entry to link Report and Bychar tabs. 
-			anchor = make_next_anchor_id(html_cache, char, table_id)
-			onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
+			# Default value to start
+			onclick = ''
 
-		html_file += '     <td class="img" colspan="%s"%s><div class="cont%s"><img src="%s" alt="" width="100"><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
+			# We are doing a ByChar table in a tabbed file, link back to the report tabs.
+			if linked_hist and anchor:
+				# Finally, connect back to the info in the raid.
+				onclick =  ' onclick="toTable(this,\'%s\')"' % (anchor.get('from')) 
 
-	# Include a Team Power column if we have more than one.
-	if len(char_list)>1:
-		html_file += '     <td></td>\n'
+			# If we don't have linked_hist, then we're on the reports tab.
+			elif not linked_hist:
 
-	html_file += '    </tr>\n'
-	# DONE WITH THE IMAGES ROW. #########################################
+				# Create new anchor entry to link Report and Bychar tabs. 
+				anchor = make_next_anchor_id(html_cache, char, table_id)
+				onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
 
-	# Initialize this count. Will add to it with each strike_team section.
-	row_idx = 2
+			html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
 
-	# Find min/max for meta/strongest team power in the Alliance
-	# This will be used for color calculation for the Team Power column.
-	stp_range = [stp_list[player_name] for player_name in player_list]
+		# Include a Team Power column if we have more than one.
+		if len(char_list)>1:
+			html_file += '     <td></td>\n'
 
-	# Find max available heroes for stats/color. Anything under 5 is forced to red.
-	if inc_avail:
-		max_avail = max([len([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]) for player in player_list])
+		html_file += '    </tr>\n'
+		# DONE WITH THE IMAGES ROW. #########################################
 
-	# Iterate through each Strike Team.
-	for strike_team in strike_teams:
+		# Include the Image row and Column headers in the row count.
+		row_idx += 1
 
-		team_num = strike_teams.index(strike_team)+1
+		# Find min/max for meta/strongest team power in the Alliance
+		# This will be used for color calculation for the Team Power column.
+		stp_range = [stp_list[player_name] for player_name in player_list]
 
-		# Determine if we are requesting a subset of the strike_team,
-		# or for strike_teams to be ignored (only_team == 0) 
-		only_team = table_format.get('only_team')
+		# Find max available heroes for stats/color. Anything under 5 is forced to red.
+		if inc_avail:
+			max_avail = max([len([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]) for player in player_list])
 
-		# Add this to allow us to pass in fake Strike_Team definitions so that the correct "Strike Team #" label gets generated. 
-		# This is primarily for Spanning output, where one strike team is generated per table.
-		if not strike_team or (only_team and only_team != team_num):
-			continue
+		# Iterate through each Strike Team.
+		for strike_team in strike_teams:
 
-		# Start by composing the data rows for the Strike Team. 
-		# We need the length of this block to sort the right 
-		# number of lines when clicking on table headers. 
-		
-		st_rows = 0
-		st_html = ''
+			team_num = strike_teams.index(strike_team)+1
 
-		# Last minute sort if proscribed by the table format.
-		if sort_by:
-			strike_team = [member for member in player_list if member in strike_team]
+			# Determine if we are requesting a subset of the strike_team,
+			# or for strike_teams to be ignored (only_team == 0) 
+			only_team = table_format.get('only_team')
 
-		# FINALLY, WRITE THE DATA FOR EACH ROW. #########################
-		alt_color = False
-		for player_name in strike_team:
-		
-			# If strike_team name not in the player_list, it's a divider.
-			# Toggle a flag for each divider to change the color of Player Name slightly
-			if player_name not in player_list:
-				alt_color = not alt_color
+			# Add this to allow us to pass in fake Strike_Team definitions so that the correct "Strike Team #" label gets generated. 
+			# This is primarily for Spanning output, where one strike team is generated per table.
+			if not strike_team or (only_team and only_team != team_num):
 				continue
 
-			# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
-			num_avail = len([char for char in table.get('under_min',{}).get(player_name,{}) if not table.get('under_min',{}).get(player_name,{}).get(char)])
-
-			# If less than 5 characters, this just doesn't apply.
-			not_ready = num_avail < 5 if len(char_list) >= 5 else False
-
-			# Player Name, then relevant stats for each character.
-			st_html += '    <tr%s>\n' % [' class="hist"',''][not hist_date]
-			st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
-
-			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-			stale_data = is_stale(alliance_info, player_name)
-
-			# Include "# Pos" info if requested.
-			if inc_pos:
-				pos_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
-				st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, html_cache, stale_data), pos_num)
-
-			# Include "# Avail" info if requested.
-			if inc_avail:
-				st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], html_cache, stale_data), num_avail)
-
-			# Write the stat values for each character.
-			for char_name in using_chars:
-
-				# Load up arguments from table, with defaults if necessary.
-				under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
-
-				for key in keys:
-
-					# Get the range of values for this character for all rosters.
-					# If historical, we want the diff between the current values and the values in the oldest record
-					key_range = [find_value_or_diff(alliance_info, player, char_name, key, hist_date)[0] for player in player_list]
-
-					# Only look up the key_val if we have a roster.
-					key_val = 0
-					other_diffs = ''
-					if player_name in player_list:
-					
-						# Standard lookup. Get the key_val for this character stat from this player's roster.
-						# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
-						key_val,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, hist_date)
-
-					need_tt = key=='power' and key_val != 0 and not linked_hist
-
-					if key_val == 0 and hist_date:
-						style = ''
-					else:
-						# Note: We are using the tt class to get black text on fields in the Hist tab.
-						field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, hist_date)
-						style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or hist_date is not None])    
-
-					st_html += '     <td%s>%s%s</td>\n' % (style, [key_val,'-'][not key_val], ['',other_diffs][need_tt])
-
-				# Include ISO class information if requested
-				if inc_class:
-
-					# Get the ISO Class in use for this member's toon.
-					iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6
-					
-					# Translate it to a code to specify the correct CSS URI.
-					iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
-					
-					# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
-					all_iso_codes = [(alliance_info['members'][player].get('other_data',{}).get(char_name,0)&15)%6 for player in player_list]
-					all_iso_codes = [code for code in all_iso_codes if code]
-					
-					# Calculate a confidence for this code based on the tally of all codes in use.
-					iso_conf = 0
-					if all_iso_codes:
-						iso_conf  = int((all_iso_codes.count(iso_code)/len(all_iso_codes))*100)
-
-					# Include the graphic via CSS and use the confidence for background color.
-					if iso_class:
-						field_color = get_value_color_ext(0, 100, iso_conf, html_cache, stale_data, under_min=under_min)
-						tool_tip = f'<span class="ttt"><b>{iso_class.title()}:</b><br>{iso_conf}%</span>'
-						st_html += f'     <td class="{iso_class[:4]} tt {field_color}">{tool_tip}</td>\n'
-					else:
-						st_html += '     <td class="hist">-</td>\n'
-
-			# Include the Team Power column.
-			if len(char_list)>1:
-				player_stp = stp_list.get(player_name,0)
-				st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(stp_range, player_stp, html_cache, stale_data), [player_stp,'-'][not player_stp])
+			# Start by composing the data rows for the Strike Team. 
+			# We need the length of this block to sort the right 
+			# number of lines when clicking on table headers. 
 			
-			st_html += '    </tr>\n'
+			st_rows = 0
+			st_html = ''
+
+			# Last minute sort if proscribed by the table format.
+			if sort_by:
+				strike_team = [member for member in player_list if member in strike_team]
+
+			# FINALLY, WRITE THE DATA FOR EACH ROW. #########################
+			alt_color = False
+			for player_name in strike_team:
 			
-			# Increment the count of data rows by one.
-			st_rows += 1
-		# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
+				# If strike_team name not in the player_list, it's a divider.
+				# Toggle a flag for each divider to change the color of Player Name slightly
+				if player_name not in player_list:
+					alt_color = not alt_color
+					continue
 
-		# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
-		# (only if more than one item requested)
-		if num_cols>1 or len(strike_teams)>1:
-			html_file += '    <tr class="%s">\n' % table_header
+				# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
+				num_avail = len([char for char in table.get('under_min',{}).get(player_name,{}) if not table.get('under_min',{}).get(player_name,{}).get(char)])
 
-			# Simplify inclusion of the sort function code
-			if linked_hist:
-				sort_func = 'onclick="sortl(%s,\'%s\',%s,%s,\'%s\')"' % ('%s', table_id, row_idx, st_rows, linked_id)
-			else:
-				sort_func = 'onclick="sortx(%s,\'%s\',%s,%s)"' % ('%s', table_id, row_idx, st_rows)
+				# If less than 5 characters, this just doesn't apply.
+				not_ready = num_avail < 5 if len(char_list) >= 5 else False
 
-			if len(strike_teams)>1:
-				html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>\n'
-			else:
-				html_file += f'     <td class="{button_hover}" {sort_func % 0}>Member</td>\n'
+				# Player Name, then relevant stats for each character.
+				st_html += '    <tr%s>\n' % [' class="hist"',''][not hist_date]
+				st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
-			col_idx = 1
+				# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
+				stale_data = is_stale(alliance_info, player_name)
 
-			# Include header if "# Pos" info requested.
-			if inc_pos:
-				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Rank</td>\n'
-				col_idx += 1
+				# Include "# Pos" info if requested.
+				if inc_pos:
+					pos_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
+					st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, html_cache, stale_data), pos_num)
 
-			# Include header if "# Avail" info requested.
-			if inc_avail:
-				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Avail</td>\n'
-				col_idx += 1
+				# Include "# Avail" info if requested.
+				if inc_avail:
+					st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], html_cache, stale_data), num_avail)
 
-			# Insert stat headings for each included Character.
-			for char in using_chars:
-				for key in keys:
-					html_file += f'     <td class="{button_hover}" %s>%s</td>\n' % (sort_func % col_idx, {'iso':'ISO'}.get(key,key.title()))
+				# Write the stat values for each character.
+				for char_name in line_chars:
+
+					# Load up arguments from table, with defaults if necessary.
+					under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
+
+					for key in keys:
+
+						# Get the range of values for this character for all rosters.
+						# If historical, we want the diff between the current values and the values in the oldest record
+						key_range = [find_value_or_diff(alliance_info, player, char_name, key, hist_date)[0] for player in player_list]
+
+						# Only look up the key_val if we have a roster.
+						key_val = 0
+						other_diffs = ''
+						if player_name in player_list:
+						
+							# Standard lookup. Get the key_val for this character stat from this player's roster.
+							# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
+							key_val,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, hist_date)
+
+						need_tt = key=='power' and key_val != 0 and not linked_hist
+
+						if key_val == 0 and hist_date:
+							style = ''
+						else:
+							# Note: We are using the tt class to get black text on fields in the Hist tab.
+							field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, hist_date)
+							style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or hist_date is not None])    
+
+						st_html += '     <td%s>%s%s</td>\n' % (style, [key_val,'-'][not key_val], ['',other_diffs][need_tt])
+
+					# Include ISO class information if requested
+					if inc_class:
+
+						# Get the ISO Class in use for this member's toon.
+						iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6
+						
+						# Translate it to a code to specify the correct CSS URI.
+						iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
+						
+						# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
+						all_iso_codes = [(alliance_info['members'][player].get('other_data',{}).get(char_name,0)&15)%6 for player in player_list]
+						all_iso_codes = [code for code in all_iso_codes if code]
+						
+						# Calculate a confidence for this code based on the tally of all codes in use.
+						iso_conf = 0
+						if all_iso_codes:
+							iso_conf  = int((all_iso_codes.count(iso_code)/len(all_iso_codes))*100)
+
+						# Include the graphic via CSS and use the confidence for background color.
+						if iso_class:
+							field_color = get_value_color_ext(0, 100, iso_conf, html_cache, stale_data, under_min=under_min)
+							tool_tip = f'<span class="ttt"><b>{iso_class.title()}:</b><br>{iso_conf}%</span>'
+							st_html += f'     <td class="{iso_class[:4]} tt {field_color}">{tool_tip}</td>\n'
+						else:
+							st_html += '     <td class="hist">-</td>\n'
+
+				# Include the Team Power column.
+				if len(char_list)>1:
+					player_stp = stp_list.get(player_name,0)
+					st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(stp_range, player_stp, html_cache, stale_data), [player_stp,'-'][not player_stp])
+				
+				st_html += '    </tr>\n'
+				
+				# Increment the count of data rows by one.
+				st_rows += 1
+			# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
+
+			# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
+			# (only if more than one item requested)
+			if num_cols>1 or len(strike_teams)>1:
+				html_file += '    <tr class="%s">\n' % table_header
+
+				# Simplify inclusion of the sort function code
+				if linked_hist:
+					sort_func = 'onclick="sortl(%s,\'%s\',%s,%s,\'%s\')"' % ('%s', table_id, row_idx, st_rows, linked_id)
+				else:
+					sort_func = 'onclick="sortx(%s,\'%s\',%s,%s)"' % ('%s', table_id, row_idx, st_rows)
+
+				if len(strike_teams)>1:
+					html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>\n'
+				else:
+					html_file += f'     <td class="{button_hover}" {sort_func % 0}>Member</td>\n'
+
+				col_idx = 1
+
+				# Include header if "# Pos" info requested.
+				if inc_pos:
+					html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Rank</td>\n'
 					col_idx += 1
 
-				# Include a header for ISO Class info if requested.
-				if inc_class:
-					html_file += '     <td>Cls</td>\n'
+				# Include header if "# Avail" info requested.
+				if inc_avail:
+					html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Avail</td>\n'
 					col_idx += 1
-			
-			# Insert the Team Power column.
-			if len(char_list)>1:
-				html_file += f'     <td class="redb" {sort_func % col_idx}>STP</td>\n'
 
-			html_file += '    </tr>\n'
-			
-			row_idx += 1
-		# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
+				# Insert stat headings for each included Character.
+				for char in line_chars:
+					for key in keys:
+						html_file += f'     <td class="{button_hover}" %s>%s</td>\n' % (sort_func % col_idx, {'iso':'ISO'}.get(key,key.title()))
+						col_idx += 1
 
-		# Add in the block of Strike Team Data Rows.
-		html_file += st_html
-		row_idx   += st_rows
+					# Include a header for ISO Class info if requested.
+					if inc_class:
+						html_file += '     <td>Cls</td>\n'
+						col_idx += 1
+				
+				# Insert the Team Power column.
+				if len(char_list)>1:
+					html_file += f'     <td class="redb" {sort_func % col_idx}>STP</td>\n'
+
+				html_file += '    </tr>\n'
+				
+				row_idx += 1
+			# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
+
+			# Add in the block of Strike Team Data Rows.
+			html_file += st_html
+			row_idx   += st_rows
 
 	# Close the Table, we are done with this chunk.
 	html_file += '   </table>\n'
@@ -785,7 +794,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	
 	if hist_info:
 		member_list = list(hist_info[max(hist_info)])
-		
+
 	# Get a sorted list of members to use for this table output.
 	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 	alliance_order = [member for member in alliance_order if member in member_list]
@@ -1038,10 +1047,10 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	html_file += '</tr>\n'
 
 	# Simplify inclusion of the sort function code
-	sort_func = 'class="%s" onclick="sort(%s,\'%s\',4)"' % ("blub", '%s', table_id)
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',3)"' % ("blub", '%s', table_id)
 
 	# Create the headings for the Alliance Info table.
-	html_file += '<tr class="hblu" style="font-size:14pt;">\n'
+	html_file += '<tr class="hblu" style="font-size:14pt;position:relative;">\n'
 	html_file += ' <td width="60"></td>\n'
 	html_file += f' <td width="215" {sort_func % 1}>Name</td>\n'            
 	html_file += f' <td width="110" {sort_func % 2}>Level</td>\n'

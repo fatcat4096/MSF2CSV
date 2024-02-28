@@ -40,6 +40,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 }
 .blub {
   min-width   : 28px;
+  z-index     : 5;
 }
 .blub:hover {
   background  : DodgerBlue;
@@ -288,7 +289,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
                 2px -2px 2px black,
                 -2px -2px 2px black, 
                 0 0 0.8em black, 
-                0 0 0.2em black;  
+                0 0 0.2em black; 
 }
 .cont {
   position    : relative;

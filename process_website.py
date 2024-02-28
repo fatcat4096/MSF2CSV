@@ -347,9 +347,9 @@ def update_strike_teams(alliance_info):
 			# Fix any issues. We will just update this info in cached_data.
 			updated = fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info) or updated
 
-	# If a change was made, update the cached_data file.
+	# If a change was made, update the cached_data file, but do not change the modification date.
 	if updated:
-		write_cached_data(alliance_info)
+		write_cached_data(alliance_info, timestamp='keep')
 
 	# If no valid strike_teams.py exists, use this info as the basis.
 	if not strike_teams_defined:
@@ -417,6 +417,10 @@ def migrate_strike_teams(alliance_info):
 		if 'trophies' in alliance_info:
 			del alliance_info['trophies']
 			del alliance_info['stark_lvl']
+
+	if 'admin' not in alliance_info:
+		alliance_info['admin'] = {'name':'fatcat4096', 'id':564592015975645184}
+		updated = True
 
 	return updated
 		
