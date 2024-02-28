@@ -145,37 +145,39 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	# Meta Heroes for use in Incursion 1.x Raid
 	tables['old_incur'] = { 'name': 'Incursion 1.x Raid', 'min_iso': 9, 'max_others': 5, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur', 'inc_dividers':'incur',
 						'lanes':[ [
-								{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto']},
-								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent']},
-								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack']},
 								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl']},
 								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
+								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot']},
+								{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive Mind)'},
+								{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent'], 'label':'Bio<br>(Rebirth)'},
+								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Captain America (Sam)'], 'label':'Skill<br>(plus Sam)'},
+								{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack'], 'label':'Skill<br>(Invaders)'},
 								] ]
 						}
 
 	# Meta Heroes for use in Gamma Raid
 	tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'max_others': 5, 'strike_teams': 'gamma', 'sort_char_by': 'avail', 'inc_avail': True,
 						'lanes':[ [
-								{'traits': ['Avenger', 'GotG'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
-								{'traits': ['PymTech', 'Infestation', 'Kree'], 'meta': ['Black Widow', 'Spider-Man (Big Time)', 'Minn-Erva', 'Captain Marvel', 'Phyla-Vell']},
-								{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								{'traits': ['Avenger', 'GotG']},
+								{'traits': ['PymTech', 'Infestation', 'Kree']},
+								{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
 								],[ ### Lane 2 ###
-								{'traits': ['Avenger', 'SpiderVerse'], 'meta': ['Viv Vision', 'Vision', 'Deathlok', 'Hulkbuster', 'Iron Man']},
-								{'traits': ['PymTech', 'Infestation', 'Wakanda'], 'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
-								{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								{'traits': ['Avenger', 'SpiderVerse']},
+								{'traits': ['PymTech', 'Infestation', 'Wakanda']},
+								{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
 								],[ ### Lane 3 ###
-								{'traits': ['Shield', 'Brotherhood'], 'meta': ['Black Widow', 'Captain America', 'Nick Fury', 'Maria Hill', 'Magneto']},
-								{'traits': ['Defender', 'Mercenary', 'HeroesForHire'], 'meta': ['Black Cat', 'Ghost Rider (Robbie)', 'Ms. Marvel (Hard Light)', 'Photon', 'Doctor Strange']},
-								{'traits': ['GotG', 'Xmen', 'Mercenary'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-								{'traits': ['Brotherhood', 'Mercenary', 'Xmen'], 'meta': ['Dazzler', 'Fantomex', 'Gambit', 'Rogue', 'Sunfire']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								{'traits': ['Shield', 'Brotherhood']},
+								{'traits': ['Defender', 'Mercenary', 'HeroesForHire']},
+								{'traits': ['GotG', 'Xmen', 'Mercenary']},
+								{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
 								],[ ### Lane 4 ###
-								{'traits': ['Shield', 'Aim'], 'meta': ['Black Widow', 'Captain America', 'Nick Fury', 'Maria Hill', 'Hawkeye']},
-								{'traits': ['Defender', 'Hydra', 'HeroesForHire'], 'meta': ['Black Cat', 'Ghost Rider (Robbie)', 'Ms. Marvel (Hard Light)', 'Photon', 'Doctor Strange']},
-								{'traits': ['Shield', 'Wakanda', 'Defender', 'HeroesForHire'], 'meta': ['Black Panther', 'Black Panther (1MM)', 'Nakia', 'Okoye', 'Shuri']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG'], 'meta': ['Ghost-Spider', 'Spider-Man (Miles)', 'Spider-Weaver', 'Spider-Man', 'Scarlet Spider']},
+								{'traits': ['Shield', 'Aim']},
+								{'traits': ['Defender', 'Hydra', 'HeroesForHire']},
+								{'traits': ['Shield', 'Wakanda', 'Defender', 'HeroesForHire']},
+								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
 								] ]
 						}
 
@@ -203,8 +205,10 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	# Meta Heroes for use in Teams
 	tables['teams'] = { 'name': 'Teams', 'sort_by': 'stp', 'span': True,
 						'lanes':[ [
-								# Said 'no' to AxMen, BA, F4, Inhumans, Rebirth, Shadowland, Uncanny, X-Factor, X-Force     Removed Rebirth, Bifrost, Pegasus, and Invader as redundant.
 								{'traits': ['AForce']},
+								{'traits': ['Astonishing']},
+								{'traits': ['Bifrost']},
+								{'traits': ['BionicAvenger']},
 								{'traits': ['BlackOrder','Thanos']},
 								{'traits': ['Darkhold']},
 								{'traits': ['DarkHunter']},
@@ -214,20 +218,26 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['HeroesForHire']},
 								{'traits': ['Infestation']},
 								{'traits': ['InfinityWatch']},
+								{'traits': ['Invader']},
 								{'traits': ['Knowhere']},
 								{'traits': ['MastersOfEvil']},
 								{'traits': ['NewAvenger']},
 								{'traits': ['NewWarrior']},
+								{'traits': ['Out of Time'], 'meta': ['Captain America', 'Captain Carter', 'Starbrand', 'Black Knight', 'Cosmic Ghost Rider']},
+								{'traits': ['Pegasus']},
+								{'traits': ['PymTech']},
 								{'traits': ['Rebirth'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
 								{'traits': ['SecretDefender']},
+								{'traits': ['Shadowland']},
 								{'traits': ['SuperiorSix']},
+								{'traits': ['Uncanny']},
 								{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
 								{'traits': ['Unlimited']},
 								{'traits': ['WarDog']},
 								{'traits': ['WeaponX']},
 								{'traits': ['XTreme']},
 								{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
-								{'traits': ['Horseman','Mythic','Black Cat','Quicksilver','Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars'},	
+								{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars'},	
 								] ]
 						}
 
