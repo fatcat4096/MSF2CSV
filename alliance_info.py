@@ -234,6 +234,15 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date='')
 
 	# Find the current value. 
 	char_info = alliance_info['members'][player_name].get('processed_chars',{}).get(char_name,{})
+
+	# Abilities have to be treated a little differently. 
+	if key in ('bas','spc','ult','pas'):
+		bas,abil = divmod(char_info.get('abil',0),1000)
+		spc,abil = divmod(abil,100)
+		ult,pas  = divmod(abil,10)
+		char_info = char_info.copy()
+		char_info.update({'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas})
+
 	current_val = int(char_info.get(key,0))
 	
 	# If we're not on a history tab, we're almost done.
@@ -269,6 +278,14 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date='')
 
 		hist_info   = alliance_info['hist'][hist_date][player_name].get(char_name,{})
 
+		# Abilities have to be treated a little differently. 
+		if key in ('bas','spc','ult','pas'):
+			bas,abil = divmod(hist_info.get('abil',0),1000)
+			spc,abil = divmod(abil,100)
+			ult,pas  = divmod(abil,10)
+			hist_info = char_info.copy()
+			hist_info.update({'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas})
+
 		# get the difference between the oldest value and the current one.
 		delta_val = current_val - int(hist_info.get(key,0))
 
@@ -278,6 +295,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date='')
 			# Iterate through all the stats we're currently tracking.
 			diffs = []
 			for entry in char_info:
+			
 				diff = int(char_info[entry]) - int(hist_info.get(entry,0))
 
 				if diff:

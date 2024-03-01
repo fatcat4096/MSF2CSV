@@ -442,6 +442,11 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 		# Get keys from table_format/table, with defaults if necessary.
 		keys = get_table_value(table_format, table, 'inc_keys', ['power','tier','iso'])
 
+		# Treat 'abil' as 4 separate entries.
+		if 'abil' in keys:
+			idx = keys.index('abil')
+			keys = keys[:idx] + ['bas', 'spc', 'ult', 'pas'] + keys[idx+1:]
+
 		# Number of columns under each Character entry.
 		num_cols = len(keys) + inc_class
 
@@ -577,13 +582,13 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 					if inc_class:
 
 						# Get the ISO Class in use for this member's toon.
-						iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6
+						iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6								# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
 						
 						# Translate it to a code to specify the correct CSS URI.
 						iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
 						
 						# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
-						all_iso_codes = [(alliance_info['members'][player].get('other_data',{}).get(char_name,0)&15)%6 for player in player_list]
+						all_iso_codes = [(alliance_info['members'][player].get('other_data',{}).get(char_name,0)&15)%6 for player in player_list]	# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
 						all_iso_codes = [code for code in all_iso_codes if code]
 						
 						# Calculate a confidence for this code based on the tally of all codes in use.
@@ -641,7 +646,8 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 				# Insert stat headings for each included Character.
 				for char in line_chars:
 					for key in keys:
-						html_file += f'     <td class="{button_hover}" %s>%s</td>\n' % (sort_func % col_idx, {'iso':'ISO'}.get(key,key.title()))
+						width = 'p' if key == 'power' else ''
+						html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'iso':'ISO'}.get(key,key.title()))
 						col_idx += 1
 
 					# Include a header for ISO Class info if requested.
@@ -1021,7 +1027,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	if alliance_info.get('leader'):
 		member_list = [alliance_info.get('leader')]
 	
-	member_list += alliance_info.get('captains',[])
+	member_list += [member for member in alliance_order if member in alliance_info.get('captains',[])]
 	member_list += [member for member in alliance_order if member not in member_list]
 
 	tot_power = sum([alliance_info['members'][member].get('tcp',0) for member in alliance_info['members']])
@@ -1349,6 +1355,7 @@ def translate_name(value):
 				"Hydra Armored Guard": "Hydra Arm Guard",
 				"InfinityWatch": "Infinity<br>Watch",
 				"Invader": "Invaders",
+				"OutOfTime": "Out of Time",
 				"MastersOfEvil": "Masters<br>Of Evil",
 				"Mercenary": "Mercs",
 				"NewAvenger": "New<br>Avengers",
@@ -1374,6 +1381,7 @@ def translate_name(value):
 				"A.I.M. Researcher":"A.I.M.<br>Researcher",
 				"Agatha Harkness":"Agatha<br>Harkness",
 				"Black Panther (1MM)":"Black<br>Panther (1MM)",
+				"Captain America":"Captain<br>America",
 				"Captain America (Sam)":"Capt. America<br>(Sam)",
 				"Captain America (WWII)":"Capt. America<br>(WWII)",
 				"Doctor Octopus":"Doctor<br>Octopus",

@@ -46,6 +46,14 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   background  : DodgerBlue;
   cursor      : pointer;  
 }
+/* Blue Button, Power -- slightly wider */
+.blubp {
+  min-width   : 50px;
+}
+.blubp:hover {
+  background  : DodgerBlue;
+  cursor      : pointer;  
+}
 /* Lt Blue Button */
 .ltbb {
   font-weight : 700;
@@ -74,6 +82,14 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   min-width   : 28px;
 }
 .blkb:hover {
+  background  : SlateGray;
+  cursor      : pointer;  
+}
+/* Black Button, Power -- slightly wider */
+.blkbp {
+  min-width   : 50px;
+}
+.blkbp:hover {
   background  : SlateGray;
   cursor      : pointer;  
 }

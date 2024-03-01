@@ -113,7 +113,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 	# And make note of when we end.
 	time_now = datetime.datetime.now()
-	rosters_output.append('\nTotal time: %s seconds.' % ((time_now - start_time).seconds))
+	rosters_output.append('\nTotal time: %s seconds' % ((time_now - start_time).seconds))
 	print (rosters_output[-1])
 
 	# Get a little closer to our work. 
