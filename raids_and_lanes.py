@@ -107,6 +107,7 @@ tables['gamma'] = { 'name': 'Gamma Raid',
 # Meta Heroes for use in Dark Dimension 6
 tables['dd6'] = { 'name': 'Dark Dimension 6',
 					'min_tier': 18,
+					'max_others': 10,
 					'sort_by': 'stp',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
@@ -122,6 +123,7 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 # Meta Heroes for use in Dark Dimension 5
 tables['dd5'] = { 'name': 'Dark Dimension 5',
 					'min_tier': 16,
+					'max_others': 10,
 					'sort_by': 'stp',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
@@ -132,7 +134,33 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 							{'traits': ['Legendary']},
 							] ]
 					}
-
+'''
+# Meta Heroes for use in Doom 2 Raid
+tables['doom2'] = { 'name': 'Doom 2',
+					'min_tier': 7,
+					'max_others': 10,
+					'sort_by': 'stp',
+					'sort_char_by': 'avail',
+					'inc_avail': True,
+					'lanes':[ [
+							{'traits': ['Bio']},
+							{'traits': ['Skill']},
+							{'traits': ['Tech']},
+							{'traits': ['Mutant']},
+							],[ ### Lane 2 ###
+							{'traits': ['Avenger', 'SpiderVerse']},
+							{'traits': ['PymTech', 'Infestation', 'Wakanda']},
+							{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
+							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
+							],[ ### Lane 3 ###
+							{'traits': ['Shield', 'Brotherhood']},
+							{'traits': ['Defender', 'Mercenary', 'HeroesForHire']},
+							{'traits': ['GotG', 'Xmen', 'Mercenary']},
+							{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
+							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
+							] ]
+					}
+'''
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
 					'sort_by': 'stp',
@@ -157,7 +185,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['MastersOfEvil']},
 							{'traits': ['NewAvenger']},
 							{'traits': ['NewWarrior']},
-							{'traits': ['Out of Time'], 'meta': ['Captain America', 'Captain Carter', 'Starbrand', 'Black Knight', 'Cosmic Ghost Rider']},
+							{'traits': ['OutOfTime'], 'meta': ['Captain America', 'Captain Carter', 'Starbrand', 'Black Knight', 'Cosmic Ghost Rider']},
 							{'traits': ['Pegasus']},
 							{'traits': ['PymTech']},
 							{'traits': ['Rebirth'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
@@ -171,7 +199,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['WeaponX']},
 							{'traits': ['XTreme']},
 							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
-							{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars'},	
+							{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars', 'inc_keys':['power', 'red'], 'max_others':0},
 							] ]
 					}
 

@@ -187,6 +187,15 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	html_file += generate_alliance_tab   (alliance_info, using_tabs=True, html_cache=html_cache)
 	html_file += generate_by_char_tab    (alliance_info, using_tabs=True, html_cache=html_cache)
 	
+	# If we want to remove whitespace for --publish, this is where we do it.
+	#print ("BEFORE:",len(html_file))
+	#html_file = ''.join([line.strip() for line in html_file.split('\n')])
+	#print ("AFTER:",len(html_file))
+	
+	# My thoughts about --publish. 
+	# Do the Alliance Info and Roster Analysis as separate HTML.
+	# Remove them from all the other tabbed files.
+	
 	# Include scripts to support sorting.
 	html_file += add_sort_scripts()
 
@@ -223,26 +232,26 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 	html_file = ''
 
-	# Which strike_teams should we use?
-	strike_teams = get_table_value(table_format, table, 'strike_teams')
+	# Which strike_teams should we use? (Strike Teams CANNOT vary section by section.)
+	strike_teams = get_table_value(table_format, table, section={}, key='strike_teams')
 
 	# Grab specified strike teams if available. 
 	strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
 
 	# Insert dividers as necessary
-	inc_dividers = get_table_value(table_format, table, 'inc_dividers', 'other')
+	inc_dividers = get_table_value(table_format, table, section={}, key='inc_dividers', default='other')
 	if inc_dividers and strike_teams:
 		strike_teams = insert_dividers(strike_teams, inc_dividers)
 
 	# If no strike team definitions are specified / found or 
 	# If only_team == 0 (ignore strike_teams) **AND**
 	# no sort_by has been specified, force sort_by to 'stp'
-	only_team = table_format.get('only_team')
+	only_team = get_table_value(table_format, table, section={}, key='only_team')
 	if (not strike_teams or only_team == 0) and not table_format.get('sort_by'):
 		table_format['sort_by'] = 'stp'
 
 	# Sort player list if requested.
-	sort_by = get_table_value(table_format, table, 'sort_by')
+	sort_by = get_table_value(table_format, table, section={}, key='sort_by')
 
 	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
 	if not strike_teams or only_team == 0:
@@ -283,7 +292,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			# Let's make it easy on ourselves. Start every section the same way.
 			html_file += '<table>\n <tr>\n  <td>\n'
 
-			max_others = get_table_value(table_format, table, 'max_others')
+			max_others = get_table_value(table_format, table, section, key='max_others')
 
 			# Only building meta table if we have meta_chars defined.
 			if meta_chars:
@@ -291,7 +300,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 				stp_list = get_stp_list(alliance_info, meta_chars, hist_date)
 
-				html_file += generate_table(alliance_info, table, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date)
+				html_file += generate_table(alliance_info, table, section, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date)
 
 				html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
@@ -310,7 +319,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			# Generate stp_list dict for the Other Table calls.
 			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
 
-			span_data = get_table_value(table_format, table, 'span', False)
+			span_data = get_table_value(table_format, table, section, key='span', default=False)
 
 			# Special code for Spanning format here. It's a very narrow window of applicability.
 			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not only_team:
@@ -337,12 +346,12 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 				for strike_team in strike_temp:
 
 					# Pass in only a single chunk of 8 players three separate times.
-					html_file += generate_table(alliance_info, table, table_format, other_chars, strike_team, table_lbl, stp_list, html_cache, hist_date)
+					html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_team, table_lbl, stp_list, html_cache, hist_date)
 					html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
 			# We are NOT spanning. Standard table generation.
 			else:
-				html_file += generate_table(alliance_info, table, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, hist_date)
+				html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, hist_date)
 
 			# End every section the same way.
 			html_file += '  </td>\n </tr>\n</table>\n'
@@ -359,7 +368,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
-def generate_table(alliance_info, table, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None):
+def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None):
 
 	# Pick a color scheme.
 	if 'OTHERS' not in table_lbl:
@@ -381,7 +390,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 		button_hover  = 'blkb'
 
 	# Sort player list if requested.
-	sort_by = get_table_value(table_format, table, 'sort_by', '')
+	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
 
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info, sort_by, stp_list)
@@ -392,7 +401,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 	# Pare any missing heroes if these aren't Meta entries.
 	if 'META' not in table_lbl and len(using_chars) > 5:
 		using_players = [player for player in sum(strike_teams, []) if player in player_list]
-		using_chars = remove_min_iso_tier(alliance_info, table_format, table, using_players, using_chars)			
+		using_chars = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)			
 
 	# If there are no characters in this table, don't generate a table.
 	if not using_chars:
@@ -427,9 +436,9 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 		# Include Available, Include Position, and Include ISO Class flags
 		# Get value from table_format/table, with defaults if necessary.
 
-		inc_avail = get_table_value(table_format, table, 'inc_avail', False) and 'OTHERS' not in table_lbl
-		inc_pos   = get_table_value(table_format, table, 'inc_pos',   False) and 'OTHERS' not in table_lbl
-		inc_class = get_table_value(table_format, table, 'inc_class', False) and not hist_date
+		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl
+		inc_pos   = get_table_value(table_format, table, section, key='inc_pos',   default=False) and 'OTHERS' not in table_lbl
+		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False) and not hist_date
 
 		# Include a column for "# Pos" info if requested.
 		if inc_pos:
@@ -440,7 +449,7 @@ def generate_table(alliance_info, table, table_format, char_list, strike_teams, 
 			html_file += '     <td></td>\n'
 
 		# Get keys from table_format/table, with defaults if necessary.
-		keys = get_table_value(table_format, table, 'inc_keys', ['power','tier','iso'])
+		keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','tier','iso'])
 
 		# Treat 'abil' as 4 separate entries.
 		if 'abil' in keys:
@@ -1200,8 +1209,11 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 		# Let's make it easy on ourselves. Start every section the same way.
 		html_file += '<table>\n <tr>\n  <td>\n'
 
+		# By default, no section-specific formatting
+		section={}
+
 		# Generate the left table with current stats.
-		html_file += generate_table(alliance_info, table, table_format, [char], [member_list], table_lbl, stp_list, html_cache, None, linked_hist=True)
+		html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], table_lbl, stp_list, html_cache, None, linked_hist=True)
 
 		# Small space between the two tables.
 		html_file += '  </td>\n  <td><br></td>\n  <td>\n'
@@ -1209,7 +1221,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 		# Generate the right table with historical information if available.
 		if hist_date:
 			table_lbl += f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
-			html_file += generate_table(alliance_info, table, table_format, [char], [member_list], table_lbl, stp_list, html_cache, hist_date, linked_hist=True)
+			html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], table_lbl, stp_list, html_cache, hist_date, linked_hist=True)
 			
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'
@@ -1344,13 +1356,15 @@ def translate_name(value):
 
 	tlist = {	"Avenger": "Avengers",
 				"AForce": "A-Force",
+				"Asgard": "Asgardians",
+				"Astonishing": "Astonishing<br>X-Men",
 				"BionicAvenger": "Bionic<br>Avengers",
 				"BlackOrder": "Black<br>Order",
-				"Brawler": "Brawlers",
 				"Brotherhood": "B'Hood",
 				"DarkHunter": "Dark<br>Hunters",
 				"Defender": "Defenders",
 				"Eternal": "Eternals",
+				"FantasticFour": "Fantastic<br>Four",
 				"HeroesForHire": "H4H",
 				"Hydra Armored Guard": "Hydra Arm Guard",
 				"InfinityWatch": "Infinity<br>Watch",
@@ -1361,15 +1375,18 @@ def translate_name(value):
 				"NewAvenger": "New<br>Avengers",
 				"NewWarrior": "New<br>Warriors",
 				"Pegasus": "PEGASUS",
+				"PowerArmor": "Power Armor",
 				"PymTech": "Pym Tech",
 				"Ravager": "Ravagers",
 				"SecretAvenger": "Secret<br>Avengers",
 				"SecretDefender": "Secret<br>Defenders",
 				"SinisterSix": "Sinister<br>Six",
 				"SpiderVerse": "Spiders",
+				"SuperiorSix": "Superior<br>Six",
 				"Symbiote": "Symbiotes",
 				"TangledWeb": "Tangled<br>Web",
 				"WarDog": "War Dogs",
+				"Wave1Avenger": "Wave 1<br>Avengers",
 				"WeaponX": "Weapon X",
 				"WebWarrior": "Web<br>Warriors",
 				"XFactor": "X-Factor",

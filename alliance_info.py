@@ -6,6 +6,7 @@ Routines used to work with alliance_info, to pull information out or maintain th
 
 
 import datetime
+import string
 
 
 
@@ -89,7 +90,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	player_list = get_player_list (alliance_info)
 
 	# Filter out anyone less than the min_iso / min_tier
-	other_chars = remove_min_iso_tier(alliance_info, table_format, table, player_list, other_chars)
+	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
 
 	# Get extracted_traits from alliance_info
 	extracted_traits = alliance_info.get('extracted_traits',{})
@@ -100,7 +101,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		traits = [traits]
 
 	# Options are 'any' and 'all'. Not currently being used.
-	traits_req = table.get('traits_req','any')		# Default is 'any'
+	traits_req = get_table_value(table_format, table, section, key='traits_req', default='any')
 
 	excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
 	traits          = [trait     for trait in traits if trait[:4] != 'Non-']
@@ -141,8 +142,8 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	table['under_min'] = {}
 
 	# Load up arguments from table, with defaults if necessary.
-	min_iso  = get_table_value(table_format,table,'min_iso',0)
-	min_tier = get_table_value(table_format,table,'min_tier',0)
+	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
+	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
 
 	# Before filtering further, while we have visibility for the entire section...
 	for player_name in player_list:
@@ -154,7 +155,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
 	# Start by pulling value from table_format or table.
-	max_others  = get_table_value(table_format, table, 'max_others', len(other_chars))
+	max_others  = get_table_value(table_format, table, section, key='max_others', default=len(other_chars))
 
 	# If span format requested, override max_others if necessary.
 	if table_format.get('span') or table.get('span'):
@@ -168,7 +169,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		other_chars = []
 
 	# Default sort is still 'alpha'.
-	sort_char_by = get_table_value(table_format, table,'sort_char_by','alpha')
+	sort_char_by = get_table_value(table_format, table, section, key='sort_char_by', default='alpha')
 
 	# This section sorts other_chars by power or availability, not by name.
 	# If max_others, this order is also used to select which we keep. 
@@ -206,11 +207,11 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	return meta_chars, other_chars
 
 
-def remove_min_iso_tier(alliance_info, table_format, table, player_list, char_list):
+def remove_min_iso_tier(alliance_info, table_format, table, section, player_list, char_list):
 
 	# Load up arguments from table, with defaults if necessary.
-	min_iso  = get_table_value(table_format,table,'min_iso',0)
-	min_tier = get_table_value(table_format,table,'min_tier',0)
+	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
+	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
  
 	# Remove? Shouldn't be necessary.
 	#if not player_list:
@@ -287,7 +288,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date='')
 			hist_info.update({'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas})
 
 		# get the difference between the oldest value and the current one.
-		delta_val = current_val - int(hist_info.get(key,0))
+		delta_val = current_val - hist_info.get(key,0)
 
 		# If there's a difference and the key is power, we need details for tooltip. 
 		if delta_val and key == 'power':
@@ -415,15 +416,63 @@ def is_stale(alliance_info, member_name):
 
 
 # All settings, we build up the same way
-def get_table_value(table_format, table, key, default=None):
+def get_table_value(table_format, table, section, key, default=None):
 
 	# Check for a custom value in table_format
 	value = table_format.get(key)
 
-	# If none provided, look for a value in table definition
+	# If nothing in table_format, look for a value in section
 	if value is None:
+		value = section.get(key)
 	
-		# If not specified, use a default value.
+	# If still nothing, look in table definition
+	# If nothing there fall back to the default value.
+	if value is None:
 		value = table.get(key,default)
 	
 	return value
+
+
+# parse a string containing roster_urls, return only the first valid User ID.
+def find_valid_roster_url(field_value):
+	
+	found_url = ''
+	
+	# Parse the whole string and only extract the first if any found.
+	found_urls = find_valid_roster_urls(field_value)
+	if found_urls:
+		found_url = found_urls[0]
+		
+	return found_url
+
+
+# parse a string containing roster_urls, looking for valid user IDs.
+def find_valid_roster_urls(field_value):
+
+	found_urls = []
+
+	# Short-circuit if we received None
+	if not field_value:
+		return found_urls	
+			
+	# If multiple values entered in a single field, process them all.
+	for value in field_value.split():
+
+		# If it looks like a URL or Roster ID, check it out. 
+		for piece in value.split('/'):
+			if is_valid_user_id(piece):
+				found_urls.append(piece)
+	
+	return found_urls
+
+
+# Validate user_id formatting.
+def is_valid_user_id(s):
+	if len(s) == 13 and set(s).issubset(string.hexdigits):
+		return True
+	elif len(s) == 36 and s[8]+s[13]+s[18]+s[23] == '----' and s.count('-') == 4 and set(s).issubset(string.hexdigits+'-'):
+		return True
+	return False
+
+
+

@@ -197,6 +197,10 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', file_name
 	
 	# Cache the char_list and trait list from this alliance_info for bot use.
 	char_list = get_char_list(alliance_info)
+
+	# If less, this is an older version. Keep our existing list.
+	if len(char_list) < len(load_char_list()):
+		return
 	
 	invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
 	traits = [trait for trait in sorted(alliance_info.get('extracted_traits',{})) if trait not in invalid_traits]

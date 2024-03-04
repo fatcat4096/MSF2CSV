@@ -182,7 +182,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in DD6 report
-	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'sort_by': 'stp', 'sort_char_by': 'avail','inc_avail': True, 
+	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'max_others': 10, 'sort_by': 'stp', 'sort_char_by': 'avail','inc_avail': True, 
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
@@ -193,7 +193,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in Dark Dimension 5
-	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'sort_by': 'stp', 'sort_char_by': 'avail', 'inc_avail': True,
+	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'max_others': 10, 'sort_by': 'stp', 'sort_char_by': 'avail', 'inc_avail': True,
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
@@ -223,7 +223,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['MastersOfEvil']},
 								{'traits': ['NewAvenger']},
 								{'traits': ['NewWarrior']},
-								{'traits': ['Out of Time'], 'meta': ['Captain America', 'Captain Carter', 'Starbrand', 'Black Knight', 'Cosmic Ghost Rider']},
+								{'traits': ['OutOfTime'], 'meta': ['Captain America', 'Captain Carter', 'Starbrand', 'Black Knight', 'Cosmic Ghost Rider']},
 								{'traits': ['Pegasus']},
 								{'traits': ['PymTech']},
 								{'traits': ['Rebirth'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
@@ -237,7 +237,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['WeaponX']},
 								{'traits': ['XTreme']},
 								{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
-								{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars'},	
+								{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars', 'inc_keys':['power', 'red'], 'max_others':0},
 								] ]
 						}
 
