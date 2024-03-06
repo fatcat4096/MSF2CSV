@@ -14,7 +14,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from parse_contents       import *
@@ -24,7 +24,6 @@ from login                import get_driver, login
 from extract_traits       import add_extracted_traits
 from parse_cache          import build_parse_cache
 from alliance_info        import update_history, is_stale
-
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, external_driver=None):
@@ -123,6 +122,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
 	stale   = len([member for member in members if is_stale(alliance_info, member)])
 	
+	# Summarize the results of processing
 	rosters_output.append(f'{updated} new, {len(members)-updated} old, {stale} stale')
 	print (rosters_output[-1])
 
@@ -133,12 +133,6 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	if working_from_website and (updated or 'strike_teams' not in globals()):
 		generate_strike_teams(alliance_info)
 
-	# Update extracted_traits if necessary.
-	add_extracted_traits(alliance_info)
-
-	# Keep a copy of critical stats from today's run for historical analysis.
-	update_history(alliance_info)
-
 	# Write the collected roster info to disk in a subdirectory.
 	write_cached_data(alliance_info)
 
@@ -147,8 +141,9 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 # Process rosters for every member in alliance_info.
 def process_rosters(driver, alliance_info, working_from_website=False, force='', only_new=False):
-	# Grab the Alliance Info url for future reference.
-	alliance_url   = driver.current_url
+
+	# Really only used for Working From Website processing.
+	alliance_url   = 'https://marvelstrikeforce.com/en/alliance/members'
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
@@ -171,93 +166,109 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 		if only_new and 'processed_chars' in members[member]:
 			continue
 
-		# Use a cached URL if available.
-		if 'url' in members[member]:
-
-			# Fix existing, cached entries.
-			if 'https' in members[member]['url']:
-				members[member]['url'] = members[member]['url'].split('/')[-2]
-				
-			#print ("Using cached URL to download",member)
-			driver.get('https://marvelstrikeforce.com/en/player/%s/characters' % members[member]['url'])
-
-			# If we're being called from Discord, provide the truncated output.
-			source = ['Cached URL   ',''][rosters_only]
-			
 		# Cached URL is the ONLY option if not working_from_website
-		elif not working_from_website:
+		if 'url' not in members[member] and not working_from_website: 
 			print ("No cached URL available -- skipping",member)
 			continue
 
-		# Otherwise, find an active roster button for this member
-		else:
+		# Start by defining the number of retries available for each attempt. 
+		retries = 3
+		page_source = ''
+		current_url = ''
 
-			# Start off by getting back to the Alliance page if we're not already on it.
-			if driver.current_url != alliance_url:
-				driver.get(alliance_url)
+		while retries:
+			try:
+				# Use a cached URL if available.
+				if 'url' in members[member]:
+					driver.get(f"https://marvelstrikeforce.com/en/player/{members[member]['url']}/characters")
 
-			# If nothing returned, we didn't find it.
-			if not find_members_roster(driver, member):
-				continue
+				# Or need to find an active roster button for this member
+				else:
 
-			source = 'Roster Link  '
+					# Start off by getting back to the Alliance page if we're not already on it.
+					current_url=alliance_url
+					if driver.current_url != alliance_url:
+						driver.get(alliance_url)
 
-		# Note when we began processing
-		start_time = datetime.datetime.now()
-		
-		member = process_roster(driver, alliance_info, parse_cache, member)
-		
-		# Failsafe if invalid data provided
-		if not member:
+					# If nothing returned, we didn't find an active roster button.
+					if not find_members_roster(driver, member):
+						break
+
+				# Note when we began processing
+				start_time = datetime.datetime.now()
+				time_limit = 8
+				refreshed  = False
+				
+				# Page loads in sections, will be > 1MB after roster information loads.
+				while (datetime.datetime.now()-start_time).seconds < time_limit:
+
+					# Give it a moment
+					time.sleep(0.25)
+
+					page_source = driver.page_source
+					current_url = driver.current_url
+
+					# If page_source is over 700K, page has completely loaded.
+					if len(page_source)>700000:
+						break
+
+					# Call refresh at the halfway point.
+					if (datetime.datetime.now()-start_time).seconds == time_limit / 2 and not refreshed:
+						refreshed = True
+						driver.refresh()
+
+				# If page loaded, pass contents to scraping routines for stat extraction.
+				member = parse_roster(page_source, alliance_info, parse_cache, member)
+				
+				# Made it out successfully. End the loop.
+				break
+
+			except (NoSuchElementException, TimeoutException, WebDriverException) as e:
+				# Still have retries available?
+				if retries:
+					retries -= 1
+					print (f"Retries left {retries}, continuing on {traceback.format_exc()}")
+					driver = login(headless=True)
+				# Too many retries, time to give up and bail.
+				else:
+					raise e
+			except Exception:
+				print (traceback.format_exc())
+				raise Exception
+
+		# Skip this member if invalid data provided OR if we never found a roster page.
+		if not member or ('url' not in members[member] and current_url == alliance_url):
 			continue
 
+		# Cache the URL just in case we can use this later
+		members[member]['url'] = current_url.split('/')[-2]
+					
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
-		not_updated = last_update and last_update < start_time
+		time_now    = datetime.datetime.now()
+		not_updated = last_update and (last_update < start_time or last_update > time_now)	# Deal with dates from .msf files imported from outside the current time zone.
 
-		found = (f'Parsing {len(driver.page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
+		found = (f'Parsing {len(page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
 		stale = ''
 		if is_stale(alliance_info, member):
 			stale = '/Stale' if alliance_info['members'][member].get('tot_power') else '/EMPTY'
 
 		if not_updated:
-			time_since = datetime.datetime.now() - last_update
-			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{time_since.days:>2}d'][rosters_only]
+			time_since = time_now - last_update
+			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{max(0,time_since.days):>2}d'][rosters_only]
 		else:
 			result = ['Updated','NEW'][rosters_only]
 
-		rosters_output.append(f'{source}{found}{result}{stale}')
+		rosters_output.append(f'{found}{result}{stale}')
 		print(rosters_output[-1])
 
+	# Keep a copy of critical stats from today's run for historical analysis.
+	update_history(alliance_info)
+
+	# Update extracted_traits if necessary.
+	add_extracted_traits(alliance_info)
+
 	return rosters_output
-
-
-# Parse just the current Roster page.
-def process_roster(driver, alliance_info, parse_cache, member=''):
-	# At this point, we're on the right page. Just need to wait for it to load before we parse it.
-	timer = 0
-	
-	# Page loads in sections, will be > 1MB after roster information loads.
-	while len(driver.page_source)<1000000:
-		# Still loading
-		time.sleep(0.25)
-		timer += 0.25
-		
-		# Call refresh if load failed to complete after 5 seconds.
-		if timer == 4.0:
-			driver.refresh()
-		# Just give up after 8 seconds.
-		elif timer > 8.0:
-			break
-
-	# If page loaded, pass contents to scraping routines for stat extraction.
-	member = parse_roster(driver.page_source, alliance_info, parse_cache, member)
-	
-	# Cache the URL just in case we can use this later
-	if member:
-		alliance_info['members'][member]['url'] = driver.current_url.split('/')[-2]
-		
-	return member
 
 
 # Get back to the Alliance page, then search to find the member's name and the related Roster button.
@@ -265,7 +276,7 @@ def find_members_roster(driver, member):
 
 	# Once member labels have populated, we're ready.
 	while len(driver.find_elements(By.TAG_NAME, "H4"))<4:
-		time.sleep(0.5)
+		time.sleep(0.25)
 
 	# Start by looking for the H4 label for this member. 
 	member_labels = driver.find_elements(By.TAG_NAME, "H4")
@@ -303,19 +314,20 @@ def find_members_roster(driver, member):
 	# Use a Try / Except structure because in my testing, offscreen buttons always throw an exception, even
 	# when I tell Selenium to scroll to them first. With Try/Except, first click focuses them, second succeeds.
 	try:
+		time.sleep(0.25)
 		button.click()
 	except:
-		time.sleep(0.5)
-
 		# If the URL / page title hasn't changed, try one more time
 		try:
 			#if 'Alliance' in driver.title:
+			time.sleep(0.25)
 			button.click()
 		# If second exception, exit with False and move on.
 		except:
 			print ("Exception raised 2x - skipping",member)
 			return False
-	
+
+	time.sleep(0.25)
 	return True
 
 
