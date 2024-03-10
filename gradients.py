@@ -86,7 +86,7 @@ def polylinear_gradient(colors, n):
 
 # Linear gradient from red, to yellow, to green. 
 # Costly to calculate, so only doing it once.
-color_scale = polylinear_gradient(['#FF866F','#F6FF6F','#89EC73'],1000)['hex']
+color_scale = polylinear_gradient(['#f05d41','#edf74d','#52e332'],1000)['hex']
 
 
 

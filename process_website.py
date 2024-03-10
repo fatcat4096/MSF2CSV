@@ -110,21 +110,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	if not external_driver:
 		driver.close()
 
-	# And make note of when we end.
-	time_now = datetime.datetime.now()
-	rosters_output.append('\nTotal time: %s seconds' % ((time_now - start_time).seconds))
-	print (rosters_output[-1])
-
-	# Get a little closer to our work. 
-	members = alliance_info['members']
-
-	# Quick report of our findings.
-	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
-	stale   = len([member for member in members if is_stale(alliance_info, member)])
-	
-	# Summarize the results of processing
-	rosters_output.append(f'{updated} new, {len(members)-updated} old, {stale} stale')
-	print (rosters_output[-1])
+	rosters_output = roster_results(alliance_info, start_time, rosters_output)
 
 	# Make sure we have a valid strike_team for Incursion and Other. 
 	updated = get_valid_strike_teams(alliance_info) 
@@ -139,8 +125,9 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	return [alliance_info,'\n'.join(rosters_output)][force == 'rosters_only']
 
 
+
 # Process rosters for every member in alliance_info.
-def process_rosters(driver, alliance_info, working_from_website=False, force='', only_new=False):
+def process_rosters(driver, alliance_info, working_from_website=False, force='', only_process=[]):
 
 	# Really only used for Working From Website processing.
 	alliance_url   = 'https://marvelstrikeforce.com/en/alliance/members'
@@ -162,8 +149,8 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 	# Let's iterate through the member names in alliance_info.
 	for member in list(members):
 
-		# If only_new and we have more than just a URL defined, skip.
-		if only_new and 'processed_chars' in members[member]:
+		# If only_process and this member isn't in the list, skip.
+		if only_process and member not in only_process:
 			continue
 
 		# Cached URL is the ONLY option if not working_from_website
@@ -269,6 +256,29 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 	add_extracted_traits(alliance_info)
 
 	return rosters_output
+
+
+
+def roster_results(alliance_info, start_time, rosters_output=[]):
+
+	# And make note of when we end.
+	time_now = datetime.datetime.now()
+	rosters_output.append('\nTotal time: %s seconds' % ((time_now - start_time).seconds))
+	print (rosters_output[-1])
+
+	# Get a little closer to our work. 
+	members = alliance_info['members']
+
+	# Quick report of our findings.
+	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
+	stale   = len([member for member in members if is_stale(alliance_info, member)])
+	
+	# Summarize the results of processing
+	rosters_output.append(f'{updated} new, {len(members)-updated} old, {stale} stale')
+	print (rosters_output[-1])
+
+	return rosters_output
+
 
 
 # Get back to the Alliance page, then search to find the member's name and the related Roster button.

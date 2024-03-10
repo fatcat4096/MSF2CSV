@@ -1029,7 +1029,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	html_file = ''
 
 	# Start by sorting members by TCP.
-	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
+	alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 	
 	# Build up the list of Alliance Members in the order we will present them.
 	member_list =  []

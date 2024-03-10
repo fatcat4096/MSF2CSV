@@ -22,7 +22,14 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, force='', ta
 	##
 	
 	if roster_url:
-		roster_url = roster_url.split('/')[-2]
+		#
+		# Use my new routine here? Add that somewhere else inside MSF2CSV? 
+		#
+		roster_url = find_valid_roster_url(roster_url)
+		if not roster_url:
+			print ("No valid user_id found in provided roster URL.")
+			return
+			
 		alliance_info = find_cached_data(roster_url)
 		if not alliance_info:
 			driver = external_driver or login()
@@ -162,6 +169,8 @@ if __name__ == '__main__':
 						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')					
 	parser.add_argument('--output', type=str, metavar='FORMAT',
 						help='only output ONE format from the list of formats', default='')
+	parser.add_argument('--publish', action='store_true',
+						help='generate HTML files and push to GitHub pages', default='')					
 	parser.add_argument('--sections_per', type=int, metavar='N',
 						help='include N sections per file.')
 	parser.add_argument('--sort_by', type=str, metavar='SORT', choices=['alpha','stp','tcp'],
@@ -212,6 +221,7 @@ if __name__ == '__main__':
 					'only_image'    : args.only_image,
 					'output'        : args.output,
 					'output_format' : output_format,
+					'publish'       : args.publish,
 					'sections_per'  : args.sections_per,
 					'sort_by'       : args.sort_by,
 					'sort_char_by'  : args.sort_char_by,
