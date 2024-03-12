@@ -4,6 +4,7 @@
 Takes the processed alliance / roster data and generate readable output to spec.  
 """
 
+from log_utils import *
 
 import datetime
 import string
@@ -15,8 +16,8 @@ from generate_css  import *
 from gradients     import color_scale, darken, grayscale
 from html_cache    import *
 
-
 # Build specific tab output for use in generating PNG graphics.
+@timed(level=3)
 def generate_html(alliance_info, table, table_format, output=''):
 
 	default_lanes = [[{'traits': ['Mutant']},
@@ -25,7 +26,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 					  {'traits': ['Mystic']},
 					  {'traits': ['Tech']}]]
 
-	html_files  = {}
+	html_files = {}
 	html_cache = {}
 	
 	output = table_format.get('output','query')
@@ -146,6 +147,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
+@timed(level=3)
 def generate_tabbed_html(alliance_info, table, table_format):
 
 	html_cache = {}
@@ -209,6 +211,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 
 
 # If we're doing a single lane format and we have history, let's generate a historical data tab. 
+@timed(level=3)
 def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
 
 	# Default it to empty.
@@ -223,12 +226,18 @@ def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
 
 
 # Just hide the messiness.
+@timed(level=3)
 def add_tab_header(content):
 	return '<table>\n<tr><td class="tlnk" style="width:100%;">'+content+'</td></tr>\n</table>'
 
 
 # Generate the contents for each lane.
+@timed(level=3)
 def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, using_tabs=False, html_cache={}):
+
+	global TRANSLATE_NAME
+	
+	#log = MSFTrace("generate_lanes",table, lanes, table_format, hist_date, using_tabs, level=3)
 
 	html_file = ''
 
@@ -284,7 +293,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 					traits = [traits]
 			
 				# Truncate Table Label after 4 entries, if more than 4, use first 3 plus "AND MORE"
-				traits = [translate_name(trait).upper() for trait in traits] 
+				traits = [TRANSLATE_NAME.get(trait, trait).upper() for trait in traits] 
 				if len(traits) > 4:
 					traits = traits[:3] + ['AND MORE']
 				table_lbl = '<br>'.join(traits)
@@ -368,7 +377,10 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
+@timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None):
+
+	global TRANSLATE_NAME
 
 	# Pick a color scheme.
 	if 'OTHERS' not in table_lbl:
@@ -478,7 +490,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				anchor = make_next_anchor_id(html_cache, char, table_id)
 				onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
 
-			html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
+			html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, TRANSLATE_NAME.get(char,char))
 
 		# Include a Team Power column if we have more than one.
 		if len(char_list)>1:
@@ -544,7 +556,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
 				# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-				stale_data = is_stale(alliance_info, player_name)
+				stale_data = table['is_stale'][player_name]
 
 				# Include "# Pos" info if requested.
 				if inc_pos:
@@ -684,6 +696,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 
 # Generate just the Alliance Tab contents.
+@timed(level=3)
 def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual', hist_date='', html_cache={}):
 
 	html_file=''
@@ -890,6 +903,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 
 # STILL NEED TO WORK ON HISTORICAL PRESENTATION. SHOULD USE PROGRESSIVE STAT CALCULATIONS FOR BOTH TO SUCCESSFULLY COMMUNICATE PROGRESS.
 
+@timed(level=3)
 def get_roster_stats(alliance_info, stat_type, hist_date=''):
 	
 	stats = {}
@@ -1024,6 +1038,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 
 
 # Generate just the Alliance Tab contents.
+@timed(level=3)
 def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 
 	html_file = ''
@@ -1159,7 +1174,10 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 
 
 # Generate just the Alliance Tab contents.
+@timed(level=3)
 def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_cache={}):
+
+	global TRANSLATE_NAME
 
 	html_file = ''
 
@@ -1198,7 +1216,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 	for char in char_list:
 		
 		# Just specify the Character name for the table title
-		table_lbl = translate_name(char).upper()
+		table_lbl = TRANSLATE_NAME.get(char,char).upper()
 
 		# Build stp_list to simplify sort_by='stp'.
 		stp_list = get_stp_list(alliance_info, [char])
@@ -1237,6 +1255,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 	return html_file
 
 
+@timed
 def extract_color(alliance_name):
 	alt_color = ''
 
@@ -1255,6 +1274,7 @@ def extract_color(alliance_name):
 
 
 # Insert dividers based on the type of team. 
+@timed
 def insert_dividers(strike_teams, raid_type):
 
 	# Start with a copy, just to be safe.
@@ -1292,15 +1312,12 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 
 def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):
 	
-	# Just in case passed a string.
-	value = int(value)
-
-	max_colors  = len(color_scale)-1
-	
 	# Special treatment for the '0' fields. 
 	if not value:
 		return 'hist'
 
+	max_colors  = len(color_scale)-1
+	
 	#Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 	if stat=='iso':
 		if not hist_date:
@@ -1308,19 +1325,19 @@ def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='pow
 		else:
 			scaled_value = [int((0.6 + 0.4 * ((value**3)/10**3)) * max_colors),0][value<0]
 	elif stat=='tier':
-		if not hist_date and value <= 15:
-			scaled_value = int(((value**2)/15**2)*0.50 * max_colors)
+		if not hist_date and value <= 16:
+			scaled_value = int(((value**2)/16**2)*0.50 * max_colors)
 		elif not hist_date:
-			scaled_value = int((0.65 + 0.35 * ((value-16)/3)) * max_colors)
+			scaled_value = int((0.65 + 0.35 * ((value-17)/2)) * max_colors)
 		else:
-			scaled_value = int((0.60 + 0.40 * ((value**2)/17**2)) * max_colors)
+			scaled_value = int((0.60 + 0.40 * ((value**2)/19**2)) * max_colors)
 	elif stat=='lvl':
-		if not hist_date and value <= 75:
-			scaled_value = int(((value**2)/75**2)*0.50 * max_colors)
+		if not hist_date and value <= 85:
+			scaled_value = int(((value**2)/85**2)*0.50 * max_colors)
 		elif not hist_date:
-			scaled_value = int((0.65 + 0.35 * ((value-75)/20)) * max_colors)
+			scaled_value = int((0.65 + 0.35 * ((value-85)/20)) * max_colors)
 		else:
-			scaled_value = int((0.60 + 0.40 * ((value**2)/95**2)) * max_colors)
+			scaled_value = int((0.60 + 0.40 * ((value**2)/100**2)) * max_colors)
 	elif stat in ('red','yel'):
 		min = 2
 		max = 7
@@ -1347,114 +1364,111 @@ def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='pow
 	if stale_data:
 		color = grayscale(color)
 
+	
+
+
 	# Cache this color away for class definitions later.
 	return make_next_color_id(html_cache, color)
 
 
 # Quick and dirty translation to shorter or better names.
-def translate_name(value):
-
-	tlist = {	"Avenger": "Avengers",
-				"AForce": "A-Force",
-				"Asgard": "Asgardians",
-				"Astonishing": "Astonishing<br>X-Men",
-				"BionicAvenger": "Bionic<br>Avengers",
-				"BlackOrder": "Black<br>Order",
-				"Brotherhood": "B'Hood",
-				"DarkHunter": "Dark<br>Hunters",
-				"Defender": "Defenders",
-				"Eternal": "Eternals",
-				"FantasticFour": "Fantastic<br>Four",
-				"HeroesForHire": "H4H",
-				"Hydra Armored Guard": "Hydra Arm Guard",
-				"InfinityWatch": "Infinity<br>Watch",
-				"Invader": "Invaders",
-				"OutOfTime": "Out of Time",
-				"MastersOfEvil": "Masters<br>Of Evil",
-				"Mercenary": "Mercs",
-				"NewAvenger": "New<br>Avengers",
-				"NewWarrior": "New<br>Warriors",
-				"Pegasus": "PEGASUS",
-				"PowerArmor": "Power Armor",
-				"PymTech": "Pym Tech",
-				"Ravager": "Ravagers",
-				"SecretAvenger": "Secret<br>Avengers",
-				"SecretDefender": "Secret<br>Defenders",
-				"SinisterSix": "Sinister<br>Six",
-				"SpiderVerse": "Spiders",
-				"SuperiorSix": "Superior<br>Six",
-				"Symbiote": "Symbiotes",
-				"TangledWeb": "Tangled<br>Web",
-				"WarDog": "War Dogs",
-				"Wave1Avenger": "Wave 1<br>Avengers",
-				"WeaponX": "Weapon X",
-				"WebWarrior": "Web<br>Warriors",
-				"XFactor": "X-Factor",
-				"Xforce": "X-Force",
-				"Xmen": "X-Men",
-				"XTreme": "X-Treme X-Men",
-				"YoungAvenger": "Young<br>Avengers",
-				"A.I.M. Monstrosity":"A.I.M.<br>Monstrosity",
-				"A.I.M. Researcher":"A.I.M.<br>Researcher",
-				"Agatha Harkness":"Agatha<br>Harkness",
-				"Black Panther (1MM)":"Black<br>Panther (1MM)",
-				"Captain America":"Captain<br>America",
-				"Captain America (Sam)":"Capt. America<br>(Sam)",
-				"Captain America (WWII)":"Capt. America<br>(WWII)",
-				"Doctor Octopus":"Doctor<br>Octopus",
-				"Doctor Strange":"Doctor<br>Strange",
-				"Doctor Voodoo":"Doctor<br>Voodoo",
-				"Elsa Bloodstone":"Elsa<br>Bloodstone",
-				"Ghost Rider (Robbie)":"Ghost Rider<br>(Robbie)",
-				"Green Goblin (Classic)":"Green Goblin<br>(Classic)",
-				"Hand Blademaster":"Hand<br>Blademaster",
-				"Hand Sorceress":"Hand<br>Sorceress",
-				"Hydra Armored Guard":"Hydra<br>Arm Guard",
-				"Hydra Grenadier":"Hydra<br>Grenadier",
-				"Hydra Rifle Trooper":"Hydra<br>Rifle Trooper",
-				"Hydra Scientist":"Hydra<br>Scientist",
-				"Invisible Woman":"Invisible<br>Woman",
-				"Iron Man (Infinity War)":"Iron Man<br>(Infinity War)",
-				"Iron Man (Zombie)":"Iron Man<br>(Zombie)",
-				"Ironheart (MKII)": "Ironheart<br>(MKII)",
-				"Juggernaut (Zombie)":"Juggernaut<br>(Zombie)",
-				"Kang the Conqueror":"Kang<br>the Conqueror",
-				"Korath the Pursuer":"Korath<br>the Pursuer",
-				"Kraven the Hunter":"Kraven<br>the Hunter",
-				"Kree Royal Guard":"Kree<br>Royal Guard",
-				"Lady Deathstrike":"Lady<br>Deathstrike",
-				"Madelyne Pryor":"Madelyne<br>Pryor",
-				"Mercenary Lieutenant":"Mercenary<br>Lieutenant",
-				"Mercenary Riot Guard":"Mercenary<br>Riot Guard",
-				"Mercenary Sniper":"Mercenary<br>Sniper",
-				"Mercenary Soldier":"Mercenary<br>Soldier",
-				"Mister Fantastic":"Mister<br>Fantastic",
-				"Mister Negative":"Mister<br>Negative",
-				"Mister Sinister":"Mister<br>Sinister",
-				"Ms. Marvel (Hard Light)": "Ms. Marvel<br>(Hard Light)",
-				"Proxima Midnight":"Proxima<br>Midnight",
-				"Ravager Boomer":"Ravager<br>Boomer",
-				"Ravager Bruiser":"Ravager<br>Bruiser",
-				"Ravager Stitcher":"Ravager<br>Stitcher",
-				"Rocket Raccoon":"Rocket<br>Raccoon",
-				"Ronan the Accuser":"Ronan<br>the Accuser",
-				"S.H.I.E.L.D. Assault":"S.H.I.E.L.D.<br>Assault",
-				"S.H.I.E.L.D. Medic":"S.H.I.E.L.D.<br>Medic",
-				"S.H.I.E.L.D. Operative":"S.H.I.E.L.D.<br>Operative",
-				"S.H.I.E.L.D. Security":"S.H.I.E.L.D.<br>Security",
-				"S.H.I.E.L.D. Trooper":"S.H.I.E.L.D.<br>Trooper",
-				"Scientist Supreme":"Scientist<br>Supreme",
-				"Spider-Man (Big Time)":"Spider-Man<br>(Big Time)",
-				"Spider-Man (Miles)":"Spider-Man<br>(Miles)",
-				"Spider-Man (Noir)":"Spider-Man<br>(Noir)",
-				"Spider-Man (Symbiote)":"Spider-Man<br>(Symbiote)",
-				"Spider-Man 2099":"Spider-Man<br>2099",
-				"Star-Lord (Annihilation)":"Star-Lord<br>(Annihilation)",
-				"Star-Lord (T'Challa)":"Star-Lord<br>(T'Challa)",
-				"Strange (Heartless)":"Strange<br>(Heartless)",
-				"Thor (Infinity War)":"Thor<br>(Infinity War)",
-				}
-				
-	# Return the translation if available.
-	return tlist.get(value, value)
-
+TRANSLATE_NAME = {	"Avenger": "Avengers",
+					"AForce": "A-Force",
+					"Asgard": "Asgardians",
+					"Astonishing": "Astonishing<br>X-Men",
+					"BionicAvenger": "Bionic<br>Avengers",
+					"BlackOrder": "Black<br>Order",
+					"Brotherhood": "B'Hood",
+					"DarkHunter": "Dark<br>Hunters",
+					"Defender": "Defenders",
+					"Eternal": "Eternals",
+					"FantasticFour": "Fantastic<br>Four",
+					"HeroesForHire": "H4H",
+					"Hydra Armored Guard": "Hydra Arm Guard",
+					"InfinityWatch": "Infinity<br>Watch",
+					"Invader": "Invaders",
+					"OutOfTime": "Out of Time",
+					"MastersOfEvil": "Masters<br>Of Evil",
+					"Mercenary": "Mercs",
+					"NewAvenger": "New<br>Avengers",
+					"NewWarrior": "New<br>Warriors",
+					"Pegasus": "PEGASUS",
+					"PowerArmor": "Power Armor",
+					"PymTech": "Pym Tech",
+					"Ravager": "Ravagers",
+					"SecretAvenger": "Secret<br>Avengers",
+					"SecretDefender": "Secret<br>Defenders",
+					"SinisterSix": "Sinister<br>Six",
+					"SpiderVerse": "Spiders",
+					"SuperiorSix": "Superior<br>Six",
+					"Symbiote": "Symbiotes",
+					"TangledWeb": "Tangled<br>Web",
+					"WarDog": "War Dogs",
+					"Wave1Avenger": "Wave 1<br>Avengers",
+					"WeaponX": "Weapon X",
+					"WebWarrior": "Web<br>Warriors",
+					"XFactor": "X-Factor",
+					"Xforce": "X-Force",
+					"Xmen": "X-Men",
+					"XTreme": "X-Treme X-Men",
+					"YoungAvenger": "Young<br>Avengers",
+					"A.I.M. Monstrosity":"A.I.M.<br>Monstrosity",
+					"A.I.M. Researcher":"A.I.M.<br>Researcher",
+					"Agatha Harkness":"Agatha<br>Harkness",
+					"Black Panther (1MM)":"Black<br>Panther (1MM)",
+					"Captain America":"Captain<br>America",
+					"Captain America (Sam)":"Capt. America<br>(Sam)",
+					"Captain America (WWII)":"Capt. America<br>(WWII)",
+					"Doctor Octopus":"Doctor<br>Octopus",
+					"Doctor Strange":"Doctor<br>Strange",
+					"Doctor Voodoo":"Doctor<br>Voodoo",
+					"Elsa Bloodstone":"Elsa<br>Bloodstone",
+					"Ghost Rider (Robbie)":"Ghost Rider<br>(Robbie)",
+					"Green Goblin (Classic)":"Green Goblin<br>(Classic)",
+					"Hand Blademaster":"Hand<br>Blademaster",
+					"Hand Sorceress":"Hand<br>Sorceress",
+					"Hydra Armored Guard":"Hydra<br>Arm Guard",
+					"Hydra Grenadier":"Hydra<br>Grenadier",
+					"Hydra Rifle Trooper":"Hydra<br>Rifle Trooper",
+					"Hydra Scientist":"Hydra<br>Scientist",
+					"Invisible Woman":"Invisible<br>Woman",
+					"Iron Man (Infinity War)":"Iron Man<br>(Infinity War)",
+					"Iron Man (Zombie)":"Iron Man<br>(Zombie)",
+					"Ironheart (MKII)": "Ironheart<br>(MKII)",
+					"Juggernaut (Zombie)":"Juggernaut<br>(Zombie)",
+					"Kang the Conqueror":"Kang<br>the Conqueror",
+					"Korath the Pursuer":"Korath<br>the Pursuer",
+					"Kraven the Hunter":"Kraven<br>the Hunter",
+					"Kree Royal Guard":"Kree<br>Royal Guard",
+					"Lady Deathstrike":"Lady<br>Deathstrike",
+					"Madelyne Pryor":"Madelyne<br>Pryor",
+					"Mercenary Lieutenant":"Mercenary<br>Lieutenant",
+					"Mercenary Riot Guard":"Mercenary<br>Riot Guard",
+					"Mercenary Sniper":"Mercenary<br>Sniper",
+					"Mercenary Soldier":"Mercenary<br>Soldier",
+					"Mister Fantastic":"Mister<br>Fantastic",
+					"Mister Negative":"Mister<br>Negative",
+					"Mister Sinister":"Mister<br>Sinister",
+					"Ms. Marvel (Hard Light)": "Ms. Marvel<br>(Hard Light)",
+					"Proxima Midnight":"Proxima<br>Midnight",
+					"Ravager Boomer":"Ravager<br>Boomer",
+					"Ravager Bruiser":"Ravager<br>Bruiser",
+					"Ravager Stitcher":"Ravager<br>Stitcher",
+					"Rocket Raccoon":"Rocket<br>Raccoon",
+					"Ronan the Accuser":"Ronan<br>the Accuser",
+					"S.H.I.E.L.D. Assault":"S.H.I.E.L.D.<br>Assault",
+					"S.H.I.E.L.D. Medic":"S.H.I.E.L.D.<br>Medic",
+					"S.H.I.E.L.D. Operative":"S.H.I.E.L.D.<br>Operative",
+					"S.H.I.E.L.D. Security":"S.H.I.E.L.D.<br>Security",
+					"S.H.I.E.L.D. Trooper":"S.H.I.E.L.D.<br>Trooper",
+					"Scientist Supreme":"Scientist<br>Supreme",
+					"Spider-Man (Big Time)":"Spider-Man<br>(Big Time)",
+					"Spider-Man (Miles)":"Spider-Man<br>(Miles)",
+					"Spider-Man (Noir)":"Spider-Man<br>(Noir)",
+					"Spider-Man (Symbiote)":"Spider-Man<br>(Symbiote)",
+					"Spider-Man 2099":"Spider-Man<br>2099",
+					"Star-Lord (Annihilation)":"Star-Lord<br>(Annihilation)",
+					"Star-Lord (T'Challa)":"Star-Lord<br>(T'Challa)",
+					"Strange (Heartless)":"Strange<br>(Heartless)",
+					"Thor (Infinity War)":"Thor<br>(Infinity War)",
+					}

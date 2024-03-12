@@ -4,6 +4,8 @@
 Log on to MSF.gg and return a driver to use for parsing.
 """
 
+from log_utils import *
+
 import time
 import getpass
 import keyring
@@ -18,6 +20,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from generate_local_files import *
 
+@timed(level=3)
 def get_driver(headless=False):
 
 	# Build the driver
@@ -34,6 +37,7 @@ def get_driver(headless=False):
 
 
 # Login to the website. Return the Selenium Driver object.
+@timed(level=3)
 def login(prompt=False, headless=False, external_driver=None, url = 'https://marvelstrikeforce.com/en/alliance/members'):
 
 	# Take care of our lazy clients
@@ -71,6 +75,7 @@ def login(prompt=False, headless=False, external_driver=None, url = 'https://mar
 
 
 # Check for saved credentials. If none saved, ask if would like to cache them.
+@timed(level=3)
 def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 
 	# If frozen, work in the same directory as the executable.
@@ -120,6 +125,7 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 
 
 # Auto Login via Scopely authentication using cached credentials.
+@timed(level=3)
 def scopely_login(driver, scopely_user, scopely_pass):
 	try:
 		wait = WebDriverWait(driver, 10)
@@ -156,6 +162,7 @@ def scopely_login(driver, scopely_user, scopely_pass):
 
 
 # Auto Login via Facebook authentication using cached credentials.
+@timed(level=3)
 def facebook_login(driver, facebook_user, facebook_pass):
 	try:
 		wait = WebDriverWait(driver, 10)

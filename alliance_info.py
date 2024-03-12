@@ -4,12 +4,13 @@
 Routines used to work with alliance_info, to pull information out or maintain the structure.  
 """
 
+from log_utils import *
 
 import datetime
 import string
 
 
-
+@timed(level=3)
 def get_hist_date(alliance_info, table_format):
 	hist_date = None
 
@@ -27,6 +28,7 @@ def get_hist_date(alliance_info, table_format):
 
 
 # Bring back a sorted list of characters from alliance_info
+@timed(level=3)
 def get_char_list(alliance_info):
 
 	# We only keep images for heroes that at least one person has recruited.
@@ -36,6 +38,7 @@ def get_char_list(alliance_info):
 
 
 # Bring back a sorted list of players from alliance_info
+@timed(level=3)
 def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 	# Only include members that actually have processed_char information attached.
@@ -56,6 +59,7 @@ def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
+@timed(level=3)
 def get_stp_list(alliance_info, char_list, hist_date='', team_pwr_dict={}):
 	
 	# Get the list of Alliance Members 
@@ -74,6 +78,7 @@ def get_stp_list(alliance_info, char_list, hist_date='', team_pwr_dict={}):
 
 
 # Split meta chars from other chars. Filter others based on provided traits.
+@timed(level=3)
 def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Get the list of usable characters
@@ -140,6 +145,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Calculate info for an under_min section, hide it in table for later use. 
 	table['under_min'] = {}
+	table['is_stale'] = {}
 
 	# Load up arguments from table, with defaults if necessary.
 	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
@@ -147,6 +153,8 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Before filtering further, while we have visibility for the entire section...
 	for player_name in player_list:
+		table['is_stale'][player_name] = is_stale(alliance_info, player_name)
+	
 		for char_name in meta_chars+other_chars:
 
 			# ...calculate whether entry is under the min requirements for use in this raid/mode .
@@ -207,6 +215,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	return meta_chars, other_chars
 
 
+@timed(level=3)
 def remove_min_iso_tier(alliance_info, table_format, table, section, player_list, char_list):
 
 	# Load up arguments from table, with defaults if necessary.
@@ -229,6 +238,7 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 
 
 # Find this member's oldest entry in our historical entries.
+@timed
 def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=''):
 
 	other_data = ''
@@ -271,13 +281,12 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date='')
 	
 		return current_val,other_data
 
-	# Start with the oldest entry in 'hist'.
-	if hist_date not in alliance_info['hist']:
-		hist_date = min(alliance_info['hist'])
+	# If requested date doesn't exist or no date specified, use the oldest date available.
+	hist_date = alliance_info['hist'].get('hist_date', min(alliance_info['hist']))
 		
 	if player_name in alliance_info['hist'][hist_date]:
 
-		hist_info   = alliance_info['hist'][hist_date][player_name].get(char_name,{})
+		hist_info = alliance_info['hist'][hist_date][player_name].get(char_name,{})
 
 		# Abilities have to be treated a little differently. 
 		if key in ('bas','spc','ult','pas'):
@@ -297,7 +306,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date='')
 			diffs = []
 			for entry in char_info:
 			
-				diff = int(char_info[entry]) - int(hist_info.get(entry,0))
+				diff = char_info[entry] - hist_info.get(entry,0)
 
 				if diff:
 					# Straightforward diff for most entries.
@@ -327,6 +336,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date='')
 
 
 # Archive the current run into the 'hist' tag for future analysis.
+@timed(level=3)
 def update_history(alliance_info):	
 
 	alliance_members = alliance_info['members']
@@ -396,6 +406,7 @@ def update_history(alliance_info):
 
 
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
+@timed(level=3)
 def is_stale(alliance_info, member_name):
 	
 	# Load thresholds, if they're explicitly defined.
@@ -416,6 +427,7 @@ def is_stale(alliance_info, member_name):
 
 
 # All settings, we build up the same way
+@timed(level=3)
 def get_table_value(table_format, table, section, key, default=None):
 
 	# Check for a custom value in table_format
@@ -434,6 +446,7 @@ def get_table_value(table_format, table, section, key, default=None):
 
 
 # parse a string containing roster_urls, return only the first valid User ID.
+@timed(level=3)
 def find_valid_roster_url(field_value):
 	
 	found_url = ''
@@ -447,6 +460,7 @@ def find_valid_roster_url(field_value):
 
 
 # parse a string containing roster_urls, looking for valid user IDs.
+@timed(level=3)
 def find_valid_roster_urls(field_value):
 
 	found_urls = []
@@ -467,6 +481,7 @@ def find_valid_roster_urls(field_value):
 
 
 # Validate user_id formatting.
+@timed(level=3)
 def is_valid_user_id(s):
 	if len(s) == 13 and set(s).issubset(string.hexdigits):
 		return True

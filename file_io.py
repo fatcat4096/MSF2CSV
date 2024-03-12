@@ -4,6 +4,7 @@
 Routines for reading/writing files and cached_data to disk.
 """
 
+from log_utils import *
 
 import os
 import sys
@@ -26,6 +27,7 @@ TAG_RE = re.compile(r'<[^>]+>')
 
 
 # Sanitize Alliance Names and player names of any HTML tags.
+@timed(level=3)
 def remove_tags(text):
 
 	# Cleaned text is without HTML tags. Also removing hashtags.
@@ -35,6 +37,7 @@ def remove_tags(text):
 	return cleaned or text
 	
 
+@timed(level=3)
 def get_local_path():
 	# If not frozen, work in the same directory as this script.
 	path = os.path.dirname(__file__)
@@ -46,6 +49,7 @@ def get_local_path():
 	return os.path.realpath(path) + os.sep
 
 
+@timed(level=3)
 def write_file(pathname, file_content, print_path=True):
 
 	files_generated = []
@@ -79,6 +83,7 @@ def write_file(pathname, file_content, print_path=True):
 	return files_generated
 
 
+@timed(level=3)
 def html_to_images(html_files=[], print_path=True):
 	
 	files_generated = []
@@ -119,6 +124,7 @@ def html_to_images(html_files=[], print_path=True):
 	return files_generated
 
 
+@timed(level=3)
 def load_cached_data(file_or_alliance=''):
 	cached_data = {}
 
@@ -152,6 +158,7 @@ def load_cached_data(file_or_alliance=''):
 	return cached_data
 
 
+@timed(level=3)
 def write_cached_data(alliance_info, file_path='', timestamp='update', file_name= None):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
@@ -232,6 +239,7 @@ def load_trait_list():
 
 
 # Has it been less than 24 hours since last update of cached_data?
+@timed(level=3)
 def fresh_enough(alliance_info):
 
 	# If a name of an alliance is passed in, find the relevant alliance_info instead.
@@ -246,6 +254,7 @@ def fresh_enough(alliance_info):
 
 
 # Handle the file list cleanly.
+@timed(level=3)
 def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
@@ -282,6 +291,7 @@ def find_cached_data(file_or_alliance=''):
 
 # Check to see if a subdirectory exists with this alliance_name and if it contains valid python files.
 # If so, change the import path to include this directory and source the files to use their definitions.
+@timed(level=3)
 def check_import_path(alliance_name):
 	
 	global strike_teams

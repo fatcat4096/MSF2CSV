@@ -6,6 +6,8 @@ Scrapes the alliance.html (Alliance display page) and characters.html file (Rost
 Returns in easy to use dicts for inclusion in tables.
 """
 
+from log_utils import *
+
 import datetime
 import re
 
@@ -14,7 +16,9 @@ from parse_cache import update_parse_cache
 from file_io import remove_tags
 
 # Parse the alliance information directly from the website.
+@timed(level=3)
 def parse_alliance(contents):
+
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	alliance = {}
@@ -71,6 +75,7 @@ def parse_alliance(contents):
 
 
 # Parse the character file out of MHTML or the page_source directly from the website.
+@timed(level=3)
 def parse_roster(contents, alliance_info, parse_cache, member=''):
 	soup = BeautifulSoup(contents, 'html.parser')
 

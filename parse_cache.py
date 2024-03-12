@@ -6,7 +6,10 @@ Routines used to build and update the parse cache.
 These are used to de-duplicate entries in the historical data structures of alliance_info.
 """
 
+from log_utils import *
+
 # Create a cache of entries to optimize our cached_data.
+@timed(level=3)
 def build_parse_cache(alliance_info, parse_cache):
 
 	# Let's process these Historical entries in chronological order. 
@@ -21,24 +24,8 @@ def build_parse_cache(alliance_info, parse_cache):
 
 			for char in member_info:
 
-				# Skip the tot_power and last_updated entries.   
-				# THIS IS NO LONGER NEEDED. DELETE IN 2024
-				if type(member_info[char]) is not dict:
-					continue
-
-				# Include dmd in standard tags.
-				# DELETE IN 2024
-				member_info[char].setdefault('dmd',0)
-
 				# Index everything by power.
 				power = member_info[char].get('power',0)
-					
-				# Convert old format to the new, only needs to be done once.
-				# THIS IS NO LONGER NEEDED. DELETE IN 2024
-				if type(power) is str:
-					for key in member_info[char]:
-						member_info[char][key] = int(member_info[char][key])
-					power = int(power)
 
 				# Get a list of other entries already added at this same power.
 				cached_entries = parse_cache.setdefault(power,[])
@@ -59,15 +46,6 @@ def build_parse_cache(alliance_info, parse_cache):
 		# Iterate through characters in the members with rosters.
 		for char in processed_chars:
 
-			# Skip the tot_power and last_updated entries.
-			# THIS IS NO LONGER NEEDED. DELETE IN 2024
-			if type(processed_chars[char]) is not dict:
-				continue
-
-			# Include dmd in standard tags.
-			# DELETE IN 2024
-			processed_chars[char].setdefault('dmd',0)
-
 			# Index everything by power.
 			power = processed_chars[char].get('power',0)
 
@@ -84,7 +62,7 @@ def build_parse_cache(alliance_info, parse_cache):
 
 
 # Update parse_cache if this is a new entry.
-# Updat the entry if already in the parse_cache
+# Update the entry if already in the parse_cache
 def update_parse_cache(processed_chars,char_name,parse_cache):
 	
 	# Will index everything by power.

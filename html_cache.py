@@ -1,11 +1,11 @@
+from log_utils import *
+
 # Return the anchor if one exists, plus the correct ID/linked ID for the tables
+@timed(level=3)
 def lookup_table_ids(html_cache, char_list, hist_date):
 	
-	# There's only one character in the list.
-	char = char_list[0]
-
 	# Find the anchor to use if building direct links from the report page.
-	anchor = html_cache.get('chars',{}).get(char,{})		
+	anchor = html_cache.get('chars',{}).get(char_list[0],{})		
 
 	# If an anchor definition exists, this is a multi-tabbed file.
 	if anchor:

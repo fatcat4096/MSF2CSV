@@ -5,6 +5,8 @@ Returns cached_data information if still fresh
 Logs into website and updates data from Alliance Information if not
 """
 
+from log_utils import *
+
 import datetime
 import time
 import sys
@@ -26,6 +28,7 @@ from parse_cache          import build_parse_cache
 from alliance_info        import update_history, is_stale
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
+@timed(level=3)
 def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, external_driver=None):
 
 	cached_alliance_info = find_cached_data(alliance_name)
@@ -127,6 +130,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 
 # Process rosters for every member in alliance_info.
+@timed(level=3)
 def process_rosters(driver, alliance_info, working_from_website=False, force='', only_process=[]):
 
 	# Really only used for Working From Website processing.
@@ -259,6 +263,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 
 
 
+@timed(level=3)
 def roster_results(alliance_info, start_time, rosters_output=[]):
 
 	# And make note of when we end.
@@ -282,6 +287,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 
 
 # Get back to the Alliance page, then search to find the member's name and the related Roster button.
+@timed(level=3)
 def find_members_roster(driver, member):
 
 	# Once member labels have populated, we're ready.
@@ -342,6 +348,7 @@ def find_members_roster(driver, member):
 
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
+@timed(level=3)
 def update_strike_teams(alliance_info):
 
 	strike_teams_defined = 'strike_teams' in globals()
@@ -379,6 +386,7 @@ def update_strike_teams(alliance_info):
 
 
 # Go through a multi-stage process to find a valid strike_team definition to use.
+@timed(level=3)
 def get_valid_strike_teams(alliance_info):
 
 	strike_teams_defined = 'strike_teams' in globals()
@@ -407,6 +415,7 @@ def get_valid_strike_teams(alliance_info):
 
 
 # Update strike teams to remove dividers and 'incur2' 
+@timed(level=3)
 def migrate_strike_teams(alliance_info):
 
 	updated = False
@@ -448,11 +457,13 @@ def migrate_strike_teams(alliance_info):
 		
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
+@timed(level=3)
 def valid_strike_team(strike_team, alliance_info):
 	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.66	
 
 
 # Before we take the strike_team.py definition as is, let's fix some common problems.
+@timed(level=3)
 def fix_strike_team(strike_team, alliance_info):
 
 	updated = False
