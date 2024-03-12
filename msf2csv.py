@@ -4,6 +4,7 @@
 Transform stats from MSF.gg into readable tables with heatmaps.
 """
 
+from log_utils import *
 
 import os, sys
 import argparse
@@ -13,8 +14,8 @@ from file_io         import *             # Routines to read and write files to 
 from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
 
-
 # If no name specified, default to the alliance for the Login player
+@timed(level=3)
 def main(alliance_name='', csv=False, prompt=False, headless=False, force='', table_format={}, roster_url='', external_driver=None):
 
 	##
@@ -22,9 +23,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, force='', ta
 	##
 	
 	if roster_url:
-		#
-		# Use my new routine here? Add that somewhere else inside MSF2CSV? 
-		#
+		# Verify we were handed a valid roster_url / user_id
 		roster_url = find_valid_roster_url(roster_url)
 		if not roster_url:
 			print ("No valid user_id found in provided roster URL.")
