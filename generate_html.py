@@ -556,7 +556,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
 
 				# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-				stale_data = table['is_stale'][player_name]
+				stale_data = alliance_info['members'][player_name]['is_stale']
 
 				# Include "# Pos" info if requested.
 				if inc_pos:
@@ -834,7 +834,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 			stats_range  = stats['range']
 
 			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-			stale_data = is_stale(alliance_info, member)
+			stale_data = member_info['is_stale']
 
 			html_file += '<tr>\n'
 
@@ -1112,7 +1112,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 		member_stats = alliance_info['members'][member]
 
 		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-		stale_data = is_stale(alliance_info, member)
+		stale_data = member_stats['is_stale']
 		
 		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
 
@@ -1364,11 +1364,9 @@ def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='pow
 	if stale_data:
 		color = grayscale(color)
 
-	
-
-
 	# Cache this color away for class definitions later.
 	return make_next_color_id(html_cache, color)
+
 
 
 # Quick and dirty translation to shorter or better names.
@@ -1472,3 +1470,9 @@ TRANSLATE_NAME = {	"Avenger": "Avengers",
 					"Strange (Heartless)":"Strange<br>(Heartless)",
 					"Thor (Infinity War)":"Thor<br>(Infinity War)",
 					}
+
+
+# Quick and dirty translation to shorter or better names.
+def translate_name(value):
+	global TRANSLATE_NAME
+	return TRANSLATE_NAME.get(value,value)

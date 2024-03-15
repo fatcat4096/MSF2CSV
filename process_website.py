@@ -131,7 +131,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(driver, alliance_info, working_from_website=False, force='', only_process=[]):
+def process_rosters(driver, alliance_info, working_from_website=False, force='', only_process=[], log_file=None):
 
 	# Really only used for Working From Website processing.
 	alliance_url   = 'https://marvelstrikeforce.com/en/alliance/members'
@@ -241,7 +241,8 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 
 		found = (f'Parsing {len(page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
 		stale = ''
-		if is_stale(alliance_info, member):
+		alliance_info['members'][member]['is_stale'] = is_stale(alliance_info, member)
+		if alliance_info['members'][member]['is_stale']:
 			stale = '/Stale' if alliance_info['members'][member].get('tot_power') else '/EMPTY'
 
 		if not_updated:
@@ -276,7 +277,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 
 	# Quick report of our findings.
 	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
-	stale   = len([member for member in members if is_stale(alliance_info, member)])
+	stale   = len([member for member in members if members[member]['is_stale']])
 	
 	# Summarize the results of processing
 	rosters_output.append(f'{updated} new, {len(members)-updated} old, {stale} stale')
@@ -411,6 +412,8 @@ def get_valid_strike_teams(alliance_info):
 			# Fix any issues. We will just update this info in cached_data.
 			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)
 
+	update_is_stale(alliance_info)
+
 	return updated
 
 
@@ -510,6 +513,13 @@ def fix_strike_team(strike_team, alliance_info):
 				if old_player_name in team:
 					team[team.index(old_player_name)] = new_player_name
 
+	update_is_stale(alliance_info)
+
 	return updated
 
+
+# Calculate is_stale for each member and cache in alliance_info.
+def update_is_stale(alliance_info):
+	for member in alliance_info['members']:
+		alliance_info['members'][member]['is_stale'] = is_stale(alliance_info, member)
 

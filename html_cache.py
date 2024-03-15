@@ -1,7 +1,6 @@
 from log_utils import *
 
 # Return the anchor if one exists, plus the correct ID/linked ID for the tables
-@timed(level=3)
 def lookup_table_ids(html_cache, char_list, hist_date):
 	
 	# Find the anchor to use if building direct links from the report page.

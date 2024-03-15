@@ -15,8 +15,8 @@ from generate_html   import *             # Routines to generate the finished ta
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
 
 # If no name specified, default to the alliance for the Login player
-@timed(level=3)
-def main(alliance_name='', csv=False, prompt=False, headless=False, force='', table_format={}, roster_url='', external_driver=None):
+@timed(level=3, init=True)
+def main(alliance_name='', csv=False, prompt=False, headless=False, force='', table_format={}, roster_url='', external_driver=None, log_file=None):
 
 	##
 	## Just a junker placeholder until I come back and do it right. 

@@ -241,7 +241,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 		update_parse_cache(processed_chars,char_name,parse_cache)
 
 	# Calculate level based on character leveling.
-	player_info['level'] = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars])
+	player_info['level'] = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars]) if processed_chars else 0
 
 	# Get a little closer to our work. 
 	player = alliance_info['members'].setdefault(player_name,{})

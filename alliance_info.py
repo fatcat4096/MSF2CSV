@@ -38,37 +38,31 @@ def get_char_list(alliance_info):
 
 
 # Bring back a sorted list of players from alliance_info
-@timed(level=3)
 def get_player_list(alliance_info, sort_by='', stp_list={}):
 
-	# Only include members that actually have processed_char information attached.
-	player_list = sorted(alliance_info['members'], key=str.lower)
+	player_list = alliance_info['members']
 
 	# If Sort Order specified, sort player_list in the correct order. 
-	if sort_by == 'stp':
-		# If we weren't provided a list of STPs, fall back to using TCP.
-		if not stp_list:
-			sort_by = 'tcp'
-		else:
-			player_list = sorted(player_list, key=lambda x: -stp_list[x])
+	if sort_by == 'stp' and stp_list:
+		return sorted(player_list, key=lambda x: -stp_list[x])
+	# If we weren't provided a list of STPs, fall back to using TCP.
+	elif sort_by in ('tcp','stp'):
+		return sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
 
-	if sort_by == 'tcp':
-		player_list = sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
-
-	return player_list
+	# Otherwise, just do a default sort.
+	return sorted(player_list, key=str.lower)
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
-@timed(level=3)
 def get_stp_list(alliance_info, char_list, hist_date='', team_pwr_dict={}):
 	
 	# Get the list of Alliance Members 
-	player_list = get_player_list (alliance_info)
+	player_list = get_player_list(alliance_info)
 
 	for player_name in player_list:
 
 		# Build a list of all character powers.
-		all_char_pwr = [find_value_or_diff(alliance_info, player_name, char_name,'power', hist_date)[0] for char_name in char_list]
+		all_char_pwr = [find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] for char_name in char_list]
 		all_char_pwr.sort()
 
 		# And sum up the Top 5 power entries for STP.
@@ -145,7 +139,6 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Calculate info for an under_min section, hide it in table for later use. 
 	table['under_min'] = {}
-	table['is_stale'] = {}
 
 	# Load up arguments from table, with defaults if necessary.
 	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
@@ -153,8 +146,6 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Before filtering further, while we have visibility for the entire section...
 	for player_name in player_list:
-		table['is_stale'][player_name] = is_stale(alliance_info, player_name)
-	
 		for char_name in meta_chars+other_chars:
 
 			# ...calculate whether entry is under the min requirements for use in this raid/mode .
@@ -215,17 +206,11 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	return meta_chars, other_chars
 
 
-@timed(level=3)
 def remove_min_iso_tier(alliance_info, table_format, table, section, player_list, char_list):
 
 	# Load up arguments from table, with defaults if necessary.
 	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
 	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
- 
-	# Remove? Shouldn't be necessary.
-	#if not player_list:
-	#	print ('player_list was empty.',char_list)
-	#	return char_list
  
 	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
 	if min_iso:
@@ -238,7 +223,6 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 
 
 # Find this member's oldest entry in our historical entries.
-@timed
 def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=''):
 
 	other_data = ''
@@ -427,7 +411,6 @@ def is_stale(alliance_info, member_name):
 
 
 # All settings, we build up the same way
-@timed(level=3)
 def get_table_value(table_format, table, section, key, default=None):
 
 	# Check for a custom value in table_format
