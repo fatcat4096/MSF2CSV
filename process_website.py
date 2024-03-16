@@ -377,6 +377,9 @@ def update_strike_teams(alliance_info):
 			# Fix any issues. We will just update this info in cached_data.
 			updated = fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info) or updated
 
+	# Refresh the is_stale data in the file.
+	update_is_stale(alliance_info)
+
 	# If a change was made, update the cached_data file, but do not change the modification date.
 	if updated:
 		write_cached_data(alliance_info, timestamp='keep')
@@ -512,8 +515,6 @@ def fix_strike_team(strike_team, alliance_info):
 			for team in strike_team:
 				if old_player_name in team:
 					team[team.index(old_player_name)] = new_player_name
-
-	update_is_stale(alliance_info)
 
 	return updated
 

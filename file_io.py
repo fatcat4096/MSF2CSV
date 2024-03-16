@@ -105,7 +105,19 @@ def html_to_images(html_files=[], print_path=True):
 		# Set the height/width of the window accordingly
 		height = driver.execute_script('return document.documentElement.scrollHeight')
 		width  = driver.execute_script('return document.documentElement.scrollWidth')
-		driver.set_window_size(width+20, height+450)
+
+		# Look for the farthest right element.
+		tables = driver.find_elements(By.TAG_NAME, "table")
+
+		min_width = 0
+		for table in tables:
+			min_width = max(table.rect['x']+table.rect['width'], min_width)
+
+			# If we've exceeded the right edge of the frame, no need to crop. 
+			if min_width >= width:
+				break
+
+		driver.set_window_size(min(width,min_width)+22, height+450)
 
 		png_filename = file[:-4]+'png'
 
