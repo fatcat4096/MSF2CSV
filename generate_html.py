@@ -4,6 +4,10 @@
 Takes the processed alliance / roster data and generate readable output to spec.  
 """
 
+# By_Char data should use same hist_date as provided in inc_hist or inline_hist
+# Need to fix data normalization routines. All-zero data in the final data frames???
+# Change the hist date selection algorithm. Don't just go min if date requested is missing, return slightly older, min if none older.
+
 from log_utils import *
 
 import datetime
@@ -235,36 +239,46 @@ def add_tab_header(content):
 @timed(level=3)
 def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, using_tabs=False, html_cache={}):
 
-	global TRANSLATE_NAME
-	
-	#log = MSFTrace("generate_lanes",table, lanes, table_format, hist_date, using_tabs, level=3)
-
 	html_file = ''
 
-	# Which strike_teams should we use? (Strike Teams CANNOT vary section by section.)
-	strike_teams = get_table_value(table_format, table, section={}, key='strike_teams')
+	# If only_members specified, use this list instead of previously defined Strike Teams.
+	only_members = get_table_value(table_format, table, key='only_members')
+	if only_members:
 
-	# Grab specified strike teams if available. 
-	strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
+		# If a single name was provided, wrap it in a list.
+		if type(only_members) is str:
+			only_members = [only_members]
 
-	# Insert dividers as necessary
-	inc_dividers = get_table_value(table_format, table, section={}, key='inc_dividers', default='other')
-	if inc_dividers and strike_teams:
-		strike_teams = insert_dividers(strike_teams, inc_dividers)
+		# Wrap up the only_members list in a Strike Team entry.
+		strike_teams = [only_members]
+	else:
+		# Which strike_teams should we use? (Strike Teams CANNOT vary section by section.)
+		strike_teams = get_table_value(table_format, table, key='strike_teams')
+
+		# Grab specified strike teams if available. 
+		strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
+
+		# Insert dividers as necessary
+		inc_dividers = get_table_value(table_format, table, key='inc_dividers', default='other')
+		if inc_dividers and strike_teams:
+			strike_teams = insert_dividers(strike_teams, inc_dividers)
 
 	# If no strike team definitions are specified / found or 
 	# If only_team == 0 (ignore strike_teams) **AND**
 	# no sort_by has been specified, force sort_by to 'stp'
-	only_team = get_table_value(table_format, table, section={}, key='only_team')
+	only_team = get_table_value(table_format, table, key='only_team')
 	if (not strike_teams or only_team == 0) and not table_format.get('sort_by'):
 		table_format['sort_by'] = 'stp'
 
 	# Sort player list if requested.
-	sort_by = get_table_value(table_format, table, section={}, key='sort_by')
+	sort_by = get_table_value(table_format, table, key='sort_by')
 
 	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
 	if not strike_teams or only_team == 0:
 		strike_teams = [get_player_list(alliance_info, sort_by)]
+
+	# Special handling required if inline_hist.
+	inline_hist = get_table_value(table_format, table, key='inline_hist')
 
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
@@ -293,7 +307,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 					traits = [traits]
 			
 				# Truncate Table Label after 4 entries, if more than 4, use first 3 plus "AND MORE"
-				traits = [TRANSLATE_NAME.get(trait, trait).upper() for trait in traits] 
+				traits = [translate_name(trait).upper() for trait in traits] 
 				if len(traits) > 4:
 					traits = traits[:3] + ['AND MORE']
 				table_lbl = '<br>'.join(traits)
@@ -308,6 +322,10 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 				meta_lbl = table_lbl+'<br><span class="sub">META</span>'
 
 				stp_list = get_stp_list(alliance_info, meta_chars, hist_date)
+				
+				# If inline_hist, need to generate STP entries for the historical date as well.
+				if inline_hist:
+					stp_list = get_stp_list(alliance_info, meta_chars, inline_hist)
 
 				html_file += generate_table(alliance_info, table, section, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date)
 
@@ -327,6 +345,10 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 			# Generate stp_list dict for the Other Table calls.
 			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
+			
+			# If inline_hist, need to generate STP entries for the historical date as well.
+			if inline_hist:
+				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, inline_hist)
 
 			span_data = get_table_value(table_format, table, section, key='span', default=False)
 
@@ -376,11 +398,19 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 	return html_file
 
 
+'''
+def team_power_report(alliance_info, lane, table_format, team_list):
+		
+	
+	for section in lane:
+		unformatted_label = get_section_label(section)
+		if unformatted_label in team_list:
+'''		
+
+
 # Generate individual tables for Meta/Other chars for each raid section.
 @timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None):
-
-	global TRANSLATE_NAME
 
 	# Pick a color scheme.
 	if 'OTHERS' not in table_lbl:
@@ -407,18 +437,35 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info, sort_by, stp_list)
 
+	# If there are no players in this table, don't generate a table.
+	using_players = [player for player in sum(strike_teams, []) if player in player_list]
+	if not using_players:
+		return ''
+		
 	# See if we need to pare the included characters even further.
 	using_chars = char_list[:]
+
+	# Find out whether inline history has been requested for this report.
+	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
 	
 	# Pare any missing heroes if these aren't Meta entries.
 	if 'META' not in table_lbl and len(using_chars) > 5:
-		using_players = [player for player in sum(strike_teams, []) if player in player_list]
 		using_chars = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)			
+
+		# if inline_hist, only want heroes that have actually been changed.
+		if inline_hist:
+
+			# min_change_filter specifies how much change is required to be considered 'intentionally built'. 
+			min_change_filter = get_table_value(table_format, table, section, key='min_change_filter', default=0)
+
+			# If a value is specified, strip any character that hasn't been built at least that amount over time.
+			if min_change_filter:
+				using_chars = [char for char in using_chars if max([find_value_or_diff(alliance_info, player, char, 'power', hist_date=inline_hist)[0]/find_value_or_diff(alliance_info, player, char, 'power')[0] for player in using_players]) >= min_change_filter]
 
 	# If there are no characters in this table, don't generate a table.
 	if not using_chars:
 		return ''
-
+		
 	# Generate a table ID to allow sorting. 
 	
 	# If linked_hist is False, this is a standard table on the reports tab.
@@ -433,7 +480,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	html_file = '   <table id="%s">\n' % (table_id)
 
 	# SEE IF WE NEED MULTIPLE LINES. WE MAY NEED TO BREAK UP USING_CHARS INTO CHUNKS.
-	line_wrap = 10
+	line_wrap = 20
 
 	# Initialize the row count. Will add to it with each strike_team section.
 	row_idx = 1
@@ -490,7 +537,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				anchor = make_next_anchor_id(html_cache, char, table_id)
 				onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
 
-			html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, TRANSLATE_NAME.get(char,char))
+			html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
 
 		# Include a Team Power column if we have more than one.
 		if len(char_list)>1:
@@ -501,10 +548,6 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		# Include the Image row and Column headers in the row count.
 		row_idx += 1
-
-		# Find min/max for meta/strongest team power in the Alliance
-		# This will be used for color calculation for the Team Power column.
-		stp_range = [stp_list[player_name] for player_name in player_list]
 
 		# Find max available heroes for stats/color. Anything under 5 is forced to red.
 		if inc_avail:
@@ -534,6 +577,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			# Last minute sort if proscribed by the table format.
 			if sort_by:
 				strike_team = [member for member in player_list if member in strike_team]
+				
+				# This divider is a little different. Go ahead and add it back in after sorting.
+				inc_dividers = get_table_value(table_format, table, section, key='inc_dividers', default='other')
+				if inc_dividers == '53':
+						strike_team = insert_dividers([strike_team], inc_dividers)[0]
 
 			# FINALLY, WRITE THE DATA FOR EACH ROW. #########################
 			alt_color = False
@@ -551,89 +599,120 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# If less than 5 characters, this just doesn't apply.
 				not_ready = num_avail < 5 if len(char_list) >= 5 else False
 
-				# Player Name, then relevant stats for each character.
-				st_html += '    <tr%s>\n' % [' class="hist"',''][not hist_date]
-				st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], player_name.replace('Commander','Cmdr.'))
+				# If inline_hist is requested, we will loop through this code twice for each user.
+				# First pass will generate normal output and second one will generate historical data. 
+				if inline_hist:
+					hist_list = [hist_date,inline_hist]
+				else:
+					hist_list = [hist_date]
+					
+				for use_hist_date in hist_list:
 
-				# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-				stale_data = alliance_info['members'][player_name]['is_stale']
+					# Find min/max for meta/strongest team power in the Alliance
+					# This will be used for color calculation for the Team Power column.
+					stp_range = [stp_list[use_hist_date][player_name] for player_name in player_list]
 
-				# Include "# Pos" info if requested.
-				if inc_pos:
-					pos_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
-					st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, html_cache, stale_data), pos_num)
+					if inline_hist and use_hist_date:
+						name_field = f'<span style="font-weight:normal;"><i>(since {use_hist_date.strftime("%m/%d/%y")})</i></span>'
+					else:
+						name_field = player_name.replace('Commander','Cmdr.')
 
-				# Include "# Avail" info if requested.
-				if inc_avail:
-					st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], html_cache, stale_data), num_avail)
+					# Player Name, then relevant stats for each character.
+					st_html += '    <tr%s>\n' % [' class="hist"',''][not use_hist_date]
+					st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], name_field)
 
-				# Write the stat values for each character.
-				for char_name in line_chars:
+					# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
+					stale_data = alliance_info['members'][player_name]['is_stale']
 
-					# Load up arguments from table, with defaults if necessary.
-					under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
+					# Include "# Pos" info if requested.
+					if inc_pos:
+						pos_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, html_cache, stale_data), pos_num)
 
-					for key in keys:
+					# Include "# Avail" info if requested.
+					if inc_avail:
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], html_cache, stale_data), num_avail)
 
-						# Get the range of values for this character for all rosters.
-						# If historical, we want the diff between the current values and the values in the oldest record
-						key_range = [find_value_or_diff(alliance_info, player, char_name, key, hist_date)[0] for player in player_list]
+					# Write the stat values for each character.
+					for char_name in line_chars:
 
-						# Only look up the key_val if we have a roster.
-						key_val = 0
-						other_diffs = ''
-						if player_name in player_list:
-						
-							# Standard lookup. Get the key_val for this character stat from this player's roster.
-							# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
-							key_val,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, hist_date)
+						# Load up arguments from table, with defaults if necessary.
+						under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
 
-						need_tt = key=='power' and key_val != 0 and not linked_hist
+						for key in keys:
 
-						if key_val == 0 and hist_date:
-							style = ''
+							# Get the range of values for this character for all rosters.
+							# If historical, we want the diff between the current values and the values in the oldest record
+							key_range = [find_value_or_diff(alliance_info, player, char_name, key, use_hist_date)[0] for player in player_list]
+
+							# Only look up the key_val if we have a roster.
+							key_val = 0
+							other_diffs = ''
+							if player_name in player_list:
+							
+								# Standard lookup. Get the key_val for this character stat from this player's roster.
+								# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
+								key_val,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, use_hist_date)
+
+							need_tt = key=='power' and key_val != 0 and not linked_hist
+
+							if key_val == 0 and use_hist_date:
+								style = ''
+							else:
+								# Note: We are using the tt class to get black text on fields in the Hist tab.
+								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, use_hist_date)
+								style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or use_hist_date is not None])    
+
+							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
+							if key_val:
+								field_value = f'{key_val:+}' if use_hist_date else f'{key_val}'
+							else:
+								field_value = '-'
+
+							st_html += '     <td%s>%s%s</td>\n' % (style, field_value, ['',other_diffs][need_tt])
+
+						# Include ISO class information if requested
+						if inc_class:
+
+							# Get the ISO Class in use for this member's toon.
+							iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6								# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
+							
+							# Translate it to a code to specify the correct CSS URI.
+							iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
+							
+							# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
+							all_iso_codes = [(alliance_info['members'][player].get('other_data',{}).get(char_name,0)&15)%6 for player in player_list]	# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
+							all_iso_codes = [code for code in all_iso_codes if code]
+							
+							# Calculate a confidence for this code based on the tally of all codes in use.
+							iso_conf = 0
+							if all_iso_codes:
+								iso_conf  = int((all_iso_codes.count(iso_code)/len(all_iso_codes))*100)
+
+							# Include the graphic via CSS and use the confidence for background color.
+							if iso_class:
+								field_color = get_value_color_ext(0, 100, iso_conf, html_cache, stale_data, under_min=under_min)
+								tool_tip = f'<span class="ttt"><b>{iso_class.title()}:</b><br>{iso_conf}%</span>'
+								st_html += f'     <td class="{iso_class[:4]} tt {field_color}">{tool_tip}</td>\n'
+							else:
+								st_html += '     <td class="hist">-</td>\n'
+
+					# Include the Strongest Team Power column.
+					if len(char_list)>1:
+						player_stp = stp_list.get(use_hist_date,{}).get(player_name,0)
+
+						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
+						if player_stp:
+							field_value = f'{player_stp:+}' if use_hist_date else f'{player_stp}'
 						else:
-							# Note: We are using the tt class to get black text on fields in the Hist tab.
-							field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, hist_date)
-							style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or hist_date is not None])    
+							field_value = '-'
 
-						st_html += '     <td%s>%s%s</td>\n' % (style, [key_val,'-'][not key_val], ['',other_diffs][need_tt])
-
-					# Include ISO class information if requested
-					if inc_class:
-
-						# Get the ISO Class in use for this member's toon.
-						iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6								# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
-						
-						# Translate it to a code to specify the correct CSS URI.
-						iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
-						
-						# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
-						all_iso_codes = [(alliance_info['members'][player].get('other_data',{}).get(char_name,0)&15)%6 for player in player_list]	# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
-						all_iso_codes = [code for code in all_iso_codes if code]
-						
-						# Calculate a confidence for this code based on the tally of all codes in use.
-						iso_conf = 0
-						if all_iso_codes:
-							iso_conf  = int((all_iso_codes.count(iso_code)/len(all_iso_codes))*100)
-
-						# Include the graphic via CSS and use the confidence for background color.
-						if iso_class:
-							field_color = get_value_color_ext(0, 100, iso_conf, html_cache, stale_data, under_min=under_min)
-							tool_tip = f'<span class="ttt"><b>{iso_class.title()}:</b><br>{iso_conf}%</span>'
-							st_html += f'     <td class="{iso_class[:4]} tt {field_color}">{tool_tip}</td>\n'
-						else:
-							st_html += '     <td class="hist">-</td>\n'
-
-				# Include the Team Power column.
-				if len(char_list)>1:
-					player_stp = stp_list.get(player_name,0)
-					st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(stp_range, player_stp, html_cache, stale_data), [player_stp,'-'][not player_stp])
-				
-				st_html += '    </tr>\n'
-				
-				# Increment the count of data rows by one.
-				st_rows += 1
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(stp_range, player_stp, html_cache, stale_data), field_value)
+					
+					st_html += '    </tr>\n'
+					
+					# Increment the count of data rows by one.
+					st_rows += 1
 			# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
 
 			# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
@@ -1177,8 +1256,6 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 @timed(level=3)
 def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_cache={}):
 
-	global TRANSLATE_NAME
-
 	html_file = ''
 
 	# Only include Dividers if using as part of a multi-tab document
@@ -1216,7 +1293,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 	for char in char_list:
 		
 		# Just specify the Character name for the table title
-		table_lbl = TRANSLATE_NAME.get(char,char).upper()
+		table_lbl = translate_name(char).upper()
 
 		# Build stp_list to simplify sort_by='stp'.
 		stp_list = get_stp_list(alliance_info, [char])
@@ -1288,6 +1365,11 @@ def insert_dividers(strike_teams, raid_type):
 				team.insert(2,'----')
 			if len(team) > 6:
 				team.insert(6,'----')
+
+		# Use 5/3 split for Sort by STP within Strike Teams.
+		elif raid_type == '53':
+			if len(team) > 5:
+				team.insert(5,'----')
 
 		# Put a divider in the middle to reflect left/right symmetry of raids.
 		else:
@@ -1368,111 +1450,118 @@ def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='pow
 	return make_next_color_id(html_cache, color)
 
 
+# Generate Labels for each section from either label info or trait names.
+def get_section_label(section):
+	
+	# If a label specified, use it.
+	if section.get('label'):
+		return section.get('label','').replace('-<br>','').replace('<br>',' ')
 
-# Quick and dirty translation to shorter or better names.
-TRANSLATE_NAME = {	"Avenger": "Avengers",
-					"AForce": "A-Force",
-					"Asgard": "Asgardians",
-					"Astonishing": "Astonishing<br>X-Men",
-					"BionicAvenger": "Bionic<br>Avengers",
-					"BlackOrder": "Black<br>Order",
-					"Brotherhood": "B'Hood",
-					"DarkHunter": "Dark<br>Hunters",
-					"Defender": "Defenders",
-					"Eternal": "Eternals",
-					"FantasticFour": "Fantastic<br>Four",
-					"HeroesForHire": "H4H",
-					"Hydra Armored Guard": "Hydra Arm Guard",
-					"InfinityWatch": "Infinity<br>Watch",
-					"Invader": "Invaders",
-					"OutOfTime": "Out of Time",
-					"MastersOfEvil": "Masters<br>Of Evil",
-					"Mercenary": "Mercs",
-					"NewAvenger": "New<br>Avengers",
-					"NewWarrior": "New<br>Warriors",
-					"Pegasus": "PEGASUS",
-					"PowerArmor": "Power Armor",
-					"PymTech": "Pym Tech",
-					"Ravager": "Ravagers",
-					"SecretAvenger": "Secret<br>Avengers",
-					"SecretDefender": "Secret<br>Defenders",
-					"SinisterSix": "Sinister<br>Six",
-					"SpiderVerse": "Spiders",
-					"SuperiorSix": "Superior<br>Six",
-					"Symbiote": "Symbiotes",
-					"TangledWeb": "Tangled<br>Web",
-					"WarDog": "War Dogs",
-					"Wave1Avenger": "Wave 1<br>Avengers",
-					"WeaponX": "Weapon X",
-					"WebWarrior": "Web<br>Warriors",
-					"XFactor": "X-Factor",
-					"Xforce": "X-Force",
-					"Xmen": "X-Men",
-					"XTreme": "X-Treme X-Men",
-					"YoungAvenger": "Young<br>Avengers",
-					"A.I.M. Monstrosity":"A.I.M.<br>Monstrosity",
-					"A.I.M. Researcher":"A.I.M.<br>Researcher",
-					"Agatha Harkness":"Agatha<br>Harkness",
-					"Black Panther (1MM)":"Black<br>Panther (1MM)",
-					"Captain America":"Captain<br>America",
-					"Captain America (Sam)":"Capt. America<br>(Sam)",
-					"Captain America (WWII)":"Capt. America<br>(WWII)",
-					"Doctor Octopus":"Doctor<br>Octopus",
-					"Doctor Strange":"Doctor<br>Strange",
-					"Doctor Voodoo":"Doctor<br>Voodoo",
-					"Elsa Bloodstone":"Elsa<br>Bloodstone",
-					"Ghost Rider (Robbie)":"Ghost Rider<br>(Robbie)",
-					"Green Goblin (Classic)":"Green Goblin<br>(Classic)",
-					"Hand Blademaster":"Hand<br>Blademaster",
-					"Hand Sorceress":"Hand<br>Sorceress",
-					"Hydra Armored Guard":"Hydra<br>Arm Guard",
-					"Hydra Grenadier":"Hydra<br>Grenadier",
-					"Hydra Rifle Trooper":"Hydra<br>Rifle Trooper",
-					"Hydra Scientist":"Hydra<br>Scientist",
-					"Invisible Woman":"Invisible<br>Woman",
-					"Iron Man (Infinity War)":"Iron Man<br>(Infinity War)",
-					"Iron Man (Zombie)":"Iron Man<br>(Zombie)",
-					"Ironheart (MKII)": "Ironheart<br>(MKII)",
-					"Juggernaut (Zombie)":"Juggernaut<br>(Zombie)",
-					"Kang the Conqueror":"Kang<br>the Conqueror",
-					"Korath the Pursuer":"Korath<br>the Pursuer",
-					"Kraven the Hunter":"Kraven<br>the Hunter",
-					"Kree Royal Guard":"Kree<br>Royal Guard",
-					"Lady Deathstrike":"Lady<br>Deathstrike",
-					"Madelyne Pryor":"Madelyne<br>Pryor",
-					"Mercenary Lieutenant":"Mercenary<br>Lieutenant",
-					"Mercenary Riot Guard":"Mercenary<br>Riot Guard",
-					"Mercenary Sniper":"Mercenary<br>Sniper",
-					"Mercenary Soldier":"Mercenary<br>Soldier",
-					"Mister Fantastic":"Mister<br>Fantastic",
-					"Mister Negative":"Mister<br>Negative",
-					"Mister Sinister":"Mister<br>Sinister",
-					"Ms. Marvel (Hard Light)": "Ms. Marvel<br>(Hard Light)",
-					"Proxima Midnight":"Proxima<br>Midnight",
-					"Ravager Boomer":"Ravager<br>Boomer",
-					"Ravager Bruiser":"Ravager<br>Bruiser",
-					"Ravager Stitcher":"Ravager<br>Stitcher",
-					"Rocket Raccoon":"Rocket<br>Raccoon",
-					"Ronan the Accuser":"Ronan<br>the Accuser",
-					"S.H.I.E.L.D. Assault":"S.H.I.E.L.D.<br>Assault",
-					"S.H.I.E.L.D. Medic":"S.H.I.E.L.D.<br>Medic",
-					"S.H.I.E.L.D. Operative":"S.H.I.E.L.D.<br>Operative",
-					"S.H.I.E.L.D. Security":"S.H.I.E.L.D.<br>Security",
-					"S.H.I.E.L.D. Trooper":"S.H.I.E.L.D.<br>Trooper",
-					"Scientist Supreme":"Scientist<br>Supreme",
-					"Spider-Man (Big Time)":"Spider-Man<br>(Big Time)",
-					"Spider-Man (Miles)":"Spider-Man<br>(Miles)",
-					"Spider-Man (Noir)":"Spider-Man<br>(Noir)",
-					"Spider-Man (Symbiote)":"Spider-Man<br>(Symbiote)",
-					"Spider-Man 2099":"Spider-Man<br>2099",
-					"Star-Lord (Annihilation)":"Star-Lord<br>(Annihilation)",
-					"Star-Lord (T'Challa)":"Star-Lord<br>(T'Challa)",
-					"Strange (Heartless)":"Strange<br>(Heartless)",
-					"Thor (Infinity War)":"Thor<br>(Infinity War)",
-					}
+	# Otherwise, just join the translated traits.
+	return ', '.join([translate_name(trait) for trait in section['traits']]).replace('-<br>','').replace('<br>',' ')
+
 
 
 # Quick and dirty translation to shorter or better names.
 def translate_name(value):
-	global TRANSLATE_NAME
+	TRANSLATE_NAME = {	"Avenger": "Avengers",
+						"AForce": "A-Force",
+						"Asgard": "Asgardians",
+						"Astonishing": "Astonishing<br>X-Men",
+						"BionicAvenger": "Bionic<br>Avengers",
+						"BlackOrder": "Black<br>Order",
+						"Brotherhood": "B'Hood",
+						"DarkHunter": "Dark<br>Hunters",
+						"Defender": "Defenders",
+						"Eternal": "Eternals",
+						"FantasticFour": "Fantastic<br>Four",
+						"HeroesForHire": "H4H",
+						"Hydra Armored Guard": "Hydra Arm Guard",
+						"InfinityWatch": "Infinity<br>Watch",
+						"Invader": "Invaders",
+						"OutOfTime": "Out of Time",
+						"MastersOfEvil": "Masters<br>Of Evil",
+						"Mercenary": "Mercs",
+						"NewAvenger": "New<br>Avengers",
+						"NewWarrior": "New<br>Warriors",
+						"Pegasus": "PEGASUS",
+						"PowerArmor": "Power Armor",
+						"PymTech": "Pym Tech",
+						"Ravager": "Ravagers",
+						"SecretAvenger": "Secret<br>Avengers",
+						"SecretDefender": "Secret<br>Defenders",
+						"SinisterSix": "Sinister<br>Six",
+						"SpiderVerse": "Spiders",
+						"SuperiorSix": "Superior<br>Six",
+						"Symbiote": "Symbiotes",
+						"TangledWeb": "Tangled<br>Web",
+						"WarDog": "War Dogs",
+						"Wave1Avenger": "Wave 1<br>Avengers",
+						"WeaponX": "Weapon X",
+						"WebWarrior": "Web<br>Warriors",
+						"XFactor": "X-Factor",
+						"Xforce": "X-Force",
+						"Xmen": "X-Men",
+						"XTreme": "X-Treme X-Men",
+						"YoungAvenger": "Young<br>Avengers",
+						"A.I.M. Monstrosity":"A.I.M.<br>Monstrosity",
+						"A.I.M. Researcher":"A.I.M.<br>Researcher",
+						"Agatha Harkness":"Agatha<br>Harkness",
+						"Black Panther (1MM)":"Black<br>Panther (1MM)",
+						"Captain America":"Captain<br>America",
+						"Captain America (Sam)":"Capt. America<br>(Sam)",
+						"Captain America (WWII)":"Capt. America<br>(WWII)",
+						"Doctor Octopus":"Doctor<br>Octopus",
+						"Doctor Strange":"Doctor<br>Strange",
+						"Doctor Voodoo":"Doctor<br>Voodoo",
+						"Elsa Bloodstone":"Elsa<br>Bloodstone",
+						"Ghost Rider (Robbie)":"Ghost Rider<br>(Robbie)",
+						"Green Goblin (Classic)":"Green Goblin<br>(Classic)",
+						"Hand Blademaster":"Hand<br>Blademaster",
+						"Hand Sorceress":"Hand<br>Sorceress",
+						"Hydra Armored Guard":"Hydra<br>Arm Guard",
+						"Hydra Grenadier":"Hydra<br>Grenadier",
+						"Hydra Rifle Trooper":"Hydra<br>Rifle Trooper",
+						"Hydra Scientist":"Hydra<br>Scientist",
+						"Invisible Woman":"Invisible<br>Woman",
+						"Iron Man (Infinity War)":"Iron Man<br>(Infinity War)",
+						"Iron Man (Zombie)":"Iron Man<br>(Zombie)",
+						"Ironheart (MKII)": "Ironheart<br>(MKII)",
+						"Juggernaut (Zombie)":"Juggernaut<br>(Zombie)",
+						"Kang the Conqueror":"Kang<br>the Conqueror",
+						"Korath the Pursuer":"Korath<br>the Pursuer",
+						"Kraven the Hunter":"Kraven<br>the Hunter",
+						"Kree Royal Guard":"Kree<br>Royal Guard",
+						"Lady Deathstrike":"Lady<br>Deathstrike",
+						"Madelyne Pryor":"Madelyne<br>Pryor",
+						"Mercenary Lieutenant":"Mercenary<br>Lieutenant",
+						"Mercenary Riot Guard":"Mercenary<br>Riot Guard",
+						"Mercenary Sniper":"Mercenary<br>Sniper",
+						"Mercenary Soldier":"Mercenary<br>Soldier",
+						"Mister Fantastic":"Mister<br>Fantastic",
+						"Mister Negative":"Mister<br>Negative",
+						"Mister Sinister":"Mister<br>Sinister",
+						"Ms. Marvel (Hard Light)": "Ms. Marvel<br>(Hard Light)",
+						"Proxima Midnight":"Proxima<br>Midnight",
+						"Ravager Boomer":"Ravager<br>Boomer",
+						"Ravager Bruiser":"Ravager<br>Bruiser",
+						"Ravager Stitcher":"Ravager<br>Stitcher",
+						"Rocket Raccoon":"Rocket<br>Raccoon",
+						"Ronan the Accuser":"Ronan<br>the Accuser",
+						"S.H.I.E.L.D. Assault":"S.H.I.E.L.D.<br>Assault",
+						"S.H.I.E.L.D. Medic":"S.H.I.E.L.D.<br>Medic",
+						"S.H.I.E.L.D. Operative":"S.H.I.E.L.D.<br>Operative",
+						"S.H.I.E.L.D. Security":"S.H.I.E.L.D.<br>Security",
+						"S.H.I.E.L.D. Trooper":"S.H.I.E.L.D.<br>Trooper",
+						"Scientist Supreme":"Scientist<br>Supreme",
+						"Spider-Man (Big Time)":"Spider-Man<br>(Big Time)",
+						"Spider-Man (Miles)":"Spider-Man<br>(Miles)",
+						"Spider-Man (Noir)":"Spider-Man<br>(Noir)",
+						"Spider-Man (Symbiote)":"Spider-Man<br>(Symbiote)",
+						"Spider-Man 2099":"Spider-Man<br>2099",
+						"Star-Lord (Annihilation)":"Star-Lord<br>(Annihilation)",
+						"Star-Lord (T'Challa)":"Star-Lord<br>(T'Challa)",
+						"Strange (Heartless)":"Strange<br>(Heartless)",
+						"Thor (Infinity War)":"Thor<br>(Infinity War)",
+						}
 	return TRANSLATE_NAME.get(value,value)

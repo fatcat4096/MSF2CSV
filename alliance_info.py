@@ -44,7 +44,7 @@ def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 	# If Sort Order specified, sort player_list in the correct order. 
 	if sort_by == 'stp' and stp_list:
-		return sorted(player_list, key=lambda x: -stp_list[x])
+		return sorted(player_list, key=lambda x: -stp_list[None][x])
 	# If we weren't provided a list of STPs, fall back to using TCP.
 	elif sort_by in ('tcp','stp'):
 		return sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
@@ -54,7 +54,7 @@ def get_player_list(alliance_info, sort_by='', stp_list={}):
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
-def get_stp_list(alliance_info, char_list, hist_date='', team_pwr_dict={}):
+def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
 	
 	# Get the list of Alliance Members 
 	player_list = get_player_list(alliance_info)
@@ -66,7 +66,7 @@ def get_stp_list(alliance_info, char_list, hist_date='', team_pwr_dict={}):
 		all_char_pwr.sort()
 
 		# And sum up the Top 5 power entries for STP.
-		team_pwr_dict[player_name] = sum(all_char_pwr[-5:])
+		team_pwr_dict.setdefault(hist_date,{})[player_name] = sum(all_char_pwr[-5:])
 
 	return team_pwr_dict
 
@@ -141,16 +141,22 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	table['under_min'] = {}
 
 	# Load up arguments from table, with defaults if necessary.
-	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
+	min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
 	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
+	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
 
 	# Before filtering further, while we have visibility for the entire section...
 	for player_name in player_list:
 		for char_name in meta_chars+other_chars:
 
 			# ...calculate whether entry is under the min requirements for use in this raid/mode .
-			under_min =              find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < min_iso
-			under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
+			under_min = 0
+			if min_lvl:
+				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'lvl' )[0] < min_lvl
+			if min_tier:
+				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
+			if min_iso:
+				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < min_iso
 			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
 	# Start by pulling value from table_format or table.
@@ -185,7 +191,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
 		# If we have min_iso/min_tier criteria, also use this to sort/filter the character list.
 		dict_ready = {}
-		if sort_char_by == 'avail' or min_iso or min_tier:
+		if sort_char_by == 'avail' or min_lvl or min_tier or min_iso:
 			dict_ready = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in player_list]) for char in other_chars}
 		
 		# If sort_by 'power', dict_ready is ignored.
@@ -209,21 +215,23 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 def remove_min_iso_tier(alliance_info, table_format, table, section, player_list, char_list):
 
 	# Load up arguments from table, with defaults if necessary.
-	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
+	min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
 	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
+	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
  
 	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
-	if min_iso:
-		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'iso')[0] for player in player_list]) >= min_iso]
-
+	if min_lvl:
+		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'lvl' )[0] for player in player_list]) >= min_lvl]
 	if min_tier:
 		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'tier')[0] for player in player_list]) >= min_tier]
+	if min_iso:
+		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'iso' )[0] for player in player_list]) >= min_iso]
 
 	return char_list
 
 
 # Find this member's oldest entry in our historical entries.
-def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=''):
+def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=None):
 
 	other_data = ''
 
@@ -411,7 +419,7 @@ def is_stale(alliance_info, member_name):
 
 
 # All settings, we build up the same way
-def get_table_value(table_format, table, section, key, default=None):
+def get_table_value(table_format, table, section={}, key='', default=None):
 
 	# Check for a custom value in table_format
 	value = table_format.get(key)
@@ -471,6 +479,3 @@ def is_valid_user_id(s):
 	elif len(s) == 36 and s[8]+s[13]+s[18]+s[23] == '----' and s.count('-') == 4 and set(s).issubset(string.hexdigits+'-'):
 		return True
 	return False
-
-
-

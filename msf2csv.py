@@ -14,9 +14,11 @@ from file_io         import *             # Routines to read and write files to 
 from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
 
+import datetime
+
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
-def main(alliance_name='', csv=False, prompt=False, headless=False, force='', table_format={}, roster_url='', external_driver=None, log_file=None):
+def main(alliance_name='', prompt=False, headless=False, force='', table_format={}, roster_url='', external_driver=None, log_file=None):
 
 	##
 	## Just a junker placeholder until I come back and do it right. 
@@ -41,17 +43,12 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, force='', ta
 			original_members = list(alliance_info['members'])
 			
 			# Grab roster info for this Army of One.
-			rosters_output = process_rosters(driver, alliance_info, only_new=True) 
+			rosters_output = process_rosters(driver, alliance_info, only_process=[roster_url]) 
 			update_history(alliance_info)			
 
 			# Determine who was added
 			new_member = [member for member in alliance_info['members'] if alliance_info['members'][member].get('url') == roster_url][0]
 			alliance_info['name'] = new_member
-
-			new_strike = [[new_member]]
-			
-			# Update the Strike Teams to only include this member.
-			alliance_info['strike_teams'] = {'custom':new_strike}
 
 			# Write cached data -- DON'T DO THIS IN THE FINAL VERSION. 
 			write_cached_data(alliance_info, file_name=roster_url)
@@ -60,7 +57,7 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, force='', ta
 		pathname = get_local_path()
 		# Request output for this Member
 		for output in tables:
-			table_format = {'strike_teams':'custom', 'span':False, 'inc_pos':True}
+			table_format = {'only_member':alliance_info['name'], 'span':False, 'inline_hist':datetime.date(2024, 2, 17), 'inc_pos':True}
 			write_file(f'{pathname}{alliance_info["name"]}-{output}.html', generate_tabbed_html(alliance_info, tables.get(output), table_format))
 		return
 	
@@ -83,8 +80,10 @@ def main(alliance_name='', csv=False, prompt=False, headless=False, force='', ta
 	valid_output   = list(tables)+['roster_analysis','alliance_info', 'by_char']
 
 	# Generate CSV?
-	if csv:
-		 write_file(pathname+"original.csv", generate_csv(alliance_info))
+	if output == 'csv':
+		 html_files = write_file(pathname+"csv.csv", generate_csv(alliance_info))
+		 
+		 return html_files
 
 	# Output only a specific report.
 	elif external_table or output:
@@ -197,6 +196,9 @@ if __name__ == '__main__':
 	# If image requested, but no output specified, raise error.
 	if args.only_image and not args.output:
 		parser.error ("--only_image requires --output FORMAT to be specified")
+	elif args.csv:
+		args.output   = 'csv'
+		output_format = 'csv'
 	# If image requested, format is explicitly 'image'
 	elif args.only_image:
 		output_format = 'image'
@@ -226,5 +228,5 @@ if __name__ == '__main__':
 					'sort_char_by'  : args.sort_char_by,
 					'span'          : args.span}
 	
-	main(args.file_or_alliance, args.csv, args.prompt, headless, force, table_format, roster_url=args.url) # Just run myself
-
+	main(args.file_or_alliance, args.prompt, headless, force, table_format, roster_url=args.url) # Just run myself
+	
