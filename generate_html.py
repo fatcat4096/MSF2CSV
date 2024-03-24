@@ -826,7 +826,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	html_file += ' <td width="200" colspan="5">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="240" colspan="6">Gear Tier</td>\n'	# Tier 13-18
+	html_file += ' <td width="240" colspan="7">Gear Tier</td>\n'	# Tier 13-19
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="160" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
@@ -879,24 +879,25 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	html_file += f' <td {sort_func % 30}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
 	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
 	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['18' ,'18'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
 
 	# T4 Abilities
-	html_file += f' <td {sort_func % 34}>Bas</td>\n'
-	html_file += f' <td {sort_func % 35}>Spc</td>\n'
-	html_file += f' <td {sort_func % 36}>Ult</td>\n'
-	html_file += f' <td {sort_func % 37}>Pas</td>\n'
+	html_file += f' <td {sort_func % 35}>Bas</td>\n'
+	html_file += f' <td {sort_func % 36}>Spc</td>\n'
+	html_file += f' <td {sort_func % 37}>Ult</td>\n'
+	html_file += f' <td {sort_func % 38}>Pas</td>\n'
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb lvl", '%s', table_id)
 
 	# Level Ranges
-	html_file += f' <td {sort_func % 39}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 40}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 40}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -958,7 +959,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
-			for key in range(13,19):
+			for key in range(13,20):
 				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['tier'][key], member_stats.get('tier',{}).get(key,0), html_cache, stale_data), member_stats.get('tier',{}).get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
@@ -1110,7 +1111,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 		stats['range']['iso'][key] = [stats[member].get('iso',{}).get(key,0) for member in member_list]
 
 	# Gear Tiers
-	for key in range(13,19):
+	for key in range(13,20):
 		stats['range']['tier'][key] = [stats[member].get('tier',{}).get(key,0) for member in member_list]
 
 	# Level Ranges
