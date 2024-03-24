@@ -57,10 +57,14 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 		pathname = get_local_path()
 		# Request output for this Member
 		for output in tables:
-			table_format = {'only_member':alliance_info['name'], 'span':False, 'inline_hist':datetime.date(2024, 2, 17), 'inc_pos':True}
+			table_format = {'only_members':alliance_info['name'], 'span':False, 'inc_pos':True}
 			write_file(f'{pathname}{alliance_info["name"]}-{output}.html', generate_tabbed_html(alliance_info, tables.get(output), table_format))
 		return
-	
+
+	# Were we passed an alliance_info explicitly?
+	elif type(alliance_name) is dict and 'members' in alliance_name:
+		alliance_info = alliance_name
+		alliance_name = alliance_info['name']
 	# Load roster info directly from cached data or the website.
 	else:
 		alliance_info = get_alliance_info(alliance_name, prompt, force, headless, external_driver)
@@ -68,8 +72,6 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 	# If we're done, the captured output is being returned as 'alliance_info'
 	if force == 'rosters_only':
 		return alliance_info
-
-	print ()
 
 	# Build a default path and filename. 
 	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'reports' + os.sep + alliance_info['name'] + '-'

@@ -274,8 +274,10 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 		return current_val,other_data
 
 	# If requested date doesn't exist or no date specified, use the oldest date available.
-	hist_date = alliance_info['hist'].get('hist_date', min(alliance_info['hist']))
-		
+	if hist_date not in alliance_info['hist']:
+		hist_list = sorted([date for date in alliance_info['hist'] if date<hist_date])
+		hist_date = hist_list[-1] if hist_list else min(alliance_info['hist'])
+
 	if player_name in alliance_info['hist'][hist_date]:
 
 		hist_info = alliance_info['hist'][hist_date][player_name].get(char_name,{})

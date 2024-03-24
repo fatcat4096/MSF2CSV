@@ -601,10 +601,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# If inline_hist is requested, we will loop through this code twice for each user.
 				# First pass will generate normal output and second one will generate historical data. 
+				hist_list = [hist_date]
 				if inline_hist:
-					hist_list = [hist_date,inline_hist]
-				else:
-					hist_list = [hist_date]
+					hist_list.append(inline_hist)
 					
 				for use_hist_date in hist_list:
 
@@ -612,26 +611,35 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					# This will be used for color calculation for the Team Power column.
 					stp_range = [stp_list[use_hist_date][player_name] for player_name in player_list]
 
-					if inline_hist and use_hist_date:
-						name_field = f'<span style="font-weight:normal;"><i>(since {use_hist_date.strftime("%m/%d/%y")})</i></span>'
-					else:
-						name_field = player_name.replace('Commander','Cmdr.')
+					# Standard Name field content. 
+					name_field = player_name.replace('Commander','Cmdr.')
+
+					# If inline_hist was requested, add content to the Name field for the second line and make this and several other fields span both lines.
+					rowspan = ''
+					if inline_hist and not use_hist_date:
+						name_field = f'{name_field}<br><span style="font-weight:normal;"><i>(since {inline_hist.strftime("%m/%d/%y")})</i></span>'
+						rowspan = '" rowspan="2'
 
 					# Player Name, then relevant stats for each character.
 					st_html += '    <tr%s>\n' % [' class="hist"',''][not use_hist_date]
-					st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready], name_field)
+
+					inline_hist_row = inline_hist and use_hist_date
+
+					# Skip this cell if on Inline Hist line.
+					if not inline_hist_row:
+						st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready]+rowspan, name_field)
 
 					# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
 					stale_data = alliance_info['members'][player_name]['is_stale']
 
 					# Include "# Pos" info if requested.
-					if inc_pos:
+					if inc_pos and not inline_hist_row:
 						pos_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, html_cache, stale_data), pos_num)
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, html_cache, stale_data)+rowspan, pos_num)
 
 					# Include "# Avail" info if requested.
-					if inc_avail:
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], html_cache, stale_data), num_avail)
+					if inc_avail and not inline_hist_row:
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], html_cache, stale_data)+rowspan, num_avail)
 
 					# Write the stat values for each character.
 					for char_name in line_chars:
@@ -672,7 +680,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							st_html += '     <td%s>%s%s</td>\n' % (style, field_value, ['',other_diffs][need_tt])
 
 						# Include ISO class information if requested
-						if inc_class:
+						if inc_class and not inline_hist_row:
 
 							# Get the ISO Class in use for this member's toon.
 							iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6								# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
@@ -693,9 +701,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							if iso_class:
 								field_color = get_value_color_ext(0, 100, iso_conf, html_cache, stale_data, under_min=under_min)
 								tool_tip = f'<span class="ttt"><b>{iso_class.title()}:</b><br>{iso_conf}%</span>'
-								st_html += f'     <td class="{iso_class[:4]} tt {field_color}">{tool_tip}</td>\n'
+								st_html += f'     <td class="{iso_class[:4]} tt {field_color+rowspan}">{tool_tip}</td>\n'
 							else:
-								st_html += '     <td class="hist">-</td>\n'
+								st_html += f'     <td class="hist{rowspan}">-</td>\n'
 
 					# Include the Strongest Team Power column.
 					if len(char_list)>1:
@@ -1315,6 +1323,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 
 		# Generate the right table with historical information if available.
 		if hist_date:
+			stp_list = get_stp_list(alliance_info, [char], hist_date)	
 			table_lbl += f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
 			html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], table_lbl, stp_list, html_cache, hist_date, linked_hist=True)
 			
@@ -1391,52 +1400,40 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 	
 	return get_value_color_ext(min_val, max_val, value, html_cache, stale_data, stat, under_min, hist_date)
 
-
-def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):
+def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):
+	
+	# If we've specified an inverted range, flip the calculation on its head.
+	if min_val > max_val:
+		min_val, max_val = max_val, min_val
+		value = max_val - value
 	
 	# Special treatment for the '0' fields. 
 	if not value:
 		return 'hist'
 
-	max_colors  = len(color_scale)-1
-	
-	#Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
-	if stat=='iso':
-		if not hist_date:
-			scaled_value = int(((value**3)/10**3) * max_colors)
-		else:
-			scaled_value = [int((0.6 + 0.4 * ((value**3)/10**3)) * max_colors),0][value<0]
-	elif stat=='tier':
-		if not hist_date and value <= 16:
-			scaled_value = int(((value**2)/16**2)*0.50 * max_colors)
-		elif not hist_date:
-			scaled_value = int((0.65 + 0.35 * ((value-17)/2)) * max_colors)
-		else:
-			scaled_value = int((0.60 + 0.40 * ((value**2)/19**2)) * max_colors)
-	elif stat=='lvl':
-		if not hist_date and value <= 85:
-			scaled_value = int(((value**2)/85**2)*0.50 * max_colors)
-		elif not hist_date:
-			scaled_value = int((0.65 + 0.35 * ((value-85)/20)) * max_colors)
-		else:
-			scaled_value = int((0.60 + 0.40 * ((value**2)/100**2)) * max_colors)
-	elif stat in ('red','yel'):
-		min = 2
-		max = 7
-		scaled_value = int((value-min)/(max-min) * max_colors)
-	# Everything else.
-	else:
-		if min == max:
-			scaled_value = max_colors
-		else:
-			scaled_value = int((value-min)/(max-min) * max_colors)
-	
-	if scaled_value < 0:
-		scaled_value = 0
-	elif scaled_value > max_colors:
-		scaled_value = max_colors
+	# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 
-	color = color_scale[scaled_value]
+	# Midpoint = ISO 8
+	if stat=='iso':
+		color = get_scaled_value(0, 8, 10, value, hist_date)
+	# ISO Level midpoint = Tier 15
+	elif stat=='tier':
+		color = get_scaled_value(0, 15, 19, value, hist_date)
+	# Gear Tier midpoint = Level 85
+	elif stat=='lvl':
+		color = get_scaled_value(0, 85, 100, value, hist_date)
+	# Ability midpoint = Level 5
+	elif stat in ('bas','spc','ult'):
+		color = get_scaled_value(0, 5, 7, value, hist_date)
+	# Passive midpoint = Level 3
+	elif stat in ('pas'):
+		color = get_scaled_value(0, 3, 5, value, hist_date)
+	elif stat in ('red','yel'):
+		color = get_scaled_value(0, 5, 7, value, hist_date)
+	# Everything else, generic handling.
+	else:
+		mid_val = (((max_val-min_val)*0.5)+min_val)
+		color = get_scaled_value(min_val, mid_val, max_val, value, hist_date)
 	
 	# Dim values slightly if under the minimum specified for the report.
 	if under_min and not hist_date:
@@ -1450,6 +1447,34 @@ def get_value_color_ext(min, max, value, html_cache, stale_data=False, stat='pow
 	return make_next_color_id(html_cache, color)
 
 
+# Do the ugly calculations here.
+def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
+
+	# If Hist Date, any growth is a positive. Start with +1 as yellow and go to top of range as green
+	if hist_date:
+		mid_val = min_val
+
+	# Define midpoint once, in case we'd like to skew it.
+	yellow_point = 0.5
+	
+	# If we're in the lower "half" of our range, calculate the spread from red to yellow
+	if value <= mid_val:
+		scaled_value = ((value-min_val)/max(1,mid_val-min_val)) * yellow_point
+	# Top "half" is yellow to green.
+	else:
+		scaled_value = ((value-mid_val)/max(1,max_val-mid_val)) * (1-yellow_point) + yellow_point 
+
+	# Ensure the scaled_value is between 0% and 100%
+	scaled_value = max(0, scaled_value)		# min of 0%
+	scaled_value = min(1, scaled_value)		# max of 100%
+
+	# Translate the scaled_value into a color from the color_scale list.
+	max_colors   = len(color_scale)-1
+	scaled_value = int(scaled_value * max_colors)
+	
+	return color_scale[scaled_value]
+
+
 # Generate Labels for each section from either label info or trait names.
 def get_section_label(section):
 	
@@ -1459,7 +1484,6 @@ def get_section_label(section):
 
 	# Otherwise, just join the translated traits.
 	return ', '.join([translate_name(trait) for trait in section['traits']]).replace('-<br>','').replace('<br>',' ')
-
 
 
 # Quick and dirty translation to shorter or better names.
