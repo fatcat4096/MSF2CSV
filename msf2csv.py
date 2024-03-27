@@ -153,6 +153,10 @@ if __name__ == '__main__':
 						help='include ISO Class information and confidence in output')
 	parser.add_argument('--inc_hist', action='store_true', 
 						help='include History info with output')
+	parser.add_argument('--inc_rank', action='store_true', 
+						help='include STP rank in output')
+	parser.add_argument('--inc_summary', action='store_true', 
+						help='include Team Power Summary in output')
 	parser.add_argument('--min_iso', type=int, metavar='N',
 						help='minimum ISO level for inclusion in output')
 	parser.add_argument('--min_tier', type=int, metavar='N',
@@ -165,6 +169,8 @@ if __name__ == '__main__':
 						help='only output ONE section of a given lane')
 	parser.add_argument('--only_team', type=int, metavar='N', choices=[0, 1, 2, 3],
 						help='only output info for one strike team, 0 is ignore strike teams')
+	parser.add_argument('--only_summary', action='store_true', 
+						help='only output Team Power Summary')
 	parser.add_argument('--only_image', action='store_true',
 						help='output PNG files instead of HTML, requires -o/--output FORMAT', default='')					
 	parser.add_argument('--output', type=str, metavar='FORMAT',
@@ -195,6 +201,10 @@ if __name__ == '__main__':
 	# Rosters Only forces Headless operation, Import Block always operates headlessly
 	headless = args.rosters_only or args.headless
 
+	# If only summary, make sure inc_summary is set as well.
+	if args.only_summary and not args.inc_summary:
+		args.inc_summary = True
+
 	# If image requested, but no output specified, raise error.
 	if args.only_image and not args.output:
 		parser.error ("--only_image requires --output FORMAT to be specified")
@@ -215,12 +225,15 @@ if __name__ == '__main__':
 	table_format = {'inc_avail'     : args.inc_avail,
 					'inc_class'     : args.inc_class,
 					'inc_hist'      : args.inc_hist,
+					'inc_rank'      : args.inc_rank,
+					'inc_summary'   : args.inc_summary,
 					'min_iso'       : args.min_iso,
 					'min_tier'      : args.min_tier,
 					'max_others'    : args.max_others,
 					'only_lane'     : args.only_lane,
 					'only_section'  : args.only_section,
 					'only_team'     : args.only_team,
+					'only_summary'  : args.only_summary,
 					'only_image'    : args.only_image,
 					'output'        : args.output,
 					'output_format' : output_format,

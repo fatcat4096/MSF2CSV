@@ -13,7 +13,7 @@ import re
 
 from bs4 import BeautifulSoup
 from parse_cache import update_parse_cache
-from file_io import remove_tags
+from file_io import *
 
 # Parse the alliance information directly from the website.
 @timed(level=3)
@@ -81,6 +81,12 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 
 	# Start by parsing Player Info from the right panel. We will use this to update alliance_info if not working_from_web.
 	player = soup.find('div', attrs = {'class':'fixed-wrapper panel-wrapper'})
+	
+	# Not sure what causes this.
+	if not player:
+		print ('Could not find player info when parsing. Writing HTML to disk as',member+'.html')
+		write_file(get_local_files()+member+'.html', soup.prettify())
+		return
 
 	# Did we actually arrive at a valid Roster Page?
 	player_name = player.find('div', attrs = {'class':'player-name'})

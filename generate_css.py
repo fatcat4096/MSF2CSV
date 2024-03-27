@@ -291,6 +291,19 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 .lvl {
   min-width   : 42px;
 }
+.summ {
+  min-width   : 90px;
+  justify-content: center;
+  align-items : center;
+  font-size   : 16px;
+  font-weight : 700;
+  text-shadow : 2px 2px 2px black,
+                -2px 2px 2px black,
+                2px -2px 2px black,
+                -2px -2px 2px black, 
+                0 0 0.8em black, 
+                0 0 0.2em black; 
+}
 .cent {
   display     : flex;
   justify-content: center;

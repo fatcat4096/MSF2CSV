@@ -6,7 +6,15 @@ Takes the processed alliance / roster data and generate readable output to spec.
 
 # By_Char data should use same hist_date as provided in inc_hist or inline_hist
 # Need to fix data normalization routines. All-zero data in the final data frames???
-# Change the hist date selection algorithm. Don't just go min if date requested is missing, return slightly older, min if none older.
+
+# Team Report Summary suggestions
+# * Include graphics for teams in Team Report Summary?
+# * Better team name formatting? 
+# * Can we avoid using deepcopy for everything?
+# * Allow summary_keys to be specified
+# * Change last column to TCP? Sort by TCP?
+# * Dim if <5 available? 
+# * Dim member if <5 available for any entry?
 
 from log_utils import *
 
@@ -69,6 +77,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 			# If there's only one lane because of only_lanes, specify the correct lane number.
 			lane_num = [only_lane, lane_idx+1][not only_lane]
 			file_num = [f'-{lane_num:02}', ''][len_lanes == 1]
+			section_num = ''
 
 			# If there are multiple lanes, specify which lane. If not, just call it Roster Info
 			tab_name = [f'LANE {lane_num}', 'ROSTER INFO'][len(lanes) == 1 and not only_lane]
@@ -82,24 +91,46 @@ def generate_html(alliance_info, table, table_format, output=''):
 
 			for section_idx in range(0,len(lane),sections_per):
 
+				# Find out whether we're including Team Power Summary.
+				inc_summary  = get_table_value(table_format, table, key='inc_summary')
+				only_summary = get_table_value(table_format, table, key='only_summary')
+
+				if only_summary:
+					tab_name = tab_name.replace('INFO','SUMMARY')
+
 				# Include the label for the lane plus the requested sections.
-				html_file = add_tab_header(tab_name)	
+				html_file = get_tab_header(tab_name)	
 
-				sections = lane[section_idx:section_idx+sections_per]
-				for section in sections:
-					html_file += generate_lanes(alliance_info, table, [[section]], table_format, html_cache=html_cache)
+				# Insert summary if requested, but only if generating entire lane.
+				if only_summary or (inc_summary and not only_section and sections_per == len(lane)):
 
-				# Include the history information if we have it and can include it.
-				if hist_date:
-					html_file += add_tab_header(get_hist_tab(hist_date, table_format))	
-					html_file += generate_lanes(alliance_info, table, [[section]], table_format, hist_date, html_cache=html_cache)
+					# Team List == full lane, means we will report on every entry.
+					team_list = [get_section_label(section) for section in lane]
 
-				# Wrap it up and add it to the collection.
-				section_num = ''
-				if only_section or sections_per != len(lane):
-					section_num += [f'-s{only_section:02}', f'-s{section_idx+1:02}'][not only_section]
-					if len(sections) != 1:
-						section_num += f'-{section_idx+len(sections):02}'
+					# Calculate strike teams
+					strike_teams = get_strike_teams(alliance_info, table, table_format)
+
+					# Add the table to the top!
+					html_file += generate_team_power_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
+
+				# If not only summary, generate the rest of the lane.
+				if not only_summary:
+
+					# Process the lane, section by section.
+					sections = lane[section_idx:section_idx+sections_per]
+					for section in sections:
+						html_file += generate_lanes(alliance_info, table, [[section]], table_format, html_cache=html_cache)
+
+						# Include the history information if we have it and can include it.
+						if hist_date:
+							html_file += get_tab_header(get_hist_tab(hist_date, table_format))	
+							html_file += generate_lanes(alliance_info, table, [[section]], table_format, hist_date, html_cache=html_cache)
+
+					# Wrap it up and add it to the collection.
+					if only_section or sections_per != len(lane):
+						section_num += [f'-s{only_section:02}', f'-s{section_idx+1:02}'][not only_section]
+						if len(sections) != 1:
+							section_num += f'-{section_idx+len(sections):02}'
 
 				# Include scripts to support sorting.
 				html_file += add_sort_scripts()
@@ -114,15 +145,15 @@ def generate_html(alliance_info, table, table_format, output=''):
 		
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += add_tab_header('ROSTER ANALYSIS (ACTUALS)')
+			html_file += get_tab_header('ROSTER ANALYSIS (ACTUALS)')
 			html_file += generate_roster_analysis(alliance_info, stat_type='actual', html_cache=html_cache)
-			html_file += add_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
+			html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
 			html_file += generate_roster_analysis(alliance_info, stat_type='progressive', html_cache=html_cache)
 
 			# Generate a label for the History Tab if we have History.
 			hist_date = get_hist_date(alliance_info, table_format)
 			if hist_date:
-				html_file += add_tab_header(get_hist_tab(hist_date, table_format))	
+				html_file += get_tab_header(get_hist_tab(hist_date, table_format))	
 				html_file += generate_roster_analysis(alliance_info, stat_type='progressive', hist_date=hist_date, html_cache=html_cache)
 		
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
@@ -231,7 +262,7 @@ def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
 
 # Just hide the messiness.
 @timed(level=3)
-def add_tab_header(content):
+def get_tab_header(content):
 	return '<table>\n<tr><td class="tlnk" style="width:100%;">'+content+'</td></tr>\n</table>'
 
 
@@ -241,44 +272,14 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 
 	html_file = ''
 
-	# If only_members specified, use this list instead of previously defined Strike Teams.
-	only_members = get_table_value(table_format, table, key='only_members')
-	if only_members:
-
-		# If a single name was provided, wrap it in a list.
-		if type(only_members) is str:
-			only_members = [only_members]
-
-		# Wrap up the only_members list in a Strike Team entry.
-		strike_teams = [only_members]
-	else:
-		# Which strike_teams should we use? (Strike Teams CANNOT vary section by section.)
-		strike_teams = get_table_value(table_format, table, key='strike_teams')
-
-		# Grab specified strike teams if available. 
-		strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
-
-		# Insert dividers as necessary
-		inc_dividers = get_table_value(table_format, table, key='inc_dividers', default='other')
-		if inc_dividers and strike_teams:
-			strike_teams = insert_dividers(strike_teams, inc_dividers)
-
-	# If no strike team definitions are specified / found or 
-	# If only_team == 0 (ignore strike_teams) **AND**
-	# no sort_by has been specified, force sort_by to 'stp'
-	only_team = get_table_value(table_format, table, key='only_team')
-	if (not strike_teams or only_team == 0) and not table_format.get('sort_by'):
-		table_format['sort_by'] = 'stp'
-
-	# Sort player list if requested.
-	sort_by = get_table_value(table_format, table, key='sort_by')
-
-	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
-	if not strike_teams or only_team == 0:
-		strike_teams = [get_player_list(alliance_info, sort_by)]
+	# Calculate strike teams
+	strike_teams = get_strike_teams(alliance_info, table, table_format)
 
 	# Special handling required if inline_hist.
 	inline_hist = get_table_value(table_format, table, key='inline_hist')
+
+	# Find out whether we're including Team Power Summary at top.
+	inc_summary = get_table_value(table_format, table, key='inc_summary')
 
 	# Iterate through all the lanes. Showing tables for each section. 
 	for lane in lanes:
@@ -289,6 +290,17 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 		# Only include Dividers if using as part of a multi-tab document
 		if using_tabs:
 			html_file += '<div id="%s" class="tcon">\n' % (divider_id)
+
+		# Insert the team_power_summary at the top if requested.
+		# Only use if using_tabs because generate_lanes() is called MULTIPLE TIMES if not in a tabbed environment
+		
+		if inc_summary and using_tabs:
+
+			# Team List == full lane, means we will report on every entry.
+			team_list = [get_section_label(section) for section in lane]
+
+			# Add the table to the top!
+			html_file += generate_team_power_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section in lane:
@@ -322,7 +334,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 				meta_lbl = table_lbl+'<br><span class="sub">META</span>'
 
 				stp_list = get_stp_list(alliance_info, meta_chars, hist_date)
-				
+
 				# If inline_hist, need to generate STP entries for the historical date as well.
 				if inline_hist:
 					stp_list = get_stp_list(alliance_info, meta_chars, inline_hist)
@@ -359,6 +371,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 				if len(strike_teams) == 1 or only_team == 0:
 					
 					# Need to do a new sort for strike_teams if sort_by is STP.
+					sort_by = get_table_value(table_format, table, key='sort_by')
 					if sort_by == 'stp':
 						strike_temp = [get_player_list(alliance_info, sort_by, stp_list)]
 					else:
@@ -398,19 +411,69 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 	return html_file
 
 
-'''
-def team_power_report(alliance_info, lane, table_format, team_list):
-		
+@timed(level=3)
+def generate_team_power_summary(alliance_info, table, lanes, table_format, team_list, strike_teams, hist_date=None, html_cache={}):
+
+	html_file = ''
+
+	# Likely need to deep copy here before moving on -- we're adding elements to the existing dicts.
+	table         = copy.deepcopy(table)
+	alliance_info = copy.deepcopy(alliance_info)
+	table_format  = copy.deepcopy(table_format)
 	
-	for section in lane:
-		unformatted_label = get_section_label(section)
-		if unformatted_label in team_list:
-'''		
+	# Generate a separate table for each lane. 
+	for lane in lanes:
+
+		# Pre-process the information for the lane, calculating STPs, num_avail, and rank.
+		for section in lane:
+			section_label = get_section_label(section)
+			if section_label in team_list or 1:
+			
+				# Filter down the character list to only those in this section
+				meta_chars,other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
+
+				# Get the STPs for this team. 
+				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
+
+				# Get the rank for this team. 
+				
+				for member in alliance_info['members']:
+					if 'processed_chars' in alliance_info['members'][member]:
+
+						# Pull it from the calculated STP list.
+						stp = stp_list[hist_date][member]
+
+						# Get the num_avail for this team. 
+						avail = len([char for char in table.get('under_min',{}).get(member,{}) if not table.get('under_min',{}).get(member,{}).get(char)])
+						rank  = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(member)+1
+					
+						alliance_info['members'][member]['processed_chars'][section_label] = {'power':stp, 'avail':avail, 'rank':rank}
+
+		stp_list = get_stp_list(alliance_info, [get_section_label(section) for section in lane], hist_date)
+
+		# Let's make it easy on ourselves. Start every section the same way.
+		html_file += '<table>\n <tr>\n  <td>\n'
+
+		section = {}
+		
+		table_lbl = 'Team<br>Power<br>Summary'
+		table_format['inc_keys'] = ['power','avail']
+		table_format['sort_by'] = 'stp'
+		
+		team_power_summary = True
+		
+		# Generate a table.
+		html_file += generate_table(alliance_info, table, section, table_format, team_list, strike_teams, table_lbl, stp_list, html_cache, hist_date, team_power_summary=team_power_summary)
+		
+		# End every section the same way.
+		html_file += '  </td>\n </tr>\n</table>\n'
+
+	return html_file
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
 @timed(level=3)
-def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None):
+def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None, team_power_summary=False):
 
 	# Pick a color scheme.
 	if 'OTHERS' not in table_lbl:
@@ -447,9 +510,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 	# Find out whether inline history has been requested for this report.
 	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
-	
+
 	# Pare any missing heroes if these aren't Meta entries.
-	if 'META' not in table_lbl and len(using_chars) > 5:
+	if 'META' not in table_lbl and len(using_chars) > 5 and not team_power_summary:
 		using_chars = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)			
 
 		# if inline_hist, only want heroes that have actually been changed.
@@ -480,7 +543,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	html_file = '   <table id="%s">\n' % (table_id)
 
 	# SEE IF WE NEED MULTIPLE LINES. WE MAY NEED TO BREAK UP USING_CHARS INTO CHUNKS.
-	line_wrap = 20
+	line_wrap = 12
 
 	# Initialize the row count. Will add to it with each strike_team section.
 	row_idx = 1
@@ -496,11 +559,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Get value from table_format/table, with defaults if necessary.
 
 		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl
-		inc_pos   = get_table_value(table_format, table, section, key='inc_pos',   default=False) and 'OTHERS' not in table_lbl
+		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False) and 'OTHERS' not in table_lbl
 		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False) and not hist_date
 
 		# Include a column for "# Pos" info if requested.
-		if inc_pos:
+		if inc_rank:
 			html_file += '     <td></td>\n'
 
 		# Include a column for "# Avail" info if requested.
@@ -520,24 +583,30 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		# Include Images for each of the Characters.
 		for char in line_chars:
-			url = f"https://assets.marvelstrikeforce.com/imgs/Portrait_{alliance_info['portraits'][char]}.png"
 
-			# Default value to start
-			onclick = ''
+			# Do special things if this is the team power report.
+			if team_power_summary:
+				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).replace(", ","<br>")}</div></td>\n'
+				
+			else:
+				url = f"https://assets.marvelstrikeforce.com/imgs/Portrait_{alliance_info['portraits'][char]}.png"
 
-			# We are doing a ByChar table in a tabbed file, link back to the report tabs.
-			if linked_hist and anchor:
-				# Finally, connect back to the info in the raid.
-				onclick =  ' onclick="toTable(this,\'%s\')"' % (anchor.get('from')) 
+				# Default value to start
+				onclick = ''
 
-			# If we don't have linked_hist, then we're on the reports tab.
-			elif not linked_hist:
+				# We are doing a ByChar table in a tabbed file, link back to the report tabs.
+				if linked_hist and anchor:
+					# Finally, connect back to the info in the raid.
+					onclick =  ' onclick="toTable(this,\'%s\')"' % (anchor.get('from')) 
 
-				# Create new anchor entry to link Report and Bychar tabs. 
-				anchor = make_next_anchor_id(html_cache, char, table_id)
-				onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
+				# If we don't have linked_hist, then we're on the reports tab.
+				elif not linked_hist:
 
-			html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
+					# Create new anchor entry to link Report and Bychar tabs. 
+					anchor = make_next_anchor_id(html_cache, char, table_id)
+					onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
+
+				html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
 
 		# Include a Team Power column if we have more than one.
 		if len(char_list)>1:
@@ -578,12 +647,12 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			if sort_by:
 				strike_team = [member for member in player_list if member in strike_team]
 				
-				# This divider is a little different. Go ahead and add it back in after sorting.
+				# If inc_dividers is '53', this divider is a little different. Go ahead and add it back in after sorting.
 				inc_dividers = get_table_value(table_format, table, section, key='inc_dividers', default='other')
 				if inc_dividers == '53':
 						strike_team = insert_dividers([strike_team], inc_dividers)[0]
 
-			# FINALLY, WRITE THE DATA FOR EACH ROW. #########################
+			# BUILD A BLOCK WITH THE DATA FOR EACH ROW. #########################
 			alt_color = False
 			for player_name in strike_team:
 			
@@ -633,9 +702,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					stale_data = alliance_info['members'][player_name]['is_stale']
 
 					# Include "# Pos" info if requested.
-					if inc_pos and not inline_hist_row:
-						pos_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, pos_num, html_cache, stale_data)+rowspan, pos_num)
+					if inc_rank and not inline_hist_row:
+						rank_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, rank_num, html_cache, stale_data)+rowspan, rank_num)
 
 					# Include "# Avail" info if requested.
 					if inc_avail and not inline_hist_row:
@@ -723,53 +792,51 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					st_rows += 1
 			# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
 
-			# WRITE THE HEADING ROW WITH VALUE DESCRIPTORS ##################
-			# (only if more than one item requested)
-			if num_cols>1 or len(strike_teams)>1:
-				html_file += '    <tr class="%s">\n' % table_header
+			# FINALLY WRITE THE HEADING ROW AND PUT IT ALL TOGETHER #########
+			html_file += '    <tr class="%s">\n' % table_header
 
-				# Simplify inclusion of the sort function code
-				if linked_hist:
-					sort_func = 'onclick="sortl(%s,\'%s\',%s,%s,\'%s\')"' % ('%s', table_id, row_idx, st_rows, linked_id)
-				else:
-					sort_func = 'onclick="sortx(%s,\'%s\',%s,%s)"' % ('%s', table_id, row_idx, st_rows)
+			# Simplify inclusion of the sort function code
+			if linked_hist:
+				sort_func = 'onclick="sortl(%s,\'%s\',%s,%s,\'%s\')"' % ('%s', table_id, row_idx, st_rows, linked_id)
+			else:
+				sort_func = 'onclick="sortx(%s,\'%s\',%s,%s)"' % ('%s', table_id, row_idx, st_rows)
 
-				if len(strike_teams)>1:
-					html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>\n'
-				else:
-					html_file += f'     <td class="{button_hover}" {sort_func % 0}>Member</td>\n'
+			if len(strike_teams)>1:
+				html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>\n'
+			else:
+				html_file += f'     <td class="{button_hover}" {sort_func % 0}>Member</td>\n'
 
-				col_idx = 1
+			col_idx = 1
 
-				# Include header if "# Pos" info requested.
-				if inc_pos:
-					html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Rank</td>\n'
+			# Include header if "# Pos" info requested.
+			if inc_rank:
+				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Rank</td>\n'
+				col_idx += 1
+
+			# Include header if "# Avail" info requested.
+			if inc_avail:
+				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Avail</td>\n'
+				col_idx += 1
+
+			# Insert stat headings for each included Character.
+			for char in line_chars:
+				for key in keys:
+					width = 'p' if key == 'power' else ''
+					html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'iso':'ISO','stp':'STP'}.get(key,key.title()))
 					col_idx += 1
 
-				# Include header if "# Avail" info requested.
-				if inc_avail:
-					html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Avail</td>\n'
+				# Include a header for ISO Class info if requested.
+				if inc_class:
+					html_file += '     <td>Cls</td>\n'
 					col_idx += 1
+			
+			# Insert the Team Power column.
+			if len(char_list)>1:
+				html_file += f'     <td class="redb" {sort_func % col_idx}>STP</td>\n'
 
-				# Insert stat headings for each included Character.
-				for char in line_chars:
-					for key in keys:
-						width = 'p' if key == 'power' else ''
-						html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'iso':'ISO'}.get(key,key.title()))
-						col_idx += 1
-
-					# Include a header for ISO Class info if requested.
-					if inc_class:
-						html_file += '     <td>Cls</td>\n'
-						col_idx += 1
-				
-				# Insert the Team Power column.
-				if len(char_list)>1:
-					html_file += f'     <td class="redb" {sort_func % col_idx}>STP</td>\n'
-
-				html_file += '    </tr>\n'
-				
-				row_idx += 1
+			html_file += '    </tr>\n'
+			
+			row_idx += 1
 			# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
 
 			# Add in the block of Strike Team Data Rows.
@@ -820,8 +887,8 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red 4-7
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	#html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
-	#html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
+	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="200" colspan="5">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
@@ -861,43 +928,43 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
 
 	# Diamonds
-	#html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
-	#html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
-	#html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
+	html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
+	html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
+	html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
 
 	# ISO Levels
-	html_file += f' <td {sort_func % 21}>%s</td>\n' % (['4+','0-4'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 22}>%s</td>\n' % (['5+','5'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 23}>%s</td>\n' % (['8+','6-8'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 24}>%s</td>\n' % (['9+','9'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['10','10' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 24}>%s</td>\n' % (['4+','0-4'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['5+','5'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 26}>%s</td>\n' % (['8+','6-8'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['9+','9'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['10','10' ][stat_type == 'actual'])
 
 	# Gear Tiers
-	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['13+','13'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['14+','14'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 29}>%s</td>\n' % (['15+','15'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 30}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['18' ,'18'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 30}>%s</td>\n' % (['13+','13'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['14+','14'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['15+','15'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 34}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 35}>%s</td>\n' % (['18+','18'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 36}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
 
 	# T4 Abilities
-	html_file += f' <td {sort_func % 35}>Bas</td>\n'
-	html_file += f' <td {sort_func % 36}>Spc</td>\n'
-	html_file += f' <td {sort_func % 37}>Ult</td>\n'
-	html_file += f' <td {sort_func % 38}>Pas</td>\n'
+	html_file += f' <td {sort_func % 38}>Bas</td>\n'
+	html_file += f' <td {sort_func % 39}>Spc</td>\n'
+	html_file += f' <td {sort_func % 40}>Ult</td>\n'
+	html_file += f' <td {sort_func % 41}>Pas</td>\n'
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb lvl", '%s', table_id)
 
 	# Level Ranges
-	html_file += f' <td {sort_func % 40}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 48}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 49}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -949,9 +1016,9 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 			html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# Diamonds
-			#for key in range(1,4):
-			#	html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), html_cache, stale_data), member_stats.get('dmd',{}).get(key,0))
-			#html_file += ' <td></td>\n' 										# Vertical Divider                             
+			for key in range(1,4):
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), html_cache, stale_data), member_stats.get('dmd',{}).get(key,0))
+			html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
 			for key in [4,5,8,9,10]:
@@ -981,7 +1048,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 		
 		# Add the progressive form in for the tabbed output as well. :)
 		if stat_type == 'actual':
-			html_file += add_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
+			html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
 			html_file += generate_roster_analysis(alliance_info, stat_type='progressive', hist_date=None, html_cache=html_cache)
 	
 		html_file += '</div>\n'
@@ -1241,7 +1308,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 			time_color  = get_value_color_ext(4*86400, 0, last_update.total_seconds(), html_cache, stale_data)
 			
 			if stale_data:
-				time_value = f'<b><i> {("Stale. Please re-sync.","EMPTY. Please Sync.")[not member_stats.get("tot_power")]} </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
+				time_value = f'<b><i> {("Stale. Re-sync.","EMPTY. Please Sync.")[not member_stats.get("tot_power")]} </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
 			else:
 				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
 		else:
@@ -1415,22 +1482,26 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 	# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 
 	# Midpoint = ISO 8
-	if stat=='iso':
+	if stat == 'iso':
 		color = get_scaled_value(0, 8, 10, value, hist_date)
 	# ISO Level midpoint = Tier 15
-	elif stat=='tier':
+	elif stat == 'tier':
 		color = get_scaled_value(0, 15, 19, value, hist_date)
 	# Gear Tier midpoint = Level 85
-	elif stat=='lvl':
+	elif stat == 'lvl':
 		color = get_scaled_value(0, 85, 100, value, hist_date)
 	# Ability midpoint = Level 5
 	elif stat in ('bas','spc','ult'):
 		color = get_scaled_value(0, 5, 7, value, hist_date)
 	# Passive midpoint = Level 3
-	elif stat in ('pas'):
+	elif stat == 'pas':
 		color = get_scaled_value(0, 3, 5, value, hist_date)
 	elif stat in ('red','yel'):
 		color = get_scaled_value(0, 5, 7, value, hist_date)
+	elif stat == 'rank':
+		color = get_scaled_value(1, 13, 25, (25-value), hist_date)
+	elif stat == 'avail':
+		color = get_scaled_value(0, 5, 15, value, hist_date)
 	# Everything else, generic handling.
 	else:
 		mid_val = (((max_val-min_val)*0.5)+min_val)
@@ -1493,7 +1564,9 @@ def translate_name(value):
 						"AForce": "A-Force",
 						"Asgard": "Asgardians",
 						"Astonishing": "Astonishing<br>X-Men",
+						"Astonishing X-Men": "Astonishing<br>X-Men",
 						"BionicAvenger": "Bionic<br>Avengers",
+						"Bionic Avengers": "Bionic<br>Avengers",
 						"BlackOrder": "Black<br>Order",
 						"Brotherhood": "B'Hood",
 						"DarkHunter": "Dark<br>Hunters",
@@ -1503,23 +1576,33 @@ def translate_name(value):
 						"HeroesForHire": "H4H",
 						"Hydra Armored Guard": "Hydra Arm Guard",
 						"InfinityWatch": "Infinity<br>Watch",
+						"Infinity Watch": "Infinity<br>Watch",
 						"Invader": "Invaders",
 						"OutOfTime": "Out of Time",
 						"MastersOfEvil": "Masters<br>Of Evil",
+						"Masters Of Evil": "Masters<br>Of Evil",
 						"Mercenary": "Mercs",
 						"NewAvenger": "New<br>Avengers",
+						"New Avengers": "New<br>Avengers",
 						"NewWarrior": "New<br>Warriors",
+						"New Warriors": "New<br>Warriors",
 						"Pegasus": "PEGASUS",
 						"PowerArmor": "Power Armor",
 						"PymTech": "Pym Tech",
 						"Ravager": "Ravagers",
 						"SecretAvenger": "Secret<br>Avengers",
 						"SecretDefender": "Secret<br>Defenders",
+						"Secret Defenders": "Secret<br>Defenders",
 						"SinisterSix": "Sinister<br>Six",
+						"Sinister Six": "Sinister<br>Six",
 						"SpiderVerse": "Spiders",
+						"SpiderSociety": "Spider<br>Society",
+						"Spider Society": "Spider<br>Society",
 						"SuperiorSix": "Superior<br>Six",
 						"Symbiote": "Symbiotes",
 						"TangledWeb": "Tangled<br>Web",
+						"Unlimited": "Unlimited<br>X-Men",
+						"Unlimited X-Men": "Unlimited<br>X-Men",
 						"WarDog": "War Dogs",
 						"Wave1Avenger": "Wave 1<br>Avengers",
 						"WeaponX": "Weapon X",
@@ -1528,7 +1611,9 @@ def translate_name(value):
 						"Xforce": "X-Force",
 						"Xmen": "X-Men",
 						"XTreme": "X-Treme X-Men",
+						"X-Treme X-Men": "X-Treme<br>X-Men",
 						"YoungAvenger": "Young<br>Avengers",
+						"Young Avengers": "Young<br>Avengers",
 						"A.I.M. Monstrosity":"A.I.M.<br>Monstrosity",
 						"A.I.M. Researcher":"A.I.M.<br>Researcher",
 						"Agatha Harkness":"Agatha<br>Harkness",

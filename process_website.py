@@ -277,7 +277,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 
 	# Quick report of our findings.
 	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
-	stale   = len([member for member in members if members[member]['is_stale']])
+	stale   = len([member for member in members if members[member].get('is_stale', True)])
 	
 	# Summarize the results of processing
 	rosters_output.append(f'{updated} new, {len(members)-updated} old, {stale} stale')
