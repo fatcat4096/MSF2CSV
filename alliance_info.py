@@ -71,48 +71,6 @@ def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
 	return team_pwr_dict
 
 
-# Return the correct strike_team definitions, depending on formatting flags.
-@timed(level=3)
-def get_strike_teams(alliance_info, table, table_format):
-	# If only_members specified, use this list instead of previously defined Strike Teams.
-	only_members = get_table_value(table_format, table, key='only_members')
-	if only_members:
-
-		# If a single name was provided, wrap it in a list.
-		if type(only_members) is str:
-			only_members = [only_members]
-
-		# Wrap up the only_members list in a Strike Team entry.
-		strike_teams = [only_members]
-	else:
-		# Which strike_teams should we use? (Strike Teams CANNOT vary section by section.)
-		strike_teams = get_table_value(table_format, table, key='strike_teams')
-
-		# Grab specified strike teams if available. 
-		strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
-
-		# Insert dividers as necessary
-		inc_dividers = get_table_value(table_format, table, key='inc_dividers', default='other')
-		if inc_dividers and strike_teams:
-			strike_teams = insert_dividers(strike_teams, inc_dividers)
-
-	# If no strike team definitions are specified / found or 
-	# If only_team == 0 (ignore strike_teams) **AND**
-	# no sort_by has been specified, force sort_by to 'stp'
-	only_team = get_table_value(table_format, table, key='only_team')
-	if (not strike_teams or only_team == 0) and not table_format.get('sort_by'):
-		table_format['sort_by'] = 'stp'
-
-	# Sort player list if requested.
-	sort_by = get_table_value(table_format, table, key='sort_by')
-
-	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
-	if not strike_teams or only_team == 0:
-		strike_teams = [get_player_list(alliance_info, sort_by)]
-
-	return strike_teams
-
-
 # Split meta chars from other chars. Filter others based on provided traits.
 @timed(level=3)
 def get_meta_other_chars(alliance_info, table, section, table_format):
