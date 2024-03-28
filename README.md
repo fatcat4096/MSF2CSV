@@ -27,9 +27,3 @@ Feel free to provide feedback, questions, comments, etc. My username is "fatcat4
 * If you would just like the original .csv file output, call this script with the -c / --csv flag. 
 * The script will by default use the cached_data file for 24 hours without requesting updated information from the website. To override this default, call msf2csv with the -f / --force flag
 * If Historical data is available, a tab will be added showing the changes made since the earliest data point. To omit the History tab, call msf2csv with the -n / --nohist flag. 
-
-# To-Do:
-1. Looking at an option to output to Google Sheets.
-2. I've been told that Linux-based installations require a 3rd party provider to use KeyRing. MacOS and Windows should support it without any additional. Please provide info if you get things working on Linux.
-
-
