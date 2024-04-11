@@ -116,6 +116,8 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 
 				# Setting a default value to flag if password isn't used.
 				scopely_pass = getpass.getpass(prompt="Scopely Password (leave blank if using e-mail link): ") or 'wait-for-email'
+				#print (f'msf2csv.scopely.{app_format}', scopely_login, scopely_pass)
+				
 				keyring.set_password(f'msf2csv.scopely.{app_format}', scopely_login, scopely_pass)
 
 				# Load the credential before returning.
@@ -125,7 +127,7 @@ def get_creds(prompt, facebook_cred = None, scopely_cred = None):
 
 
 # Auto Login via Scopely authentication using cached credentials.
-@timed(level=3)
+@timed(level=4)
 def scopely_login(driver, scopely_user, scopely_pass):
 	try:
 		wait = WebDriverWait(driver, 10)
@@ -162,7 +164,7 @@ def scopely_login(driver, scopely_user, scopely_pass):
 
 
 # Auto Login via Facebook authentication using cached credentials.
-@timed(level=3)
+@timed(level=4)
 def facebook_login(driver, facebook_user, facebook_pass):
 	try:
 		wait = WebDriverWait(driver, 10)
