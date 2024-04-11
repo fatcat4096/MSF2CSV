@@ -48,7 +48,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 }
 /* Blue Button, Power -- slightly wider */
 .blubp {
-  min-width   : 50px;
+  min-width   : 55px;
 }
 .blubp:hover {
   background  : DodgerBlue;
@@ -87,7 +87,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 }
 /* Black Button, Power -- slightly wider */
 .blkbp {
-  min-width   : 50px;
+  min-width   : 55px;
 }
 .blkbp:hover {
   background  : SlateGray;
@@ -226,7 +226,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   z-index     : 1;
   top         : 150%;
   left        : 50%;
-  margin-left : -50px;
+  margin-left : -55px;
   opacity     : 0;
   transition  : opacity 1s;
 }

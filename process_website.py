@@ -209,11 +209,11 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 						driver.refresh()
 
 				# If page loaded, pass contents to scraping routines for stat extraction.
-				member = parse_roster(page_source, alliance_info, parse_cache, member)
+				if len(page_source)>700000:
+					member = parse_roster(page_source, alliance_info, parse_cache, member)
 				
 				# Made it out successfully. End the loop.
 				break
-
 			except (NoSuchElementException, TimeoutException, WebDriverException) as e:
 				# Still have retries available?
 				if retries:
@@ -246,8 +246,12 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 			stale = '/Stale' if alliance_info['members'][member].get('tot_power') else '/EMPTY'
 
 		if not_updated:
-			time_since = time_now - last_update
-			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{max(0,time_since.days):>2}d'][rosters_only]
+			if len(page_source) < 700000: 
+				result = 'SITE DOWN'
+				stale  = ''
+			else:
+				time_since = time_now - last_update
+				result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{max(0,time_since.days):>2}d'][rosters_only]
 		else:
 			result = ['Updated','NEW'][rosters_only]
 

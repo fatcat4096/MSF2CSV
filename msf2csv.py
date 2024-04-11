@@ -159,6 +159,8 @@ if __name__ == '__main__':
 						help='include Team Power Summary in output')
 	parser.add_argument('--min_iso', type=int, metavar='N',
 						help='minimum ISO level for inclusion in output')
+	parser.add_argument('--min_lvl', type=int, metavar='N',
+						help='minimum Char level for inclusion in output')
 	parser.add_argument('--min_tier', type=int, metavar='N',
 						help='minimum Gear Tier for inclusion in output')
 	parser.add_argument('--max_others', type=int, metavar='N',
@@ -228,6 +230,7 @@ if __name__ == '__main__':
 					'inc_rank'      : args.inc_rank,
 					'inc_summary'   : args.inc_summary,
 					'min_iso'       : args.min_iso,
+					'min_lvl'       : args.min_lvl,
 					'min_tier'      : args.min_tier,
 					'max_others'    : args.max_others,
 					'only_lane'     : args.only_lane,

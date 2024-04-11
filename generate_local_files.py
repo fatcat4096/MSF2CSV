@@ -230,7 +230,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['Rebirth'], 'meta': ['Captain America', 'Captain Carter', 'Agent Venom', 'Winter Soldier', 'U.S. Agent']},
 								{'traits': ['SecretDefender']},
 								{'traits': ['Shadowland']},
-								{'traits': ['SpiderSociety'], 'meta': ['Ghost-Spider', 'Spider-Man (Noir)']},
+								{'traits': ['SpiderSociety'], 'meta': ['Ghost-Spider', 'Spider-Man (Noir)', 'Peni Parker', 'Peter B. Parker', 'Spider-Man (Pavitr)']},
 								{'traits': ['SuperiorSix']},
 								{'traits': ['Uncanny']},
 								{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},

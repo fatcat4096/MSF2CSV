@@ -85,7 +85,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	# Not sure what causes this.
 	if not player:
 		print ('Could not find player info when parsing. Writing HTML to disk as',member+'.html')
-		write_file(get_local_files()+member+'.html', soup.prettify())
+		write_file(get_local_path()+member+'.html', soup.prettify())
 		return
 
 	# Did we actually arrive at a valid Roster Page?
