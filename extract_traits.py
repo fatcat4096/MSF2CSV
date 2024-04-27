@@ -14,7 +14,7 @@ def add_extracted_traits(alliance_info):
 	# If the old trait file isn't being used, extracted_traits needs to be updated.
 	if 'trait_file' not in alliance_info or alliance_info['trait_file'] not in alliance_info['scripts']:
 
-		for script in alliance_info['scripts']:
+		for script in alliance_info.get('scripts',[]):
 			extracted_traits = extract_traits(script)
 
 			# If this file was correctly parsed, store this new trait file.

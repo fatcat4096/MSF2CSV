@@ -50,6 +50,8 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# We are in, wait until loaded before starting
 	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
 	
+	
+	
 	# Pull alliance information from this Alliance Info screen
 	website_alliance_info  = parse_alliance(driver.page_source)
 	
@@ -159,7 +161,8 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 
 		# Cached URL is the ONLY option if not working_from_website
 		if members[member].get('url','') in ('','auth') and not working_from_website: 
-			print ("No cached URL available -- skipping",member)
+			rosters_output.append((f'No cached URL available -- skipping {member}',f'{member:17}URL BAD')[rosters_only])
+			print(rosters_output[-1])
 			continue
 
 		# Start by defining the number of retries available for each attempt. 
@@ -181,6 +184,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 					if driver.current_url != alliance_url:
 						driver.get(alliance_url)
 
+					# If successful, the active roster button was found and clicked.
 					# If nothing returned, we didn't find an active roster button.
 					if not find_members_roster(driver, member):
 						break
@@ -231,8 +235,9 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 		if not member or ('url' not in members[member] and current_url == alliance_url):
 			continue
 
-		# Cache the URL just in case we can use this later
-		members[member]['url'] = current_url.split('/')[-2]
+		# Only cache URL if we processed a valid roster page.
+		if len(page_source)>700000:
+			members[member]['url'] = current_url.split('/')[-2]
 					
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
