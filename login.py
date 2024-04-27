@@ -36,35 +36,42 @@ def get_driver(headless=False):
 	return webdriver.Chrome(options=options)
 
 
-# Login to the website. Return the Selenium Driver object.
+# Login to the website. Return a Selenium Driver object for a given login.
+#
+# If no login specified, use the default login
+
 @timed(level=3)
-def login(prompt=False, headless=False, external_driver=None, url = 'https://marvelstrikeforce.com/en/alliance/members'):
+def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 
-	# Take care of our lazy clients
-	driver = external_driver or get_driver(headless)
+	alliance_info_url = 'https://marvelstrikeforce.com/en/alliance/members'
 
-	# Start at the alliance_info page.
-	driver.get(url)
+	# If we were passed in a cached driver, we're ready to go.
+	if external_driver:
+		driver = external_driver
 
 	# If a new driver, still need to login:
-	if not external_driver:
-
+	else:
 		# Start by checking to see if we have / need credentials.
-		facebook_cred, scopely_cred = get_creds(prompt)
+		scopely_login, scopely_pass = get_scopely_creds(prompt, scopely_login)
 
-		# Default to Scopely Login, does not require 2FA.
-		if scopely_cred:
-			scopely_login(driver, scopely_cred.username, scopely_cred.password)
+		driver = get_driver(headless)
+		# Start at the alliance_info page.
+		driver.get(alliance_info_url)
 
-		# If Scopely login not defined, use Facebook login instead.
-		elif facebook_cred:
-			facebook_login(driver, facebook_cred.username, facebook_cred.password)
+		scopely_website_login(driver, scopely_login, scopely_pass)
+
+
+	# If our current url isn't == alliance_info_url then we didn't ever login. 
 	
+
 	# Waiting while you login manually, automatically, or approve login via 2FA.
 	try:
 		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-roster')))
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
+
+		# NEED TO MAKE SURE THAT CALLING ROUTINE HANDLES driver == None PROPERLY
+		return
 
 	# Click on the Accept Cookies button if it is presented. This dialog prevents roster processing.
 	accept_cookies_btn = driver.find_elements(By.ID,'onetrust-accept-btn-handler')
@@ -76,59 +83,41 @@ def login(prompt=False, headless=False, external_driver=None, url = 'https://mar
 
 # Check for saved credentials. If none saved, ask if would like to cache them.
 @timed(level=3)
-def get_creds(prompt, facebook_cred = None, scopely_cred = None):
-
-	# If frozen, work in the same directory as the executable.
-	app_format = ['python','frozen'][getattr(sys, 'frozen', False)]
-
-	facebook_login = keyring.get_password(f'msf2csv.facebook.{app_format}', 'msfgg.facebook.login')
-	if facebook_login:
-		facebook_cred = keyring.get_credential(f'msf2csv.facebook.{app_format}', facebook_login)
-
-	scopely_login = keyring.get_password(f'msf2csv.scopely.{app_format}','msfgg.scopely.login')
-	if scopely_login:
-		scopely_cred  = keyring.get_credential(f'msf2csv.scopely.{app_format}',scopely_login)
+def get_scopely_creds(prompt=False, scopely_login=''):
 
 	# If this is the first launch of a frozen executable, go ahead and prompt for login.
 	first_launch = 'strike_teams' not in globals()
-			
-	# Check for prompt flag or presence of 'noprompt' file. 
-	if prompt or first_launch or not (facebook_cred or scopely_cred):
+
+	# Look for a default login
+	if not scopely_login:
+		scopely_login = keyring.get_password('msf2csv','msfgg.scopely.default')
+	# TEMPORARY TESTING, IF LOGIN PASSED, FORCE USER TO CLICK THROUGH.
+	else:
+		scopely_pass = 'wait-for-email'
+		return scopely_login, scopely_pass
+
+	# If we're requesting a prompt, first launch of a frozen executable, or no default scopely_login is defined
+	# Ask for a default login and 
+	if prompt or first_launch or not scopely_login:
 	
 		print ('\nWelcome to MSF2CSV!\n')
 	
-		# If prompt flag not used, ask if person would like to cache their credentials
-		if prompt or input("Would you like to cache your credentials? (Y/N): ").upper() == 'Y':
+		scopely_login = input("Enter default Scopely Login (e-mail address): ")
+		keyring.set_password('msf2csv', 'msfgg.scopely.default', scopely_login)
 
-			# Ask which login they would like to use.
-			if input("Would you like to cache 'F'acebook or 'S'copely credentials? (F/S): ").upper() == "F":
+		# Setting a default value to flag if password isn't used.
+		scopely_pass = getpass.getpass(prompt="Scopely Password (leave blank if using e-mail link): ") or 'wait-for-email'
+		
+		keyring.set_password('msf2csv', scopely_login, scopely_pass)
 
-				# Prompt for each login / pass and store in keyring.
-				facebook_login = input("Facebook Login: ")
-				keyring.set_password(f'msf2csv.facebook.{app_format}', 'msfgg.facebook.login', facebook_login)
-				keyring.set_password(f'msf2csv.facebook.{app_format}', facebook_login, getpass.getpass(prompt="Facebook Password: "))
+	scopely_pass = keyring.get_password('msf2csv',scopely_login) or ''
 
-				# Load the credential before returning.
-				facebook_cred = keyring.get_credential(f'msf2csv.facebook.{app_format}',facebook_login)
-			else:
-				scopely_login = input("Scopely Login (e-mail address): ")
-				keyring.set_password(f'msf2csv.scopely.{app_format}', 'msfgg.scopely.login', scopely_login)
-
-				# Setting a default value to flag if password isn't used.
-				scopely_pass = getpass.getpass(prompt="Scopely Password (leave blank if using e-mail link): ") or 'wait-for-email'
-				#print (f'msf2csv.scopely.{app_format}', scopely_login, scopely_pass)
-				
-				keyring.set_password(f'msf2csv.scopely.{app_format}', scopely_login, scopely_pass)
-
-				# Load the credential before returning.
-				scopely_cred = keyring.get_credential(f'msf2csv.scopely.{app_format}',scopely_login)
-
-	return facebook_cred, scopely_cred
+	return scopely_login, scopely_pass
 
 
 # Auto Login via Scopely authentication using cached credentials.
 @timed(level=4)
-def scopely_login(driver, scopely_user, scopely_pass):
+def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 	try:
 		wait = WebDriverWait(driver, 10)
 	
@@ -161,30 +150,3 @@ def scopely_login(driver, scopely_user, scopely_pass):
 
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
-
-
-# Auto Login via Facebook authentication using cached credentials.
-@timed(level=4)
-def facebook_login(driver, facebook_user, facebook_pass):
-	try:
-		wait = WebDriverWait(driver, 10)
-	
-		# Click on the Facebook Login button.
-		login = wait.until(EC.element_to_be_clickable((By.ID, 'facebook-login')))
-		login.click()
-
-		# Fill in username and password.
-		login_field = wait.until(EC.presence_of_element_located((By.ID,'email')))
-		login_field.send_keys(facebook_user)
-
-		pass_field = wait.until(EC.presence_of_element_located((By.ID,'pass')))
-		pass_field.send_keys(facebook_pass)
-
-		# Click the login button to generate 2FA challenge.
-		login_button = wait.until(EC.element_to_be_clickable((By.ID, 'loginbutton')))
-		login_button.click()
-
-	except TimeoutException:
-		print("Timed out. Unable to complete login.")
-
-

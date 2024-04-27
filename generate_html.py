@@ -275,6 +275,9 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 	# Calculate strike teams
 	strike_teams = get_strike_teams(alliance_info, table, table_format)
 
+	# Value does not change from section to section
+	only_team = get_table_value(table_format, table, key='only_team')
+
 	# Special handling required if inline_hist.
 	inline_hist = get_table_value(table_format, table, key='inline_hist')
 
@@ -363,7 +366,6 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, inline_hist)
 
 			span_data = get_table_value(table_format, table, section, key='span', default=False)
-			only_team = get_table_value(table_format, table, key='only_team')
 
 			# Special code for Spanning format here. It's a very narrow window of applicability.
 			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not only_team:
@@ -682,7 +684,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					stp_range = [stp_list[use_hist_date][player_name] for player_name in player_list]
 
 					# Standard Name field content. 
-					name_field = player_name.replace('Commander','Cmdr.')
+					name_field = alliance_info['members'][player_name].get('display_name',player_name).replace('Commander','Cmdr.')
 
 					# If inline_hist was requested, add content to the Name field for the second line and make this and several other fields span both lines.
 					rowspan = ''
@@ -994,8 +996,8 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 
 			html_file += '<tr>\n'
 
-			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters" target="_blank"' % (alliance_info['members'][member].get('url',''))
-			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (['nblu','ngra'][stale_data], member_url, member)
+			member_url = ' href="https://marvelstrikeforce.com/en/v1/players/%s/characters" target="_blank"' % (alliance_info['members'][member].get('url',''))
+			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (['nblu','ngra'][stale_data], member_url, member_info.get('display_name',member))
 			
 			for key in ['tcp','stp','tcc']:
 				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,0), html_cache, stale_data), f'{member_stats[key]:,}')
@@ -1283,15 +1285,15 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 		html_file += ' <tr style="background:%s; font-size:22px;">\n' % (member_color)
 		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png"/></td>\n' % (member_stats.get('image','ShieldDmg_Defense_3dea00f7'))
 
-		member_url = alliance_info['members'][member].get('url','')
+		member_url = member_stats.get('url','')
 		if member_url:
-			member_url = ' href="https://marvelstrikeforce.com/en/player/%s/characters" target="_blank"' % (member_url)
+			member_url = ' href="https://marvelstrikeforce.com/en/v1/players/%s/characters" target="_blank"' % (member_url)
 
-		member_discord = alliance_info['members'][member].get('discord','')
+		member_discord = member_stats.get('discord','')
 		if member_discord:
 			member_discord = f'<br><span style="font-size:16px">@{member_discord.get("name","")}</span>'
 
-		html_file += '  <td class="urlb"><span class="bd"><a style="text-decoration:none; color:black;"%s>%s</span>%s</a></td>\n' % (member_url, member, member_discord)
+		html_file += '  <td class="urlb"><span class="bd"><a style="text-decoration:none; color:black;"%s>%s</span>%s</a></td>\n' % (member_url, member_stats.get('display_name',member), member_discord)
 		html_file += '  <td>%s</td>\n' % (member_stats.get('level','n/a'))
 		html_file += '  <td>%s</td>\n' % (member_role)
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   html_cache, stale_data), f'{member_stats.get("tcp",0):,}')
@@ -1309,7 +1311,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 			time_color  = get_value_color_ext(4*86400, 0, last_update.total_seconds(), html_cache, stale_data)
 			
 			if stale_data:
-				time_value = f'<b><i> {("Stale. Re-sync.","EMPTY. Please Sync.")[not member_stats.get("tot_power")]} </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%a, %b %d'), last_update.days)
+				time_value = f'<b><i> {("Stale. Re-sync.","EMPTY. Please Sync.")[not member_stats.get("tot_power")]} </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%b %d'), last_update.days)
 			else:
 				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
 		else:
@@ -1516,7 +1518,10 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 	# If we've specified an inverted range, flip the calculation on its head.
 	if min_val > max_val:
 		min_val, max_val = max_val, min_val
-		value = max_val - value
+
+		# 0 Stays 0, max_val goes to 1, 1 goes to mex_value
+		if value:
+			value = (max_val - value) + 1
 	
 	# Special treatment for the '0' fields. 
 	if not value:
@@ -1710,6 +1715,7 @@ def translate_name(value):
 						"Spider-Man (Big Time)":"Spider-Man<br>(Big Time)",
 						"Spider-Man (Miles)":"Spider-Man<br>(Miles)",
 						"Spider-Man (Noir)":"Spider-Man<br>(Noir)",
+						"Spider-Man (Pavitr)":"Spider-Man<br>(Pavitr)",
 						"Spider-Man (Symbiote)":"Spider-Man<br>(Symbiote)",
 						"Spider-Man 2099":"Spider-Man<br>2099",
 						"Star-Lord (Annihilation)":"Star-Lord<br>(Annihilation)",

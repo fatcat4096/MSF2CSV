@@ -25,11 +25,11 @@ from file_io              import *
 from login                import get_driver, login
 from extract_traits       import add_extracted_traits
 from parse_cache          import build_parse_cache
-from alliance_info        import update_history, is_stale
+from alliance_info        import update_history, is_stale, is_valid_user_id
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 @timed(level=3)
-def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, external_driver=None):
+def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, scopely_login='', external_driver=None):
 
 	cached_alliance_info = find_cached_data(alliance_name)
 
@@ -45,7 +45,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 			return cached_alliance_info
 
 	# Start by logging into the website.
-	driver = login(prompt, headless, external_driver=external_driver)
+	driver = login(prompt, headless, external_driver=external_driver, scopely_login=scopely_login)
 
 	# We are in, wait until loaded before starting
 	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
@@ -158,7 +158,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 			continue
 
 		# Cached URL is the ONLY option if not working_from_website
-		if 'url' not in members[member] and not working_from_website: 
+		if members[member].get('url','') in ('','auth') and not working_from_website: 
 			print ("No cached URL available -- skipping",member)
 			continue
 
@@ -170,8 +170,8 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 		while retries:
 			try:
 				# Use a cached URL if available.
-				if 'url' in members[member]:
-					driver.get(f"https://marvelstrikeforce.com/en/player/{members[member]['url']}/characters")
+				if members[member].get('url','') not in ('','auth'):
+					driver.get(f"https://marvelstrikeforce.com/en/v1/players/{members[member]['url']}/characters")
 
 				# Or need to find an active roster button for this member
 				else:
@@ -361,6 +361,11 @@ def update_strike_teams(alliance_info):
 	# Update strike team definitions to remove dividers and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
 
+	# Fix errant Display Names.
+	for member in alliance_info['members']:
+		if is_valid_user_id(alliance_info['members'][member].get('display_name','')):
+			del alliance_info['members'][member]['display_name']
+
 	# Iterate through each defined strike team.
 	for raid_type in ('incur','gamma'):
 
@@ -469,7 +474,7 @@ def migrate_strike_teams(alliance_info):
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
 @timed(level=3)
 def valid_strike_team(strike_team, alliance_info):
-	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.66	
+	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.5	
 
 
 # Before we take the strike_team.py definition as is, let's fix some common problems.
@@ -506,12 +511,12 @@ def fix_strike_team(strike_team, alliance_info):
 	
 	# After everything, if we have the same number both missing and extra, 
 	# assume we have replaced the missing people with the leftover ones.
-	if still_to_find and len(still_to_find) == len(not_yet_found):
+	if still_to_find and len(still_to_find) <= len(not_yet_found):
 
 		updated = True
 
 		# Put each of the new players into the old players spots.
-		for idx in range(len(not_yet_found)):
+		for idx in range(len(still_to_find)):
 			old_player_name = not_yet_found[idx]
 			new_player_name = still_to_find[idx]
 

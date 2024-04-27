@@ -51,8 +51,7 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)']},
 							{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot']},
 							{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive Mind)'},
-							{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent'], 'label':'Bio<br>(Rebirth)'},
-							{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Captain America (Sam)'], 'label':'Skill<br>(plus Sam)'},
+							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'},
 							{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack'], 'label':'Skill<br>(Invaders)'},
 							] ]
 					}
@@ -117,6 +116,23 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
 							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
 							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
+							] ]
+					}
+
+# Meta Heroes for use in Dark Dimension 7
+tables['dd7'] = { 'name': 'Dark Dimension 7',
+					'min_tier': 19,
+					'max_others': 10,
+					'sort_by': 'stp',
+					'sort_char_by': 'avail',
+					'inc_avail': True,
+					'lanes':[ [
+							{'traits': ['All'], 'label':'Gear Tier 19'},
+							{'traits': ['Non-Legendary', 'Non-Mythic', 'City'],   'label':'City'},
+							{'traits': ['Non-Legendary', 'Non-Mythic', 'Global', 'Black Knight'], 'label':'Global'},
+							{'traits': ['Non-Legendary', 'Non-Mythic', 'Cosmic'], 'label':'Cosmic'},
+							{'traits': ['Legendary'], 'label':'Legendary'},
+							{'traits': ['Mythic'],    'label':'Mythic'},
 							] ]
 					}
 

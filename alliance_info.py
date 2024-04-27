@@ -62,11 +62,10 @@ def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
 	for player_name in player_list:
 
 		# Build a list of all character powers.
-		all_char_pwr = [find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] for char_name in char_list]
-		all_char_pwr.sort()
+		all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] for char_name in char_list], reverse=True)
 
 		# And sum up the Top 5 power entries for STP.
-		team_pwr_dict.setdefault(hist_date,{})[player_name] = sum(all_char_pwr[-5:])
+		team_pwr_dict.setdefault(hist_date,{})[player_name] = sum(all_char_pwr[:5])
 
 	return team_pwr_dict
 
@@ -106,6 +105,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	traits          = [trait     for trait in traits if trait[:4] != 'Non-']
 
 	for char in other_chars[:]:
+
+		# All is All
+		if 'All' in traits:
+			continue
 
 		# Skip explicitly named characters.
 		if char in traits:
@@ -373,7 +376,6 @@ def update_history(alliance_info):
 		
 	# Compare today's data vs. the most recent History entry. 
 	# If anything identical to previous entry, point today's entry at the previous entry.
-
 	hist_list = list(hist)
 	hist_list.remove(today)
 	

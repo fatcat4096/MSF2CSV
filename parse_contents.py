@@ -15,6 +15,8 @@ from bs4 import BeautifulSoup
 from parse_cache import update_parse_cache
 from file_io import *
 
+from alliance_info import is_valid_user_id
+
 # Parse the alliance information directly from the website.
 @timed(level=3)
 def parse_alliance(contents):
@@ -105,16 +107,17 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	mvp_missing = player.text.find('MVP') == -1
 	red_missing = player.text.find('Total Red') == -1
 
-	player_info['tcp']   =  int(re.sub(r"\D", "", player_stats[0].text))
-	player_info['stp']   =  int(re.sub(r"\D", "", player_stats[1].text))
-	player_info['mvp']   = [int(re.sub(r"\D", "", player_stats[2].text)),0][mvp_missing]
-	player_info['tcc']   =  int(re.sub(r"\D", "", player_stats[3-mvp_missing].text))
-	player_info['max']   =  int(re.sub(r"\D", "", player_stats[4-mvp_missing].text))
-	player_info['arena'] =  int(re.sub(r"\D", "", player_stats[5-mvp_missing].text))
+	# SIDE PANEL IS CURRENTLY INVALID, KEEP DATA FROM ALLIANCE_INFO PAGE.
+	#player_info['tcp']   =  int(re.sub(r"\D", "", player_stats[0].text))
+	#player_info['stp']   =  int(re.sub(r"\D", "", player_stats[1].text))
+	#player_info['mvp']   = [int(re.sub(r"\D", "", player_stats[2].text)),0][mvp_missing]
+	#player_info['tcc']   =  int(re.sub(r"\D", "", player_stats[3-mvp_missing].text))
+	#player_info['max']   =  int(re.sub(r"\D", "", player_stats[4-mvp_missing].text))
+	#player_info['arena'] =  int(re.sub(r"\D", "", player_stats[5-mvp_missing].text))
 	
-	player_info['blitz'] =  int(re.sub(r"\D", "", player_stats[-3+red_missing*2].text))
-	player_info['stars'] = [int(re.sub(r"\D", "", player_stats[-2].text)),0][red_missing]
-	player_info['red']   = [int(re.sub(r"\D", "", player_stats[-1].text)),0][red_missing]
+	#player_info['blitz'] =  int(re.sub(r"\D", "", player_stats[-3+red_missing*2].text))
+	#player_info['stars'] = [int(re.sub(r"\D", "", player_stats[-2].text)),0][red_missing]
+	#player_info['red']   = [int(re.sub(r"\D", "", player_stats[-1].text)),0][red_missing]
 
 	processed_chars  = {}
 	other_data       = {}
@@ -260,6 +263,20 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	# Add the 'clean' parsed data to our list of processed players.
 	player['processed_chars'] = processed_chars
 	player['other_data']      = other_data
+	
+	# Keep the top level name, but only if valid.
+	if not is_valid_user_id(member):
+		player['display_name']    = member
+
+	# Temporary fix. Calculate values if possible.
+	tcp = sum([processed_chars[member]['power'] for member in processed_chars])
+	if tcp:
+		player_info['tcp'] = tcp
+	player_info['stp']   = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
+	player_info['tcc']   = len([char for char in processed_chars if processed_chars[char]['power']])
+	player_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
+	player_info['stars'] = sum([processed_chars[char]['yel'] for char in processed_chars])
+	player_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
 
 	# And update the player info with current stats from the side panel.
 	player.update(player_info)
