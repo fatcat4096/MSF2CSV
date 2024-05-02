@@ -478,8 +478,28 @@ def find_valid_roster_urls(field_value):
 # Validate user_id formatting.
 @timed(level=3)
 def is_valid_user_id(s):
+	if not s:
+		return False
 	if len(s) == 13 and set(s).issubset(string.hexdigits):
 		return True
 	elif len(s) == 36 and s[8]+s[13]+s[18]+s[23] == '----' and s.count('-') == 4 and set(s).issubset(string.hexdigits+'-'):
 		return True
 	return False
+
+
+
+# Update the fresh alliance_info from website with extra info from cached_data.
+@timed(level=3)
+def update_alliance_info_from_cached(alliance_info, cached_alliance_info):
+
+	# Copy over extra information into freshly downloaded alliance_info.
+	for key in cached_alliance_info:
+		if key not in alliance_info:
+			alliance_info[key] = cached_alliance_info[key]
+			
+	# Also copy over additional information inside the member definitions. 
+	for member in alliance_info['members']:
+		for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red','tot_power','last_update','discord','scopely']:
+			if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
+				alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
+

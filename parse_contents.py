@@ -19,14 +19,14 @@ from alliance_info import is_valid_user_id
 
 # Parse the alliance information directly from the website.
 @timed(level=3)
-def parse_alliance(contents):
+def parse_alliance(contents, discord_user=None, scopely_login=None):
 
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	alliance = {}
 
 	# Parse the basic alliance info
-	alliance['name']      = str(soup.find('span', attrs = {'class':'alliance-name'}).contents[0])
+	alliance['name']      = remove_tags(soup.find('span', attrs = {'class':'alliance-name'}).text).strip()
 	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('ALLIANCEICON_')[-1][:-4]
 
 	# Parse the alliance stats.
@@ -41,8 +41,18 @@ def parse_alliance(contents):
 	# Iterate through each entry, building up a member dict with stats for each.
 	for member_row in members_table:
 		member = {}
-		# Remove '[ME]' and HTML tags if present.
-		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text.replace('[ME]',''))
+
+		# Remove HTML tags if present.
+		member_name = remove_tags(member_row.find('td', attrs={'class':'player'}).text)
+
+		# If '[ME]' is in name, THIS is where we store Discord User and Scopely Login info.
+		if '[ME]' in member_name:
+			# Get rid of the '[ME]' in member name.
+			member_name = member_name.replace('[ME]','')
+
+			# Store extra information if provided.
+			if discord_user:	member['discord'] = discord_user
+			if scopely_login:	member['scopely'] = scopely_login
 
 		member['level'] = int(member_row.find('td', attrs={'class':'avatar'}).text.strip())
 		member['image'] = member_row.find('td', attrs={'class':'avatar'}).find('img').get('src').split('Portrait_')[-1][:-4]

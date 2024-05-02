@@ -103,22 +103,6 @@ tables['gamma'] = { 'name': 'Gamma Raid',
 							] ]
 					}
 
-# Meta Heroes for use in Dark Dimension 6
-tables['dd6'] = { 'name': 'Dark Dimension 6',
-					'min_tier': 18,
-					'max_others': 10,
-					'sort_by': 'stp',
-					'sort_char_by': 'avail',
-					'inc_avail': True,
-					'lanes':[ [
-							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
-							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
-							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
-							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
-							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
-							] ]
-					}
-
 # Meta Heroes for use in Dark Dimension 7
 tables['dd7'] = { 'name': 'Dark Dimension 7',
 					'min_tier': 19,
@@ -133,6 +117,22 @@ tables['dd7'] = { 'name': 'Dark Dimension 7',
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'Cosmic'], 'label':'Cosmic'},
 							{'traits': ['Legendary'], 'label':'Legendary'},
 							{'traits': ['Mythic'],    'label':'Mythic'},
+							] ]
+					}
+
+# Meta Heroes for use in Dark Dimension 6
+tables['dd6'] = { 'name': 'Dark Dimension 6',
+					'min_tier': 18,
+					'max_others': 10,
+					'sort_by': 'stp',
+					'sort_char_by': 'avail',
+					'inc_avail': True,
+					'lanes':[ [
+							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
+							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
+							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
+							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
+							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
 							] ]
 					}
 

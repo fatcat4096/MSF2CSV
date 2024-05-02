@@ -77,7 +77,6 @@ def generate_html(alliance_info, table, table_format, output=''):
 			# If there's only one lane because of only_lanes, specify the correct lane number.
 			lane_num = [only_lane, lane_idx+1][not only_lane]
 			file_num = [f'-{lane_num:02}', ''][len_lanes == 1]
-			section_num = ''
 
 			# If there are multiple lanes, specify which lane. If not, just call it Roster Info
 			tab_name = [f'LANE {lane_num}', 'ROSTER INFO'][len(lanes) == 1 and not only_lane]
@@ -114,6 +113,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 					html_file += generate_team_power_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
 
 				# If not only summary, generate the rest of the lane.
+				section_num = ''
 				if not only_summary:
 
 					# Process the lane, section by section.

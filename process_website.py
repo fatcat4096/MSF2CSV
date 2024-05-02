@@ -25,7 +25,7 @@ from file_io              import *
 from login                import get_driver, login
 from extract_traits       import add_extracted_traits
 from parse_cache          import build_parse_cache
-from alliance_info        import update_history, is_stale, is_valid_user_id
+from alliance_info        import *
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 @timed(level=3)
@@ -47,14 +47,8 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Start by logging into the website.
 	driver = login(prompt, headless, external_driver=external_driver, scopely_login=scopely_login)
 
-	# We are in, wait until loaded before starting
-	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
-	
-	
-	
-	# Pull alliance information from this Alliance Info screen
-	website_alliance_info  = parse_alliance(driver.page_source)
-	
+	website_alliance_info = process_alliance_info(driver)
+
 	# If no alliance_name specified, we are defaulting to use whatever the login's alliance is.
 	if not alliance_name:
 		alliance_name = website_alliance_info['name']
@@ -62,6 +56,10 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Now that we're guaranteed to have an alliance_name check one last time for a matching cached_data file. 
 	if not cached_alliance_info:
 		cached_alliance_info = find_cached_data(alliance_name)
+
+	#
+	# CHANGE THIS TO JUST **FAIL** GRACEFULLY -- IF REQUESTED INFO DOESN'T EXIST, SAY SO
+	#
 
 	# If we don't have cached_data, we have to work from the website. Fall back to the login alliance_info. 
 	if not cached_alliance_info and alliance_name != website_alliance_info['name']:
@@ -89,18 +87,9 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 				update_strike_teams(cached_alliance_info)
 				return cached_alliance_info	
 
-			# So we have fresh alliance_info and the stale cached information.
-			# Copy over extra information into freshly downloaded alliance_info.
-			for key in cached_alliance_info:
-				if key not in alliance_info:
-					alliance_info[key] = cached_alliance_info[key]
-					
-			# Also copy over additional information inside the member definitions. 
-			for member in alliance_info['members']:
-				for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red','tot_power','last_update']:
-					if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
-						alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
-	
+			# Update the fresh alliance_info from website with extra info from cached_data.
+			update_alliance_info_from_cached(alliance_info, cached_alliance_info)
+
 	# If not working_from_website, the cached_alliance_info will be our baseline. 
 	else:
 		alliance_info = cached_alliance_info
@@ -128,6 +117,18 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	write_cached_data(alliance_info)
 
 	return [alliance_info,'\n'.join(rosters_output)][force == 'rosters_only']
+
+
+
+# Wait til alliance_info is ready, then parse the contents..
+@timed(level=3)
+def process_alliance_info(driver, discord_user={}, scopely_login=''):
+
+	# We are in, wait until loaded before starting
+	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
+
+	# Pull alliance information from this Alliance Info screen
+	return parse_alliance(driver.page_source, discord_user, scopely_login)
 
 
 
@@ -161,8 +162,11 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 
 		# Cached URL is the ONLY option if not working_from_website
 		if members[member].get('url','') in ('','auth') and not working_from_website: 
-			rosters_output.append((f'No cached URL available -- skipping {member}',f'{member:17}URL BAD')[rosters_only])
-			print(rosters_output[-1])
+	
+			# One message for bot, one for the screen.
+			rosters_output.append(f'{member:17}NEED URL')
+			print (f'No cached URL available -- skipping {member}')
+
 			continue
 
 		# Start by defining the number of retries available for each attempt. 
@@ -186,12 +190,12 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 
 					# If successful, the active roster button was found and clicked.
 					# If nothing returned, we didn't find an active roster button.
-					if not find_members_roster(driver, member):
+					if not find_members_roster(driver, member, rosters_output):
 						break
 
 				# Note when we began processing
 				start_time = datetime.datetime.now()
-				time_limit = 8
+				time_limit = 6
 				refreshed  = False
 				
 				# Page loads in sections, will be > 1MB after roster information loads.
@@ -207,23 +211,22 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 					if len(page_source)>700000:
 						break
 
-					# Call refresh at the halfway point.
-					if (datetime.datetime.now()-start_time).seconds == time_limit / 2 and not refreshed:
-						refreshed = True
-						driver.refresh()
-
 				# If page loaded, pass contents to scraping routines for stat extraction.
 				if len(page_source)>700000:
 					member = parse_roster(page_source, alliance_info, parse_cache, member)
+				# Retry if we have retries remaining. Page never fully loaded.
+				elif working_from_website and (current_url == alliance_url or (datetime.datetime.now()-start_time).seconds > time_limit):
+					retries -= 1
+					continue
 				
 				# Made it out successfully. End the loop.
 				break
+
 			except (NoSuchElementException, TimeoutException, WebDriverException) as e:
 				# Still have retries available?
 				if retries:
 					retries -= 1
 					print (f"Retries left {retries}, continuing on {traceback.format_exc()}")
-					driver = login(headless=True)
 				# Too many retries, time to give up and bail.
 				else:
 					raise e
@@ -238,27 +241,34 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 		# Only cache URL if we processed a valid roster page.
 		if len(page_source)>700000:
 			members[member]['url'] = current_url.split('/')[-2]
-					
+
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
 		time_now    = datetime.datetime.now()
 		not_updated = last_update and (last_update < start_time or last_update > time_now)	# Deal with dates from .msf files imported from outside the current time zone.
 
 		found = (f'Parsing {len(page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
+
+		member_stale = is_stale(alliance_info, member)
+		alliance_info['members'][member]['is_stale'] = member_stale
 		stale = ''
-		alliance_info['members'][member]['is_stale'] = is_stale(alliance_info, member)
 		if alliance_info['members'][member]['is_stale']:
-			stale = '/Stale' if alliance_info['members'][member].get('tot_power') else '/EMPTY'
+			stale = '/Stale'
 
 		if not_updated:
-			if len(page_source) < 700000: 
-				result = 'SITE DOWN'
-				stale  = ''
-			else:
-				time_since = time_now - last_update
-				result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{max(0,time_since.days):>2}d'][rosters_only]
+			time_since = time_now - last_update
+			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{max(0,time_since.days):>2}d'][rosters_only]
 		else:
 			result = ['Updated','NEW'][rosters_only]
+
+		# Never received Roster page to parse.
+		if len(page_source) < 700000: 
+			result = 'SITE DOWN'
+			stale  = ''
+		# Empty Roster page. Member has never synced.
+		elif not alliance_info['members'][member].get('tot_power'):
+			result = 'NEED SYNC'
+			stale = ''
 
 		rosters_output.append(f'{found}{result}{stale}')
 		print(rosters_output[-1])
@@ -298,10 +308,10 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 
 # Get back to the Alliance page, then search to find the member's name and the related Roster button.
 @timed(level=3)
-def find_members_roster(driver, member):
+def find_members_roster(driver, member, rosters_output=[]):
 
 	# Once member labels have populated, we're ready.
-	while len(driver.find_elements(By.TAG_NAME, "H4"))<4:
+	while len(driver.find_elements(By.TAG_NAME, "H4"))<10:
 		time.sleep(0.25)
 
 	# Start by looking for the H4 label for this member. 
@@ -316,12 +326,16 @@ def find_members_roster(driver, member):
 	
 	# This shouldn't happen. Should always be able to find Member on screen.
 	if not member_label:
-		print ("Couldn't find label - skipping",member)
+	
+		# One message for bot, one for the screen.
+		rosters_output.append(f'{member:17}NO LABEL')
+		print (f'Could not find label - skipping {member}')
+
 		return False
 
 	# Find the roster button in same row as the Member name and click on it. 
 	buttons = driver.find_elements(By.CLASS_NAME, 'button')
-	
+
 	for button in buttons:
 		if abs(member_label.location['y']-button.location['y'])<12 and button.size['width'] in (53,54):
 			break
@@ -331,7 +345,11 @@ def find_members_roster(driver, member):
 
 	# Abort if we couldn't find the button, or found it and it's not active.
 	if not button or not button.is_enabled():
-		print ("Button not found - skipping",member)
+
+		# One message for bot, one for the screen.
+		rosters_output.append(f'{member:17}NO BUTTON')
+		print (f'Button not found - skipping {member}')
+
 		return False
 
 	# Scroll so this button is visible. Subtracting 200 because it's scrolling TOO FAR DOWN.
@@ -340,20 +358,24 @@ def find_members_roster(driver, member):
 	# Use a Try / Except structure because in my testing, offscreen buttons always throw an exception, even
 	# when I tell Selenium to scroll to them first. With Try/Except, first click focuses them, second succeeds.
 	try:
-		time.sleep(0.25)
+		time.sleep(0.50)
 		button.click()
 	except:
 		# If the URL / page title hasn't changed, try one more time
 		try:
 			#if 'Alliance' in driver.title:
-			time.sleep(0.25)
+			time.sleep(0.50)
 			button.click()
 		# If second exception, exit with False and move on.
 		except:
-			print ("Exception raised 2x - skipping",member)
+
+			# One message for bot, one for the screen.
+			rosters_output.append(f'{member:17}EXCEPTION')
+			print (f'Exception raised 2x - skipping {member}')
+
 			return False
 
-	time.sleep(0.25)
+	time.sleep(0.50)
 	return True
 
 
