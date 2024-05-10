@@ -133,8 +133,13 @@ def log_init(calling_func, context=None):
 
 	date_time = time.strftime("%Y.%m.%d-%H%M%S",time.localtime(time.time()))
 
+	# Create a directory for the logfiles.
+	base_dir = './trace/'
+	if not os.path.exists(base_dir):
+		os.makedirs(base_dir)
+		
 	# Specify a filename for the logfile.
-	filename = f"./Trace/python.{date_time}{username}-{calling_func}.log"
+	filename = f"{base_dir}python.{date_time}{username}-{calling_func}.log"
 	
 	file_handler = logging.FileHandler(filename=filename, encoding="utf-8", mode="w")
 	file_handler_formatter = logging.Formatter(
@@ -317,20 +322,8 @@ def log_leave(log, ret, **kwarg):
 	return
 
 
-######################################################################
-#                                                                    #
-#   #                             #     #                            #
-#   #        ####    ####         #     #  #####  #  #       ####    #
-#   #       #    #  #    #        #     #    #    #  #      #        #
-#   #       #    #  #             #     #    #    #  #       ####    #
-#   #       #    #  #  ###        #     #    #    #  #           #   #
-#   #       #    #  #    #        #     #    #    #  #      #    #   #
-#   #######  ####    ####          #####     #    #  ######  ####    #
-#                                                                    #
-######################################################################
 
-
-
+"""
 # Do we still need these? 
 # ---------------------------------------------------
 def log_clear():
@@ -353,19 +346,21 @@ def log_clear():
 						try:
 							os.rename(base_dir+'python'+log_file,base_dir+'python.'+datetime+log_file+ext)
 						except:
-							exc = exception_info()
-							log_err('Error clearing log:\n',exc)
+							pass
+							# exc = exception_info()
+							# log_err('Error clearing log:\n',exc)
 						break
 		
 		log_files = [x for x in os.listdir(base_dir) if x.find('python')!=-1]
 		
 		# Only keep the 10 most recent log files. 
 		for x in range(len(log_files) - 10):
-			safe_remove(base_dir+log_files[x])
+			pass # safe_remove(base_dir+log_files[x])
 		
 	except:
-		exc = exception_info()
-		log_err('Error clearing log:\n',exc)
+		pass
+		# exc = exception_info()
+		# log_err('Error clearing log:\n',exc)
 	return
 
 
@@ -382,72 +377,4 @@ def log_inf(*i_arg,**kwarg):
 	log_file['logger'].info(f"INF {level}Message: {', '.join(map(repr,i_arg))}")
 
 	return
-
-
-
-# Do we still need these?
-# --------------------------------------------------------------------
-def exception_info(exc_type=None, exc_value=None, exc_traceback=None, max_tb_level=5):
-	if exc_type is None:
-		exc_type, exc_value, exc_traceback = sys.exc_info()
-	try:
-		exc_args = exc_value.__dict__["args"]
-	except KeyError:
-		exc_args = ["<no args>"]
-	exc_detail = traceback.format_tb(exc_traceback, max_tb_level)
-
-	if type(exc_args) is tuple:
-		exc_args = list(exc_args)
-
-	try:
-		if len(exc_args) == 1:
-			return '\nEXCEPTION: %s -- %s\n%s\n' % (exc_type.__name__, exc_args[0], ''.join(exc_detail))
-		else:
-			return '\nEXCEPTION: %s -- %s\n%s\n' % (exc_type.__name__, repr(exc_args),  ''.join(exc_detail))
-	except:
-		return '\nEXCEPTION: %s -- %s\n%s\n' % (exc_type.__name__, repr(exc_args), repr(exc_detail))
-
-
-
-# Do we still need these?
-# --------------------------------------------------------------------
-def safe_remove(l_filename):
-	# Change pathname to use '/' instead of '\' characters
-	l_filename = prep_path(l_filename)
-
-	if os.path.exists(l_filename):
-		try:
-			os.remove(l_filename)
-		except:
-			try:
-				result = os.popen("attrib -r "+ l_filename).read()
-				os.remove(l_filename)
-			except:
-				log_err("File could not be removed:",l_filename)
-				return ""
-
-	return l_filename
-
-
-
-# Do we still need these?
-# --------------------------------------------------------------------
-def prep_path(path):
-
-	path = '/'.join(path.split('\\')).split('/')
-	
-	for i in range(path.count('')):
-		path.remove('')
-
-	for i in range(path.count('.')):
-		path.remove('.')
-
-	for i in range(path.count('..')):
-		idx = path.index('..')
-		path = path[:idx-1]+path[idx+1:]
-
-	path = '/'.join(path)
-
-	if os.path.isdir(path):
-		return path+'/'
-	return path
+"""
