@@ -276,7 +276,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 	# Keep a copy of critical stats from today's run for historical analysis.
 	update_history(alliance_info)
 
-	# Update extracted_traits if necessary.
+	# Update traits info if necessary.
 	add_extracted_traits(alliance_info)
 
 	return rosters_output
@@ -347,7 +347,7 @@ def find_members_roster(driver, member, rosters_output=[]):
 	if not button or not button.is_enabled():
 
 		# One message for bot, one for the screen.
-		rosters_output.append(f'{member:17}NO BUTTON')
+		rosters_output.append(f'{member:17}NEED SYNC')
 		print (f'Button not found - skipping {member}')
 
 		return False
@@ -385,8 +385,11 @@ def update_strike_teams(alliance_info):
 
 	strike_teams_defined = 'strike_teams' in globals()
 
-	# Update strike team definitions to remove dividers and 'incur2'.
+	# Temporary update strike team definitions to remove dividers and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
+
+	# Transition 'extracted_traits' to 'traits' and update missing traits.
+	updated = add_extracted_traits(alliance_info) or updated
 
 	# Fix errant Display Names.
 	for member in alliance_info['members']:

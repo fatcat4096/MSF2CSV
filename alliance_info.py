@@ -91,7 +91,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
 
 	# Get extracted_traits from alliance_info
-	extracted_traits = alliance_info.get('extracted_traits',{})
+	extracted_traits = alliance_info.get('traits',{})
 
 	# Only filter other_chars.
 	traits = section.get('traits',[])

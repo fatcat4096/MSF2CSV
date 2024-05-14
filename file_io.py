@@ -229,7 +229,7 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', file_name
 		return
 	
 	invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
-	traits = [trait for trait in sorted(alliance_info.get('extracted_traits',{})) if trait not in invalid_traits]
+	traits = [trait for trait in sorted(alliance_info.get('traits',{})) if trait not in invalid_traits]
 
 	# Caching traits and char lists for Discord autocomplete.
 	pickle.dump((char_list,traits), open(get_local_path() + os.sep + 'cached_lists', 'wb'))

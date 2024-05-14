@@ -281,10 +281,11 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	if not is_valid_user_id(member):
 		player['display_name']    = member
 
+	# Only use calculated total power for TCP if higher than the recorded TCP in Alliance Info.
+	if tot_power > alliance_info['members'].get(member,{}).get('tcp',0):
+		player_info['tcp'] = tot_power
+		
 	# Temporary fix. Calculate values if possible.
-	tcp = sum([processed_chars[member]['power'] for member in processed_chars])
-	if tcp:
-		player_info['tcp'] = tcp
 	player_info['stp']   = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
 	player_info['tcc']   = len([char for char in processed_chars if processed_chars[char]['power']])
 	player_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
@@ -297,9 +298,10 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	# Update alliance_info with portrait information.
 	alliance_info['portraits'] = char_portraits
 
-	# If 'scripts' isn't already defined, just grab the URLs for the js scripts on the page. Will be used by extract_traits.
-	if 'scripts' not in alliance_info:
-		alliance_info['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
+	# Keep the scripts in use up to date in alliance_info. Will be used by extract_traits.
+	scripts = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
+	if scripts:
+		alliance_info['scripts'] = scripts
 
 	# If a new member name has been found during Roster parse, 
 	if member != player_name:
