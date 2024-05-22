@@ -29,7 +29,7 @@ from alliance_info        import *
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 @timed(level=3)
-def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, scopely_login='', external_driver=None):
+def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, scopely_login=''):
 
 	cached_alliance_info = find_cached_data(alliance_name)
 
@@ -44,30 +44,29 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 			update_strike_teams(cached_alliance_info)
 			return cached_alliance_info
 
+		# If no alliance_name specified but we found one obvious candidate, report that we are using it.
+		if not alliance_name:
+			alliance_name = cached_alliance_info['name']
+			print (f"Defaulting to alliance from cached_data: {alliance_name}.")
+
 	# Start by logging into the website.
-	driver = login(prompt, headless, external_driver=external_driver, scopely_login=scopely_login)
+	driver = login(prompt, headless, scopely_login=scopely_login)
 
 	website_alliance_info = process_alliance_info(driver)
 
-	# If no alliance_name specified, we are defaulting to use whatever the login's alliance is.
+	# If no alliance_name specified, use the login's alliance.
 	if not alliance_name:
 		alliance_name = website_alliance_info['name']
+		print (f"Defaulting to alliance from website login: {alliance_name}.")
 
 	# Now that we're guaranteed to have an alliance_name check one last time for a matching cached_data file. 
 	if not cached_alliance_info:
 		cached_alliance_info = find_cached_data(alliance_name)
 
-	#
-	# CHANGE THIS TO JUST **FAIL** GRACEFULLY -- IF REQUESTED INFO DOESN'T EXIST, SAY SO
-	#
-
-	# If we don't have cached_data, we have to work from the website. Fall back to the login alliance_info. 
+	# If we haven't found cached_data and the alliance requested is NOT the one from the login, fail gracefully. 
 	if not cached_alliance_info and alliance_name != website_alliance_info['name']:
-		print ("Cached_data not found for %s. Collecting info for %s instead." % (alliance_name, website_alliance_info['name']))
-		alliance_name = website_alliance_info['name']
-
-		# Final chance, check for an existing cached_data using the website_alliance_info's alliance_name
-		cached_alliance_info = find_cached_data(alliance_name)
+		print (f"No info found for alliance: {alliance_name}. Aborting.")
+		return
 
 	# We're working from website if the specified alliance_name matches the website alliance_name
 	working_from_website = (alliance_name == website_alliance_info['name'])
@@ -98,13 +97,13 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	start_time = datetime.datetime.now()
 
 	# Work the website or cached URLs to update alliance_info 
-	rosters_output = process_rosters(driver, alliance_info, working_from_website, force)
+	process_rosters(driver, alliance_info, working_from_website)
 
 	# Close the Selenium session.
-	if not external_driver:
-		driver.close()
+	driver.close()
 
-	rosters_output = roster_results(alliance_info, start_time, rosters_output)
+	# Print a summary of the results.
+	roster_results(alliance_info, start_time)
 
 	# Make sure we have a valid strike_team for Incursion and Other. 
 	updated = get_valid_strike_teams(alliance_info) 
@@ -116,7 +115,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Write the collected roster info to disk in a subdirectory.
 	write_cached_data(alliance_info)
 
-	return [alliance_info,'\n'.join(rosters_output)][force == 'rosters_only']
+	return alliance_info
 
 
 
@@ -134,7 +133,7 @@ def process_alliance_info(driver, discord_user={}, scopely_login=''):
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(driver, alliance_info, working_from_website=False, force='', only_process=[], log_file=None):
+def process_rosters(driver, alliance_info, working_from_website=False, rosters_only=False, only_process=[], log_file=None):
 
 	# Really only used for Working From Website processing.
 	alliance_url   = 'https://marvelstrikeforce.com/en/alliance/members'
@@ -143,7 +142,6 @@ def process_rosters(driver, alliance_info, working_from_website=False, force='',
 	members = alliance_info['members']
 
 	# If we're being called from Discord, provide the truncated output.
-	rosters_only   = force == "rosters_only"
 	rosters_output = []
 
 	# Use this cache to optimize our cached_data output.

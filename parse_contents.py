@@ -170,7 +170,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 					continue
 				elif 'LVL' in stat.text:
 					level = int(re.sub(r"\D", "", stat.text))
-				else:
+				elif stat.text:
 					power = int(re.sub(r"\D", "", stat.text))
 
 			# For total roster calculation.

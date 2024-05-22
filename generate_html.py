@@ -1610,6 +1610,7 @@ def get_section_label(section):
 def translate_name(value):
 	TRANSLATE_NAME = {	"Avenger": "Avengers",
 						"AForce": "A-Force",
+						"AlphaStar": "Alpha Star",
 						"Asgard": "Asgardians",
 						"Astonishing": "Astonishing<br>X-Men",
 						"Astonishing X-Men": "Astonishing<br>X-Men",
@@ -1724,5 +1725,6 @@ def translate_name(value):
 						"Star-Lord (T'Challa)":"Star-Lord<br>(T'Challa)",
 						"Strange (Heartless)":"Strange<br>(Heartless)",
 						"Thor (Infinity War)":"Thor<br>(Infinity War)",
+						"X23":"X-23",
 						}
 	return TRANSLATE_NAME.get(value,value)

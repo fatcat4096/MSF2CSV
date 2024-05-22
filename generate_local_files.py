@@ -220,6 +220,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	tables['teams'] = { 'name': 'Teams', 'sort_by': 'stp', 'span': True,
 						'lanes':[ [  
 								{'traits': ['AForce']},
+								{'traits': ['AlphaStar'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 								{'traits': ['Astonishing']},
 								{'traits': ['Bifrost']},
 								{'traits': ['BionicAvenger']},

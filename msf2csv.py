@@ -18,59 +18,17 @@ import datetime
 
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
-def main(alliance_name='', prompt=False, headless=False, force='', table_format={}, roster_url='', external_driver=None, log_file=None):
-
-	##
-	## Just a junker placeholder until I come back and do it right. 
-	##
+def main(alliance_name='', prompt=False, headless=False, force='', table_format={}, scopely_login='', log_file=None):
 	
-	if roster_url:
-		# Verify we were handed a valid roster_url / user_id
-		roster_url = find_valid_roster_url(roster_url)
-		if not roster_url:
-			print ("No valid user_id found in provided roster URL.")
-			return
-			
-		alliance_info = find_cached_data(roster_url)
-		if not alliance_info:
-			driver = external_driver or login()
-
-			# Start with the Alliance that's asking.
-			alliance_info = find_cached_data('SIGMA Infamously Strange')
-			alliance_info['members'][roster_url] = {'url': roster_url}
-			
-			# Get original list of members
-			original_members = list(alliance_info['members'])
-			
-			# Grab roster info for this Army of One.
-			rosters_output = process_rosters(driver, alliance_info, only_process=[roster_url]) 
-			update_history(alliance_info)			
-
-			# Determine who was added
-			new_member = [member for member in alliance_info['members'] if alliance_info['members'][member].get('url') == roster_url][0]
-			alliance_info['name'] = new_member
-
-			# Write cached data -- DON'T DO THIS IN THE FINAL VERSION. 
-			write_cached_data(alliance_info, file_name=roster_url)
-			
-		# Create required structures
-		pathname = get_local_path()
-		# Request output for this Member
-		for output in tables:
-			table_format = {'only_members':alliance_info['name'], 'span':False, 'inc_pos':True}
-			write_file(f'{pathname}{alliance_info["name"]}-{output}.html', generate_tabbed_html(alliance_info, tables.get(output), table_format))
-		return
-
-	# Were we passed an alliance_info explicitly?
-	elif type(alliance_name) is dict and 'members' in alliance_name:
+	# Were we passed an alliance_info via alliance_name?
+	if type(alliance_name) is dict and 'members' in alliance_name:
 		alliance_info = alliance_name
-		alliance_name = alliance_info['name']
 	# Load roster info directly from cached data or the website.
 	else:
-		alliance_info = get_alliance_info(alliance_name, prompt, force, headless, external_driver)
+		alliance_info = get_alliance_info(alliance_name, prompt, force, headless, scopely_login)
 
-	# If we're done, the captured output is being returned as 'alliance_info'
-	if force == 'rosters_only':
+	# If we failed to retrieve alliance info, we've already explained. Just exit.
+	if not alliance_info:
 		return alliance_info
 
 	# Build a default path and filename. 
@@ -127,9 +85,10 @@ if __name__ == '__main__':
 	formatter = lambda prog: argparse.HelpFormatter(prog, max_help_position=40)
 	parser = argparse.ArgumentParser(formatter_class=formatter, description='Create HTML tables from MSF roster data.')
 
-	parser.add_argument('file_or_alliance', type=str, nargs='?',
-						help='specify a cached_data file or alliance_name input', default='')
-	
+	group0 = parser.add_mutually_exclusive_group()
+	group0.add_argument('alliance_name', type=str, nargs='?',
+						help='e-mail address for Scopely account login', default='')
+
 	parser.add_argument('-c', '--csv', action='store_true', 
 						help='just generate csv output, no html tables')
 	parser.add_argument('-p' , '--prompt', action='store_true', 
@@ -143,8 +102,8 @@ if __name__ == '__main__':
 						help='force download of Alliance roster data, regardless of timing')
 	group1.add_argument('-s', '--stale', action='store_true',
 						help='prevent download of Alliance roster data, regardless of timing')
-	group1.add_argument('-r', '--rosters_only', action='store_true', 
-						help='force download of Alliance roster data, no output (forces headless)')
+	group0.add_argument('--login', type=str, metavar='EMAIL',
+						help='e-mail address for Scopely account login', default='')
 
 	# Table Formatting flags. 
 	parser.add_argument('--inc_avail', action='store_true', default=None,
@@ -197,12 +156,7 @@ if __name__ == '__main__':
 		force = 'fresh'
 	elif args.stale:
 		force = 'stale'
-	elif args.rosters_only:
-		force = 'rosters_only'
 	
-	# Rosters Only forces Headless operation, Import Block always operates headlessly
-	headless = args.rosters_only or args.headless
-
 	# If only summary, make sure inc_summary is set as well.
 	if args.only_summary and not args.inc_summary:
 		args.inc_summary = True
@@ -246,5 +200,5 @@ if __name__ == '__main__':
 					'sort_char_by'  : args.sort_char_by,
 					'span'          : args.span}
 	
-	main(args.file_or_alliance, args.prompt, headless, force, table_format, roster_url=args.url) # Just run myself
+	main(args.alliance_name, args.prompt, args.headless, force, table_format, args.login) # Just run myself
 	

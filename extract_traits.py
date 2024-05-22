@@ -106,7 +106,7 @@ def extract_traits(file=''):
 def update_traits(extracted_traits):
 
 	# Currently includes: Cabal, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'MercsForMoney' not in extracted_traits:
+	if extracted_traits and 'X23' not in extracted_traits.get('WeaponX'):
 
 		manual_traits =	{
 						'Namor':['Cabal'],
@@ -123,10 +123,13 @@ def update_traits(extracted_traits):
 						'Black Knight': ['Hero','Global','Skill','Protector','OutOfTime'],
 						'Starbrand': ['Hero','Global','Mystic','Brawler','OutOfTime'],
 						'Ghost-Spider': ['Skill', 'SpiderSociety'],
-						'Spider-Man Noir': ['Skill', 'SpiderSociety'],
+						'Spider-Man (Noir)': ['Skill', 'SpiderSociety'],
 						'Peni Parker': ['Hero','City','Skill','Tech','Protector','SpiderVerse','SpiderSociety'],
 						'Peter B. Parker': ['Hero','City','Skill','Bio','Support','SpiderVerse','SpiderSociety'],
 						'Spider-Man (Pavitr)': ['Hero','City','Skill','Bio','Brawler','SpiderVerse','SpiderSociety'],
+						'Sunfire': ['AlphaStar'],
+						'Wolverine': ['AlphaStar'],
+						'X23': ['WeaponX'],
 						}
 
 		# Parse information into the needed structure.

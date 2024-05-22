@@ -182,6 +182,7 @@ tables['teams'] = { 'name': 'Teams',
 					'span': True,
 					'lanes':[ [  
 							{'traits': ['AForce']},
+							{'traits': ['AlphaStar'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 							{'traits': ['Astonishing']},
 							{'traits': ['Bifrost']},
 							{'traits': ['BionicAvenger']},
