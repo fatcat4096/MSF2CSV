@@ -23,7 +23,7 @@ def generate_strike_teams(alliance_info):
 
 	strike_teams = alliance_info.setdefault('strike_teams',{})
 
-	for raid_type in ('incur','gamma'):
+	for raid_type in ('incur','spotlight'):
 
 		if not strike_teams.get(raid_type):
 
@@ -34,7 +34,10 @@ def generate_strike_teams(alliance_info):
 			members = sorted(alliance_info['members'],key=str.lower)
 
 			# Break it up into chunks and add the appropriate dividers.
-			strike_teams[raid_type] = [members[:8], members[8:16], members[16:]]
+			if raid_type == 'spotlight':
+				strike_teams[raid_type] = [members[:6], members[6:12], members[12:18], members[18:]]
+			else:
+				strike_teams[raid_type] = [members[:8], members[8:16], members[16:]]
 	
 	# Create header
 	new_file  = '''# This file contains the Strike Teams used for HTML file output.
@@ -52,7 +55,7 @@ strike_teams = {}
 
 	# Create each strike_team definition.
 	new_file += generate_strike_team('incur', strike_teams['incur'], 'Used for Incursion Raid output.')
-	new_file += generate_strike_team('gamma', strike_teams['gamma'], 'Used for Gamma Raids and other output.')
+	new_file += generate_strike_team('spotlight', strike_teams['spotlight'], 'Used for Spotlight Raids and other output.')
 
 	# Write it to disk.
 
@@ -136,7 +139,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						'max_others': 5,
 						'strike_teams': 'incur',
 						'sort_char_by': 'avail',
-						'inc_dividers': 'incur',
+						'inc_dividers': 'spotlight',
 						'inc_keys': ['power','lvl','tier','iso'],
 						'lanes':[ [
 								{'traits': ['Non-Mythic'], 'label':'Non-Mythic'},

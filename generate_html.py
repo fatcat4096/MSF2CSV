@@ -1488,6 +1488,12 @@ def insert_dividers(strike_teams, raid_type):
 			if len(team) > 6:
 				team.insert(6,'----')
 
+		elif raid_type == 'spotlight':
+			if len(team) > 2:
+				team.insert(2,'----')
+			if len(team) > 5:
+				team.insert(5,'----')
+
 		# Use 5/3 split for Sort by STP within Strike Teams.
 		elif raid_type == '53':
 			if len(team) > 5:

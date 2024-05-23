@@ -395,7 +395,7 @@ def update_strike_teams(alliance_info):
 			del alliance_info['members'][member]['display_name']
 
 	# Iterate through each defined strike team.
-	for raid_type in ('incur','gamma'):
+	for raid_type in ('incur','spotlight'):
 
 		# If the global definition of strike_team is valid for this alliance, let's use it. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
@@ -435,7 +435,7 @@ def get_valid_strike_teams(alliance_info):
 	# Update strike team definitions to remove dividers and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
 
-	for raid_type in ('incur','gamma'):
+	for raid_type in ('incur','spotlight'):
 
 		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
@@ -464,33 +464,35 @@ def migrate_strike_teams(alliance_info):
 	updated = False
 
 	# Update old format strike team definitions. Key off of the presence of 'incur2'.
-	if 'strike_teams' in globals() and 'incur2' in strike_teams:
+	if 'strike_teams' in globals() and 'gamma' in strike_teams:
 
-		# Move 'incur2' into 'incur' to start.
-		strike_teams['incur'] = strike_teams.pop('incur2')
+		# Just transfer the order of people in 'gamma' into 'spotlight'.
+		temp_list = sum(strike_teams.pop('gamma'), [])
 
-		# Remove dividers from both strike teams. We will add dividers at run time.
-		for raid_type in strike_teams:
-			for idx in range(len(strike_teams[raid_type])):
-				strike_teams[raid_type][idx] = [member for member in strike_teams[raid_type][idx] if '--' not in member]
+		# Break the list of players into 4 new groups of 6.
+		spotlight = []
+		for idx in range(0,len(temp_list),6):
+			spotlight.append(temp_list[idx:idx+6])
+
+		# And add the definition of the new Spotlight teams to strike_teams.
+		strike_teams['spotlight'] = spotlight
 
 		# Since we changed strike_teams.py, return updated = True so calling routine will write the updated file to disk.
 		updated = True
 	
 	# Update the alliance_info structure as well, just in case it's all we've got.
-	if 'strike_teams' in alliance_info and 'incur2' in alliance_info['strike_teams']:
+	if 'strike_teams' in alliance_info and 'gamma' in alliance_info['strike_teams']:
 
-		# Move 'incur2' into 'incur' to start.
-		alliance_info['strike_teams']['incur'] = alliance_info['strike_teams'].pop('incur2')
-		
-		# Remove dividers from both strike teams. We will add dividers at run time.
-		for raid_type in alliance_info['strike_teams']:
-			for idx in range(len(alliance_info['strike_teams'][raid_type])):
-				alliance_info['strike_teams'][raid_type][idx] = [member for member in alliance_info['strike_teams'][raid_type][idx] if '--' not in member]
+		# Just transfer the order of people in 'gamma' into 'spotlight'.
+		temp_list = sum(alliance_info['strike_teams'].pop('gamma'), [])
 
-		if 'trophies' in alliance_info:
-			del alliance_info['trophies']
-			del alliance_info['stark_lvl']
+		# Break the list of players into 4 new groups of 6.
+		spotlight = []
+		for idx in range(0,len(temp_list),6):
+			spotlight.append(temp_list[idx:idx+6])
+
+		# And add the definition of the new Spotlight teams to strike_teams.
+		alliance_info['strike_teams']['spotlight'] = spotlight
 
 	if 'admin' not in alliance_info:
 		alliance_info['admin'] = {'name':'fatcat4096', 'id':564592015975645184}
