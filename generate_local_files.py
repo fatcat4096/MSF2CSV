@@ -136,6 +136,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						'max_others': 5,
 						'strike_teams': 'incur',
 						'sort_char_by': 'avail',
+						'inc_dividers': 'incur',
 						'inc_keys': ['power','lvl','tier','iso'],
 						'lanes':[ [
 								{'traits': ['Non-Mythic'], 'label':'Non-Mythic'},

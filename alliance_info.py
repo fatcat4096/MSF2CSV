@@ -87,16 +87,17 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list (alliance_info)
 
-	# Filter out anyone less than the min_iso / min_tier
-	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
-
 	# Get extracted_traits from alliance_info
 	extracted_traits = alliance_info.get('traits',{})
 
-	# Only filter other_chars.
+	# Only use trait filters for other_chars.
 	traits = section.get('traits',[])
 	if type(traits) is str:
 		traits = [traits]
+
+	# If no traits specified, no other chars will be included.
+	if not traits:
+		other_chars = []
 
 	# Options are 'any' and 'all'. Not currently being used.
 	traits_req = get_table_value(table_format, table, section, key='traits_req', default='any')
@@ -127,7 +128,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 				break
 
 		# If char isn't in the final trait examined, remove it.
-		if char not in extracted_traits.get(trait,[]):
+		if trait and char not in extracted_traits.get(trait,[]):
 			other_chars.remove(char)			
 
 		# Final check, does this character have any EXCLUDED traits?
@@ -136,6 +137,9 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 			# Character is from an EXCLUDED group. Remove it.
 			if char in extracted_traits.get(trait,[]) and char in other_chars:
 				other_chars.remove(char)
+
+	# Filter out anyone less than the min_iso / min_tier
+	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
 
 	# Filter out any characters which no one has summoned.
 	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
