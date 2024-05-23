@@ -130,6 +130,21 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	tables = {}
 
 
+	# Meta Heroes for use in Spotlight Raid
+	tables['spotlight'] = { 'name': 'Spotlight Raid',
+						'min_iso': 9,
+						'max_others': 5,
+						'strike_teams': 'incur',
+						'sort_char_by': 'avail',
+						'inc_keys': ['power','lvl','tier','iso'],
+						'lanes':[ [
+								{'traits': ['Non-Mythic'], 'label':'Non-Mythic'},
+								{'traits': ['SpiderSociety']},
+								{'traits': ['AlphaStar'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+								{'traits': ['All'],  'label':'Final Boss'},
+								] ]
+						}
+
 	# Meta Heroes for use in Incursion 2 Raid
 	tables['incur'] = { 'name': 'Incursion 2 Raid', 'min_iso': 9, 'max_others': 5, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur',
 						'lanes':[ [
@@ -151,32 +166,6 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 									{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'},
 									] ]
 							}
-
-	# Meta Heroes for use in Gamma Raid
-	tables['gamma'] = { 'name': 'Gamma Raid', 'min_tier': 16, 'max_others': 5, 'strike_teams': 'gamma', 'sort_char_by': 'avail', 'inc_avail': True,
-						'lanes':[ [
-								{'traits': ['Avenger', 'GotG']},
-								{'traits': ['PymTech', 'Infestation', 'Kree']},
-								{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-								],[ ### Lane 2 ###
-								{'traits': ['Avenger', 'SpiderVerse']},
-								{'traits': ['PymTech', 'Infestation', 'Wakanda']},
-								{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-								],[ ### Lane 3 ###
-								{'traits': ['Shield', 'Brotherhood']},
-								{'traits': ['Defender', 'Mercenary', 'HeroesForHire']},
-								{'traits': ['GotG', 'Xmen', 'Mercenary']},
-								{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-								],[ ### Lane 4 ###
-								{'traits': ['Shield', 'Aim']},
-								{'traits': ['Defender', 'Hydra', 'HeroesForHire']},
-								{'traits': ['Shield', 'Wakanda', 'Defender', 'HeroesForHire']},
-								{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-								] ]
-						}
 
 	# Meta Heroes for use in Dark Dimension 7
 	tables['dd7'] = { 'name': 'Dark Dimension 7',

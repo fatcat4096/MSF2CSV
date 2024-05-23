@@ -39,6 +39,21 @@
 # Active tables are the files which will be generated.
 tables = {}
 
+# Meta Heroes for use in Spotlight Raid
+tables['spotlight'] = { 'name': 'Spotlight Raid',
+					'min_iso': 9,
+					'max_others': 5,
+					'strike_teams': 'incur',
+					'sort_char_by': 'avail',
+					'inc_keys': ['power','lvl','tier','iso'],
+					'lanes':[ [
+							{'traits': ['Non-Mythic'], 'label':'Non-Mythic'},
+							{'traits': ['SpiderSociety']},
+							{'traits': ['AlphaStar'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+							{'traits': ['All'],  'label':'Final Boss'},
+							] ]
+					}
+
 # Meta Heroes for use in Incursion 2 Raid
 tables['incur'] = { 'name': 'Incursion 2 Raid',
 					'min_iso': 9,
@@ -68,37 +83,6 @@ tables['old_incur'] = { 'name': 'Incursion 1.x Raid',
 							{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack'], 'label':'Skill<br>(Invaders)'},
 							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
 							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'},
-							] ]
-					}
-
-# Meta Heroes for use in Gamma Raid
-tables['gamma'] = { 'name': 'Gamma Raid',
-					'min_tier': 16,
-					'max_others': 10,
-					'strike_teams': 'gamma',
-					'sort_char_by': 'avail',
-					'inc_avail': True,
-					'lanes':[ [
-							{'traits': ['Avenger', 'GotG']},
-							{'traits': ['PymTech', 'Infestation', 'Kree']},
-							{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-							],[ ### Lane 2 ###
-							{'traits': ['Avenger', 'SpiderVerse']},
-							{'traits': ['PymTech', 'Infestation', 'Wakanda']},
-							{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-							],[ ### Lane 3 ###
-							{'traits': ['Shield', 'Brotherhood']},
-							{'traits': ['Defender', 'Mercenary', 'HeroesForHire']},
-							{'traits': ['GotG', 'Xmen', 'Mercenary']},
-							{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-							],[ ### Lane 4 ###
-							{'traits': ['Shield', 'Aim']},
-							{'traits': ['Defender', 'Hydra', 'HeroesForHire']},
-							{'traits': ['Shield', 'Wakanda', 'Defender', 'HeroesForHire']},
-							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
 							] ]
 					}
 
@@ -149,33 +133,7 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 							{'traits': ['Legendary']},
 							] ]
 					}
-'''
-# Meta Heroes for use in Doom 2 Raid
-tables['doom2'] = { 'name': 'Doom 2',
-					'min_tier': 7,
-					'max_others': 10,
-					'sort_by': 'stp',
-					'sort_char_by': 'avail',
-					'inc_avail': True,
-					'lanes':[ [
-							{'traits': ['Bio']},
-							{'traits': ['Skill']},
-							{'traits': ['Tech']},
-							{'traits': ['Mutant']},
-							],[ ### Lane 2 ###
-							{'traits': ['Avenger', 'SpiderVerse']},
-							{'traits': ['PymTech', 'Infestation', 'Wakanda']},
-							{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-							],[ ### Lane 3 ###
-							{'traits': ['Shield', 'Brotherhood']},
-							{'traits': ['Defender', 'Mercenary', 'HeroesForHire']},
-							{'traits': ['GotG', 'Xmen', 'Mercenary']},
-							{'traits': ['Brotherhood', 'Mercenary', 'Xmen']},
-							{'traits': ['Kree', 'SpiderVerse', 'GotG']},
-							] ]
-					}
-'''
+
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
 					'sort_by': 'stp',
