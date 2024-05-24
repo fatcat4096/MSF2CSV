@@ -43,13 +43,13 @@ tables = {}
 tables['spotlight'] = { 'name': 'Spotlight Raid',
 					'min_iso': 9,
 					'max_others': 5,
-					'strike_teams': 'incur',
-					'sort_char_by': 'avail',
+					'strike_teams': 'spotlight',
 					'inc_dividers': 'spotlight',
+					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
 							{'traits': ['Non-Mythic'], 'label':'Non-Mythic'},
-							{'traits': ['SpiderSociety']},
+							{'traits': ['SpiderSociety'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)']},
 							{'traits': ['AlphaStar'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 							{'traits': ['All'],  'label':'Final Boss'},
 							] ]
