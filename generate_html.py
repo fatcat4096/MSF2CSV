@@ -1629,7 +1629,7 @@ def translate_name(value):
 						"Eternal": "Eternals",
 						"FantasticFour": "Fantastic<br>Four",
 						"HeroesForHire": "H4H",
-						"Hydra Armored Guard": "Hydra Arm Guard",
+						"HiveMind": "Hive-Mind",
 						"InfinityWatch": "Infinity<br>Watch",
 						"Infinity Watch": "Infinity<br>Watch",
 						"Invader": "Invaders",

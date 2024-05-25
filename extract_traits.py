@@ -105,31 +105,50 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	# Currently includes: Cabal, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'X23' not in extracted_traits.get('WeaponX'):
+	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
+	if 'AlphaFlight' not in extracted_traits:
 
 		manual_traits =	{
-						'Namor':['Cabal'],
-						'The Leader': ['Villain','Global','Support','Bio','Cabal','Gamma'],
-						'Iron Patriot': ['Villain','Global','Tech','Blaster','Cabal'],
-						'Deathpool': ['MercsForMoney'], 
-						'Deadpool': ['MercsForMoney'],
-						'Daken': ['Villain','Global','Mutant','Controller','Mercenary','MercsForMoney'],
-						'Old Man Logan': ['Hero','Global','Mutant','Controller','Mercenary','Xmen','MercsForMoney','Legendary'],
-						'Pandapool': ['Hero','Global','Mutant','Protector','Mercenary','MercsForMoney'],
-						'Captain America': ['OutOfTime'],
-						'Captain Carter': ['OutOfTime'],
-						'Cosmic Ghost Rider': ['Hero','Cosmic','Mystic','Controller','OutOfTime'],
-						'Black Knight': ['Hero','Global','Skill','Protector','OutOfTime'],
-						'Starbrand': ['Hero','Global','Mystic','Brawler','OutOfTime'],
-						'Ghost-Spider': ['Skill', 'SpiderSociety'],
-						'Spider-Man (Noir)': ['Skill', 'SpiderSociety'],
-						'Peni Parker': ['Hero','City','Skill','Tech','Protector','SpiderVerse','SpiderSociety'],
-						'Peter B. Parker': ['Hero','City','Skill','Bio','Support','SpiderVerse','SpiderSociety'],
-						'Spider-Man (Pavitr)': ['Hero','City','Skill','Bio','Brawler','SpiderVerse','SpiderSociety'],
-						'Sunfire': ['AlphaStar'],
-						'Wolverine': ['AlphaStar'],
-						'X23': ['WeaponX'],
+						# Alpha Flight
+						'Sunfire'            :['AlphaFlight'],
+						'Wolverine'          :['AlphaFlight'],
+						'Guardian'           :['AlphaFlight','Hero','Global','Tech','Brawler'],
+						'Northstar'          :['AlphaFlight','Hero','Global','Mutant','Controller'],
+						'Sasquatch'          :['AlphaFlight','Hero','Global','Bio','Protector'],
+						# Cabal
+						'Namor'              :['Cabal'],
+						'Iron Patriot'       :['Cabal','Global','Villain','Tech','Blaster'],
+						'The Leader'         :['Cabal','Global','Villain','Bio','Support','Gamma'],
+						# Hive-Mind
+						'Carnage'            :['HiveMind'],
+						'Venom'              :['HiveMind'],
+						'Void Knight'        :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','Cosmic','Support'],
+						'Gwenom'             :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','City','Brawler'],
+						'Red Goblin'         :['HiveMind','Bio','SpiderVerse','Symbiote','Villain','City','Protector'],
+						# Mercs For Money
+						'Deadpool'           :['MercsForMoney'],
+						'Deathpool'          :['MercsForMoney'], 
+						'Daken'              :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
+						'Old Man Logan'      :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
+						'Pandapool'          :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
+						# Out of Time
+						'Captain America'    :['OutOfTime'],
+						'Captain Carter'     :['OutOfTime'],
+						'Black Knight'       :['OutOfTime','Hero','Global','Skill','Protector'],
+						'Starbrand'          :['OutOfTime','Hero','Global','Mystic','Brawler'],
+						'Cosmic Ghost Rider' :['OutOfTime','Hero','Cosmic','Mystic','Controller',],
+						# Spider Society
+						'Ghost-Spider'       :['SpiderSociety','Skill'],
+						'Spider-Man (Noir)'  :['SpiderSociety','Skill'],
+						'Peni Parker'        :['SpiderSociety','SpiderVerse','Hero','City','Skill','Tech','Protector',],
+						'Peter B. Parker'    :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Support'],
+						'Spider-Man (Pavitr)':['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Brawler'],
+						# Mephisto
+						'Mephisto'           :['Mythic','Villain','Cosmic','Mystic','Protector'],
+						# Spider-Verse
+						'Spider-Woman'       :['SpiderVerse'],
+						# Weapon X
+						'X23'                :['WeaponX'],
 						}
 
 		# Parse information into the needed structure.
@@ -137,6 +156,9 @@ def update_traits(extracted_traits):
 			for trait in manual_traits[char]:
 				extracted_traits.setdefault(trait,{})[char]=1
 				extracted_traits[trait]
-		
+	
+		if 'AlphaStar' in extracted_traits:
+			del extracted_traits['AlphaStar']
+	
 		# Indicate extracted_traits has been Updated.
 		return True

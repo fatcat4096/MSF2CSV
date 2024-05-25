@@ -144,7 +144,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						'lanes':[ [
 								{'traits': ['Non-Mythic'], 'label':'Non-Mythic'},
 								{'traits': ['SpiderSociety'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)']},
-								{'traits': ['AlphaStar'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+								{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 								{'traits': ['All'],  'label':'Final Boss'},
 								] ]
 						}
@@ -213,7 +213,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	tables['teams'] = { 'name': 'Teams', 'sort_by': 'stp', 'span': True,
 						'lanes':[ [  
 								{'traits': ['AForce']},
-								{'traits': ['AlphaStar'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+								{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 								{'traits': ['Astonishing']},
 								{'traits': ['Bifrost']},
 								{'traits': ['BionicAvenger']},
@@ -225,6 +225,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['Eternal']},
 								{'traits': ['Gamma']},
 								{'traits': ['HeroesForHire']},
+								{'traits': ['HiveMind']},
 								{'traits': ['Infestation']},
 								{'traits': ['InfinityWatch']},
 								{'traits': ['Invader']},
