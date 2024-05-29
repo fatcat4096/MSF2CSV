@@ -1516,17 +1516,11 @@ def insert_dividers(strike_teams, raid_type):
 	for team in strike_teams:
 
 		# Use 2-3-3 lanes if Incursion 1.x.
-		if raid_type == 'incur':
+		if raid_type in ('incur', 'spotlight'):
 			if len(team) > 2:
 				team.insert(2,'----')
 			if len(team) > 6:
 				team.insert(6,'----')
-
-		elif raid_type == 'spotlight':
-			if len(team) > 2:
-				team.insert(2,'----')
-			if len(team) > 5:
-				team.insert(5,'----')
 
 		# Use 5/3 split for Sort by STP within Strike Teams.
 		elif raid_type == '53':
@@ -1650,7 +1644,7 @@ def get_section_label(section):
 def translate_name(value):
 	TRANSLATE_NAME = {	"Avenger": "Avengers",
 						"AForce": "A-Force",
-						"AlphaStar": "Alpha Star",
+						"AlphaFlight": "Alpha Flight",
 						"Asgard": "Asgardians",
 						"Astonishing": "Astonishing<br>X-Men",
 						"Astonishing X-Men": "Astonishing<br>X-Men",

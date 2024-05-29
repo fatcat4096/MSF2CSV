@@ -463,42 +463,70 @@ def migrate_strike_teams(alliance_info):
 
 	updated = False
 
+	print ("'strike_teams' in globals()",'strike_teams' in globals())
+
 	# Update old format strike team definitions. Key off of the presence of 'incur2'.
-	if 'strike_teams' in globals() and 'gamma' in strike_teams:
+	if 'strike_teams' in globals():
+		
+		temp_list = []
 
-		# Just transfer the order of people in 'gamma' into 'spotlight'.
-		temp_list = sum(strike_teams.pop('gamma'), [])
+		# Still has old Gamma strike teams?
+		if 'gamma' in strike_teams:
+			temp_list = sum(strike_teams.pop('gamma'), [])
 
-		# Remove any entries which aren't valid player names.
-		temp_list = [member for member in temp_list if member in alliance_info['members']]
+		# Need to merge the 4 teams back into 3?
+		elif 'spotlight' in strike_teams and len(strike_teams['spotlight']) == 4:
+			temp_list = sum(strike_teams.pop('spotlight'), [])
 
-		# Break the list of players into 4 new groups of 6.
-		spotlight = []
-		for idx in range(0,len(temp_list),6):
-			spotlight.append(temp_list[idx:idx+6])
+		# Work to do?
+		if temp_list:
 
-		# And add the definition of the new Spotlight teams to strike_teams.
-		strike_teams['spotlight'] = spotlight
+			# Remove any entries which aren't valid player names.
+			temp_list = [member for member in temp_list if member in alliance_info['members']]
 
-		# Since we changed strike_teams.py, return updated = True so calling routine will write the updated file to disk.
-		updated = True
+			# Break the list of players into 3 new groups of 8.
+			spotlight = []
+			for idx in [0,8,16]:
+				spotlight.append(temp_list[idx:idx+8])
+
+			print ('spotlight',spotlight)
+
+			# And add the definition of the new Spotlight teams to strike_teams.
+			strike_teams['spotlight'] = spotlight
+
+			# Since we changed strike_teams.py, return updated = True so calling routine will write the updated file to disk.
+			updated = True
+
+	print ("'strike_teams' in globals()",'strike_teams' in globals())
 	
 	# Update the alliance_info structure as well, just in case it's all we've got.
-	if 'strike_teams' in alliance_info and 'gamma' in alliance_info['strike_teams']:
+	if 'strike_teams' in alliance_info:
 
-		# Just transfer the order of people in 'gamma' into 'spotlight'.
-		temp_list = sum(alliance_info['strike_teams'].pop('gamma'), [])
+		temp_list = []
 
-		# Remove any entries which aren't valid player names.
-		temp_list = [member for member in temp_list if member in alliance_info['members']]
+		# Still has old Gamma strike teams?
+		if 'gamma' in alliance_info['strike_teams']:
+			temp_list = sum(alliance_info['strike_teams'].pop('gamma'), [])
 
-		# Break the list of players into 4 new groups of 6.
-		spotlight = []
-		for idx in range(0,len(temp_list),6):
-			spotlight.append(temp_list[idx:idx+6])
+		# Need to merge the 4 teams back into 3?
+		elif 'spotlight' in alliance_info['strike_teams'] and len(alliance_info['strike_teams']['spotlight']) == 4:
+			temp_list = sum(alliance_info['strike_teams'].pop('spotlight'), [])
 
-		# And add the definition of the new Spotlight teams to strike_teams.
-		alliance_info['strike_teams']['spotlight'] = spotlight
+		# Work to do?
+		if temp_list:
+
+			# Remove any entries which aren't valid player names.
+			temp_list = [member for member in temp_list if member in alliance_info['members']]
+
+			# Break the list of players into 4 new groups of 6.
+			spotlight = []
+			for idx in [0,8,16]:
+				spotlight.append(temp_list[idx:idx+8])
+
+			print ('spotlight',spotlight)
+
+			# And add the definition of the new Spotlight teams to strike_teams.
+			alliance_info['strike_teams']['spotlight'] = spotlight
 
 	if 'admin' not in alliance_info:
 		alliance_info['admin'] = {'name':'fatcat4096', 'id':564592015975645184}
