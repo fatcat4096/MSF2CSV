@@ -469,6 +469,9 @@ def migrate_strike_teams(alliance_info):
 		# Just transfer the order of people in 'gamma' into 'spotlight'.
 		temp_list = sum(strike_teams.pop('gamma'), [])
 
+		# Remove any entries which aren't valid player names.
+		temp_list = [member for member in temp_list if member in alliance_info['members']]
+
 		# Break the list of players into 4 new groups of 6.
 		spotlight = []
 		for idx in range(0,len(temp_list),6):
@@ -485,6 +488,9 @@ def migrate_strike_teams(alliance_info):
 
 		# Just transfer the order of people in 'gamma' into 'spotlight'.
 		temp_list = sum(alliance_info['strike_teams'].pop('gamma'), [])
+
+		# Remove any entries which aren't valid player names.
+		temp_list = [member for member in temp_list if member in alliance_info['members']]
 
 		# Break the list of players into 4 new groups of 6.
 		spotlight = []

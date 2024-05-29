@@ -60,9 +60,7 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 
 		scopely_website_login(driver, scopely_login, scopely_pass)
 
-
 	# If our current url isn't == alliance_info_url then we didn't ever login. 
-	
 
 	# Waiting while you login manually, automatically, or approve login via 2FA.
 	try:
@@ -91,10 +89,6 @@ def get_scopely_creds(prompt=False, scopely_login=''):
 	# Look for a default login
 	if not scopely_login:
 		scopely_login = keyring.get_password('msf2csv','msfgg.scopely.default')
-	# TEMPORARY TESTING, IF LOGIN PASSED, FORCE USER TO CLICK THROUGH.
-	else:
-		scopely_pass = 'wait-for-email'
-		return scopely_login, scopely_pass
 
 	# If we're requesting a prompt, first launch of a frozen executable, or no default scopely_login is defined
 	# Ask for a default login and 
@@ -110,7 +104,7 @@ def get_scopely_creds(prompt=False, scopely_login=''):
 		
 		keyring.set_password('msf2csv', scopely_login, scopely_pass)
 
-	scopely_pass = keyring.get_password('msf2csv',scopely_login) or ''
+	scopely_pass = keyring.get_password('msf2csv',scopely_login) or 'wait-for-email'
 
 	return scopely_login, scopely_pass
 

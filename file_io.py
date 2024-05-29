@@ -112,7 +112,7 @@ def html_to_images(html_files=[], print_path=True):
 		# Look for the farthest right element.
 		tables = driver.find_elements(By.TAG_NAME, "table")
 		
-		min_width = 600
+		min_width = 400
 		for table_idx, table in enumerate(tables):
 			min_width = max(table.rect['x']+table.rect['width'], min_width)
 

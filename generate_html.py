@@ -526,7 +526,27 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# If a value is specified, strip any character that hasn't been built at least that amount over time.
 			if min_change_filter:
-				using_chars = [char for char in using_chars if max([find_value_or_diff(alliance_info, player, char, 'power', hist_date=inline_hist)[0]/find_value_or_diff(alliance_info, player, char, 'power')[0] for player in using_players]) >= min_change_filter]
+				filtered_chars = []
+
+				for char in using_chars:
+					for player in using_players:
+
+						# Get current power for this toon.
+						curr_power = find_value_or_diff(alliance_info, player, char, 'power')[0]
+
+						# If not summoned yet, move on to next player.
+						if not curr_power:
+							continue
+
+						# Get historical power for this toon.
+						hist_diff = find_value_or_diff(alliance_info, player, char, 'power', hist_date=inline_hist)[0]
+						
+						# If relevant growth, include and move to next char
+						if hist_diff/curr_power > min_change_filter:
+							filtered_chars.append(char)
+							break
+
+				using_chars = filtered_chars
 
 	# If there are no characters in this table, don't generate a table.
 	if not using_chars:
@@ -545,8 +565,22 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# Let's get this party started!
 	html_file = '   <table id="%s">\n' % (table_id)
 
-	# SEE IF WE NEED MULTIPLE LINES. WE MAY NEED TO BREAK UP USING_CHARS INTO CHUNKS.
-	line_wrap = 12
+	# See if multiple lines requested. 
+	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=10)
+
+	# Values 5 and over indicate how many toons should be included per line.
+	# Values under 5 indicate how many lines we should wrap info to.
+
+	# 0 == 1. No wrap, one row.
+	if not line_wrap:
+		line_wrap = len(using_chars)
+	# Values less than 5 indicate how many lines to wrap to.
+	elif line_wrap < 5:
+		line_wrap = round(len(using_chars)/line_wrap + 0.49)
+	
+	# Default back to 10, if result provides more rows than columns.
+	if line_wrap < len(using_chars)/line_wrap:
+		line_wrap = 10
 
 	# Initialize the row count. Will add to it with each strike_team section.
 	row_idx = 1
