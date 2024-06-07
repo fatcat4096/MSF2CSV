@@ -463,8 +463,6 @@ def migrate_strike_teams(alliance_info):
 
 	updated = False
 
-	print ("'strike_teams' in globals()",'strike_teams' in globals())
-
 	# Update old format strike team definitions. Key off of the presence of 'incur2'.
 	if 'strike_teams' in globals():
 		
@@ -489,16 +487,12 @@ def migrate_strike_teams(alliance_info):
 			for idx in [0,8,16]:
 				spotlight.append(temp_list[idx:idx+8])
 
-			print ('spotlight',spotlight)
-
 			# And add the definition of the new Spotlight teams to strike_teams.
 			strike_teams['spotlight'] = spotlight
 
 			# Since we changed strike_teams.py, return updated = True so calling routine will write the updated file to disk.
 			updated = True
 
-	print ("'strike_teams' in globals()",'strike_teams' in globals())
-	
 	# Update the alliance_info structure as well, just in case it's all we've got.
 	if 'strike_teams' in alliance_info:
 
@@ -522,8 +516,6 @@ def migrate_strike_teams(alliance_info):
 			spotlight = []
 			for idx in [0,8,16]:
 				spotlight.append(temp_list[idx:idx+8])
-
-			print ('spotlight',spotlight)
 
 			# And add the definition of the new Spotlight teams to strike_teams.
 			alliance_info['strike_teams']['spotlight'] = spotlight

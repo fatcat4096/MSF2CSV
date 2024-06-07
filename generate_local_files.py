@@ -142,7 +142,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						'sort_char_by': 'avail',
 						'inc_keys': ['power','lvl','tier','iso'],
 						'lanes':[ [
-								{'traits': ['Non-Mythic'], 'label':'Non-Mythic'},
+								{'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Non-Mythic'},
 								{'traits': ['SpiderSociety'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)']},
 								{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 								{'traits': ['All'],  'label':'Final Boss'},
@@ -223,7 +223,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['DarkHunter']},
 								{'traits': ['Deathseed']},
 								{'traits': ['Eternal']},
-								{'traits': ['Gamma']},
+								{'traits': ['Gamma'], 'meta': ['Red Hulk', 'Hulk', 'She-Hulk', 'Abomination', 'Brawn']},
 								{'traits': ['HeroesForHire']},
 								{'traits': ['HiveMind']},
 								{'traits': ['Infestation']},

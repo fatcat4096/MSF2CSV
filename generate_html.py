@@ -1516,11 +1516,20 @@ def insert_dividers(strike_teams, raid_type):
 	for team in strike_teams:
 
 		# Use 2-3-3 lanes if Incursion 1.x.
-		if raid_type in ('incur', 'spotlight'):
+		if raid_type in ('incur'):
 			if len(team) > 2:
 				team.insert(2,'----')
 			if len(team) > 6:
 				team.insert(6,'----')
+
+		# Use 3-2-3 lanes if Spotlight.
+		elif raid_type in ('spotlight'):
+			if len(team) > 2:
+				team.insert(2,'----')
+			if len(team) > 5:
+				team.insert(5,'----')
+			if len(team) > 8:
+				team.insert(8,'----')
 
 		# Use 5/3 split for Sort by STP within Strike Teams.
 		elif raid_type == '53':
