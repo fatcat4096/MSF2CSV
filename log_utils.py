@@ -133,8 +133,15 @@ def log_init(calling_func, context=None):
 
 	date_time = time.strftime("%Y.%m.%d-%H%M%S",time.localtime(time.time()))
 
+	# Let's define the local path.
+	path = os.path.dirname(__file__)
+
+	# If frozen, work in the same directory as the executable.
+	if getattr(sys, 'frozen', False):
+		path = os.path.dirname(sys.executable)
+
 	# Create a directory for the logfiles.
-	base_dir = './trace/'
+	base_dir = os.path.realpath(path) + os.sep + 'trace' + os.sep
 	if not os.path.exists(base_dir):
 		os.makedirs(base_dir)
 		
