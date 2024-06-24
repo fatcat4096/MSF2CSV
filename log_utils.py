@@ -18,6 +18,24 @@ from typing import Callable, Any
 
 import logging
 
+import __main__
+
+# Default value, use the local file path.
+log_file_path = __file__
+
+# If frozen, work in the same directory as the executable.
+if getattr(sys, 'frozen', False):
+	log_file_path = os.path.dirname(sys.executable)
+# If imported, work in the same directory as the importing file.
+elif hasattr(__main__, '__file__'):
+	log_file_path = os.path.dirname(os.path.abspath(__main__.__file__))
+
+# Create a directory for the logfiles.
+log_file_path = os.path.realpath(log_file_path) + os.sep + 'trace' + os.sep
+if not os.path.exists(log_file_path):
+	os.makedirs(log_file_path)
+
+print('log_file_path:',log_file_path)
 
 # 'reporting_level' controls whether we log at all. Set to 0 to disable logging.
 # 'reporting_threshold' controls how long a call has to take before we start reporting time required.
@@ -125,28 +143,18 @@ def timed(func_=None, level=4, init=False, handoff=False):
 
 # Creater a logger object for use in a command.
 def log_init(calling_func, context=None):
+
+	global log_file_path
 	
-	logger = logging.getLogger(calling_func)
+	date_time = time.strftime("%Y.%m.%d-%H%M%S",time.localtime(time.time()))
+
+	logger = logging.getLogger(calling_func+date_time)
 	logger.setLevel(logging.INFO)
 
 	username = f'-{context.author.name}' if context else ''
 
-	date_time = time.strftime("%Y.%m.%d-%H%M%S",time.localtime(time.time()))
-
-	# Let's define the local path.
-	path = os.path.dirname(__file__)
-
-	# If frozen, work in the same directory as the executable.
-	if getattr(sys, 'frozen', False):
-		path = os.path.dirname(sys.executable)
-
-	# Create a directory for the logfiles.
-	base_dir = os.path.realpath(path) + os.sep + 'trace' + os.sep
-	if not os.path.exists(base_dir):
-		os.makedirs(base_dir)
-		
 	# Specify a filename for the logfile.
-	filename = f"{base_dir}python.{date_time}{username}-{calling_func}.log"
+	filename = f"{log_file_path}python.{date_time}{username}-{calling_func}.log"
 	
 	file_handler = logging.FileHandler(filename=filename, encoding="utf-8", mode="w")
 	file_handler_formatter = logging.Formatter(

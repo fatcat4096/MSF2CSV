@@ -43,7 +43,6 @@ def generate_strike_teams(alliance_info):
 	new_file  = '''# This file contains the Strike Teams used for HTML file output.
 #
 # Move entries between strike teams and reorder players within strike teams.
-# Include lane dividers, i.e. "----" to indicate which players are in which lanes/clusters.
 #
 # Also, you can add entries in strike_teams dict and use them in output in msf2csv.py.
 # These teams will be saved and included in cached alliance information.

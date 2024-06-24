@@ -162,7 +162,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		if members[member].get('url','') in ('','auth') and not working_from_website: 
 	
 			# One message for bot, one for the screen.
-			rosters_output.append(f'{member:17}NEED URL')
+			rosters_output.append(f'{member:17}NO URL')
 			print (f'No cached URL available -- skipping {member}')
 
 			continue
@@ -174,13 +174,13 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 
 		while retries:
 			try:
+
 				# Use a cached URL if available.
 				if members[member].get('url','') not in ('','auth'):
 					driver.get(f"https://marvelstrikeforce.com/en/v1/players/{members[member]['url']}/characters")
 
 				# Or need to find an active roster button for this member
 				else:
-
 					# Start off by getting back to the Alliance page if we're not already on it.
 					current_url=alliance_url
 					if driver.current_url != alliance_url:
@@ -193,8 +193,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 
 				# Note when we began processing
 				start_time = datetime.datetime.now()
-				time_limit = 6
-				refreshed  = False
+				time_limit = 5
 				
 				# Page loads in sections, will be > 1MB after roster information loads.
 				while (datetime.datetime.now()-start_time).seconds < time_limit:
@@ -212,13 +211,12 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 				# If page loaded, pass contents to scraping routines for stat extraction.
 				if len(page_source)>700000:
 					member = parse_roster(page_source, alliance_info, parse_cache, member)
-				# Retry if we have retries remaining. Page never fully loaded.
-				elif working_from_website and (current_url == alliance_url or (datetime.datetime.now()-start_time).seconds > time_limit):
-					retries -= 1
-					continue
-				
-				# Made it out successfully. End the loop.
-				break
+					break
+
+				# If we got here, we exceeded the time limit and our page still hasn't fully loaded.
+				retries -= 1
+
+				print ("TIMED OUT! Retries remaining...",retries, )
 
 			except (NoSuchElementException, TimeoutException, WebDriverException) as e:
 				# Still have retries available?
@@ -251,7 +249,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		alliance_info['members'][member]['is_stale'] = member_stale
 		stale = ''
 		if alliance_info['members'][member]['is_stale']:
-			stale = '/Stale'
+			stale = '/Old'
 
 		if not_updated:
 			time_since = time_now - last_update
@@ -261,11 +259,11 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 
 		# Never received Roster page to parse.
 		if len(page_source) < 700000: 
-			result = 'SITE DOWN'
+			result = 'TIMEOUT'
 			stale  = ''
 		# Empty Roster page. Member has never synced.
 		elif not alliance_info['members'][member].get('tot_power'):
-			result = 'NEED SYNC'
+			result = 'RE-SYNC'
 			stale = ''
 
 		rosters_output.append(f'{found}{result}{stale}')
@@ -316,7 +314,7 @@ def find_members_roster(driver, member, rosters_output=[]):
 	member_labels = driver.find_elements(By.TAG_NAME, "H4")
 
 	for member_label in member_labels:
-		if member == remove_tags(member_label.text.replace('[ME]','')):
+		if member.lower() == remove_tags(member_label.text.replace('[ME]','')).lower():
 			break
 
 		# This isn't it.
@@ -345,7 +343,7 @@ def find_members_roster(driver, member, rosters_output=[]):
 	if not button or not button.is_enabled():
 
 		# One message for bot, one for the screen.
-		rosters_output.append(f'{member:17}NEED SYNC')
+		rosters_output.append(f'{member:17}RE-SYNC')
 		print (f'Button not found - skipping {member}')
 
 		return False
