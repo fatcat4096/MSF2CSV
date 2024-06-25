@@ -21,7 +21,7 @@ import logging
 import __main__
 
 # Default value, use the local file path.
-log_file_path = __file__
+log_file_path = os.path.dirname(__file__)
 
 # If frozen, work in the same directory as the executable.
 if getattr(sys, 'frozen', False):
@@ -34,8 +34,6 @@ elif hasattr(__main__, '__file__'):
 log_file_path = os.path.realpath(log_file_path) + os.sep + 'trace' + os.sep
 if not os.path.exists(log_file_path):
 	os.makedirs(log_file_path)
-
-print('log_file_path:',log_file_path)
 
 # 'reporting_level' controls whether we log at all. Set to 0 to disable logging.
 # 'reporting_threshold' controls how long a call has to take before we start reporting time required.
