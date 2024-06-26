@@ -306,22 +306,24 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 @timed(level=3)
 def find_members_roster(driver, member, rosters_output=[]):
 
-	# Once member labels have populated, we're ready.
-	while len(driver.find_elements(By.TAG_NAME, "H4"))<10:
+	# Once member entries have populated, we're ready.
+	while len(driver.find_elements(By.TAG_NAME, "tr"))<10:
 		time.sleep(0.25)
 
-	# Start by looking for the H4 label for this member. 
-	member_labels = driver.find_elements(By.TAG_NAME, "H4")
+	# Start by looking for the row with this member.
+	table_rows = driver.find_elements(By.TAG_NAME, "tr")
+	
+	for table_row in table_rows:
 
-	for member_label in member_labels:
-		if member.lower() == remove_tags(member_label.text.replace('[ME]','')).lower():
+		member_labels = table_row.find_elements(By.TAG_NAME, "H4")
+		if member_labels and member.lower() == remove_tags(member_labels[0].text.replace('[ME]','')).lower():
 			break
 
-		# This isn't it.
-		member_label = None
+		# Wrong row. Keep searching.
+		table_row = None
 	
-	# This shouldn't happen. Should always be able to find Member on screen.
-	if not member_label:
+	# This shouldn't happen. Should always find Member on screen.
+	if not table_row:
 	
 		# One message for bot, one for the screen.
 		rosters_output.append(f'{member:17}NO LABEL')
@@ -329,18 +331,14 @@ def find_members_roster(driver, member, rosters_output=[]):
 
 		return False
 
-	# Find the roster button in same row as the Member name and click on it. 
-	buttons = driver.find_elements(By.CLASS_NAME, 'button')
+	# Find the buttons in the same row as the Member name. 
+	buttons = table_row.find_elements(By.CLASS_NAME, 'button')
 
-	for button in buttons:
-		if abs(member_label.location['y']-button.location['y'])<12 and button.size['width'] in (53,54):
-			break
-			
-		# This isn't it.
-		button = None
+	# Did we find it and is it active? .
+	button = buttons[0] if buttons and buttons[0].is_enabled() else None
 
-	# Abort if we couldn't find the button, or found it and it's not active.
-	if not button or not button.is_enabled():
+	# If we couldn't find an active View Roster button
+	if not button:
 
 		# One message for bot, one for the screen.
 		rosters_output.append(f'{member:17}RE-SYNC')
