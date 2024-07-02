@@ -48,6 +48,9 @@ def extract_traits(file=''):
 
 	# load the indicated script, MSF.gg will respond with a 404 page if not available anymore.
 	page = urllib.request.urlopen('https://marvelstrikeforce.com'+file)
+	
+	print ('Parsing:','https://marvelstrikeforce.com'+file)
+	
 	buffer = str(page.read())
 
 	extracted_traits = {}
@@ -106,49 +109,56 @@ def extract_traits(file=''):
 def update_traits(extracted_traits):
 
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if 'AlphaFlight' not in extracted_traits:
+	if 'Illuminati' not in extracted_traits:
 
 		manual_traits =	{
 						# Alpha Flight
-						'Sunfire'            :['AlphaFlight'],
-						'Wolverine'          :['AlphaFlight'],
-						'Guardian'           :['AlphaFlight','Hero','Global','Tech','Brawler'],
-						'Northstar'          :['AlphaFlight','Hero','Global','Mutant','Controller'],
-						'Sasquatch'          :['AlphaFlight','Hero','Global','Bio','Protector'],
+						'Sunfire'              :['AlphaFlight'],
+						'Wolverine'            :['AlphaFlight'],
+						'Guardian'             :['AlphaFlight','Hero','Global','Tech','Brawler'],
+						'Northstar'            :['AlphaFlight','Hero','Global','Mutant','Controller'],
+						'Sasquatch'            :['AlphaFlight','Hero','Global','Bio','Protector'],
 						# Cabal
-						'Namor'              :['Cabal'],
-						'Iron Patriot'       :['Cabal','Global','Villain','Tech','Blaster'],
-						'The Leader'         :['Cabal','Global','Villain','Bio','Support','Gamma'],
+						'Namor'                :['Cabal'],
+						'Iron Patriot'         :['Cabal','Global','Villain','Tech','Blaster'],
+						'The Leader'           :['Cabal','Global','Villain','Bio','Support','Gamma'],
 						# Hive-Mind
-						'Carnage'            :['HiveMind'],
-						'Venom'              :['HiveMind'],
-						'Void Knight'        :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','Cosmic','Support'],
-						'Gwenom'             :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','City','Brawler'],
-						'Red Goblin'         :['HiveMind','Bio','SpiderVerse','Symbiote','Villain','City','Protector'],
+						'Carnage'              :['HiveMind'],
+						'Venom'                :['HiveMind'],
+						'Void Knight'          :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','Cosmic','Support'],
+						'Gwenom'               :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','City','Brawler'],
+						'Red Goblin'           :['HiveMind','Bio','SpiderVerse','Symbiote','Villain','City','Protector'],
+						# Illuminati
+						'Iron Man'             :['Illuminati'],
+						'Black Bolt'           :['Illuminati'],
+						'Mister Fantastic'     :['Illuminati'],
+						'Black Panther (Shuri)':['Illuminati', 'Hero', 'Global', 'Mystic', 'Controller', 'Wakandan'], 
+						'Captain Britain'      :['Illuminati', 'Hero', 'Global', 'Mystic', 'Protector', 'Epic'],
+						'Hank Pym'             :['Illuminati', 'Hero', 'Global', 'Tech', 'Support', 'Pym Tech', 'Avenger'],
 						# Mercs For Money
-						'Deadpool'           :['MercsForMoney'],
-						'Deathpool'          :['MercsForMoney'], 
-						'Daken'              :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
-						'Old Man Logan'      :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
-						'Pandapool'          :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
+						'Deadpool'             :['MercsForMoney'],
+						'Deathpool'            :['MercsForMoney'], 
+						'Daken'                :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
+						'Old Man Logan'        :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
+						'Pandapool'            :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
 						# Out of Time
-						'Captain America'    :['OutOfTime'],
-						'Captain Carter'     :['OutOfTime'],
-						'Black Knight'       :['OutOfTime','Hero','Global','Skill','Protector'],
-						'Starbrand'          :['OutOfTime','Hero','Global','Mystic','Brawler'],
-						'Cosmic Ghost Rider' :['OutOfTime','Hero','Cosmic','Mystic','Controller',],
+						'Captain America'      :['OutOfTime'],
+						'Captain Carter'       :['OutOfTime'],
+						'Black Knight'         :['OutOfTime','Hero','Global','Skill','Protector'],
+						'Starbrand'            :['OutOfTime','Hero','Global','Mystic','Brawler'],
+						'Cosmic Ghost Rider'   :['OutOfTime','Hero','Cosmic','Mystic','Controller',],
 						# Spider Society
-						'Ghost-Spider'       :['SpiderSociety','Skill'],
-						'Spider-Man (Noir)'  :['SpiderSociety','Skill'],
-						'Peni Parker'        :['SpiderSociety','SpiderVerse','Hero','City','Skill','Tech','Protector',],
-						'Peter B. Parker'    :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Support'],
-						'Spider-Man (Pavitr)':['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Brawler'],
+						'Ghost-Spider'         :['SpiderSociety','Skill'],
+						'Spider-Man (Noir)'    :['SpiderSociety','Skill'],
+						'Peni Parker'          :['SpiderSociety','SpiderVerse','Hero','City','Skill','Tech','Protector',],
+						'Peter B. Parker'      :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Support'],
+						'Spider-Man (Pavitr)'  :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Brawler'],
 						# Mephisto
-						'Mephisto'           :['Mythic','Villain','Cosmic','Mystic','Protector'],
+						'Mephisto'             :['Mythic','Villain','Cosmic','Mystic','Protector'],
 						# Spider-Verse
-						'Spider-Woman'       :['SpiderVerse'],
+						'Spider-Woman'         :['SpiderVerse'],
 						# Weapon X
-						'X23'                :['WeaponX'],
+						'X23'                  :['WeaponX'],
 						}
 
 		# Parse information into the needed structure.

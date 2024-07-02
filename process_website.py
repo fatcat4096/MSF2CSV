@@ -249,7 +249,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		alliance_info['members'][member]['is_stale'] = member_stale
 		stale = ''
 		if alliance_info['members'][member]['is_stale']:
-			stale = '/Old'
+			stale = '/*SD'
 
 		if not_updated:
 			time_since = time_now - last_update
@@ -263,7 +263,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 			stale  = ''
 		# Empty Roster page. Member has never synced.
 		elif not alliance_info['members'][member].get('tot_power'):
-			result = 'RE-SYNC'
+			result = 'NO DATA'
 			stale = ''
 
 		rosters_output.append(f'{found}{result}{stale}')
@@ -341,7 +341,7 @@ def find_members_roster(driver, member, rosters_output=[]):
 	if not button:
 
 		# One message for bot, one for the screen.
-		rosters_output.append(f'{member:17}RE-SYNC')
+		rosters_output.append(f'{member:17}NO URL')
 		print (f'Button not found - skipping {member}')
 
 		return False

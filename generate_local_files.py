@@ -225,6 +225,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['Gamma'], 'meta': ['Red Hulk', 'Hulk', 'She-Hulk', 'Abomination', 'Brawn']},
 								{'traits': ['HeroesForHire']},
 								{'traits': ['HiveMind']},
+								{'traits': ['Illuminati'], 'meta': ['Iron Man', 'Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
 								{'traits': ['Infestation']},
 								{'traits': ['InfinityWatch']},
 								{'traits': ['Invader']},
