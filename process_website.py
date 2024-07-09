@@ -288,7 +288,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	# And make note of when we end.
 	time_now = datetime.datetime.now()
 	summary.append('\n**Total time:** %s seconds' % ((time_now - start_time).seconds))
-	print (summary[-1])
+	print (summary[-1].replace('**',''))
 
 	# Get a little closer to our work. 
 	members = alliance_info['members']
@@ -299,7 +299,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	
 	# Summarize the results of processing
 	summary.append(f'Found **{updated}** new, **{len(members)-updated}** old, **{stale}** stale')
-	print (summary[-1])
+	print (summary[-1].replace('**',''))
 
 	# If included, generate Key as footer as well.
 	status = ''.join([line[17:] for line in rosters_output])
