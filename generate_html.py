@@ -501,7 +501,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
 
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list (alliance_info, sort_by, stp_list)
+	player_list = get_player_list (alliance_info, sort_by, stp_list, table)
 
 	# If there are no players in this table, don't generate a table.
 	using_players = [player for player in sum(strike_teams, []) if player in player_list]
@@ -682,6 +682,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Last minute sort if proscribed by the table format.
 			if sort_by:
+			
 				strike_team = [member for member in player_list if member in strike_team]
 				
 				# If inc_dividers is '53', this divider is a little different. Go ahead and add it back in after sorting.
@@ -1493,7 +1494,7 @@ def get_strike_teams(alliance_info, table, table_format):
 	# If only_team == 0 (ignore strike_teams) **AND**
 	# no sort_by has been specified, force sort_by to 'stp'
 	only_team = get_table_value(table_format, table, key='only_team')
-	if (not strike_teams or only_team == 0) and not table_format.get('sort_by'):
+	if (not strike_teams or only_team == 0) and not get_table_value(table_format, table, key='sort_by'):
 		table_format['sort_by'] = 'stp'
 
 	# Sort player list if requested.
@@ -1501,7 +1502,7 @@ def get_strike_teams(alliance_info, table, table_format):
 
 	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
 	if not strike_teams or only_team == 0:
-		strike_teams = [get_player_list(alliance_info, sort_by)]
+		strike_teams = [get_player_list(alliance_info, sort_by, table=table)]
 
 	return strike_teams
 

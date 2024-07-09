@@ -171,12 +171,13 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		retries = 3
 		page_source = ''
 		current_url = ''
+		HAVE_URL = members[member].get('url','') not in ('','auth')
 
 		while retries:
 			try:
 
 				# Use a cached URL if available.
-				if members[member].get('url','') not in ('','auth'):
+				if HAVE_URL:
 					driver.get(f"https://marvelstrikeforce.com/en/v1/players/{members[member]['url']}/characters")
 
 				# Or need to find an active roster button for this member
@@ -249,13 +250,13 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		alliance_info['members'][member]['is_stale'] = member_stale
 		stale = ''
 		if alliance_info['members'][member]['is_stale']:
-			stale = '/*SD'
+			stale = '/OLD'
 
 		if not_updated:
 			time_since = time_now - last_update
 			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{max(0,time_since.days):>2}d'][rosters_only]
 		else:
-			result = ['Updated','NEW'][rosters_only]
+			result = ['UPD','NEW'][not HAVE_URL] if rosters_only else 'Updated'
 
 		# Never received Roster page to parse.
 		if len(page_source) < 700000: 
@@ -281,11 +282,13 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 
 @timed(level=3)
 def roster_results(alliance_info, start_time, rosters_output=[]):
+	
+	summary = []
 
 	# And make note of when we end.
 	time_now = datetime.datetime.now()
-	rosters_output.append('\nTotal time: %s seconds' % ((time_now - start_time).seconds))
-	print (rosters_output[-1])
+	summary.append('\n**Total time:** %s seconds' % ((time_now - start_time).seconds))
+	print (summary[-1])
 
 	# Get a little closer to our work. 
 	members = alliance_info['members']
@@ -295,10 +298,36 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	stale   = len([member for member in members if members[member].get('is_stale', True)])
 	
 	# Summarize the results of processing
-	rosters_output.append(f'{updated} new, {len(members)-updated} old, {stale} stale')
-	print (rosters_output[-1])
+	summary.append(f'Found **{updated}** new, **{len(members)-updated}** old, **{stale}** stale')
+	print (summary[-1])
 
-	return rosters_output
+	# If included, generate Key as footer as well.
+	status = ''.join([line[17:] for line in rosters_output])
+
+	status_key = [] 
+
+	if 'NEW/OLD' in status:
+		status_key.append("* **NEW/OLD** - Newly added but stale. Needs sync")
+
+	if 'UPD/OLD' in status:
+		status_key.append("* **UPD/OLD** - Updated but stale. Needs sync")
+
+	elif '/OLD' in status:
+		status_key.append('* **OLD** - Roster is stale/old. Needs sync')
+		
+	if 'NO DATA' in status:
+		status_key.append('* **NO DATA** - Roster is empty. Needs sync')
+
+	if 'NO URL' in status:
+		status_key.append("* **NO URL** - No 'View Roster' link. Sync, then **/alliance refresh**")
+
+	if 'TIMEOUT' in status:
+		status_key.append('* **TIMEOUT** - Website slow/down. Try later')
+
+	if status_key:
+		summary += [''] + status_key
+
+	return summary
 
 
 
@@ -342,7 +371,7 @@ def find_members_roster(driver, member, rosters_output=[]):
 
 		# One message for bot, one for the screen.
 		rosters_output.append(f'{member:17}NO URL')
-		print (f'Button not found - skipping {member}')
+		print (f'Link not found - skipping {member}')
 
 		return False
 

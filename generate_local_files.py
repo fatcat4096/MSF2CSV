@@ -174,7 +174,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	tables['dd7'] = { 'name': 'Dark Dimension 7',
 						'min_tier': 19,
 						'max_others': 10,
-						'sort_by': 'stp',
+						'sort_by': 'avail',
 						'sort_char_by': 'avail',
 						'inc_avail': True,
 						'lanes':[ [
@@ -188,7 +188,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in DD6 report
-	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'max_others': 10, 'sort_by': 'stp', 'sort_char_by': 'avail','inc_avail': True, 
+	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail','inc_avail': True, 
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
@@ -199,7 +199,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in Dark Dimension 5
-	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'max_others': 10, 'sort_by': 'stp', 'sort_char_by': 'avail', 'inc_avail': True,
+	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True,
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},

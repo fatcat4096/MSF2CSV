@@ -38,17 +38,20 @@ def get_char_list(alliance_info):
 
 
 # Bring back a sorted list of players from alliance_info
-def get_player_list(alliance_info, sort_by='', stp_list={}):
+def get_player_list(alliance_info, sort_by='', stp_list={}, table={}):
 
 	player_list = alliance_info['members']
 
 	# If Sort Order specified, sort player_list in the correct order. 
 	if sort_by == 'stp' and stp_list:
 		return sorted(player_list, key=lambda x: -stp_list[None][x])
+	# Sort by avail if requested.
+	elif sort_by == 'avail' and table:
+		return sorted(player_list, key=lambda x: -len([char for char in table.get('under_min',{}).get(x,{}) if not table.get('under_min',{}).get(x,{}).get(char)]))
 	# If we weren't provided a list of STPs, fall back to using TCP.
-	elif sort_by in ('tcp','stp'):
+	elif sort_by in ('tcp','stp','avail'):
 		return sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
-
+	
 	# Otherwise, just do a default sort.
 	return sorted(player_list, key=str.lower)
 
