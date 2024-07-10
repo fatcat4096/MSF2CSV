@@ -893,6 +893,9 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 
 	html_file=''
 
+	# Conditionally include Diamonds columns.
+	DIAMONDS_ENABLED = False
+
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
 		html_file += '<div id="RosterAnalysis" class="tcon">\n'
@@ -925,8 +928,10 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red 4-7
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	# Conditionally include Diamonds columns.
+	if DIAMONDS_ENABLED:
+		html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
+		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="200" colspan="5">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
@@ -965,44 +970,48 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	html_file += f' <td {sort_func % 18}>%s</td>\n' % (['6+','6*'][stat_type == 'actual'])
 	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
 
-	# Diamonds
-	html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
-	html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
-	html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
-
-	# ISO Levels
-	html_file += f' <td {sort_func % 24}>%s</td>\n' % (['4+','0-4'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['5+','5'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 26}>%s</td>\n' % (['8+','6-8'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['9+','9'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['10','10' ][stat_type == 'actual'])
-
-	# Gear Tiers
-	html_file += f' <td {sort_func % 30}>%s</td>\n' % (['13+','13'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['14+','14'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['15+','15'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 34}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 35}>%s</td>\n' % (['18+','18'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 36}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
-
-	# T4 Abilities
-	html_file += f' <td {sort_func % 38}>Bas</td>\n'
-	html_file += f' <td {sort_func % 39}>Spc</td>\n'
-	html_file += f' <td {sort_func % 40}>Ult</td>\n'
-	html_file += f' <td {sort_func % 41}>Pas</td>\n'
+	# Conditionally include Diamonds columns.
+	if DIAMONDS_ENABLED:
+		html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
+		html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
+		html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
 
 	# Simplify inclusion of the sort function code
-	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb lvl", '%s', table_id)
+	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',2)"' % ("ltbb col", '%s', DIAMONDS_ENABLED*4, table_id)
+
+	# ISO Levels
+	html_file += f' <td {sort_func % 21}>%s</td>\n' % (['4+','0-4'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 22}>%s</td>\n' % (['5+','5'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 23}>%s</td>\n' % (['8+','6-8'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 24}>%s</td>\n' % (['9+','9'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['10','10' ][stat_type == 'actual'])
+
+	# Gear Tiers
+	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['13+','13'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['14+','14'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 29}>%s</td>\n' % (['15+','15'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 30}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['18+','18'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
+
+	# T4 Abilities
+	html_file += f' <td {sort_func % 35}>Bas</td>\n'
+	html_file += f' <td {sort_func % 36}>Spc</td>\n'
+	html_file += f' <td {sort_func % 37}>Ult</td>\n'
+	html_file += f' <td {sort_func % 38}>Pas</td>\n'
+
+	# Simplify inclusion of the sort function code
+	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',2)"' % ("ltbb lvl", '%s', DIAMONDS_ENABLED*4, table_id)
 
 	# Level Ranges
-	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 48}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 49}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 40}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -1053,10 +1062,11 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['red'][key], member_stats.get('red',{}).get(key,0), html_cache, stale_data), member_stats.get('red',{}).get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                             
 
-			# Diamonds
-			for key in range(1,4):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), html_cache, stale_data), member_stats.get('dmd',{}).get(key,0))
-			html_file += ' <td></td>\n' 										# Vertical Divider                             
+			# Conditionally include Diamonds columns.
+			if DIAMONDS_ENABLED:
+				for key in range(1,4):
+					html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), html_cache, stale_data), member_stats.get('dmd',{}).get(key,0))
+				html_file += ' <td></td>\n' 									# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
 			for key in [4,5,8,9,10]:
@@ -1235,6 +1245,9 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 
 	html_file = ''
+	
+	# Conditionally include Arena/Blitz columns.
+	ARENA_BLITZ_ENABLED = False
 
 	# Start by sorting members by TCP.
 	alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
@@ -1265,7 +1278,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 
 	html_file += '<tr style="font-size:18px;color:white;">\n'
 	html_file += ' <td colspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
-	html_file += ' <td colspan="10" class="alliance_name"%s>%s</td>\n' % (alt_color, alliance_info['name'].upper())
+	html_file += ' <td colspan="%s" class="alliance_name"%s>%s</td>\n' % (8+ 2*ARENA_BLITZ_ENABLED, alt_color, alliance_info['name'].upper())
 	html_file += ' <td colspan="2"><div style="image-rendering:crisp-edges; transform:scale(1.5);"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></div></td>\n' % (alliance_info.get('image','EMBLEM_6_dd63d11b'))
 	html_file += '</tr>\n'
 
@@ -1282,12 +1295,19 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	html_file += f' <td width="110" {sort_func % 5}>Strongest<br>Team</td>\n'
 	html_file += f' <td width="110" {sort_func % 6}>Total<br>Collected</td>\n'
 	html_file += f' <td width="110" {sort_func % 7}>Max<br>Stars</td>\n'
-	html_file += f' <td width="110" {sort_func % 8}>Arena<br>Rank</td>\n'
-	html_file += f' <td width="110" {sort_func % 9}>Blitz<br>Wins</td>\n'
-	html_file += f' <td width="110" {sort_func % 10}>War<br>MVP</td>\n'
-	html_file += f' <td width="110" {sort_func % 11}>Total<br>Stars</td>\n'
-	html_file += f' <td width="110" {sort_func % 12}>Total<br>Red</td>\n'
-	html_file += f' <td width="215" {sort_func % 13}>Last Updated:</td>\n'
+
+	# Conditionally include columns.
+	if ARENA_BLITZ_ENABLED:
+		html_file += f' <td width="110" {sort_func % 8}>Arena<br>Rank</td>\n'
+		html_file += f' <td width="110" {sort_func % 9}>Blitz<br>Wins</td>\n'
+
+	# Change the sort routine depending on whether Arena/Blitz columns present.
+	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',3)"' % ("blub", '%s', ARENA_BLITZ_ENABLED*2, table_id)
+
+	html_file += f' <td width="110" {sort_func % 8}>War<br>MVP</td>\n'
+	html_file += f' <td width="110" {sort_func % 9}>Total<br>Stars</td>\n'
+	html_file += f' <td width="110" {sort_func % 10}>Total<br>Red</td>\n'
+	html_file += f' <td width="215" {sort_func % 11}>Last Updated:</td>\n'
 	html_file += '</tr>\n'
 	
 	tcp_range   = [alliance_info['members'][member].get('tcp',0)   for member in member_list]
@@ -1295,8 +1315,12 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	tcc_range   = [alliance_info['members'][member].get('tcc',0)   for member in member_list]
 	mvp_range   = [alliance_info['members'][member].get('mvp',0)   for member in member_list]
 	max_range   = [alliance_info['members'][member].get('max',0)   for member in member_list]
-	arena_range = [alliance_info['members'][member].get('arena',0) for member in member_list]
-	blitz_range = [alliance_info['members'][member].get('blitz',0) for member in member_list]
+
+	# Conditionally include columns.
+	if ARENA_BLITZ_ENABLED:
+		arena_range = [alliance_info['members'][member].get('arena',0) for member in member_list]
+		blitz_range = [alliance_info['members'][member].get('blitz',0) for member in member_list]
+
 	stars_range = [alliance_info['members'][member].get('stars',0) for member in member_list]
 	red_range   = [alliance_info['members'][member].get('red',0)   for member in member_list]
 
@@ -1335,8 +1359,12 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stp_range,   member_stats.get('stp',0),   html_cache, stale_data), f'{member_stats.get("stp",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color_ext(max(tcc_range)-5, max(tcc_range),   member_stats.get('tcc',0),   html_cache, stale_data), f'{member_stats.get("tcc",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(max_range,   member_stats.get('max',0),   html_cache, stale_data), f'{member_stats.get("max",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color_ext(max(arena_range), min(arena_range), member_stats.get('arena',0), html_cache, stale_data), f'{member_stats.get("arena",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(blitz_range, member_stats.get('blitz',0), html_cache, stale_data), f'{member_stats.get("blitz",0):,}')
+
+		# Conditionally include columns.
+		if ARENA_BLITZ_ENABLED:
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color_ext(max(arena_range), min(arena_range), member_stats.get('arena',0), html_cache, stale_data), f'{member_stats.get("arena",0):,}')
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(blitz_range, member_stats.get('blitz',0), html_cache, stale_data), f'{member_stats.get("blitz",0):,}')
+			
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(mvp_range,   member_stats.get('mvp',0),   html_cache, stale_data), f'{member_stats.get("mvp",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stars_range, member_stats.get('stars',0), html_cache, stale_data), f'{member_stats.get("stars",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(red_range,   member_stats.get('red',0),   html_cache, stale_data), f'{member_stats.get("red",0):,}')

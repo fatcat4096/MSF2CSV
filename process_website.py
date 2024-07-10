@@ -219,17 +219,17 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 
 				print ("TIMED OUT! Retries remaining...",retries, )
 
-			except (NoSuchElementException, TimeoutException, WebDriverException) as e:
+			except (NoSuchElementException, TimeoutException, WebDriverException) as exc:
 				# Still have retries available?
 				if retries:
 					retries -= 1
 					print (f"Retries left {retries}, continuing on {traceback.format_exc()}")
 				# Too many retries, time to give up and bail.
 				else:
-					raise e
-			except Exception:
+					raise
+			except Exception as exc:
 				print (traceback.format_exc())
-				raise Exception
+				raise
 
 		# Skip this member if invalid data provided OR if we never found a roster page.
 		if not member or ('url' not in members[member] and current_url == alliance_url):
@@ -244,37 +244,48 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		time_now    = datetime.datetime.now()
 		not_updated = last_update and (last_update < start_time or last_update > time_now)	# Deal with dates from .msf files imported from outside the current time zone.
 
-		found = (f'Parsing {len(page_source):7} bytes   Found: ','')[rosters_only]+f'{member:17}'
-
+		# Cache the IS_STALE info away for easier access later.
 		member_stale = is_stale(alliance_info, member)
 		alliance_info['members'][member]['is_stale'] = member_stale
-		stale = ''
-		if alliance_info['members'][member]['is_stale']:
-			stale = '/OLD'
 
-		if not_updated:
-			time_since = time_now - last_update
-			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',f'{max(0,time_since.days):>2}d'][rosters_only]
-		else:
-			result = ['UPD','NEW'][not HAVE_URL] if rosters_only else 'Updated'
+		# Report our findings
 
 		# Never received Roster page to parse.
 		if len(page_source) < 700000: 
 			result = 'TIMEOUT'
-			stale  = ''
 		# Empty Roster page. Member has never synced.
 		elif not alliance_info['members'][member].get('tot_power'):
 			result = 'NO DATA'
-			stale = ''
+		# No update. Report how long it's been.
+		elif not_updated:
+			time_since = time_now - last_update
+			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',  f'{max(0,time_since.days):>2}d'][rosters_only]
+		# Got an update, and it's brand new
+		elif not HAVE_URL:
+			result = 'NEW'
+		# Got an update, but we've seen it before.
+		else:
+			result = 'UPD' if member_stale else 'UPDATED'
+			
+		# If Stale / Needs to Update, add this to our report.
+		if member_stale:
+			result += '/OLD' if not_updated else '/STL'
 
-		rosters_output.append(f'{found}{result}{stale}')
-		print(rosters_output[-1])
+		# The status the bot will actually use.
+		rosters_output.append(f'{member:17}{result}')
+		
+		# Printed result on terminal screen.
+		print(f'Parsing {len(page_source):7} bytes   Found: {rosters_output[-1]}')
 
-	# Keep a copy of critical stats from today's run for historical analysis.
-	update_history(alliance_info)
+	# If anything was updated, do some additional work.
+	status = ''.join([line[17:] for line in rosters_output])
+	if 'UPD' in status or 'NEW' in status:
 
-	# Update traits info if necessary.
-	add_extracted_traits(alliance_info)
+		# Keep a copy of critical stats from today's run for historical analysis.
+		update_history(alliance_info)
+
+		# Update traits info if necessary.
+		add_extracted_traits(alliance_info)
 
 	return rosters_output
 
@@ -301,19 +312,19 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	summary.append(f'Found **{updated}** new, **{len(members)-updated}** old, **{stale}** stale')
 	print (summary[-1].replace('**',''))
 
-	# If included, generate Key as footer as well.
+	# If roster_output included, generate Key for footer as well.
 	status = ''.join([line[17:] for line in rosters_output])
 
 	status_key = [] 
 
-	if 'NEW/OLD' in status:
-		status_key.append("* **NEW/OLD** - Newly added but stale. Needs sync")
+	if 'NEW/STL' in status:
+		status_key.append("* **NEW/STL** - Newly added but stale. Needs sync")
 
-	if 'UPD/OLD' in status:
-		status_key.append("* **UPD/OLD** - Updated but stale. Needs sync")
+	if 'UPD/STL' in status:
+		status_key.append("* **UPD/STL** - Updated but stale. Needs sync")
 
-	elif '/OLD' in status:
-		status_key.append('* **OLD** - Roster is stale/old. Needs sync')
+	if '/OLD' in status:
+		status_key.append('* **OLD** - Roster is old/stale. Needs sync')
 		
 	if 'NO DATA' in status:
 		status_key.append('* **NO DATA** - Roster is empty. Needs sync')
