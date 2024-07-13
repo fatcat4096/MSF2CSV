@@ -411,6 +411,9 @@ def update_history(alliance_info):
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
 @timed(level=3)
 def is_stale(alliance_info, member_name):
+
+	# TEMPORARY PATH, ALWAYS RETURN FALSE FOR IS_STALE.
+	return False
 	
 	# Load thresholds, if they're explicitly defined.
 	max_growth = alliance_info.get('settings',{}).get('percent_growth', 1.5)
@@ -509,4 +512,3 @@ def update_alliance_info_from_cached(alliance_info, cached_alliance_info):
 		for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red','tot_power','last_update','discord','scopely']:
 			if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
 				alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
-

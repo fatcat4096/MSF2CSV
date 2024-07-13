@@ -178,7 +178,7 @@ def load_cached_data(file_or_alliance=''):
 
 
 @timed(level=3)
-def write_cached_data(alliance_info, file_path='', timestamp='update', file_name= None):
+def write_cached_data(alliance_info, file_path='', timestamp='update'):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
 	if not file_path:
@@ -196,8 +196,10 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', file_name
 	if not os.path.exists(file_path):
 		os.makedirs(file_path)
 	
+	alliance_name = get_alliance_name(alliance_info)
+
 	# Construct the file name
-	file_path += os.sep + 'cached_data-'+(file_name or remove_tags(alliance_info['name']))+'.msf'
+	file_path += os.sep + 'cached_data-' + alliance_name + '.msf'
 	
 	# If we don't want to indicate this file has changed, save the current timestamp.
 	if timestamp != 'update':
@@ -260,6 +262,9 @@ def load_trait_list():
 # Has it been less than 24 hours since last update of cached_data?
 @timed(level=3)
 def fresh_enough(alliance_info):
+
+	# TEMPORARY PATCH UNTIL WORKING AGAIN, NO REFRESH
+	return True
 
 	# If a name of an alliance is passed in, find the relevant alliance_info instead.
 	if type(alliance_info) is str:
@@ -339,5 +344,17 @@ def check_import_path(alliance_name):
 			tables = raids_and_lanes.tables
 
 
+# Offer standardized process for building alliance name from alliance_info data.
+def get_alliance_name(alliance_info):
+
+	alliance_name = remove_tags(alliance_info['name'])
+
+	if alliance_info.get('color'):
+		alliance_name += '-' + alliance_info.get('color')
+	
+	return alliance_name
+	
+
 # Insert the local directory at the front of path to override packaged versions.
 sys.path.insert(0, get_local_path())
+
