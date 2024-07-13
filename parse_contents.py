@@ -26,7 +26,40 @@ def parse_alliance(contents, discord_user=None, scopely_login=None):
 	alliance = {}
 
 	# Parse the basic alliance info
-	alliance['name']      = remove_tags(soup.find('span', attrs = {'class':'alliance-name'}).text).strip()
+	alliance_name = soup.find('span', attrs = {'class':'alliance-name'})
+	alliance_html = ''.join([str(x) for x in alliance_name.children])
+
+	alliance_color = ''
+
+	# Two options for color, either explicit color= indicator
+	if '<color=' in alliance_html:
+		alliance_color = alliance_html[alliance_html.index('<color=')+6:]
+	# or just a simple tag with a hex color in it.
+	#elif '<#' in alliance_html:
+	
+	# ONCE COLOR IS LOADED IN ALLIANCE_INFO['COLOR'] NEEDS TO BE USED TO WRITE FILE **AND** USED WHEN STORING DEFAULT ALLIANCE IN DATABASE
+	# ALSO, NEED TO FIND EVERYWHERE THAT WE USE ALLIANCE_INFO['NAME'] FOR FILE NAMING.
+	
+	# Define dict entry even if empty so that existing/old entry won't be copied over. 
+	#alliance['color'] = alliance_color
+
+	alliance_style = ''
+	
+	if '<b>' in alliance_html:
+		alliance_style += 'font-weight:bold;'
+	if '<i>' in alliance_html:
+		alliance_style += 'font-style:italic;'
+	if alliance_color:
+		alliance_style += f'color:{alliance_color};'
+	
+	# Start by removing all formatting.
+	alliance_name = remove_tags(alliance_name.text).strip()
+
+	# Wrap the alliance_name if we found speical formatting.
+	if alliance_style:
+		alliance_name = f'<span style="{alliance_style}">{alliance_name}</span>'
+
+	alliance['name']      = alliance_name
 	alliance['image']     = soup.find('div',  attrs = {'class':'trophy-icon'}).find('img').get('src').split('ALLIANCEICON_')[-1][:-4]
 
 	# Parse the alliance stats.
@@ -80,8 +113,8 @@ def parse_alliance(contents, discord_user=None, scopely_login=None):
 	alliance['captains'] = captains
 	
 	# Just grab the URLs for the js scripts on the page. Will be used by extract_traits.
-	alliance['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
-	
+	alliance['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'type':'text/javascript'}) if script.get('src') and 'static' in script.get('src')]
+
 	# Return the parsed alliance info.
 	return alliance
 
@@ -281,16 +314,17 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	if not is_valid_user_id(member):
 		player['display_name']    = member
 
-	# Only use calculated total power for TCP if higher than the recorded TCP in Alliance Info.
-	if tot_power > alliance_info['members'].get(member,{}).get('tcp',0):
-		player_info['tcp'] = tot_power
-		
 	# Temporary fix. Calculate values if possible.
-	player_info['stp']   = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
-	player_info['tcc']   = len([char for char in processed_chars if processed_chars[char]['power']])
+	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
+	calc_tcc             = len([char for char in processed_chars if processed_chars[char]['power']])
 	player_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
 	player_info['stars'] = sum([processed_chars[char]['yel'] for char in processed_chars])
 	player_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
+
+	# Only use calculated TCP, STP, and TCC if higher than the recorded values in Alliance Info.
+	if tot_power > alliance_info['members'].get(member,{}).get('tcp',0):		player_info['tcp'] = tot_power
+	if calc_stp  > alliance_info['members'].get(member,{}).get('stp',0):		player_info['stp'] = calc_stp
+	if calc_tcc  > alliance_info['members'].get(member,{}).get('tcp',0):		player_info['tcc'] = calc_tcc
 
 	# And update the player info with current stats from the side panel.
 	player.update(player_info)
@@ -299,7 +333,7 @@ def parse_roster(contents, alliance_info, parse_cache, member=''):
 	alliance_info['portraits'] = char_portraits
 
 	# Keep the scripts in use up to date in alliance_info. Will be used by extract_traits.
-	scripts = [script.get('src') for script in soup.findAll('script', attrs = {'charset':'utf-8'})]
+	scripts = [script.get('src') for script in soup.findAll('script', attrs = {'type':'text/javascript'}) if script.get('src') and 'static' in script.get('src')]
 	if scripts:
 		alliance_info['scripts'] = scripts
 
