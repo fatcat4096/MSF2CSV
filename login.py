@@ -29,6 +29,9 @@ def get_driver(headless=False):
 	options.add_argument('--accept-lang=en-US')	
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
+	prefs = {"download.default_directory" : "C:\\Users\\baker\\dev\\msf\\csv"}
+	options.add_experimental_option("prefs",prefs)
+
 	# If headless requested, run this as a headless server.
 	if headless:
 		options.add_argument('--headless=new')
@@ -60,11 +63,11 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 
 		scopely_website_login(driver, scopely_login, scopely_pass)
 
-	# If our current url isn't == alliance_info_url then we didn't ever login. 
+	# If our page doesn't include the Alliance Members table, never successfully logged in. 
 
 	# Waiting while you login manually, automatically, or approve login via 2FA.
 	try:
-		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-roster')))
+		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-members')))
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
 
@@ -144,3 +147,34 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
+
+
+def click_on_csv_button(driver):
+	button = driver.find_elements(By.CLASS_NAME, 'download-button')
+
+	# Only call click if button was located.
+	if button:
+		button[0].click()
+		
+	return driver.find_elements(By.CLASS_NAME, 'download-option')
+
+def click_on_info_button(driver):
+	downloads = click_on_csv_button(driver)
+
+	# Narrow down the search to the "INFO" Download Option.
+	button = downloads[0].find_elements(By.TAG_NAME, 'button')
+
+	# Only call click if button was located.
+	if button:
+		button[0].click()						
+	
+def click_on_roster_button(driver):
+	downloads = click_on_csv_button(driver)
+
+	# Narrow down the search to the "INFO" Download Option.
+	button = downloads[1].find_elements(By.TAG_NAME, 'button')
+
+	# Only call click if button was located.
+	if button:
+		button[0].click()						
+
