@@ -52,7 +52,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Start by logging into the website.
 	driver = login(prompt, headless, scopely_login=scopely_login)
 
-	website_alliance_info = process_alliance_info(driver)
+	website_alliance_info = parse_alliance(driver)
 
 	# If no alliance_name specified, use the login's alliance.
 	if not alliance_name:
@@ -71,27 +71,17 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# We're working from website if the specified alliance_name matches the website alliance_name
 	working_from_website = (alliance_name == website_alliance_info['name'])
 
+	if not working_from_website:
+		print (f"Login doesn't match website alliance name: {alliance_name}. Aborting.")
+		return
+
 	# If working_from_website, the website_alliance_info will be our baseline. 
-	if working_from_website:
-		alliance_info = website_alliance_info
-	
-		# If we found cached_alliance_info, should we use it as-is or update the website info?
-		if cached_alliance_info:
-	
-			# If fresh data and no membership changes, let's just use it as-is.
-			if force == 'stale' or (not force and fresh_enough(cached_alliance_info) and alliance_info['members'].keys() == cached_alliance_info['members'].keys()):
-				print ("Using cached_data from file:", cached_alliance_info['file_path'])
-				
-				# Update the strike team info if we have valid teams in strike_teams.py
-				update_strike_teams(cached_alliance_info)
-				return cached_alliance_info	
+	alliance_info = website_alliance_info
 
-			# Update the fresh alliance_info from website with extra info from cached_data.
-			update_alliance_info_from_cached(alliance_info, cached_alliance_info)
-
-	# If not working_from_website, the cached_alliance_info will be our baseline. 
-	else:
-		alliance_info = cached_alliance_info
+	# If we found cached_alliance_info, update the fresh
+	# info from website with extra info from cached_data.
+	if cached_alliance_info:
+		update_alliance_info_from_cached(alliance_info, cached_alliance_info)
 
 	# Make note of when we begin.
 	start_time = datetime.datetime.now()
@@ -109,7 +99,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	updated = get_valid_strike_teams(alliance_info) 
 
 	# Generate strike_teams.py if we updated strike team definitions or if this file doesn't exist locally.
-	if working_from_website and (updated or 'strike_teams' not in globals()):
+	if updated or 'strike_teams' not in globals():
 		generate_strike_teams(alliance_info)
 
 	# Write the collected roster info to disk in a subdirectory.
@@ -119,21 +109,9 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 
 
-# Wait til alliance_info is ready, then parse the contents..
-@timed(level=3)
-def process_alliance_info(driver, discord_user={}, scopely_login=''):
-
-	# We are in, wait until loaded before starting
-	WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.TAG_NAME, 'H4')))
-
-	# Pull alliance information from this Alliance Info screen
-	return parse_alliance(driver.page_source, discord_user, scopely_login)
-
-
-
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(driver, alliance_info, working_from_website=False, rosters_only=False, only_process=[], log_file=None):
+def process_rosters(driver, alliance_info, working_from_website=False, only_process=[], diamond_data={}, log_file=None):
 
 	# Really only used for Working From Website processing.
 	alliance_url   = 'https://marvelstrikeforce.com/en/alliance/members'
@@ -171,30 +149,44 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		retries = 3
 		page_source = ''
 		current_url = ''
-		HAVE_URL = members[member].get('url','') not in ('','auth')
+		MEMBER_URL = members[member].get('url','')
+		HAVE_URL = MEMBER_URL not in ('','auth') and members[member].get('avail')
 
 		while retries:
 			try:
 
-				# Use a cached URL if available.
-				if HAVE_URL:
-					driver.get(f"https://marvelstrikeforce.com/en/v1/players/{members[member]['url']}/characters")
-
-				# Or need to find an active roster button for this member
-				else:
-					# Start off by getting back to the Alliance page if we're not already on it.
-					current_url=alliance_url
-					if driver.current_url != alliance_url:
-						driver.get(alliance_url)
-
-					# If successful, the active roster button was found and clicked.
-					# If nothing returned, we didn't find an active roster button.
-					if not find_members_roster(driver, member, rosters_output):
-						break
-
 				# Note when we began processing
 				start_time = datetime.datetime.now()
 				time_limit = 5
+
+				# Navigate to the roster page.
+				if HAVE_URL:
+					# Start by getting to Profile page.
+					driver.get(f"https://marvelstrikeforce.com/en/member/{MEMBER_URL}/info")
+
+					# Parse the Player Stats on the Profile page.
+					player_stats = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "player-stats-table")))
+					parse_player_stats(player_stats.get_attribute('innerHTML'), alliance_info['members'][member])
+					
+					# Look for the Roster Button.
+					buttons = []
+					while not buttons:
+						time.sleep(0.25)
+						buttons = driver.find_elements(By.XPATH,f'//a[@href="/member/{MEMBER_URL}/characters"]')
+					
+					# Navigate from Profile tab to Roster tab.
+					buttons[0].click()
+						
+				# Or need to find an active roster button for this member
+				else:
+					
+					# TEMP -- Clear out errant Diamond Data.
+					processed_chars = members[member].get('processed_chars',{})
+					for char in processed_chars:
+						processed_chars[char]['dmd'] = 0
+
+					# Nothing to do. Roster hasn't been made available.
+					break
 				
 				# Page loads in sections, will be > 1MB after roster information loads.
 				while (datetime.datetime.now()-start_time).seconds < time_limit:
@@ -211,7 +203,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 
 				# If page loaded, pass contents to scraping routines for stat extraction.
 				if len(page_source)>700000:
-					member = parse_roster(page_source, alliance_info, parse_cache, member)
+					member = parse_roster(page_source, alliance_info, parse_cache, member, driver.roster_csv, diamond_data)
 					break
 
 				# If we got here, we exceeded the time limit and our page still hasn't fully loaded.
@@ -246,12 +238,14 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 
 		# Cache the IS_STALE info away for easier access later.
 		member_stale = is_stale(alliance_info, member)
-		alliance_info['members'][member]['is_stale'] = member_stale
+		members[member]['is_stale'] = member_stale
 
 		# Report our findings
 
 		# Never received Roster page to parse.
-		if len(page_source) < 700000: 
+		if not members[member].get('avail'):
+			result = 'UNAVAIL'
+		elif len(page_source) < 700000: 
 			result = 'TIMEOUT'
 		# Empty Roster page. Member has never synced.
 		elif not alliance_info['members'][member].get('tot_power'):
@@ -259,7 +253,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, rosters_o
 		# No update. Report how long it's been.
 		elif not_updated:
 			time_since = time_now - last_update
-			result =  [f'Last upd: {time_since.days}d{int(time_since.seconds/3600): 2}h ago',  f'{max(0,time_since.days):>2}d'][rosters_only]
+			result =  f'{max(0,time_since.days):>2}d {int(time_since.seconds/3600)}h'
 		# Got an update, and it's brand new
 		elif not HAVE_URL:
 			result = 'NEW'
@@ -317,7 +311,10 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 
 	status_key = [] 
 
-	if 'NEW/STL' in status:
+	if 'UNAVAIL' in status:
+		status_key.append("* **UNAVAIL** - Change Sharing to **ALLIANCE ONLY**")
+
+	"""if 'NEW/STL' in status:
 		status_key.append("* **NEW/STL** - Newly added but stale. Needs sync")
 
 	if 'UPD/STL' in status:
@@ -330,7 +327,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 		status_key.append('* **NO DATA** - Roster is empty. Needs sync')
 
 	if 'NO URL' in status:
-		status_key.append("* **NO URL** - No 'View Roster' link. Sync, then **/alliance refresh**")
+		status_key.append("* **NO URL** - No 'View Roster' link. Sync, then **/alliance refresh**")"""
 
 	if 'TIMEOUT' in status:
 		status_key.append('* **TIMEOUT** - Website slow/down. Try later')
