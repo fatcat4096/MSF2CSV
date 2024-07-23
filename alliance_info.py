@@ -257,7 +257,9 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 		char_info.update({'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas})
 
 	current_val = int(char_info.get(key,0))
-	
+	if key == 'red':
+		current_val += int(char_info.get('dmd',0))
+
 	# If we're not on a history tab, we're almost done.
 	if not hist_date:
 	
@@ -302,6 +304,8 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 
 		# get the difference between the oldest value and the current one.
 		delta_val = current_val - hist_info.get(key,0)
+		if key == 'red':
+			delta_val -= hist_info.get('dmd',0)
 
 		# If there's a difference and the key is power, we need details for tooltip. 
 		if delta_val and key == 'power':
@@ -509,6 +513,6 @@ def update_alliance_info_from_cached(alliance_info, cached_alliance_info):
 			
 	# Also copy over additional information inside the member definitions. 
 	for member in alliance_info['members']:
-		for key in ['processed_chars','url','other_data','max','arena','blitz','stars','red','tot_power','last_update','discord','scopely']:
+		for key in ['processed_chars','url','other_data','max','arena','blitz','blitz_wins','stars','red','tot_power','last_update','discord','scopely']:
 			if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
 				alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]

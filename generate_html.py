@@ -780,7 +780,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 							if key_val:
-								field_value = f'{key_val:+}' if use_hist_date else f'{key_val}'
+								if key=='red' and key_val>7:
+									field_value = f'{key_val-7}&#x1F48E;'
+								else:
+									field_value = f'{key_val:+}' if use_hist_date else f'{key_val}'
+
 							else:
 								field_value = '-'
 
@@ -894,7 +898,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	html_file=''
 
 	# Conditionally include Diamonds columns.
-	DIAMONDS_ENABLED = False
+	DIAMONDS_ENABLED = True
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -1247,7 +1251,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	html_file = ''
 	
 	# Conditionally include Arena/Blitz columns.
-	ARENA_BLITZ_ENABLED = False
+	ARENA_BLITZ_ENABLED = True
 
 	# Start by sorting members by TCP.
 	alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)

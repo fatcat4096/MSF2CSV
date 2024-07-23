@@ -20,8 +20,9 @@ def add_extracted_traits(alliance_info):
 
 	# Update with traits missing from JSON file.
 	traits  = alliance_info.setdefault('traits',{})
+
 	updated = update_traits(traits) or updated
-		
+
 	# If the old trait file isn't being used, traits needs to be updated.
 	if not traits or alliance_info.get('trait_file') not in alliance_info.setdefault('scripts',[]):
 
@@ -48,8 +49,6 @@ def extract_traits(file=''):
 
 	# load the indicated script, MSF.gg will respond with a 404 page if not available anymore.
 	page = urllib.request.urlopen('https://marvelstrikeforce.com'+file)
-	
-	print ('Parsing:','https://marvelstrikeforce.com'+file)
 	
 	buffer = str(page.read())
 
@@ -109,9 +108,11 @@ def extract_traits(file=''):
 def update_traits(extracted_traits):
 
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if 'Illuminati' not in extracted_traits:
+	if extracted_traits and 'Ares' not in extracted_traits['Villain']:
 
 		manual_traits =	{
+						# Ares
+						'Ares'                 :['Villain','Global','Mystic','Protector'],
 						# Alpha Flight
 						'Sunfire'              :['AlphaFlight'],
 						'Wolverine'            :['AlphaFlight'],
@@ -122,6 +123,9 @@ def update_traits(extracted_traits):
 						'Namor'                :['Cabal'],
 						'Iron Patriot'         :['Cabal','Global','Villain','Tech','Blaster'],
 						'The Leader'           :['Cabal','Global','Villain','Bio','Support','Gamma'],
+						# Epic
+						'Iron Man (Zombie)'    :['Epic'],
+						'Juggernaut (Zombie)'  :['Epic'],
 						# Hive-Mind
 						'Carnage'              :['HiveMind'],
 						'Venom'                :['HiveMind'],

@@ -144,9 +144,9 @@ def log_init(calling_func, context=None):
 
 	global log_file_path
 	
-	date_time = time.strftime("%Y.%m.%d-%H%M%S",time.localtime(time.time()))
+	date_time = time.strftime("%y.%m.%d-%H%M%S",time.localtime(time.time()))
 
-	logger = logging.getLogger(calling_func+date_time)
+	logger = logging.getLogger(calling_func+'-'+date_time)	
 	logger.setLevel(logging.INFO)
 
 	username = f'-{context.author.name}' if context else ''
@@ -156,7 +156,7 @@ def log_init(calling_func, context=None):
 	
 	file_handler = logging.FileHandler(filename=filename, encoding="utf-8", mode="w")
 	file_handler_formatter = logging.Formatter(
-		"[{asctime}] [{levelname:<8}] {name}: {message}", "%Y-%m-%d %H:%M:%S", style="{"
+		"[{asctime}] [{levelname:<8}]: {message}", "%Y-%m-%d %H:%M:%S", style="{"
 	)
 	file_handler.setFormatter(file_handler_formatter)
 
@@ -304,7 +304,6 @@ def log_leave(log, ret, **kwarg):
 		return
 
 	level  = len(stack)
-	l_time = time.asctime(time.localtime(time.time()))
 
 	log_buffer = ''
 	level = "   "*(level-1)
