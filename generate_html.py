@@ -781,7 +781,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 							if key_val:
 								if key=='red' and key_val>7:
-									field_value = f'{key_val-7}&#x1F48E;'
+									field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
 								else:
 									field_value = f'{key_val:+}' if use_hist_date else f'{key_val}'
 

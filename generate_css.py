@@ -42,6 +42,11 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   min-width   : 28px;
   z-index     : 5;
 }
+.dmd {
+  min-width   : 35px;
+  line-height : 100%;
+  display     : inline-block;
+}
 .blub:hover {
   background  : DodgerBlue;
   cursor      : pointer;  
