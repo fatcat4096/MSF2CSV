@@ -63,24 +63,29 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	if not cached_alliance_info:
 		cached_alliance_info = find_cached_data(alliance_name)
 
-	# If we haven't found cached_data and the alliance requested is NOT the one from the login, fail gracefully. 
-	if not cached_alliance_info and alliance_name != website_alliance_info['name']:
-		print (f"No info found for alliance: {alliance_name}. Aborting.")
-		return
-
 	# We're working from website if the specified alliance_name matches the website alliance_name
-	working_from_website = (alliance_name == website_alliance_info['name'])
+	working_from_website = (alliance_name.lower() == website_alliance_info['name'].lower())
 
+	# If we haven't found cached_data and the alliance requested is NOT the one from the login, fail gracefully. 
 	if not working_from_website:
-		print (f"Login doesn't match website alliance name: {alliance_name}. Aborting.")
+		print (f"Alliance requested doesn't match login alliance: {alliance_name}. Aborting.")
 		return
 
 	# If working_from_website, the website_alliance_info will be our baseline. 
 	alliance_info = website_alliance_info
 
-	# If we found cached_alliance_info, update the fresh
-	# info from website with extra info from cached_data.
+	# If we found cached_alliance_info, should we use it as-is or update the website info?
 	if cached_alliance_info:
+
+		# If fresh data and no membership changes, let's just use it as-is.
+		if force == 'stale' or (not force and fresh_enough(cached_alliance_info) and alliance_info['members'].keys() == cached_alliance_info['members'].keys()):
+			print ("Using cached_data from file:", cached_alliance_info['file_path'])
+
+			# Update the strike team info if we have valid teams in strike_teams.py
+			update_strike_teams(cached_alliance_info)
+			return cached_alliance_info
+
+		# Update the fresh alliance_info from website with extra info from cached_data.
 		update_alliance_info_from_cached(alliance_info, cached_alliance_info)
 
 	# Make note of when we begin.

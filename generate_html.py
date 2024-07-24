@@ -1251,7 +1251,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	html_file = ''
 	
 	# Conditionally include Arena/Blitz columns.
-	ARENA_BLITZ_ENABLED = True
+	ARENA_BLITZ_ENABLED = False
 
 	# Start by sorting members by TCP.
 	alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
@@ -1589,6 +1589,7 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 	
 	return get_value_color_ext(min_val, max_val, value, html_cache, stale_data, stat, under_min, hist_date)
 
+
 def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):
 	
 	# If we've specified an inverted range, flip the calculation on its head.
@@ -1598,6 +1599,9 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		# 0 Stays 0, max_val goes to 1, 1 goes to mex_value
 		if value:
 			value = (max_val - value) + 1
+
+	# Special treatment if there's only a single value.
+	min_val -= min_val == max_val
 	
 	# Special treatment for the '0' fields. 
 	if not value:

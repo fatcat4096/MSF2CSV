@@ -313,11 +313,11 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
 		update_parse_cache(processed_chars,char_name,parse_cache)
 
-	"""# Calculate level based on character leveling.
+	# Calculate level based on character leveling.
 	player_info['level'] = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars]) if processed_chars else 0
 
 	# Use Alliance Info information if it's available.
-	player_info['level'] = max(player_info['level'], alliance_info['members'].get(member,{}).get('level',0))"""
+	player_info['level'] = max(player_info['level'], alliance_info['members'].get(member,{}).get('level',0))
 
 	# Get a little closer to our work. 
 	player = alliance_info['members'].setdefault(player_name,{})
@@ -335,7 +335,7 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 	if 1: #not is_valid_user_id(member):
 		player['display_name']    = member
 
-	"""# Temporary fix. Calculate values if possible.
+	# Temporary fix. Calculate values if possible.
 	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
 	calc_tcc             = len([char for char in processed_chars if processed_chars[char]['power']])
 	player_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
@@ -345,7 +345,7 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 	# Only use calculated TCP, STP, and TCC if higher than the recorded values in Alliance Info.
 	if tot_power > alliance_info['members'].get(member,{}).get('tcp',0):		player_info['tcp'] = tot_power
 	if calc_stp  > alliance_info['members'].get(member,{}).get('stp',0):		player_info['stp'] = calc_stp
-	if calc_tcc  > alliance_info['members'].get(member,{}).get('tcp',0):		player_info['tcc'] = calc_tcc"""
+	if calc_tcc  > alliance_info['members'].get(member,{}).get('tcp',0):		player_info['tcc'] = calc_tcc
 
 	# And update the player info with current stats from the side panel.
 	player.update(player_info)
