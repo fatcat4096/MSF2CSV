@@ -4,14 +4,21 @@
 Takes the processed alliance / roster data and generates original format .csv files.  
 """
 
-
 from alliance_info import get_player_list, get_char_list
+
+from copy import deepcopy
 
 
 # Including this here for expedience.
 def generate_csv(alliance_info):
+	# Create a duplicate structure to 
+	member_info = deepcopy(alliance_info.get('members',{}))
+	for member in member_info:
+		for char in member_info[member].get('processed_chars',{}):
+			member_info[member]['processed_chars'][char]['red+dmd'] = member_info[member]['processed_chars'][char]['red'] + member_info[member]['processed_chars'][char]['dmd'] 
+	
 	# Write the basic output to a CSV in the local directory.
-	keys1 = ['lvl','power','yel','red','tier']
+	keys1 = ['lvl','power','yel','red+dmd','tier']
 	keys2 = ['iso','iso','iso','iso','iso','iso']
 	
 	csv_file = ['Name,AllianceName,CharacterId,Favorite,Level,Power,Stars,RedStar,GearLevel,Basic,Special,Ultimate,Passive,ISO Class,ISO Level,ISO Armor,ISO Damage,ISO Focus,ISO Health,ISO Resist']
@@ -22,14 +29,14 @@ def generate_csv(alliance_info):
 	alliance_name = alliance_info['name']
 			
 	for player_name in player_list:
-		processed_chars = alliance_info['members'][player_name]['processed_chars']
+		processed_chars = member_info[player_name]['processed_chars']
+		other_data      = member_info[player_name]['other_data']
 
 		# Only include entries for recruited characters.
 		for char_name in char_list:
-			if processed_chars[char_name]['lvl']:
-				other_data = alliance_info['members'][player_name]['other_data'][char_name] & 15	# Bitwise AND to bring out just the iso_class and favorite status. -- REMOVE THE & 15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
-				iso_class = ['','Fortifier','Healer','Skirmisher','Raider','Striker'][other_data%6]
-				favorite  = ['false','true'][int(other_data/6)]
+			if processed_chars.get(char_name,{}).get('lvl'):
+				iso_class = ['','Fortifier','Healer','Skirmisher','Raider','Striker'][other_data[char_name]%6]
+				favorite  = ['false','true'][int(other_data[char_name]/6)]
 				
 				bas,abil = divmod(processed_chars[char_name]['abil'],1000)
 				spc,abil = divmod(abil,100)

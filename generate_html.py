@@ -1601,7 +1601,7 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 			value = (max_val - value) + 1
 
 	# Special treatment if there's only a single value.
-	min_val -= min_val == max_val
+	value += min_val == max_val
 	
 	# Special treatment for the '0' fields. 
 	if not value:
