@@ -34,10 +34,7 @@ def generate_strike_teams(alliance_info):
 			members = sorted(alliance_info['members'],key=str.lower)
 
 			# Break it up into chunks and add the appropriate dividers.
-			if raid_type == 'spotlight':
-				strike_teams[raid_type] = [members[:6], members[6:12], members[12:18], members[18:]]
-			else:
-				strike_teams[raid_type] = [members[:8], members[8:16], members[16:]]
+			strike_teams[raid_type] = [members[:8], members[8:16], members[16:]]
 	
 	# Create header
 	new_file  = '''# This file contains the Strike Teams used for HTML file output.
@@ -170,13 +167,19 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 									] ]
 							}
 
+	# Meta Heroes for use in Dark Dimension 8
+	tables['dd8'] = { 'name': 'Dark Dimension 8', 'min_tier': 19, 'min_iso': 13, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
+						'lanes':[ [
+								{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
+								{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
+								{'traits': ['Non-Legendary', 'Global', 'Villain'], 'label':'Global Villain'},
+								{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'Global Hero'},
+								{'traits_req':'any', 'traits': ['Cosmic', 'Legendary'],   'label':'Cosmic or<br>Legendary'},
+								] ]
+						}
+
 	# Meta Heroes for use in Dark Dimension 7
-	tables['dd7'] = { 'name': 'Dark Dimension 7',
-						'min_tier': 19,
-						'max_others': 10,
-						'sort_by': 'avail',
-						'sort_char_by': 'avail',
-						'inc_avail': True,
+	tables['dd7'] = { 'name': 'Dark Dimension 7', 'min_tier': 19, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
 						'lanes':[ [
 								{'traits': ['All'], 'label':'Gear Tier 19'},
 								{'traits': ['Non-Legendary', 'Non-Mythic', 'City'],   'label':'City'},
@@ -187,19 +190,19 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								] ]
 						}
 
-	# Meta Heroes for use in DD6 report
-	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail','inc_avail': True, 
+	# Meta Heroes for use in Dark Dimension 6
+	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
 								{'traits': ['Non-Legendary', 'City'],     'label':'City'},
 								{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
-								{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
+								{'traits_req':'any', 'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
 								] ]
 						}
 
 	# Meta Heroes for use in Dark Dimension 5
-	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True,
+	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
@@ -214,6 +217,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['AForce']},
 								{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 								{'traits': ['Astonishing']},
+								{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
 								{'traits': ['Bifrost']},
 								{'traits': ['BionicAvenger']},
 								{'traits': ['BlackOrder','Thanos']},

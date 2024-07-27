@@ -273,6 +273,8 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 			
 			if iso_info.find('blue') != -1:
 				iso += 5
+			elif iso_info.find('purple') != -1:
+				iso += 10
 			
 			iso = str(iso)
 

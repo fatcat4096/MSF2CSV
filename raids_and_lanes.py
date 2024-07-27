@@ -87,6 +87,24 @@ tables['old_incur'] = { 'name': 'Incursion 1.x Raid',
 							] ]
 					}
 
+# Meta Heroes for use in Dark Dimension 8
+tables['dd8'] = { 'name': 'Dark Dimension 8',
+					'min_tier': 19,
+					'min_iso': 13,
+					'max_others': 10,
+					'sort_by': 'avail',
+					'sort_char_by': 'avail',
+					'inc_avail': True,
+					'traits_req': 'all', 
+					'lanes':[ [
+							{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
+							{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
+							{'traits': ['Non-Legendary', 'Global', 'Villain'], 'label':'Global Villain'},
+							{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'Global Hero'},
+							{'traits_req':'any', 'traits': ['Cosmic', 'Legendary'],   'label':'Cosmic or<br>Legendary'},
+							] ]
+					}
+
 # Meta Heroes for use in Dark Dimension 7
 tables['dd7'] = { 'name': 'Dark Dimension 7',
 					'min_tier': 19,
@@ -94,6 +112,7 @@ tables['dd7'] = { 'name': 'Dark Dimension 7',
 					'sort_by': 'avail',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
+					'traits_req': 'all', 
 					'lanes':[ [
 							{'traits': ['All'], 'label':'Gear Tier 19'},
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'City'],   'label':'City'},
@@ -111,12 +130,13 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 					'sort_by': 'avail',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
+					'traits_req': 'all', 
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
 							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
 							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
-							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
+							{'traits_req':'any', 'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
 							] ]
 					}
 
@@ -127,6 +147,7 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 					'sort_by': 'avail',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
+					'traits_req': 'all', 
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
@@ -143,6 +164,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['AForce']},
 							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 							{'traits': ['Astonishing']},
+							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
 							{'traits': ['Bifrost']},
 							{'traits': ['BionicAvenger']},
 							{'traits': ['BlackOrder','Thanos']},

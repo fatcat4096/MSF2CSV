@@ -626,7 +626,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).replace(", ","<br>")}</div></td>\n'
 				
 			else:
-				url = f"https://assets.marvelstrikeforce.com/imgs/Portrait_{alliance_info['portraits'][char]}.png"
+				url = f"https://assets.marvelstrikeforce.com/imgs/Portrait_{alliance_info['portraits'].get(char,'')}.png"
 
 				# Default value to start
 				onclick = ''
@@ -1600,13 +1600,13 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		if value:
 			value = (max_val - value) + 1
 
-	# Special treatment if there's only a single value.
-	value += min_val == max_val
-	
 	# Special treatment for the '0' fields. 
 	if not value:
 		return 'hist'
 
+	# Special treatment if there's only a single value.
+	value += min_val == max_val
+	
 	# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 
 	# Midpoint = ISO 8

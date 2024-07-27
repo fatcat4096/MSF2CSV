@@ -107,8 +107,18 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
+	updated = False
+
+	if 'AlphaStar' in extracted_traits:
+		del extracted_traits['AlphaStar']
+		updated = True
+
+	if 'Annhilator' in extracted_traits:
+		del extracted_traits['Annhilator']
+		updated = True
+
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'Ares' not in extracted_traits['Villain']:
+	if extracted_traits and 'Annihilator' not in extracted_traits:
 
 		manual_traits =	{
 						# Ares
@@ -119,6 +129,12 @@ def update_traits(extracted_traits):
 						'Guardian'             :['AlphaFlight','Hero','Global','Tech','Brawler'],
 						'Northstar'            :['AlphaFlight','Hero','Global','Mutant','Controller'],
 						'Sasquatch'            :['AlphaFlight','Hero','Global','Bio','Protector'],
+						# Annihilator
+						'Ultimus'              :['Annihilator'],
+						'Silver Surfer'        :['Annihilator'],
+						'Gladiator'            :['Annihilator','Villain','Cosmic','Bio','Protector'],
+						'Gorr'                 :['Annihilator','Villain','Cosmic','Bio','Controller'],
+						'Thanos (Endgame)'     :['Annihilator','Villain','Cosmic','Skill','Brawler'],
 						# Cabal
 						'Namor'                :['Cabal'],
 						'Iron Patriot'         :['Cabal','Global','Villain','Tech','Blaster'],
@@ -171,8 +187,7 @@ def update_traits(extracted_traits):
 				extracted_traits.setdefault(trait,{})[char]=1
 				extracted_traits[trait]
 	
-		if 'AlphaStar' in extracted_traits:
-			del extracted_traits['AlphaStar']
-	
 		# Indicate extracted_traits has been Updated.
-		return True
+		updated = True
+
+	return updated
