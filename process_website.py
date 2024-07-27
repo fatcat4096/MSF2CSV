@@ -439,7 +439,7 @@ def update_strike_teams(alliance_info):
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
 
 			# Make some common sense fixes and then update the alliance_info dict.
-			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
+			updated = fix_strike_teams(strike_teams[raid_type], alliance_info) or updated
 
 			# Only 'updated' if we changed the cached value.
 			if alliance_info.get('strike_teams',{}).get(raid_type) != strike_teams[raid_type]:
@@ -450,7 +450,7 @@ def update_strike_teams(alliance_info):
 		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
 	
 			# Fix any issues. We will just update this info in cached_data.
-			updated = fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info) or updated
+			updated = fix_strike_teams(alliance_info['strike_teams'][raid_type], alliance_info) or updated
 
 	# Refresh the is_stale data in the file.
 	update_is_stale(alliance_info)
@@ -479,7 +479,7 @@ def get_valid_strike_teams(alliance_info):
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
 
 			# If we update or fix the definition, write it to disk before we're done.
-			updated = fix_strike_team(strike_teams[raid_type], alliance_info) or updated
+			updated = fix_strike_teams(strike_teams[raid_type], alliance_info) or updated
 			
 			# Store the result in alliance_info.
 			alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
@@ -488,7 +488,7 @@ def get_valid_strike_teams(alliance_info):
 		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
 	
 			# Fix any issues. We will just update this info in cached_data.
-			fix_strike_team(alliance_info['strike_teams'][raid_type], alliance_info)
+			fix_strike_teams(alliance_info['strike_teams'][raid_type], alliance_info)
 
 	update_is_stale(alliance_info)
 
@@ -573,54 +573,74 @@ def valid_strike_team(strike_team, alliance_info):
 
 # Before we take the strike_team.py definition as is, let's fix some common problems.
 @timed(level=3)
-def fix_strike_team(strike_team, alliance_info):
+def fix_strike_teams(strike_teams, alliance_info):
 
+	# Track whether anything has been changed.
 	updated = False
 
-	player_names  = list(alliance_info['members'])
-	player_lower  = [name.lower() for name in player_names]
+	# Track which members have been used.
+	members_used = set()
 
-	# Make a copy to keep track of who we've found and who we haven't.
-	still_to_find = player_names[:]
-	not_yet_found = []
-
-	# Start with looking for capitalization issues.
-	for team in strike_team:
-
-		# Fix any capitalization issues.
-		for idx in range(len(team)):
-			player_name = team[idx]
-
-			# If can't find, maybe they just got the wrong case? Fix it silently, if so.
-			if player_name not in player_names and player_name.lower() in player_lower:
-				team[idx] = player_names[player_lower.index(player_name.lower())]
-				updated = True
-
-			# If we found it, remove it from the list to find.
-			if team[idx] in still_to_find:
-				still_to_find.remove(team[idx])
-			# If not a divider, note that we didn't find this one.
-			elif '--' not in team[idx]:
-				not_yet_found.append(team[idx])
+	# Get a working list of valid member names.
+	MEMBER_LIST = sorted(alliance_info.get('members',[]), key=str.lower)
 	
-	# After everything, if we have the same number both missing and extra, 
-	# assume we have replaced the missing people with the leftover ones.
-	if still_to_find and len(still_to_find) <= len(not_yet_found):
-
-		updated = True
-
-		# Put each of the new players into the old players spots.
-		for idx in range(len(still_to_find)):
-			old_player_name = not_yet_found[idx]
-			new_player_name = still_to_find[idx]
-
-			# Find and replace them one by one.
-			for team in strike_team:
-				if old_player_name in team:
-					team[team.index(old_player_name)] = new_player_name
+	# Start by removing invalid entries or duplicates. 
+	for strike_team in strike_teams:
+		updated = clean_strike_team(strike_team, MEMBER_LIST, members_used) or updated
+	
+	# Finally, fill any empty entries with the remaining members 
+	for strike_team in strike_teams:
+		updated = fill_strike_team(strike_team, MEMBER_LIST, members_used) or updated
 
 	return updated
 
+
+def clean_strike_team(strike_team, MEMBER_LIST, members_used):
+
+	# Track whether anything has been changed.
+	updated = False
+
+	MEMBER_LOWER = [member.lower for member in MEMBER_LIST]
+
+	for idx,member in enumerate(strike_team):
+
+		# Start by fixing case if necessary.
+		if member not in MEMBER_LIST and member.lower() in MEMBER_LOWER:
+			member = MEMBER_LIST[MEMBER_LOWER.index(member.lower())]
+			strike_team[idx] = member
+			updated = True
+	
+		# Clear duplicate or invalid entries.
+		if member not in MEMBER_LIST or member in members_used:
+			strike_team[idx] = ''
+			updated = True
+
+		# Make note that a name has been used.
+		elif member in MEMBER_LIST:
+			members_used.add(member)
+	
+	return updated
+
+
+def fill_strike_team(strike_team, MEMBER_LIST, members_used):
+	
+	# Track whether anything has been changed.
+	updated = False
+
+	members_to_add = [member for member in MEMBER_LIST if member not in members_used]
+
+	# Ensure we have 8 entries to fill.
+	while len(strike_team) < 8:
+		strike_team.append('')
+	
+	for idx,member in enumerate(strike_team):
+		if not member and members_to_add:
+			strike_team[idx] = members_to_add.pop(0)
+			members_used.add(strike_team[idx])
+			updated = True
+
+	return updated
+	
 
 # Calculate is_stale for each member and cache in alliance_info.
 def update_is_stale(alliance_info):
