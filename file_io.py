@@ -178,7 +178,7 @@ def load_cached_data(file_or_alliance=''):
 
 
 @timed(level=3)
-def write_cached_data(alliance_info, file_path='', timestamp='update'):
+def write_cached_data(alliance_info, file_path='', timestamp='update', filename=''):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
 	if not file_path:
@@ -199,7 +199,7 @@ def write_cached_data(alliance_info, file_path='', timestamp='update'):
 	alliance_name = get_alliance_name(alliance_info)
 
 	# Construct the file name
-	file_path += os.sep + 'cached_data-' + alliance_name + '.msf'
+	file_path += os.sep + 'cached_data-' + (filename or alliance_name) + '.msf'
 	
 	# If we don't want to indicate this file has changed, save the current timestamp.
 	if timestamp != 'update':
