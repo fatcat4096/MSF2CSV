@@ -276,7 +276,9 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 			elif iso_info.find('purple') != -1:
 				iso += 10
 			
-			iso = str(iso)
+			# TEMP FIX FOR BROKEN WEBSITE
+			if level >= 85 and not iso:
+				iso = 10
 
 			iso_class = 0
 			if iso_info.find('fortify') != -1:
@@ -390,15 +392,18 @@ def parse_diamond_data(roster_csv, char_portraits):
 
 	diamond_data = {}
 
-	# Build char name lookup from portrait listing.
-	char_lookup = {}
-	for name in char_portraits:
-	
-		char_lookup[char_portraits[name].rsplit('_',1)[0]] = name
-		
+	# Can't parse if diamond data is unavailable.
+	if not os.path.exists(roster_csv):
+		return diamond_data
+
 	# Pull full Roster Info from the roster.csv file.
 	roster_csv = open(roster_csv, 'r', encoding='utf-8').readlines()
 
+	# Build char name lookup from portrait listing.
+	char_lookup = {}
+	for name in char_portraits:
+		char_lookup[char_portraits[name].rsplit('_',1)[0]] = name
+		
 	# Build up an index of the fields.
 	index_line = roster_csv[0].strip().split(',')
 	index_dict = {}
