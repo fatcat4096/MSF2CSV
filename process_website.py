@@ -155,23 +155,42 @@ def process_rosters(driver, alliance_info, working_from_website=False, only_proc
 		page_source = ''
 		current_url = ''
 		MEMBER_URL = members[member].get('url','')
-		HAVE_URL = MEMBER_URL not in ('','auth') and members[member].get('avail')
+		HAVE_URL = MEMBER_URL not in ('','auth') and (members[member].get('avail') or member == driver.username)		# Own roster will always be available.
 
 		while retries:
 			try:
 
 				# Note when we began processing
 				start_time = datetime.datetime.now()
-				time_limit = 5
+				time_limit = 6
 
 				# Navigate to the roster page.
 				if HAVE_URL:
 					# Start by getting to Profile page.
 					driver.get(f"https://marvelstrikeforce.com/en/member/{MEMBER_URL}/info")
 
-					# Parse the Player Stats on the Profile page.
-					player_stats = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "player-stats-table")))
-					parse_player_stats(player_stats.get_attribute('innerHTML'), alliance_info['members'][member])
+					try:
+						# Parse the Player Stats on the Profile page.
+						player_stats = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "player-stats-table")))
+						parse_player_stats(player_stats.get_attribute('innerHTML'), alliance_info['members'][member])
+
+						#
+						# CAN WE FIND A BETTER TEST FOR THIS? THIS IS A HORRIBLE HACK.
+						#
+						# If we have a URL for our name, see if we can find the correct value here. 
+						if ':' in member:
+							# Do this in multiple steps. This isn't guaranteed to succeed. Not guaranteed to have .text.
+							new_name = driver.find_element(By.TAG_NAME,'h3').text
+							# There has to be a better sanity check for this.
+							if new_name != driver.username:
+								alliance_info.update({'name':new_name, 'leader':new_name})
+								alliance_info['members'][new_name] = alliance_info['members'].pop(member)
+								member = new_name
+					
+					# If we timeout on the Player Profile page, handle it in stride.
+					except TimeoutException as exc:
+						# Report the error and move on to the Roster Page.
+						print ("TIMEOUT on Player Profile tab. Moving on to Roster tab insead.")
 					
 					# Look for the Roster Button.
 					buttons = []
@@ -185,11 +204,6 @@ def process_rosters(driver, alliance_info, working_from_website=False, only_proc
 				# Or need to find an active roster button for this member
 				else:
 					
-					# TEMP -- Clear out errant Diamond Data.
-					processed_chars = members[member].get('processed_chars',{})
-					for char in processed_chars:
-						processed_chars[char]['dmd'] = 0
-
 					# Nothing to do. Roster hasn't been made available.
 					break
 				
