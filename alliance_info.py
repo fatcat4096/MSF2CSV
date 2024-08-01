@@ -8,6 +8,8 @@ from log_utils import *
 
 import datetime
 import string
+import copy
+import re
 
 
 @timed(level=3)
@@ -203,15 +205,19 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		dict_ready = {}
 		if sort_char_by == 'avail' or min_lvl or min_tier or min_iso:
 			dict_ready = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in player_list]) for char in other_chars}
-		
-		# If sort_by 'power', dict_ready is ignored.
-		dict_score = {f'{dict_ready.get(char,0):03}{dict_power[char]:010}':char for char in other_chars}
+				
+		# Determine which players are actually being included and which chars they have at level.
+		players_in_report = sum(get_strike_teams(alliance_info, table, table_format),[])
+		chars_in_report = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in players_in_report]) for char in other_chars}
+
+		# When evaluating character popularity, only consider chars that will actually be included.
+		dict_score = {f'{dict_ready.get(char,0):03}{dict_power[char]:010}':char for char in other_chars if chars_in_report[char]}
+		other_chars = [dict_score[score] for score in sorted(dict_score, reverse=True)]
 
 		# If max_others is defined, reduce the number of heroes included in Others.
-		other_chars = [dict_score[score] for score in sorted(dict_score, reverse=True)]
 		if max_others:
 			other_chars = other_chars[:max_others]
-
+		
 	if sort_char_by == 'alpha':
 		other_chars.sort()
 
@@ -239,6 +245,86 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 
 	return char_list
 
+
+# Return the correct strike_team definitions, depending on formatting flags.
+@timed(level=3)
+def get_strike_teams(alliance_info, table, table_format):
+	# If only_members specified, use this list instead of previously defined Strike Teams.
+	only_members = get_table_value(table_format, table, key='only_members')
+	if only_members:
+
+		# If a single name was provided, wrap it in a list.
+		if type(only_members) is str:
+			only_members = [only_members]
+
+		# Wrap up the only_members list in a Strike Team entry.
+		strike_teams = [only_members]
+	else:
+		# Which strike_teams should we use? (Strike Teams CANNOT vary section by section.)
+		strike_teams = get_table_value(table_format, table, key='strike_teams')
+
+		# Grab specified strike teams if available. 
+		strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
+
+		# Insert dividers as necessary
+		inc_dividers = get_table_value(table_format, table, key='inc_dividers', default='other')
+		if inc_dividers and strike_teams:
+			strike_teams = insert_dividers(strike_teams, inc_dividers)
+
+	# If no strike team definitions are specified / found or 
+	# If only_team == 0 (ignore strike_teams) **AND**
+	# no sort_by has been specified, force sort_by to 'stp'
+	only_team = get_table_value(table_format, table, key='only_team')
+	if (not strike_teams or only_team == 0) and not get_table_value(table_format, table, key='sort_by'):
+		table_format['sort_by'] = 'stp'
+
+	# Sort player list if requested.
+	sort_by = get_table_value(table_format, table, key='sort_by')
+
+	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
+	if not strike_teams or only_team == 0:
+		strike_teams = [get_player_list(alliance_info, sort_by, table=table)]
+
+	return strike_teams
+
+
+# Insert dividers based on the type of team. 
+@timed
+def insert_dividers(strike_teams, raid_type):
+
+	# Start with a copy, just to be safe.
+	strike_teams = copy.deepcopy(strike_teams)
+
+	for team in strike_teams:
+
+		# Use 2-3-3 lanes if Incursion 1.x.
+		if raid_type in ('incur'):
+			if len(team) > 2:
+				team.insert(2,'----')
+			if len(team) > 6:
+				team.insert(6,'----')
+
+		# Use 3-2-3 lanes if Spotlight.
+		elif raid_type in ('spotlight'):
+			if len(team) > 2:
+				team.insert(2,'----')
+			if len(team) > 5:
+				team.insert(5,'----')
+			if len(team) > 8:
+				team.insert(8,'----')
+
+		# Use 5/3 split for Sort by STP within Strike Teams.
+		elif raid_type == '53':
+			if len(team) > 5:
+				team.insert(5,'----')
+
+		# Put a divider in the middle to reflect left/right symmetry of raids.
+		else:
+			if len(team) > 4:
+				team.insert(4,'----')
+
+	return strike_teams
+	
 
 # Find this member's oldest entry in our historical entries.
 def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=None):
@@ -500,6 +586,49 @@ def is_valid_user_id(s):
 		return True
 	return False
 
+
+## parse a string containing roster_urls, return only the first valid alliance ID.
+@timed(level=3)
+def find_valid_alliance_url(field_value):
+	
+	found_url = ''
+	
+	# Parse the whole string and only extract the first if any found.
+	found_urls = find_valid_alliance_urls(field_value)
+	if found_urls:
+		found_url = found_urls[0]
+		
+	return found_url
+
+
+# parse a string containing alliance_urls, looking for valid alliance IDs.
+@timed(level=3)
+def find_valid_alliance_urls(field_value):
+
+	found_urls = []
+
+	# Short-circuit if we received None
+	if not field_value:
+		return found_urls	
+			
+	# If multiple values entered in a single field, process them all.
+	for value in field_value.split():
+
+		# If it looks like a URL or Roster ID, check it out. 
+		for piece in value.split('/'):
+			# Remove user ID if included.
+			if piece.count(':')==2:
+				piece = piece.rsplit(':',1)[0]
+			if is_valid_alliance_id(piece):
+				found_urls.append(piece)
+	
+	return found_urls
+
+
+# Validate user_id formatting.
+@timed(level=3)
+def is_valid_alliance_id(s):
+	return re.fullmatch(r"^[-:0-9a-fA-F]+$", s or "") and len(s)==48
 
 
 # Update the fresh alliance_info from website with extra info from cached_data.
