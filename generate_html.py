@@ -937,7 +937,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 		html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
 		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="200" colspan="5">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
+	html_file += ' <td width="200" colspan="6">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="240" colspan="7">Gear Tier</td>\n'	# Tier 13-19
@@ -984,38 +984,39 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',2)"' % ("ltbb col", '%s', DIAMONDS_ENABLED*4, table_id)
 
 	# ISO Levels
-	html_file += f' <td {sort_func % 21}>%s</td>\n' % (['4+','0-4'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 22}>%s</td>\n' % (['5+','5'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 23}>%s</td>\n' % (['8+','6-8'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 24}>%s</td>\n' % (['9+','9'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['10','10' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 21}>%s</td>\n' % (['5+', '0-5' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 22}>%s</td>\n' % (['9+', '6-9' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 23}>%s</td>\n' % (['10+','10'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 24}>%s</td>\n' % (['11+','11'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 25}>%s</td>\n' % (['12+','12'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 26}>%s</td>\n' % (['13', '13'  ][stat_type == 'actual'])
 
 	# Gear Tiers
-	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['13+','13'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['14+','14'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 29}>%s</td>\n' % (['15+','15'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 30}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['18+','18'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['13+','13'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 29}>%s</td>\n' % (['14+','14'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 30}>%s</td>\n' % (['15+','15'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['18+','18'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 34}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
 
 	# T4 Abilities
-	html_file += f' <td {sort_func % 35}>Bas</td>\n'
-	html_file += f' <td {sort_func % 36}>Spc</td>\n'
-	html_file += f' <td {sort_func % 37}>Ult</td>\n'
-	html_file += f' <td {sort_func % 38}>Pas</td>\n'
+	html_file += f' <td {sort_func % 36}>Bas</td>\n'
+	html_file += f' <td {sort_func % 37}>Spc</td>\n'
+	html_file += f' <td {sort_func % 38}>Ult</td>\n'
+	html_file += f' <td {sort_func % 39}>Pas</td>\n'
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',2)"' % ("ltbb lvl", '%s', DIAMONDS_ENABLED*4, table_id)
 
 	# Level Ranges
-	html_file += f' <td {sort_func % 40}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -1073,7 +1074,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 				html_file += ' <td></td>\n' 									# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
-			for key in [4,5,8,9,10]:
+			for key in [5,9,10,11,12,13]:
 				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['iso'][key], member_stats.get('iso',{}).get(key,0), html_cache, stale_data), member_stats.get('iso',{}).get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
@@ -1139,10 +1140,6 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 		# Don't include stats from heroes that haven't been recruited yet.
 		recruited_chars = [char for char in char_list if current_rosters[member].get(char,{}).get('power')]
 
-		# Use this as a comparator to just return current values.
-		null_stats = {'yel':0, 'red':0, 'dmd':0, 'lvl':0, 'tier':0, 'iso':0, 'abil':0, 'power':0}
-		diff_stats = null_stats.copy()
-		
 		# Loop through every char
 		for char in recruited_chars:
 		
@@ -1151,7 +1148,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 
 			# Use for Total / Average # columns -- do this BEFORE normalizing data.
 			for key in ['yel','red','dmd','tier','lvl','iso']:
-				member_stats['tot_'+key] = member_stats.get('tot_'+key,0) + char_stats[key] # - diff_stats[key]
+				member_stats['tot_'+key] = member_stats.get('tot_'+key,0) + char_stats[key]
 
 			# If progressive, only report the highest USABLE red star and diamonds only valid if 7R.
 			if char_stats['red'] > char_stats['yel']:
@@ -1169,10 +1166,12 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 			else:
 				char_stats['lvl'] -= char_stats['lvl']%5			# Round down to nearest multiple of 5.
 
-			if char_stats['iso'] < 4 and stat_type == 'actual':
-				char_stats['iso'] = 4
-			elif char_stats['iso'] in range(6,9) and stat_type == 'actual':
-				char_stats['iso'] = 8
+			# Gather 0-5 into 5.
+			if char_stats['iso'] < 5 and stat_type == 'actual':
+				char_stats['iso'] = 5
+			# Gather 6-9 into 9.
+			elif char_stats['iso'] in range(6,10) and stat_type == 'actual':
+				char_stats['iso'] = 9
 
 			# Just tally the values in each key. Increment the count of each value found.
 			for key in ['yel', 'lvl', 'red', 'dmd', 'tier', 'iso']:
@@ -1226,7 +1225,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 		stats['range']['dmd'][key] = [stats[member].get('dmd',{}).get(key,0) for member in member_list]
 
 	# ISO Levels
-	for key in range(4,11):
+	for key in range(5,14):
 		stats['range']['iso'][key] = [stats[member].get('iso',{}).get(key,0) for member in member_list]
 
 	# Gear Tiers
@@ -1496,86 +1495,6 @@ def extract_color(alliance_name):
 
 	return alt_color
 
-
-# Return the correct strike_team definitions, depending on formatting flags.
-@timed(level=3)
-def get_strike_teams(alliance_info, table, table_format):
-	# If only_members specified, use this list instead of previously defined Strike Teams.
-	only_members = get_table_value(table_format, table, key='only_members')
-	if only_members:
-
-		# If a single name was provided, wrap it in a list.
-		if type(only_members) is str:
-			only_members = [only_members]
-
-		# Wrap up the only_members list in a Strike Team entry.
-		strike_teams = [only_members]
-	else:
-		# Which strike_teams should we use? (Strike Teams CANNOT vary section by section.)
-		strike_teams = get_table_value(table_format, table, key='strike_teams')
-
-		# Grab specified strike teams if available. 
-		strike_teams = alliance_info.get('strike_teams',{}).get(strike_teams)
-
-		# Insert dividers as necessary
-		inc_dividers = get_table_value(table_format, table, key='inc_dividers', default='other')
-		if inc_dividers and strike_teams:
-			strike_teams = insert_dividers(strike_teams, inc_dividers)
-
-	# If no strike team definitions are specified / found or 
-	# If only_team == 0 (ignore strike_teams) **AND**
-	# no sort_by has been specified, force sort_by to 'stp'
-	only_team = get_table_value(table_format, table, key='only_team')
-	if (not strike_teams or only_team == 0) and not get_table_value(table_format, table, key='sort_by'):
-		table_format['sort_by'] = 'stp'
-
-	# Sort player list if requested.
-	sort_by = get_table_value(table_format, table, key='sort_by')
-
-	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
-	if not strike_teams or only_team == 0:
-		strike_teams = [get_player_list(alliance_info, sort_by, table=table)]
-
-	return strike_teams
-
-
-# Insert dividers based on the type of team. 
-@timed
-def insert_dividers(strike_teams, raid_type):
-
-	# Start with a copy, just to be safe.
-	strike_teams = copy.deepcopy(strike_teams)
-
-	for team in strike_teams:
-
-		# Use 2-3-3 lanes if Incursion 1.x.
-		if raid_type in ('incur'):
-			if len(team) > 2:
-				team.insert(2,'----')
-			if len(team) > 6:
-				team.insert(6,'----')
-
-		# Use 3-2-3 lanes if Spotlight.
-		elif raid_type in ('spotlight'):
-			if len(team) > 2:
-				team.insert(2,'----')
-			if len(team) > 5:
-				team.insert(5,'----')
-			if len(team) > 8:
-				team.insert(8,'----')
-
-		# Use 5/3 split for Sort by STP within Strike Teams.
-		elif raid_type == '53':
-			if len(team) > 5:
-				team.insert(5,'----')
-
-		# Put a divider in the middle to reflect left/right symmetry of raids.
-		else:
-			if len(team) > 4:
-				team.insert(4,'----')
-
-	return strike_teams
-	
 
 # Translate value to a color from the Heat Map gradient.
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=''):
