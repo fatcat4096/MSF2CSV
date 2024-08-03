@@ -275,8 +275,9 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 	# Calculate strike teams
 	strike_teams = get_strike_teams(alliance_info, table, table_format)
 
-	# Value does not change from section to section
-	only_team = get_table_value(table_format, table, key='only_team')
+	# Values do not change from section to section
+	only_team    = get_table_value(table_format, table, key='only_team')
+	only_members = get_table_value(table_format, table, key='only_members')
 
 	# Special handling required if inline_hist.
 	inline_hist = get_table_value(table_format, table, key='inline_hist')
@@ -368,7 +369,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			span_data = get_table_value(table_format, table, section, key='span', default=False)
 
 			# Special code for Spanning format here. It's a very narrow window of applicability.
-			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not only_team:
+			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not (only_team or only_members):
 
 				# If strike_team is just the entire player list, break it up into 3 groups.
 				if len(strike_teams) == 1 or only_team == 0:
