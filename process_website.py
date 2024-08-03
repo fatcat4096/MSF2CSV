@@ -174,23 +174,10 @@ def process_rosters(driver, alliance_info, working_from_website=False, only_proc
 						player_stats = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CLASS_NAME, "player-stats-table")))
 						parse_player_stats(player_stats.get_attribute('innerHTML'), alliance_info['members'][member])
 
-						#
-						# CAN WE FIND A BETTER TEST FOR THIS? THIS IS A HORRIBLE HACK.
-						#
-						# If we have a URL for our name, see if we can find the correct value here. 
-						if ':' in member:
-							# Do this in multiple steps. This isn't guaranteed to succeed. Not guaranteed to have .text.
-							new_name = driver.find_element(By.TAG_NAME,'h3').text
-							# There has to be a better sanity check for this.
-							if new_name != driver.username:
-								alliance_info.update({'name':new_name, 'leader':new_name})
-								alliance_info['members'][new_name] = alliance_info['members'].pop(member)
-								member = new_name
-					
 					# If we timeout on the Player Profile page, handle it in stride.
 					except TimeoutException as exc:
 						# Report the error and move on to the Roster Page.
-						print ("TIMEOUT on Player Profile tab. Moving on to Roster tab insead.")
+						print ("TIMEOUT on Player Profile tab. Moving on to Roster tab instead.")
 					
 					# Look for the Roster Button.
 					buttons = []
