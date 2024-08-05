@@ -540,23 +540,23 @@ def get_table_value(table_format, table, section={}, key='', default=None):
 	return value
 
 
-# parse a string containing roster_urls, return only the first valid User ID.
+# parse a string containing roster URLs, return only the first old format User ID.
 @timed(level=3)
-def find_valid_roster_url(field_value):
+def find_old_format_roster_url(field_value):
 	
 	found_url = ''
 	
 	# Parse the whole string and only extract the first if any found.
-	found_urls = find_valid_roster_urls(field_value)
+	found_urls = find_old_format_roster_urls(field_value)
 	if found_urls:
 		found_url = found_urls[0]
 		
 	return found_url
 
 
-# parse a string containing roster_urls, looking for valid user IDs.
+# parse a string containing roster URLs, looking for old format user IDs.
 @timed(level=3)
-def find_valid_roster_urls(field_value):
+def find_old_format_roster_urls(field_value):
 
 	found_urls = []
 
@@ -569,7 +569,7 @@ def find_valid_roster_urls(field_value):
 
 		# If it looks like a URL or Roster ID, check it out. 
 		for piece in value.split('/'):
-			if is_valid_user_id(piece):
+			if is_old_format_user_id(piece):
 				found_urls.append(piece)
 	
 	return found_urls
@@ -577,7 +577,7 @@ def find_valid_roster_urls(field_value):
 
 # Validate user_id formatting.
 @timed(level=3)
-def is_valid_user_id(s):
+def is_old_format_user_id(s):
 	if not s:
 		return False
 	if len(s) == 13 and set(s).issubset(string.hexdigits):

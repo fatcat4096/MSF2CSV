@@ -157,7 +157,7 @@ def parse_player_stats(contents, member_info):
 
 # Parse the character file out of MHTML or the page_source directly from the website.
 @timed(level=3)
-def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='', diamond_data={}):
+def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='', roster_csv_data={}):
 	soup = BeautifulSoup(contents, 'html.parser')
 
 	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
@@ -276,10 +276,6 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 			elif iso_info.find('purple') != -1:
 				iso += 10
 			
-			# TEMP FIX FOR BROKEN WEBSITE
-			if level >= 85 and not iso:
-				iso = 10
-
 			iso_class = 0
 			if iso_info.find('fortify') != -1:
 				iso_class = 1
@@ -292,6 +288,15 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 			elif iso_info.find('assassin') != -1:
 				iso_class = 5
 
+			# TEMP FIX FOR BROKEN WEBSITE
+			if level >= 85 and not iso:
+
+				# ISO level is easy. It's 10.
+				iso = 10
+
+				# ISO class is harder. Gotta copy from current entry.
+				iso_class = alliance_info.get('members',{}).get(player_name,{}).get('other_data',{}).get(char_name,0)%6
+
 			processed_chars[char_name] = {'power':int(power), 'lvl':int(level), 'tier':int(tier), 'iso':int(iso), 'yel':yelStars, 'red':redStars, 'dmd':0, 'abil':int(bas+spc+ult+pas)}
 			other_data[char_name]      = favorite+iso_class
 
@@ -301,18 +306,28 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 			other_data[char_name]      = 0
 
 	# Finally, after we've processed everything else traditionally.
-	# Fill the diamond_data structure if not yet populated.
-	if roster_csv and not diamond_data:
-		diamond_data = parse_diamond_data(roster_csv, char_portraits)
+	# Fill the roster_csv_data structure if not yet populated.
+	if roster_csv and not roster_csv_data:
+		roster_csv_data = parse_roster_csv_data(roster_csv, char_portraits)
 
-	if player_name not in diamond_data:
-		print ("Look into this. Why isn't",player_name,"in the diamond_data structure?")
+	# Should NOT happen.
+	if player_name not in roster_csv_data:
+		print ("Look into this. Why isn't",player_name,"in the roster_csv_data structure?")
 
+	# Final stages -- fix any data that needs supplemental information from roster.csv and then optimize the alliance_info data structure
 	for char_name in processed_chars:
 		
-		# Set Diamond data appropriately.
-		if char_name in diamond_data.get(player_name,{}):
-			processed_chars[char_name]['dmd'] = diamond_data[player_name][char_name]['dmd']
+		if char_name in roster_csv_data.get(player_name,{}):
+			# Set Diamond data appropriately.
+			processed_chars[char_name]['dmd'] = roster_csv_data[player_name][char_name].get('dmd',0)
+
+			# If still no ISO Class data, look for it in the roster_csv_data.
+			if not other_data[char_name]%6:
+				other_data[char_name] += roster_csv_data[player_name][char_name].get('cls',0)
+
+		# Should not be happening.
+		elif char_name not in ('Gladiator','Gorr','Thanos (Endgame)'):
+			print (f'* {player_name} -- {char_name} not found in roster.csv')
 		
 		# Look for a duplicate entry in our cache and point both to the same entry if possible.
 		update_parse_cache(processed_chars,char_name,parse_cache)
@@ -336,8 +351,7 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 	player['other_data']      = other_data
 	
 	# Keep the top level name, but only if valid.
-	if 1: #not is_valid_user_id(member):
-		player['display_name']    = member
+	player['display_name']    = member
 
 	# Temporary fix. Calculate values if possible.
 	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
@@ -362,39 +376,19 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 	if scripts:
 		alliance_info['scripts'] = scripts
 
-	# If a new member name has been found during Roster parse, 
-	if member != player_name:
-
-		# Copy any existing information from the old 'members' entry to the new one.
-		if alliance_info['members'].get(member):
-			for key in alliance_info['members'][member]:
-				if key not in alliance_info['members'][player_name]:
-					alliance_info['members'][player_name][key] = alliance_info['members'][member][key]
-
-			# Finish by deleting the outdated entry.
-			del alliance_info['members'][member]
-
-		# Also update any matching definitions in 'Leaders' and 'Captains'
-		if alliance_info.get('leader') == member:
-			alliance_info['leader'] = player_name
-		
-		if member in alliance_info.get('captains',[]):
-			member_idx = alliance_info['captains'].index(member)
-			alliance_info['captains'][member_idx] = player_name
-
 	return player_name
 
 
 
 # Parse the Diamond data directly from the roster.csv file.
 @timed(level=3)
-def parse_diamond_data(roster_csv, char_portraits):
+def parse_roster_csv_data(roster_csv, char_portraits):
 
-	diamond_data = {}
+	roster_csv_data = {}
 
 	# Can't parse if diamond data is unavailable.
 	if not os.path.exists(roster_csv):
-		return diamond_data
+		return roster_csv_data
 
 	# Pull full Roster Info from the roster.csv file.
 	roster_csv = open(roster_csv, 'r', encoding='utf-8').readlines()
@@ -423,25 +417,48 @@ def parse_diamond_data(roster_csv, char_portraits):
 		member_name = remove_tags(member_row[1])
 		
 		for item in index_dict:
-			char_id_idx  = index_dict[item]['id']
-			char_red_idx = index_dict[item]['activeRed']
+			char_id_idx  = index_dict[item].get('id')
+			char_red_idx = index_dict[item].get('activeRed')
+			char_cls_idx = index_dict[item].get('iso8.active')
 
-			# Abort if no char defined.
+			# Should not happen.
+			if not char_id_idx:
+				continue
+
+			# Abort if no char defined -- member hasn't recruited all heroes yet.
 			char_id = member_row[char_id_idx]
 			if not char_id:
 				continue
 				
 			# Translate from internal ID to human readable name.
-			char_name = char_lookup.get(char_id,'NOT FOUND')
+			char_name = char_lookup.get(char_id)
 
-			char_red = member_row[char_red_idx]
-
-			# Abort if no Diamonds to report.
-			char_dmd = max(0,int(char_red)-7) if char_red else 0
-			if not char_dmd:
+			# Should not happen.
+			if not char_name:
+				print ('ERROR: Could not find translation for:',char_id)
 				continue
 
-			# Add this entry to the diamond_data.
-			diamond_data.setdefault(member_name,{}).setdefault(char_name, {})['dmd'] = char_dmd
+			# Create the entry to hold data.
+			char_entry = roster_csv_data.setdefault(member_name,{}).setdefault(char_name, {})
 
-	return diamond_data
+			# Translate from Active Red to Diamond count.
+			if char_red_idx:
+				char_red = member_row[char_red_idx]
+				char_dmd = max(0,int(char_red)-7) if char_red else 0
+				char_entry['dmd'] = char_dmd
+
+			# Translate from ISO Class literal to internal representation.
+			if char_cls_idx:
+				char_cls = member_row[char_cls_idx]
+				char_cls = {
+					'fortifier': 1,
+					'healer': 2,
+					'skirmisher': 3,
+					'raider': 4,
+					'striker': 5,
+				}.get(char_cls,0)
+
+				# Add this entry to the roster_csv_data.
+				char_entry['cls'] = char_cls
+
+	return roster_csv_data

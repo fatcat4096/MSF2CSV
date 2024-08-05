@@ -116,7 +116,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(driver, alliance_info, working_from_website=False, only_process=[], diamond_data={}, log_file=None):
+def process_rosters(driver, alliance_info, working_from_website=False, only_process=[], roster_csv_data={}, log_file=None):
 
 	# Really only used for Working From Website processing.
 	alliance_url   = 'https://marvelstrikeforce.com/en/alliance/members'
@@ -177,7 +177,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, only_proc
 					# If we timeout on the Player Profile page, handle it in stride.
 					except TimeoutException as exc:
 						# Report the error and move on to the Roster Page.
-						print ("TIMEOUT on Player Profile tab. Moving on to Roster tab instead.")
+						print ("\nTIMEOUT on Player Profile tab. Moving on to Roster tab instead.")
 					
 					# Look for the Roster Button.
 					buttons = []
@@ -209,7 +209,7 @@ def process_rosters(driver, alliance_info, working_from_website=False, only_proc
 
 				# If page loaded, pass contents to scraping routines for stat extraction.
 				if len(page_source)>700000:
-					member = parse_roster(page_source, alliance_info, parse_cache, member, driver.roster_csv, diamond_data)
+					member = parse_roster(page_source, alliance_info, parse_cache, member, driver.roster_csv, roster_csv_data)
 					break
 
 				# If we got here, we exceeded the time limit and our page still hasn't fully loaded.
@@ -427,11 +427,6 @@ def update_strike_teams(alliance_info):
 
 	# Transition 'extracted_traits' to 'traits' and update missing traits.
 	updated = add_extracted_traits(alliance_info) or updated
-
-	# Fix errant Display Names.
-	for member in alliance_info['members']:
-		if is_valid_user_id(alliance_info['members'][member].get('display_name','')):
-			del alliance_info['members'][member]['display_name']
 
 	# Iterate through each defined strike team.
 	for raid_type in ('incur','spotlight'):
