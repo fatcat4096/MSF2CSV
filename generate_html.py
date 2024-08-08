@@ -5,7 +5,6 @@ Takes the processed alliance / roster data and generate readable output to spec.
 """
 
 # By_Char data should use same hist_date as provided in inc_hist or inline_hist
-# Need to fix data normalization routines. All-zero data in the final data frames???
 
 # Team Report Summary suggestions
 # * Include graphics for teams in Team Report Summary?
@@ -27,6 +26,7 @@ from alliance_info import *
 from generate_css  import *
 from gradients     import color_scale, darken, grayscale
 from html_cache    import *
+
 
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
@@ -143,22 +143,15 @@ def generate_html(alliance_info, table, table_format, output=''):
 	else:
 		html_file = ''
 		
+		hist_date = get_hist_date(alliance_info, table_format)
+		
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += get_tab_header('ROSTER ANALYSIS (ACTUALS)')
-			html_file += generate_roster_analysis(alliance_info, stat_type='actual', html_cache=html_cache)
-			html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
-			html_file += generate_roster_analysis(alliance_info, stat_type='progressive', html_cache=html_cache)
+			html_file += generate_roster_analysis(alliance_info, hist_date=hist_date, html_cache=html_cache)
 
-			# Generate a label for the History Tab if we have History.
-			hist_date = get_hist_date(alliance_info, table_format)
-			if hist_date:
-				html_file += get_tab_header(get_hist_tab(hist_date, table_format))	
-				html_file += generate_roster_analysis(alliance_info, stat_type='progressive', hist_date=hist_date, html_cache=html_cache)
-		
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
-			html_file += generate_alliance_tab(alliance_info, html_cache=html_cache)
+			html_file += generate_alliance_tab(alliance_info, hist_date=hist_date, html_cache=html_cache)
 
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'by_char':
@@ -179,6 +172,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 		html_files[output+'.html'] = html_file	
 
 	return html_files
+
 
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
@@ -220,8 +214,8 @@ def generate_tabbed_html(alliance_info, table, table_format):
 		html_file += generate_lanes(alliance_info, table, lanes, table_format, hist_date, using_tabs=True, html_cache=html_cache)
 
 	# After all Lanes are added, add the Roster Analysis, Alliance Info, and ByChars tabs.
-	html_file += generate_roster_analysis(alliance_info, using_tabs=True, html_cache=html_cache)
-	html_file += generate_alliance_tab   (alliance_info, using_tabs=True, html_cache=html_cache)
+	html_file += generate_roster_analysis(alliance_info, using_tabs=True, hist_date=hist_date, html_cache=html_cache)
+	html_file += generate_alliance_tab   (alliance_info, using_tabs=True, hist_date=hist_date, html_cache=html_cache)
 	html_file += generate_by_char_tab    (alliance_info, using_tabs=True, html_cache=html_cache)
 	
 	# If we want to remove whitespace for --publish, this is where we do it.
@@ -245,6 +239,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	return html_file
 
 
+
 # If we're doing a single lane format and we have history, let's generate a historical data tab. 
 @timed(level=3)
 def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
@@ -260,10 +255,12 @@ def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
 	return hist_tab
 
 
+
 # Just hide the messiness.
 @timed(level=3)
 def get_tab_header(content):
 	return '<table>\n<tr><td class="tlnk" style="width:100%;">'+content+'</td></tr>\n</table>'
+
 
 
 # Generate the contents for each lane.
@@ -415,6 +412,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 	return html_file
 
 
+
 @timed(level=3)
 def generate_team_power_summary(alliance_info, table, lanes, table_format, team_list, strike_teams, hist_date=None, html_cache={}):
 
@@ -473,6 +471,7 @@ def generate_team_power_summary(alliance_info, table, lanes, table_format, team_
 		html_file += '  </td>\n </tr>\n</table>\n'
 
 	return html_file
+
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
@@ -566,23 +565,18 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# Let's get this party started!
 	html_file = '   <table id="%s">\n' % (table_id)
 
-	# See if multiple lines requested. 
-	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=10)
+	# Automate the line_wrap selection.
+	wrap_after = 12
+	lines_used  = 1
 
-	# Values 5 and over indicate how many toons should be included per line.
-	# Values under 5 indicate how many lines we should wrap info to.
+	# Calculate an optimal number of lines to wrap to.
+	while len(using_chars) > wrap_after * lines_used:
+		lines_used += 1
+		wrap_after = int( (wrap_after * 4 / 3) + 0.49)
 
-	# 0 == 1. No wrap, one row.
-	if not line_wrap:
-		line_wrap = len(using_chars)
-	# Values less than 5 indicate how many lines to wrap to.
-	elif line_wrap < 5:
-		line_wrap = round(len(using_chars)/line_wrap + 0.49)
+	# Calculate the line_wrap to best fill this number of lines
+	line_wrap = round(len(using_chars)/lines_used + 0.49)
 	
-	# Default back to 10, if result provides more rows than columns.
-	if line_wrap < len(using_chars)/line_wrap:
-		line_wrap = 10
-
 	# Initialize the row count. Will add to it with each strike_team section.
 	row_idx = 1
 
@@ -892,22 +886,38 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	return html_file
 
 
+
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual', hist_date='', html_cache={}):
+def generate_roster_analysis(alliance_info, using_tabs=False, hist_date='', html_cache={}):
 
-	html_file=''
+	# Only include Dividers if using as part of a multi-tab document
+	if using_tabs:
+		html_file = '<div id="RosterAnalysis" class="tcon">\n'
+	else:
+		html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
+	html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache)
+
+	# Add the progressive form in for the tabbed output as well. :)
+	html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
+	html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache)
+
+	# Only include Dividers if using as part of a multi-tab document
+	if using_tabs:
+		html_file += '</div>\n'
+
+	return html_file
+		
+
+
+def generate_analysis_table(alliance_info, stat_type='actual', hist_date='', html_cache={}):
 
 	# Conditionally include Diamonds columns.
 	DIAMONDS_ENABLED = True
 
-	# Only include Dividers if using as part of a multi-tab document
-	if using_tabs:
-		html_file += '<div id="RosterAnalysis" class="tcon">\n'
-
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
-	html_file += '<table id="%s">\n' % (table_id)
+	html_file = '<table id="%s">\n' % (table_id)
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("blub nam", '%s', table_id)
@@ -1024,12 +1034,17 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 	# Start by doing stat analysis.	
 	stats = get_roster_stats(alliance_info, stat_type, hist_date)
 	
+	#
+	# WHAT HAPPENS IF WE ALLOW ALL MEMBERS INSTEAD?
+	#
+	
 	# Get the list of Alliance Members 
 	member_list = []
 	hist_info = alliance_info.get('hist')
 	
 	if hist_info:
 		member_list = list(hist_info[max(hist_info)])
+
 
 	# Get a sorted list of members to use for this table output.
 	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
@@ -1045,6 +1060,10 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 			stale_data = member_info['is_stale']
 
 			html_file += '<tr>\n'
+
+			#
+			# FIX THIS URL. IN FACT, FIND ALL THE URLS AND FIX THEM ALL.
+			#
 
 			member_url = ' href="https://marvelstrikeforce.com/en/v1/players/%s/characters" target="_blank"' % (alliance_info['members'][member].get('url',''))
 			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (['nblu','ngra'][stale_data], member_url, member_info.get('display_name',member))
@@ -1097,17 +1116,8 @@ def generate_roster_analysis(alliance_info, using_tabs=False, stat_type='actual'
 
 	html_file += '</table>\n'
 
-	# Only include Dividers if using as part of a multi-tab document
-	if using_tabs:
-		
-		# Add the progressive form in for the tabbed output as well. :)
-		if stat_type == 'actual':
-			html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
-			html_file += generate_roster_analysis(alliance_info, stat_type='progressive', hist_date=None, html_cache=html_cache)
-	
-		html_file += '</div>\n'
-
 	return html_file
+
 
 
 # STILL NEED TO WORK ON HISTORICAL PRESENTATION. SHOULD USE PROGRESSIVE STAT CALCULATIONS FOR BOTH TO SUCCESSFULLY COMMUNICATE PROGRESS.
@@ -1244,9 +1254,10 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 	return stats
 
 
+
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
+def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_cache={}):
 
 	html_file = ''
 	
@@ -1319,14 +1330,50 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 	tcc_range   = [alliance_info['members'][member].get('tcc',0)   for member in member_list]
 	mvp_range   = [alliance_info['members'][member].get('mvp',0)   for member in member_list]
 	max_range   = [alliance_info['members'][member].get('max',0)   for member in member_list]
-
+	
 	# Conditionally include columns.
 	if ARENA_BLITZ_ENABLED:
 		arena_range = [alliance_info['members'][member].get('arena',0) for member in member_list]
 		blitz_range = [alliance_info['members'][member].get('blitz',0) for member in member_list]
-
+	
 	stars_range = [alliance_info['members'][member].get('stars',0) for member in member_list]
 	red_range   = [alliance_info['members'][member].get('red',0)   for member in member_list]
+	
+	# If we've asked for Historical analysis, we need to do a little additional work.
+	if hist_date:
+
+		hist_diff = {}
+
+		# Get a little closer to our work.
+		hist = alliance_info.get('hist')
+
+		# Ensure we have a good date.
+		if hist_date not in hist:
+			hist_date = min(hist)
+
+		for member,processed_chars in hist.get(hist_date).items():
+		
+			member_diff = {}
+			member_info = alliance_info['members'][member]
+		
+			# Calculate inferred level and diff -- don't split this cell if diff is 0.
+			member_diff['tcp']   = member_info.get('tcp',  0) - sum([processed_chars[char].get('power',0) for char in processed_chars])
+			member_diff['stp']   = member_info.get('stp',  0) - sum(sorted([processed_chars[char]['power'] for char in processed_chars], reverse=True)[:5])
+			member_diff['tcc']   = member_info.get('tcc',  0) - len([char for char in processed_chars if processed_chars[char]['power']])
+			member_diff['max']   = member_info.get('max',  0) - len([char for char in processed_chars if processed_chars[char]['yel']==7])
+			member_diff['stars'] = member_info.get('stars',0) - sum([processed_chars[char]['yel'] for char in processed_chars])
+			member_diff['red']   = member_info.get('red',  0) - sum([processed_chars[char]['red'] for char in processed_chars])
+
+			hist_diff[member] = member_diff
+			
+		hist_range = {}
+			
+		hist_range['tcp']   = [hist_diff[member].get('tcp',0)   for member in member_list]
+		hist_range['stp']   = [hist_diff[member].get('stp',0)   for member in member_list]
+		hist_range['tcc']   = [hist_diff[member].get('tcc',0)   for member in member_list]
+		hist_range['max']   = [hist_diff[member].get('max',0)   for member in member_list]
+		hist_range['stars'] = [hist_diff[member].get('stars',0) for member in member_list]
+		hist_range['red']   = [hist_diff[member].get('red',0)   for member in member_list]
 
 	for member in member_list:
 		# Get a little closer to what we're working with.
@@ -1350,13 +1397,18 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 
 		member_url = member_stats.get('url','')
 		if member_url:
-			member_url = ' href="https://marvelstrikeforce.com/en/v1/players/%s/characters" target="_blank"' % (member_url)
+			member_url = f' href="https://marvelstrikeforce.com/en/member/{member_url}/characters" target="_blank"'
+		
+		# If hist_date was requested, add date under the name field.
+		second_line = ''
+		if hist_date:
+			second_line = f'<br><span style="font-weight:normal;"><i>(since {hist_date.strftime("%m/%d/%y")})</i></span>'
+		# If no hist_date, see if we have a discord name to include.
+		elif member_stats.get('discord'):
+			second_line = f'<br><span style="font-size:16px">@{member_stats.get("discord",{}).get("name","")}</span>'
 
-		member_discord = member_stats.get('discord','')
-		if member_discord:
-			member_discord = f'<br><span style="font-size:16px">@{member_discord.get("name","")}</span>'
+		html_file += '  <td class="urlb"><a style="text-decoration:none; color:black;"%s><span class="bd">%s</span>%s</a></td>\n' % (member_url, member_stats.get('display_name',member), second_line)
 
-		html_file += '  <td class="urlb"><span class="bd"><a style="text-decoration:none; color:black;"%s>%s</span>%s</a></td>\n' % (member_url, member_stats.get('display_name',member), member_discord)
 		html_file += '  <td>%s</td>\n' % (member_stats.get('level','n/a'))
 		html_file += '  <td>%s</td>\n' % (member_role)
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   html_cache, stale_data), f'{member_stats.get("tcp",0):,}')
@@ -1385,8 +1437,23 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 			time_color = get_value_color_ext(0, 1, 0, html_cache)
 			time_value = 'NEVER<br><b><i>Ask member to sync.</i></b>'
 		
-		html_file += '  <td class="%s" style="font-size:16px;">%s</td>\n' % (time_color, time_value)
+		html_file += '  <td class="%s" style="font-size:18px;">%s</td>\n' % (time_color, time_value)
 		html_file += ' </tr>\n'
+
+
+
+		# History requested. Do a second row with differences.
+		if hist_date:
+			html_file += ' <tr style="background:%s; font-size:22px;">\n' % (member_color)
+		
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(hist_range['tcp'],   hist_diff[member].get('tcp',0),   html_cache, stale_data), f'{hist_diff[member].get("tcp",  0):,}')
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(hist_range['stp'],   hist_diff[member].get('stp',0),   html_cache, stale_data), f'{hist_diff[member].get("stp",  0):,}')
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(hist_range['tcc'],   hist_diff[member].get('tcc',0),   html_cache, stale_data), f'{hist_diff[member].get("tcc",  0):,}')
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(hist_range['max'],   hist_diff[member].get('max',0),   html_cache, stale_data), f'{hist_diff[member].get("max",  0):,}')
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(hist_range['stars'], hist_diff[member].get('stars',0), html_cache, stale_data), f'{hist_diff[member].get("stars",0):,}')
+			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(hist_range['red'],   hist_diff[member].get('red',0),   html_cache, stale_data), f'{hist_diff[member].get("red",  0):,}')
+		
+			html_file += ' </tr>\n'
 
 
 	html_file += '</table>\n'
@@ -1396,6 +1463,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, html_cache={}):
 		html_file += '</div>\n'
 
 	return html_file
+
 
 
 # Generate just the Alliance Tab contents.
@@ -1479,6 +1547,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, html_
 	return html_file
 
 
+
 @timed
 def extract_color(alliance_name):
 	alt_color = ''
@@ -1497,6 +1566,7 @@ def extract_color(alliance_name):
 	return alt_color
 
 
+
 # Translate value to a color from the Heat Map gradient.
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=''):
 	min_val = min(val_range) if val_range else 0
@@ -1508,6 +1578,7 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 			min_val = min(new_range)
 	
 	return get_value_color_ext(min_val, max_val, value, html_cache, stale_data, stat, under_min, hist_date)
+
 
 
 def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):
@@ -1567,6 +1638,7 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 	return make_next_color_id(html_cache, color)
 
 
+
 # Do the ugly calculations here.
 def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 
@@ -1595,6 +1667,7 @@ def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 	return color_scale[scaled_value]
 
 
+
 # Generate Labels for each section from either label info or trait names.
 def get_section_label(section):
 	
@@ -1604,6 +1677,7 @@ def get_section_label(section):
 
 	# Otherwise, just join the translated traits.
 	return ', '.join([translate_name(trait) for trait in section['traits']]).replace('-<br>','').replace('<br>',' ')
+
 
 
 # Quick and dirty translation to shorter or better names.

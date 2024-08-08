@@ -116,8 +116,6 @@ if __name__ == '__main__':
 						help='include STP rank in output')
 	parser.add_argument('--inc_summary', action='store_true', 
 						help='include Team Power Summary in output')
-	parser.add_argument('--line_wrap', type=int, metavar='N',
-						help='if 1-4, lines per section; if 5+, Chars per line')
 	parser.add_argument('--min_iso', type=int, metavar='N',
 						help='minimum ISO level for inclusion in output')
 	parser.add_argument('--min_lvl', type=int, metavar='N',
@@ -189,7 +187,6 @@ if __name__ == '__main__':
 					'min_lvl'       : args.min_lvl,
 					'min_tier'      : args.min_tier,
 					'max_others'    : args.max_others,
-					'line_wrap'     : args.line_wrap,
 					'only_lane'     : args.only_lane,
 					'only_section'  : args.only_section,
 					'only_team'     : args.only_team,
