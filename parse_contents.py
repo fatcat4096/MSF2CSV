@@ -363,7 +363,7 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 	player_info['level'] = max(calc_lvl,  alliance_info['members'].get(member,{}).get('level',0))
 	player_info['tcp']   = max(tot_power, alliance_info['members'].get(member,{}).get('tcp',0))
 	player_info['stp']   = max(calc_stp,  alliance_info['members'].get(member,{}).get('stp',0))
-	player_info['tcc']   = max(calc_tcc,  alliance_info['members'].get(member,{}).get('tcp',0))
+	player_info['tcc']   = max(calc_tcc,  alliance_info['members'].get(member,{}).get('tcc',0))
 
 	# And update the player info with current stats from the side panel.
 	player.update(player_info)
