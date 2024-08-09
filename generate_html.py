@@ -889,7 +889,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_roster_analysis(alliance_info, using_tabs=False, hist_date='', html_cache={}):
+def generate_roster_analysis(alliance_info, using_tabs=False, hist_date=None, html_cache={}):
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -898,9 +898,14 @@ def generate_roster_analysis(alliance_info, using_tabs=False, hist_date='', html
 		html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
 	html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache)
 
-	# Add the progressive form in for the tabbed output as well. :)
+	# Add the progressive form in as well. :)
 	html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
 	html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache)
+	
+	# Add the historical form in if hist_date is available.
+	if hist_date:
+		html_file += get_tab_header(f'ROSTER ANALYSIS (SINCE {hist_date.strftime("%m/%d/%y")})')
+		html_file += generate_analysis_table(alliance_info, stat_type='progressive', hist_date=hist_date, html_cache=html_cache)
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -910,10 +915,25 @@ def generate_roster_analysis(alliance_info, using_tabs=False, hist_date='', html
 		
 
 
-def generate_analysis_table(alliance_info, stat_type='actual', hist_date='', html_cache={}):
+def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, html_cache={}):
 
 	# Conditionally include Diamonds columns.
 	DIAMONDS_ENABLED = True
+
+	# Generate the header for the Roster Analysis table
+	html_file = generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache)
+
+	# Start by doing stat analysis.	
+	stats = get_roster_stats(alliance_info, stat_type, hist_date)
+
+	# Format the analyzed data into a table.
+	html_file += generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, html_cache)
+
+	return html_file
+
+
+
+def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
 
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
@@ -1031,27 +1051,25 @@ def generate_analysis_table(alliance_info, stat_type='actual', hist_date='', htm
 
 	html_file += '</tr>\n'
 	
-	# Start by doing stat analysis.	
-	stats = get_roster_stats(alliance_info, stat_type, hist_date)
+	return html_file
 	
-	#
-	# WHAT HAPPENS IF WE ALLOW ALL MEMBERS INSTEAD?
-	#
-	
-	# Get the list of Alliance Members 
-	member_list = []
-	hist_info = alliance_info.get('hist')
-	
-	if hist_info:
-		member_list = list(hist_info[max(hist_info)])
 
+
+def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, html_cache):
+	
+	html_file = ''
+
+	#
+	# BRINGING IN HIST_DATE FOR TWO REASONS
+	# * PASS IN ON get_value_color() SO IT KNOWS TO BE GENEROUS IN COLOR SCALING.
+	# * USE ITS PRESENCE TO TRIGGER + INDICATIONS IN F-STRING FORMATTING
+	#
 
 	# Get a sorted list of members to use for this table output.
-	alliance_order = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
-	alliance_order = [member for member in alliance_order if member in member_list]
+	member_list = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 
 	# Iterate through each row for members in the table.
-	for member in alliance_order:
+	for member in member_list:
 			member_info = alliance_info['members'][member]
 			member_stats = stats.get(member,{})
 			stats_range  = stats['range']
@@ -1061,56 +1079,55 @@ def generate_analysis_table(alliance_info, stat_type='actual', hist_date='', htm
 
 			html_file += '<tr>\n'
 
-			#
-			# FIX THIS URL. IN FACT, FIND ALL THE URLS AND FIX THEM ALL.
-			#
-
-			member_url = ' href="https://marvelstrikeforce.com/en/v1/players/%s/characters" target="_blank"' % (alliance_info['members'][member].get('url',''))
+			member_url = ''
+			if member_info.get('avail'):
+				member_url = f' href="https://marvelstrikeforce.com/en/member/{member_info.get("url")}/characters" target="_blank"'
+		
 			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (['nblu','ngra'][stale_data], member_url, member_info.get('display_name',member))
 			
 			for key in ['tcp','stp','tcc']:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,0), html_cache, stale_data), f'{member_stats[key]:,}')
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,0), html_cache, stale_data, hist_date=hist_date), f'{member_stats.get(key,0):,}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
 			for key in ['yel', 'red', 'tier', 'lvl', 'iso']:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['tot_'+key], member_stats.get('tot_'+key,0), html_cache, stale_data), f'{member_stats.get("tot_"+key, 0) / max(member_stats["tcc"],1):.2f}')
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['tot_'+key], member_stats.get('tot_'+key,0), html_cache, stale_data, hist_date=hist_date), f'{member_stats.get("tot_"+key, 0) / max(member_stats.get("tcc",0),1):.2f}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
 			for key in range(4,8):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['yel'][key], member_stats.get('yel',{}).get(key,0), html_cache, stale_data), member_stats.get('yel',{}).get(key,0))
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['yel'][key], member_stats.get('yel',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('yel',{}).get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Red Stars                                                                                                                                       
 			for key in range(4,8):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['red'][key], member_stats.get('red',{}).get(key,0), html_cache, stale_data), member_stats.get('red',{}).get(key,0))
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['red'][key], member_stats.get('red',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('red',{}).get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# Conditionally include Diamonds columns.
 			if DIAMONDS_ENABLED:
 				for key in range(1,4):
-					html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), html_cache, stale_data), member_stats.get('dmd',{}).get(key,0))
+					html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('dmd',{}).get(key,0))
 				html_file += ' <td></td>\n' 									# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
 			for key in [5,9,10,11,12,13]:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['iso'][key], member_stats.get('iso',{}).get(key,0), html_cache, stale_data), member_stats.get('iso',{}).get(key,0))
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['iso'][key], member_stats.get('iso',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('iso',{}).get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
 			for key in range(13,20):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['tier'][key], member_stats.get('tier',{}).get(key,0), html_cache, stale_data), member_stats.get('tier',{}).get(key,0))
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['tier'][key], member_stats.get('tier',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('tier',{}).get(key,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
 			for key in ['bas','spc','ult','pas']:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,{}).get(7,0), html_cache, stale_data), member_stats.get(key,{}).get(7,0))
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,{}).get(7,0), html_cache, stale_data, hist_date=hist_date), member_stats.get(key,{}).get(7,0))
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
 			for key in range(70,105,5):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['lvl'][key], member_stats.get('lvl',{}).get(key,0), html_cache, stale_data), member_stats.get('lvl',{}).get(key,0))
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['lvl'][key], member_stats.get('lvl',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('lvl',{}).get(key,0))
 
 			html_file += '</tr>\n'
 
@@ -1129,15 +1146,10 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 	
 	hist_info = alliance_info.get('hist',{})
 	
-	current_rosters = {}
-	oldest_rosters  = {}
-	
-	if hist_info:
-		current_rosters = copy.deepcopy(hist_info[max(hist_info)])
-		oldest_rosters  = copy.deepcopy(hist_info[min(hist_info)])
+	current_rosters = copy.deepcopy(hist_info[max(hist_info)])
 	
 	# Get the list of Alliance Members 
-	member_list = list(current_rosters)
+	member_list = list(alliance_info.get('members',{}))
 
 	# Get the list of usable characters for analysis.
 	char_list = get_char_list(alliance_info)
@@ -1149,7 +1161,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 		member_stats = stats.setdefault(member,{})
 		
 		# Don't include stats from heroes that haven't been recruited yet.
-		recruited_chars = [char for char in char_list if current_rosters[member].get(char,{}).get('power')]
+		recruited_chars = [char for char in char_list if current_rosters.get(member,{}).get(char,{}).get('power')]
 
 		# Loop through every char
 		for char in recruited_chars:
@@ -1395,10 +1407,10 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 		html_file += ' <tr style="background:%s; font-size:22px;">\n' % (member_color)
 		html_file += '  <td style="padding:0px;"><img height="45" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png"/></td>\n' % (member_stats.get('image','ShieldDmg_Defense_3dea00f7'))
 
-		member_url = member_stats.get('url','')
-		if member_url:
-			member_url = f' href="https://marvelstrikeforce.com/en/member/{member_url}/characters" target="_blank"'
-		
+		member_url = ''
+		if member_stats.get('avail'):
+			member_url = f' href="https://marvelstrikeforce.com/en/member/{member_stats.get("url")}/characters" target="_blank"'
+
 		# If hist_date was requested, add date under the name field.
 		second_line = ''
 		if hist_date:
