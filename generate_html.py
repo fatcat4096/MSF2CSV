@@ -891,20 +891,29 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 @timed(level=3)
 def generate_roster_analysis(alliance_info, using_tabs=False, hist_date=None, html_cache={}):
 
-	# Only include Dividers if using as part of a multi-tab document
-	if using_tabs:
-		html_file = '<div id="RosterAnalysis" class="tcon">\n'
-	else:
-		html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
-	html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache)
-
-	# Add the progressive form in as well. :)
-	html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
-	html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache)
+	#
+	# TEMP, Just so I can focus on color ranges.
+	#
+	html_file = ''
+	if not hist_date:
+	#
+	# TEMP, Just so I can focus on color ranges.
+	#
 	
+		# Only include Dividers if using as part of a multi-tab document
+		if using_tabs:
+			html_file = '<div id="RosterAnalysis" class="tcon">\n'
+		else:
+			html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
+		html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache)
+
+		# Add the progressive form in as well. :)
+		html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
+		html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache)
+		
 	# Add the historical form in if hist_date is available.
 	if hist_date:
-		html_file += get_tab_header(f'ROSTER ANALYSIS (SINCE {hist_date.strftime("%m/%d/%y")})')
+		html_file += get_tab_header(f'ROSTER ANALYSIS (CHANGES SINCE {hist_date.strftime("%m/%d/%y")})')
 		html_file += generate_analysis_table(alliance_info, stat_type='progressive', hist_date=hist_date, html_cache=html_cache)
 
 	# Only include Dividers if using as part of a multi-tab document
@@ -1059,18 +1068,12 @@ def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, ht
 	
 	html_file = ''
 
-	#
-	# BRINGING IN HIST_DATE FOR TWO REASONS
-	# * PASS IN ON get_value_color() SO IT KNOWS TO BE GENEROUS IN COLOR SCALING.
-	# * USE ITS PRESENCE TO TRIGGER + INDICATIONS IN F-STRING FORMATTING
-	#
-
 	# Get a sorted list of members to use for this table output.
 	member_list = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 
 	# Iterate through each row for members in the table.
 	for member in member_list:
-			member_info = alliance_info['members'][member]
+			member_info  = alliance_info['members'][member]
 			member_stats = stats.get(member,{})
 			stats_range  = stats['range']
 
@@ -1083,51 +1086,52 @@ def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, ht
 			if member_info.get('avail'):
 				member_url = f' href="https://marvelstrikeforce.com/en/member/{member_info.get("url")}/characters" target="_blank"'
 		
-			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % (['nblu','ngra'][stale_data], member_url, member_info.get('display_name',member))
+			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % ('ngra' if stale_data else 'nblu', member_url, member_info.get('display_name',member))
 			
-			for key in ['tcp','stp','tcc']:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,0), html_cache, stale_data, hist_date=hist_date), f'{member_stats.get(key,0):,}')
+			for stat in ['tcp','stp','tcc']:
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
-			for key in ['yel', 'red', 'tier', 'lvl', 'iso']:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['tot_'+key], member_stats.get('tot_'+key,0), html_cache, stale_data, hist_date=hist_date), f'{member_stats.get("tot_"+key, 0) / max(member_stats.get("tcc",0),1):.2f}')
+			for stat in ['yel', 'red', 'tier', 'lvl', 'iso']:
+				field_value = f"{member_stats.get('avg_'+stat,0):+.2f}" if hist_date else f"{member_stats.get('avg_'+stat,0):.2f}"
+				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['avg_'+stat], member_stats.get('avg_'+stat,0), html_cache, stale_data, hist_date=hist_date), field_value)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
 			for key in range(4,8):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['yel'][key], member_stats.get('yel',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('yel',{}).get(key,0))
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'yel', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Red Stars                                                                                                                                       
 			for key in range(4,8):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['red'][key], member_stats.get('red',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('red',{}).get(key,0))
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'red', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# Conditionally include Diamonds columns.
 			if DIAMONDS_ENABLED:
 				for key in range(1,4):
-					html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['dmd'][key], member_stats.get('dmd',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('dmd',{}).get(key,0))
+					html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'dmd', key)
 				html_file += ' <td></td>\n' 									# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
 			for key in [5,9,10,11,12,13]:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['iso'][key], member_stats.get('iso',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('iso',{}).get(key,0))
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'iso', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
 			for key in range(13,20):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['tier'][key], member_stats.get('tier',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('tier',{}).get(key,0))
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'tier', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
-			for key in ['bas','spc','ult','pas']:
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range[key], member_stats.get(key,{}).get(7,0), html_cache, stale_data, hist_date=hist_date), member_stats.get(key,{}).get(7,0))
+			for stat in ['bas','spc','ult','pas']:
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat, 7)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
 			for key in range(70,105,5):
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['lvl'][key], member_stats.get('lvl',{}).get(key,0), html_cache, stale_data, hist_date=hist_date), member_stats.get('lvl',{}).get(key,0))
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'lvl', key)
 
 			html_file += '</tr>\n'
 
@@ -1137,17 +1141,135 @@ def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, ht
 
 
 
+def get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat, key=None):
+
+	if key is None:
+		member_stat = member_stats.get(stat,0)
+		stat_range = stats_range[stat]
+	else:
+		member_stat = member_stats.get(stat,{}).get(key,0)
+		stat_range = stats_range[stat][key]
+		
+	field_value = f"{member_stat:+}" if hist_date else f"{member_stat}"
+
+	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=hist_date), field_value)
+
+
+
 # STILL NEED TO WORK ON HISTORICAL PRESENTATION. SHOULD USE PROGRESSIVE STAT CALCULATIONS FOR BOTH TO SUCCESSFULLY COMMUNICATE PROGRESS.
 
 @timed(level=3)
 def get_roster_stats(alliance_info, stat_type, hist_date=''):
 	
+	hist = alliance_info.get('hist',{})
+	
+	# Calculate stats for most recent roster refresh
+	stats          = analyze_rosters(alliance_info, stat_type, hist[max(hist)])
+
+	# If Historical analysis, a little more work to do.
+	if hist_date:
+
+		# Calculate stats for requested date
+		hist_stats = analyze_rosters(alliance_info, stat_type, hist[hist_date])
+
+		# Find differences between current stats and hist_stats.
+		for member in stats:
+			stats[member]['tcp'] -= hist_stats[member]['tcp']
+			stats[member]['stp'] -= hist_stats[member]['stp']
+			stats[member]['tcc'] -= hist_stats[member]['tcc']
+
+			# Totals (and create dicts for the rest of the ranges)
+			for key in ['yel','red','dmd','tier','lvl','iso']:
+				stats[member]['avg_'+key] -= hist_stats[member].get('avg_'+key,0)
+			
+			# Yellow and Red Stars
+			for key in range(4,8):
+				get_stat_diff(stats, hist_stats, member, 'yel', key)
+				get_stat_diff(stats, hist_stats, member, 'red', key)
+
+			# Diamonds
+			for key in range(1,4):
+				get_stat_diff(stats, hist_stats, member, 'dmd', key)
+
+			# ISO Levels
+			for key in range(5,14):
+				get_stat_diff(stats, hist_stats, member, 'iso', key)
+
+			# Gear Tiers
+			for key in range(13,20):
+				get_stat_diff(stats, hist_stats, member, 'tier', key)
+
+			# Level Ranges
+			for key in range(65,105,5):
+				get_stat_diff(stats, hist_stats, member, 'lvl', key)
+
+			# T4 Abilities
+			for stat in ['bas','spc','ult','pas']:
+				get_stat_diff(stats, hist_stats, member, stat, 7)
+
+	# Get the list of Alliance Members 
+	member_list = list(alliance_info.get('members',{}))
+
+	# Calculate alliance-wide ranges for each statistic. Use min() and max() to determine colors
+	stats_range = stats.setdefault('range',{})
+
+	stats_range['tcp'] = [stats[member]['tcp'] for member in member_list]
+	stats_range['stp'] = [stats[member]['stp'] for member in member_list]
+	stats_range['tcc'] = [stats[member]['tcc'] for member in member_list]
+
+	# Totals (and create dicts for the rest of the ranges)
+	for stat in ['yel','red','dmd','tier','lvl','iso']:
+		#stats_range[stat]  = {}
+		stats_range['avg_'+stat]  = [stats[member].get('avg_'+stat,0) for member in member_list]
+	
+	# Yellow and Red Stars
+	for key in range(4,8):
+		get_stat_range(stats, 'yel', key, member_list)
+		get_stat_range(stats, 'red', key, member_list)
+
+	# Diamonds
+	for key in range(1,4):
+		get_stat_range(stats, 'dmd', key, member_list)
+
+	# ISO Levels
+	for key in range(5,14):
+		get_stat_range(stats, 'iso', key, member_list)
+
+	# Gear Tiers
+	for key in range(13,20):
+		get_stat_range(stats, 'tier', key, member_list)
+
+	# Level Ranges
+	for key in range(65,105,5):
+		get_stat_range(stats, 'lvl', key, member_list)
+
+	# T4 Abilities
+	for stat in ['bas','spc','ult','pas']:
+		get_stat_range(stats, stat, 7, member_list)
+
+	return stats
+
+
+
+def get_stat_diff(stats, hist_stats, member, stat, key):
+	stats[member].setdefault(stat,{})[key] = stats[member].get(stat,{}).get(key,0) - hist_stats[member].get(stat,{}).get(key,0)
+
+
+
+def get_stat_range(stats, stat, key, member_list):
+	stats['range'].setdefault(stat,{})[key] = [stats[member].get(stat,{}).get(key,0) for member in member_list]
+
+
+
+# FOLLOWING CODE BLOCK USES alliance_info, stat_type, stats, current_rosters
+
+def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
+
 	stats = {}
 	
-	hist_info = alliance_info.get('hist',{})
-	
-	current_rosters = copy.deepcopy(hist_info[max(hist_info)])
-	
+	# We'll be making changes, work with a copy.
+	rosters_to_analyze = copy.deepcopy(rosters_to_analyze)
+
 	# Get the list of Alliance Members 
 	member_list = list(alliance_info.get('members',{}))
 
@@ -1157,23 +1279,25 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 	# Start by doing stat analysis.	
 	for member in member_list:
 	
+		tot_vals = {'power':[]}
+	
 		# Get a little closer to our work.
 		member_stats = stats.setdefault(member,{})
 		
 		# Don't include stats from heroes that haven't been recruited yet.
-		recruited_chars = [char for char in char_list if current_rosters.get(member,{}).get(char,{}).get('power')]
+		recruited_chars = [char for char in char_list if rosters_to_analyze.get(member,{}).get(char,{}).get('power')]
 
 		# Loop through every char
 		for char in recruited_chars:
 		
 			# Get a little closer to our work.
-			char_stats = current_rosters[member][char]
+			char_stats = rosters_to_analyze[member][char]
 
 			# Use for Total / Average # columns -- do this BEFORE normalizing data.
 			for key in ['yel','red','dmd','tier','lvl','iso']:
-				member_stats['tot_'+key] = member_stats.get('tot_'+key,0) + char_stats[key]
+				tot_vals[key] = tot_vals.get(key,0) + char_stats[key]
 
-			# If progressive, only report the highest USABLE red star and diamonds only valid if 7R.
+			# Only report the highest USABLE red star and diamonds only valid if 7R.
 			if char_stats['red'] > char_stats['yel']:
 				char_stats['red'] = char_stats['yel']
 			if char_stats['red'] != 7:
@@ -1189,10 +1313,10 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 			else:
 				char_stats['lvl'] -= char_stats['lvl']%5			# Round down to nearest multiple of 5.
 
-			# Gather 0-5 into 5.
+			# Gather ISO 0-5 into ISO 5.
 			if char_stats['iso'] < 5 and stat_type == 'actual':
 				char_stats['iso'] = 5
-			# Gather 6-9 into 9.
+			# Gather ISO 6-9 into ISO 9.
 			elif char_stats['iso'] in range(6,10) and stat_type == 'actual':
 				char_stats['iso'] = 9
 
@@ -1221,48 +1345,23 @@ def get_roster_stats(alliance_info, stat_type, hist_date=''):
 				member_stats.setdefault(key,{})[abil_stats[key]] = member_stats.get(key,{}).setdefault(abil_stats[key],0)+1
 
 			# Use for TCP, STP, TCC columns
-			member_stats.setdefault('power',[]).append(char_stats['power'])
+			tot_vals['power'].append(char_stats['power'])
 
-		member_stats['tcp'] = alliance_info['members'].get(member,{}).get('tcp') or sum(member_stats.get('power',[]))
-		member_stats['stp'] = alliance_info['members'].get(member,{}).get('stp') or sum(sorted(member_stats.get('power',[]))[-5:])
-		member_stats['tcc'] = alliance_info['members'].get(member,{}).get('tcc') or len(member_stats.get('power',[]))
+		# Calculate TCP, STP, and Total Chars Collected 
+		if tot_vals['power']:
+			member_stats['tcp'] = sum(tot_vals['power'])
+			member_stats['stp'] = sum(sorted(tot_vals['power'])[-5:])
+			member_stats['tcc'] = len(tot_vals['power'])
+		# If no roster data available, use values from alliance_info.
+		else:
+			member_stats['tcp'] = alliance_info['members'].get(member,{}).get('tcp')
+			member_stats['stp'] = alliance_info['members'].get(member,{}).get('stp')
+			member_stats['tcc'] = alliance_info['members'].get(member,{}).get('tcc')
 
-	# Calculate alliance-wide ranges for each statistic. Use min() and max() to determine colors
-	stats['range'] = {}
-	stats['range']['tcp'] = [stats[member]['tcp'] for member in member_list]
-	stats['range']['stp'] = [stats[member]['stp'] for member in member_list]
-	stats['range']['tcc'] = [stats[member]['tcc'] for member in member_list]
-
-	# Totals (and create dicts for the rest of the ranges)
-	for key in ['yel','red','dmd','tier','lvl','iso']:
-		stats['range'][key]  = {}
-		stats['range']['tot_'+key]  = [stats[member].get('tot_'+key,0) for member in member_list]
-	
-	# Yellow and Red Stars
-	for key in range(4,8):
-		stats['range']['yel'][key] = [stats[member].get('yel',{}).get(key,0) for member in member_list]
-		stats['range']['red'][key] = [stats[member].get('red',{}).get(key,0) for member in member_list]
-
-	# Diamonds
-	for key in range(1,4):
-		stats['range']['dmd'][key] = [stats[member].get('dmd',{}).get(key,0) for member in member_list]
-
-	# ISO Levels
-	for key in range(5,14):
-		stats['range']['iso'][key] = [stats[member].get('iso',{}).get(key,0) for member in member_list]
-
-	# Gear Tiers
-	for key in range(13,20):
-		stats['range']['tier'][key] = [stats[member].get('tier',{}).get(key,0) for member in member_list]
-
-	# Level Ranges
-	for key in range(65,105,5):
-		stats['range']['lvl'][key] = [stats[member].get('lvl',{}).get(key,0) for member in member_list]
-
-	# T4 Abilities
-	for key in ['bas','spc','ult','pas']:
-		stats['range'][key] = [stats[member].get(key,{}).get(7,0) for member in member_list]
-
+		# Change tot_ values to avg_ values.
+		for key in ['yel','red','dmd','tier','lvl','iso']:
+			member_stats['avg_'+key] = tot_vals.get(key,0) / max(alliance_info['members'].get(member,{}).get('tcc'),1)
+			
 	return stats
 
 
