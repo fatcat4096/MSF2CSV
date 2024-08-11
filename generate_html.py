@@ -24,7 +24,7 @@ import copy
 # Routines to create color gradient for heat map
 from alliance_info import *
 from generate_css  import *
-from gradients     import color_scale, darken, grayscale
+from gradients     import *
 from html_cache    import *
 
 
@@ -147,7 +147,8 @@ def generate_html(alliance_info, table, table_format, output=''):
 		
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += generate_roster_analysis(alliance_info, hist_date=hist_date, html_cache=html_cache)
+			use_range = table_format.get('use_range','set')
+			html_file += generate_roster_analysis(alliance_info, hist_date=hist_date, html_cache=html_cache, use_range=use_range)
 
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
@@ -889,32 +890,23 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_roster_analysis(alliance_info, using_tabs=False, hist_date=None, html_cache={}):
+def generate_roster_analysis(alliance_info, using_tabs=False, hist_date=None, html_cache={}, use_range='set'):
 
-	#
-	# TEMP, Just so I can focus on color ranges.
-	#
-	html_file = ''
-	if not hist_date:
-	#
-	# TEMP, Just so I can focus on color ranges.
-	#
-	
-		# Only include Dividers if using as part of a multi-tab document
-		if using_tabs:
-			html_file = '<div id="RosterAnalysis" class="tcon">\n'
-		else:
-			html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
-		html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache)
+	# Only include Dividers if using as part of a multi-tab document
+	if using_tabs:
+		html_file = '<div id="RosterAnalysis" class="tcon">\n'
+	else:
+		html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
+	html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache, use_range=use_range)
 
-		# Add the progressive form in as well. :)
-		html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
-		html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache)
+	# Add the progressive form in as well. :)
+	html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
+	html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache, use_range=use_range)
 		
 	# Add the historical form in if hist_date is available.
 	if hist_date:
 		html_file += get_tab_header(f'ROSTER ANALYSIS (CHANGES SINCE {hist_date.strftime("%m/%d/%y")})')
-		html_file += generate_analysis_table(alliance_info, stat_type='progressive', hist_date=hist_date, html_cache=html_cache)
+		html_file += generate_analysis_table(alliance_info, stat_type='progressive', hist_date=hist_date, html_cache=html_cache, use_range=use_range)
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -924,7 +916,7 @@ def generate_roster_analysis(alliance_info, using_tabs=False, hist_date=None, ht
 		
 
 
-def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, html_cache={}):
+def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, html_cache={}, use_range='set'):
 
 	# Conditionally include Diamonds columns.
 	DIAMONDS_ENABLED = True
@@ -936,7 +928,7 @@ def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, h
 	stats = get_roster_stats(alliance_info, stat_type, hist_date)
 
 	# Format the analyzed data into a table.
-	html_file += generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, html_cache)
+	html_file += generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, html_cache, use_range)
 
 	return html_file
 
@@ -1064,7 +1056,7 @@ def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
 	
 
 
-def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, html_cache):
+def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, html_cache, use_range):
 	
 	html_file = ''
 
@@ -1089,49 +1081,44 @@ def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, ht
 			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % ('ngra' if stale_data else 'nblu', member_url, member_info.get('display_name',member))
 			
 			for stat in ['tcp','stp','tcc']:
-				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat)
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
 			for stat in ['yel', 'red', 'tier', 'lvl', 'iso']:
-				field_value = f"{member_stats.get('avg_'+stat,0):+.2f}" if hist_date else f"{member_stats.get('avg_'+stat,0):.2f}"
-				html_file += ' <td class="%s">%s</td>\n' % (get_value_color(stats_range['avg_'+stat], member_stats.get('avg_'+stat,0), html_cache, stale_data, hist_date=hist_date), field_value)
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, f'avg_{stat}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
-			# Yellow Stars
-			for key in range(4,8):
-				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'yel', key)
-			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+			# Yellow and Red Stars
+			for stat in ['yel','red']:
+				for key in range(4,8):
+					html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat, key)
+				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
-			# Red Stars                                                                                                                                       
-			for key in range(4,8):
-				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'red', key)
-			html_file += ' <td></td>\n' 										# Vertical Divider                             
-
 			# Conditionally include Diamonds columns.
 			if DIAMONDS_ENABLED:
 				for key in range(1,4):
-					html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'dmd', key)
+					html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'dmd', key)
 				html_file += ' <td></td>\n' 									# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
 			for key in [5,9,10,11,12,13]:
-				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'iso', key)
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'iso', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
 			for key in range(13,20):
-				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'tier', key)
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'tier', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
 			for stat in ['bas','spc','ult','pas']:
-				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat, 7)
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat, 7)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
 			for key in range(70,105,5):
-				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'lvl', key)
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'lvl', key)
 
 			html_file += '</tr>\n'
 
@@ -1141,7 +1128,7 @@ def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, ht
 
 
 
-def get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat, key=None):
+def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat, key=None):
 
 	if key is None:
 		member_stat = member_stats.get(stat,0)
@@ -1149,14 +1136,17 @@ def get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date
 	else:
 		member_stat = member_stats.get(stat,{}).get(key,0)
 		stat_range = stats_range[stat][key]
-		
-	field_value = f"{member_stat:+}" if hist_date else f"{member_stat}"
+	
+	if not member_stat:
+		field_value = '-'
+	elif member_stat == int(member_stat):
+		field_value = f"{member_stat:+,}" if hist_date else f"{member_stat:,}"
+	else:
+		field_value = f"{member_stat:+.2f}" if hist_date else f"{member_stat:.2f}"
 
-	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=hist_date), field_value)
+	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, use_range=use_range), field_value)
 
 
-
-# STILL NEED TO WORK ON HISTORICAL PRESENTATION. SHOULD USE PROGRESSIVE STAT CALCULATIONS FOR BOTH TO SUCCESSFULLY COMMUNICATE PROGRESS.
 
 @timed(level=3)
 def get_roster_stats(alliance_info, stat_type, hist_date=''):
@@ -1679,14 +1669,28 @@ def extract_color(alliance_name):
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=''):
-	min_val = min(val_range) if val_range else 0
-	max_val = max(val_range) if val_range else 0
+def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date='', use_range=False):
+	if not val_range or not value:
+		return 'hist'
+	elif use_range=='set':
+		min_val = 0
+		max_val = 1000
+		new_range = sorted(set(val_range))
+		value = 1000/len(new_range)*(new_range.index(value)+1)
+	elif use_range == 'list':
+		min_val = 0
+		max_val = 1000
+		new_range = sorted(val_range, reverse=True)
+		value = 1000/len(new_range)*(len(new_range)-new_range.index(value))
+	else:
+		min_val = min(val_range)
+		max_val = max(val_range)
 
-	if not min_val:
-		new_range = [x for x in val_range if x != 0]
-		if new_range:
-			min_val = min(new_range)
+		# Ignore min_val of 0.
+		if not min_val:
+			new_range = [x for x in val_range if x != 0]
+			if new_range:
+				min_val = min(new_range)
 	
 	return get_value_color_ext(min_val, max_val, value, html_cache, stale_data, stat, under_min, hist_date)
 
@@ -1707,13 +1711,14 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		return 'hist'
 
 	# Special treatment if there's only a single value.
-	value += min_val == max_val
+	#value += min_val == max_val
 	
 	# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 
 	# Midpoint = ISO 8
 	if stat == 'iso':
-		color = get_scaled_value(0, 8, 10, value, hist_date)
+		color = iso_color_scale[value-1]
+		#color = get_scaled_value(0, 9, 13, value, hist_date)
 	# ISO Level midpoint = Tier 15
 	elif stat == 'tier':
 		color = get_scaled_value(0, 15, 19, value, hist_date)
@@ -1761,7 +1766,7 @@ def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 	yellow_point = 0.5
 	
 	# If we're in the lower "half" of our range, calculate the spread from red to yellow
-	if value <= mid_val:
+	if value < mid_val:
 		scaled_value = ((value-min_val)/max(1,mid_val-min_val)) * yellow_point
 	# Top "half" is yellow to green.
 	else:
@@ -1770,6 +1775,8 @@ def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 	# Ensure the scaled_value is between 0% and 100%
 	scaled_value = max(0, scaled_value)		# min of 0%
 	scaled_value = min(1, scaled_value)		# max of 100%
+
+	
 
 	# Translate the scaled_value into a color from the color_scale list.
 	max_colors   = len(color_scale)-1
