@@ -93,9 +93,6 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 	try:
 		WebDriverWait(driver, 300).until(EC.presence_of_element_located((By.CLASS_NAME, 'alliance-members')))
 
-		# Wait until page has fully displayed
-		WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "H2")))
-
 	# If our page doesn't include the Alliance Members table, never successfully logged in. 
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
@@ -273,8 +270,9 @@ def extract_user_and_alliance(driver):
 		buttons[0].click()
 
 		# May need to make note of color information here. 
-		driver.username      = remove_tags(username[0].text)
-		driver.alliance_name = remove_tags(alliance_name[0].text).strip()
+		driver.username       = remove_tags(username[0].text)
+		driver.alliance_name  = remove_tags(alliance_name[0].text).strip()
+		driver.alliance_color = alliance_name[0].get_attribute('innerHTML')			# We will use this for color naming.
 
 	except TimeoutException:
 		print("Timed out. user-menu-trigger never became available.")
