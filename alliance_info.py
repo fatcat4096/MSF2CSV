@@ -40,22 +40,35 @@ def get_char_list(alliance_info):
 
 
 # Bring back a sorted list of players from alliance_info
-def get_player_list(alliance_info, sort_by='', stp_list={}, table={}):
+def get_player_list(alliance_info, sort_by='', stp_list={}, table={}, char_list=[]):
 
-	player_list = alliance_info['members']
+	player_list = alliance_info.get('members',[])
 
 	# If Sort Order specified, sort player_list in the correct order. 
 	if sort_by == 'stp' and stp_list:
 		return sorted(player_list, key=lambda x: -stp_list[None][x])
-	# Sort by avail if requested.
+	# Sort by avail if requested, use stp as secondary criteria.
 	elif sort_by == 'avail' and table:
-		return sorted(player_list, key=lambda x: -len([char for char in table.get('under_min',{}).get(x,{}) if not table.get('under_min',{}).get(x,{}).get(char)]))
+
+		# Factor in STP when sorting by availability.
+		local_stp = {}
+
+		for player in player_list:
+			inc_char = char_list or [char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]
+			pow_list = sorted([find_value_or_diff(alliance_info, player, char_name, 'power')[0] for char_name in inc_char])
+			local_stp[player] = sum(pow_list[-5:])
+
+		return sorted(player_list, key=lambda x: -len([char for char in (char_list or table.get('under_min',{}).get(x,{})) if not table.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
+			
 	# If we weren't provided a list of STPs, fall back to using TCP.
 	elif sort_by in ('tcp','stp','avail'):
 		return sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
 	
-	# Otherwise, just do a default sort.
+	# Otherwise, just do a default alpha sort.
 	return sorted(player_list, key=str.lower)
+
+
+
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
@@ -67,10 +80,10 @@ def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
 	for player_name in player_list:
 
 		# Build a list of all character powers.
-		all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] for char_name in char_list], reverse=True)
+		all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] for char_name in char_list])
 
 		# And sum up the Top 5 power entries for STP.
-		team_pwr_dict.setdefault(hist_date,{})[player_name] = sum(all_char_pwr[:5])
+		team_pwr_dict.setdefault(hist_date,{})[player_name] = sum(all_char_pwr[-5:])
 
 	return team_pwr_dict
 
@@ -90,7 +103,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	other_chars = [char for char in char_list if not char in meta_chars]
 
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list (alliance_info)
+	player_list = get_player_list(alliance_info)
 
 	# Get extracted_traits from alliance_info
 	extracted_traits = alliance_info.get('traits',{})
