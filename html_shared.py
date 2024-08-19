@@ -93,18 +93,20 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		color = get_scaled_value(0, 9, 13, value, hist_date)
 	# ISO Level midpoint = Tier 15
 	elif stat == 'tier':
-		color = get_scaled_value(0, 15, 19, value, hist_date)
+		color = get_scaled_value(0, 16, 19, value, hist_date)
 	# Gear Tier midpoint = Level 85
 	elif stat == 'lvl':
 		color = get_scaled_value(0, 85, 100, value, hist_date)
 	# Ability midpoint = Level 5
 	elif stat in ('bas','spc','ult'):
-		color = get_scaled_value(0, 5, 7, value, hist_date)
+		color = get_scaled_value(0, 6, 7, value, hist_date)
 	# Passive midpoint = Level 3
 	elif stat == 'pas':
-		color = get_scaled_value(0, 3, 5, value, hist_date)
-	elif stat in ('red','yel'):
+		color = get_scaled_value(0, 4, 5, value, hist_date)
+	elif stat in ('yel'):
 		color = get_scaled_value(0, 5, 7, value, hist_date)
+	elif stat in ('red'):
+		color = get_scaled_value(0, 6, 10, value, hist_date)
 	elif stat == 'rank':
 		color = get_scaled_value(1, 13, 25, (25-value), hist_date)
 	elif stat == 'avail':
