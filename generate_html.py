@@ -467,8 +467,8 @@ def generate_team_power_summary(alliance_info, table, lanes, table_format, team_
 		section = {}
 		
 		table_lbl = 'Team<br>Power<br>Summary'
-		table_format['inc_keys'] = ['power','avail']
-		table_format['sort_by'] = 'stp'
+		table_format['inc_keys'] = ['power','rank']
+		table_format['sort_by'] = 'tcp'
 		
 		team_power_summary = True
 		
