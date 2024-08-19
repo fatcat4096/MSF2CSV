@@ -79,8 +79,13 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Make note of when we begin.
 	start_time = datetime.datetime.now()
 
+	# Initialize structures used during refresh.
+	status          = []
+	roster_csv_data = {}
+
 	# Work the website or cached URLs to update alliance_info 
-	status = process_rosters(driver, alliance_info)
+	for member in list(alliance_info['members']):
+		status += process_rosters(driver, alliance_info, [member], roster_csv_data)
 
 	# If anything was updated, do some additional work.
 	status = ''.join([line[17:] for line in status])
@@ -270,7 +275,7 @@ def process_roster_html(driver, alliance_info, member):
 			# Navigate from Profile tab to Roster tab.
 			buttons[0].click()
 			
-			print ('Calling process_roster_htmls(), loading roster tab...')
+			#print ('Calling process_roster_htmls(), loading roster tab...')
 			
 			# Page loads in sections, will be > 700K after roster information loads.
 			while (datetime.datetime.now()-start_time).seconds < time_limit and len(page_source)<700000:
@@ -281,7 +286,7 @@ def process_roster_html(driver, alliance_info, member):
 
 			# If page loaded, extract stats and exit.
 			if len(page_source)>700000:
-				print (f'Parsing page for member: {member} - {len(page_source)} bytes')
+				#print (f'Parsing page for member: {member} - {len(page_source)} bytes')
 				return parse_roster_html(page_source, alliance_info, member)
 
 			# If we got here, we exceeded the time limit and our page still hasn't fully loaded.
