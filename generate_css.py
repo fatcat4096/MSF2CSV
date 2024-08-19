@@ -53,7 +53,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 }
 /* Blue Button, Power -- slightly wider */
 .blubp {
-  min-width   : 55px;
+  min-width   : 50px;
 }
 .blubp:hover {
   background  : DodgerBlue;
@@ -75,7 +75,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   font-weight : 700;
   background  : DarkRed;
   color       : white;
-  min-width   : 60px;
+  min-width   : 50px;
   height      : 30px;
 }
 .redb:hover {

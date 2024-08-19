@@ -37,7 +37,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
 
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list(alliance_info, sort_by, stp_list, table)
+	player_list = get_player_list(alliance_info, sort_by, stp_list, table, char_list)
 
 	# If there are no players in this table, don't generate a table.
 	using_players = [player for player in sum(strike_teams, []) if player in player_list]
@@ -310,14 +310,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 								style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or use_hist_date is not None])    
 
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
-							if key_val:
-								if key=='red' and key_val>7:
-									field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
-								else:
-									field_value = f'{key_val:+}' if use_hist_date else f'{key_val}'
-
+							if key=='red' and key_val>7:
+								field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
 							else:
-								field_value = '-'
+								field_value = get_field_value(key_val, use_hist_date)
 
 							st_html += '     <td%s>%s%s</td>\n' % (style, field_value, ['',other_diffs][need_tt])
 
@@ -348,15 +344,24 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 								st_html += f'     <td class="hist{rowspan}">-</td>\n'
 
 					# Include the Strongest Team Power column.
-					if len(char_list)>1:
+					if team_power_summary:
+						# Need to subtract Hist value if use_hist_date
+						player_tcp = alliance_info['members'][player_name].get('tcp',0)
+
+						# Get the TCP range for heat map shading.
+						tcp_range = [alliance_info['members'][player_name].get('tcp',0) for player_name in strike_team]
+
+						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
+						field_value = get_field_value(player_tcp, use_hist_date)
+	
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(tcp_range, player_tcp, html_cache, stale_data, use_range='set'), field_value)
+					
+					elif len(char_list)>1:
 						player_stp = stp_list.get(use_hist_date,{}).get(player_name,0)
 
 						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
-						if player_stp:
-							field_value = f'{player_stp:+}' if use_hist_date else f'{player_stp}'
-						else:
-							field_value = '-'
-
+						field_value = get_field_value(player_stp, use_hist_date)
+	
 						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(stp_range, player_stp, html_cache, stale_data), field_value)
 					
 					st_html += '    </tr>\n'
@@ -404,7 +409,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					col_idx += 1
 			
 			# Insert the Team Power column.
-			if len(char_list)>1:
+			if team_power_summary:
+				html_file += f'     <td class="redb" {sort_func % col_idx}>TCP</td>\n'
+			elif len(char_list)>1:
 				html_file += f'     <td class="redb" {sort_func % col_idx}>STP</td>\n'
 
 			html_file += '    </tr>\n'
@@ -421,3 +428,17 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 	return html_file
 
+
+
+def get_field_value(value, hist_date):
+	if value:
+		if value > 10**6:
+			field_value = f'{value/10**6:+.2f}M' if hist_date else f'{value/10**6:.2f}M'
+		elif value > 1000:
+			field_value = f'{value/1000:+.0f}K'  if hist_date else f'{value/1000:.0f}K'
+		else:
+			field_value = f'{value:+}' if hist_date else f'{value}'
+	else:
+		field_value = '-'
+
+	return field_value
