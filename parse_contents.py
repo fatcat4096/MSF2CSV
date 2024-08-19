@@ -15,7 +15,6 @@ from file_io import *
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from parse_cache import update_parse_cache
 
 # Parse the alliance information directly from the website.
 @timed(level=3)
@@ -57,7 +56,7 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 	# Start by removing all formatting.
 	alliance_name = remove_tags(alliance_name.text).strip()
 
-	# Wrap the alliance_name if we found speical formatting.
+	# Wrap the alliance_name if we found special formatting.
 	if alliance_style:
 		alliance_name = f'<span style="{alliance_style}">{alliance_name}</span>'"""
 
@@ -79,6 +78,11 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 	alliance_stats       = soup.findAll('div', attrs = {'class':'msf-tag'})
 	
 	for stat in alliance_stats:
+
+		# Skip over entries which don't have data. ;)
+		if not stat.find('div', attrs = {'class':'filter-title'}):
+			continue
+			
 		title = stat.find('div', attrs = {'class':'filter-title'}).text
 		value = stat.find('div', attrs = {'class':'filter-value'}).text
 
@@ -92,17 +96,37 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 	members  = {}
 	captains = []
 
+	#
+	# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
+	#
+
+	html_rows = soup.find('div', attrs = {'class':'alliance-member-table'}).findAll('tr')[1:]
+	
+	#
+	# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
+	#
+
 	# Pull base Member Info from the info.csv file.
 	info_csv = open(driver.info_csv, 'r', encoding='utf-8').readlines()
 	
 	# Iterate through each entry, building up a member dict with stats for each.
-	for member_row in info_csv[1:]:
+	for idx, member_row in enumerate(info_csv[1:]):
 		member = {}
+
+		#
+		# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
+		#
+
+		member_name = remove_tags(html_rows[idx].findAll('td')[0].find('div', attrs={'class':'name'}).text.strip().replace(' [ME]',''))
+
+		#
+		# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
+		#
 
 		member_row = member_row.strip().split(',')
 
-		# Remove HTML tags if present.
-		member_name = remove_tags(member_row[2])
+		"""# Remove HTML tags if present.
+		member_name = remove_tags(member_row[2])"""
 
 		# Process role information.
 		member_role     = member_row[1]
@@ -114,11 +138,11 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 		member['url']   = member_row[0]
 		member['image'] = member_row[3].split('Portrait_')[-1][:-4]
 		member['frame'] = member_row[4].split('ICON_FRAME_')[-1][:-4]
-		member['level'] = int(member_row[5])
-		member['tcp']   = int(member_row[7])
-		member['stp']   = int(member_row[8])
-		member['mvp']   = int(member_row[9])
-		member['tcc']   = int(member_row[10])
+		member['level'] = int(member_row[5])  if member_row[5] else 0
+		member['tcp']   = int(member_row[7])  if member_row[7] else 0
+		member['stp']   = int(member_row[8])  if member_row[8] else 0
+		member['mvp']   = int(member_row[9])  if member_row[9] else 0
+		member['tcc']   = int(member_row[10]) if member_row[10] else 0
 		member['avail'] = member_row[11]=='true'
 
 		# Store the finished member info.
@@ -155,17 +179,11 @@ def parse_player_stats(contents, member_info):
 	member_info['red']        = int(re.sub(r"\D", "", stats[9].text))
 
 
+
 # Parse the character file out of MHTML or the page_source directly from the website.
 @timed(level=3)
-def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='', roster_csv_data={}):
+def parse_roster_html(contents, alliance_info, member=''):
 	soup = BeautifulSoup(contents, 'html.parser')
-
-	# Sanitize the Player Name (remove html tags) and report which panel we're working on.
-	#player_name = remove_tags(player_name.text)
-
-	# Have no choice but to accept the inbound Member Name
-	# Name on the HTML is for the login user.
-	player_name = member
 
 	player_info = {}
 
@@ -175,10 +193,7 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 	
 	chars  = soup.findAll('li', attrs = {'class':'character'})
 
-	# Add up all the power of the heroes we find. Will compare this to the previously found info
-	# AND to the live Total Power for their roster to determine whether the info collected is fresh or stale.
-	tot_power = 0
-
+	# Iterate through each toon that we found.
 	for char in chars:
 		
 		# If no char_name defined, last entry on page. Skip.
@@ -213,9 +228,6 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 				elif stat.text:
 					power = int(re.sub(r"\D", "", stat.text))
 
-			# For total roster calculation.
-			tot_power += int(power)
-			
 			# Decode Yellow Stars, Red Stars, and Diamonds
 			stars = str(char_stats.find('span'))
 			if stars == 'None':
@@ -295,7 +307,7 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 				iso = 10
 
 				# ISO class is harder. Gotta copy from current entry.
-				iso_class = alliance_info.get('members',{}).get(player_name,{}).get('other_data',{}).get(char_name,0)%6
+				iso_class = alliance_info.get('members',{}).get(member,{}).get('other_data',{}).get(char_name,0)%6
 
 			processed_chars[char_name] = {'power':int(power), 'lvl':int(level), 'tier':int(tier), 'iso':int(iso), 'yel':yelStars, 'red':redStars, 'dmd':0, 'abil':int(bas+spc+ult+pas)}
 			other_data[char_name]      = favorite+iso_class
@@ -305,69 +317,9 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 			processed_chars[char_name] = {'power':0, 'lvl':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'dmd':0, 'abil':0}
 			other_data[char_name]      = 0
 
-	# Finally, after we've processed everything else traditionally.
-	# Fill the roster_csv_data structure if not yet populated.
-	if roster_csv and not roster_csv_data:
-		roster_csv_data = parse_roster_csv_data(roster_csv, char_portraits)
+	# Finally, merge the processed roster into our Alliance Info
+	merge_roster(alliance_info, member, processed_chars, other_data)
 
-	# Should NOT happen.
-	if player_name not in roster_csv_data:
-		print ("Look into this. Why isn't",player_name,"in the roster_csv_data structure?")
-
-	# Final stages -- fix any data that needs supplemental information from roster.csv and then optimize the alliance_info data structure
-	for char_name in processed_chars:
-		
-		if char_name in roster_csv_data.get(player_name,{}):
-			# Set Diamond data appropriately.
-			processed_chars[char_name]['dmd'] = roster_csv_data[player_name][char_name].get('dmd',0)
-
-			# If still no ISO Class data, look for it in the roster_csv_data.
-			if not other_data[char_name]%6:
-				other_data[char_name] += roster_csv_data[player_name][char_name].get('cls',0)
-
-		# Should not be happening.
-		elif processed_chars.get(char_name,{}).get('power'):
-			print (f'* {player_name} -- {char_name} not found in roster.csv')
-		
-		# Look for a duplicate entry in our cache and point both to the same entry if possible.
-		update_parse_cache(processed_chars,char_name,parse_cache)
-
-	# Calculate level based on character leveling.
-
-	# Use Alliance Info information if it's available.
-
-	# Get a little closer to our work. 
-	player = alliance_info['members'].setdefault(player_name,{})
-	
-	# Update 'last_update' if the calculated tot_power has changed.
-	if player.get('tot_power') != tot_power:
-		player['tot_power']   = tot_power
-		player['last_update'] = datetime.datetime.now()
-
-	# Add the 'clean' parsed data to our list of processed players.
-	player['processed_chars'] = processed_chars
-	player['other_data']      = other_data
-	
-	# Keep the top level name, but only if valid.
-	player['display_name']    = member
-
-	# Temporary fix. Calculate values if possible.
-	calc_lvl             = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars]) if processed_chars else 0
-	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
-	calc_tcc             = len([char for char in processed_chars if processed_chars[char]['power']])
-	player_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
-	player_info['stars'] = sum([processed_chars[char]['yel'] for char in processed_chars])
-	player_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
-
-	# Only use calculated TCP, STP, and TCC if higher than the recorded values in Alliance Info.
-	player_info['level'] = max(calc_lvl,  alliance_info['members'].get(member,{}).get('level',0))
-	player_info['tcp']   = max(tot_power, alliance_info['members'].get(member,{}).get('tcp',0))
-	player_info['stp']   = max(calc_stp,  alliance_info['members'].get(member,{}).get('stp',0))
-	player_info['tcc']   = max(calc_tcc,  alliance_info['members'].get(member,{}).get('tcc',0))
-
-	# And update the player info with current stats from the side panel.
-	player.update(player_info)
-	
 	# Update alliance_info with portrait information.
 	alliance_info['portraits'] = char_portraits
 
@@ -376,89 +328,133 @@ def parse_roster(contents, alliance_info, parse_cache, member='', roster_csv='',
 	if scripts:
 		alliance_info['scripts'] = scripts
 
-	return player_name
+
+	
+def merge_roster(alliance_info, member, processed_chars, other_data):
+
+	# Get a little closer to our work. 
+	member_info = alliance_info['members'].setdefault(member,{})
+	
+	# Update 'last_update' if the calculated tot_power has changed.
+	calc_pwr = sum([processed_chars[char]['power'] for char in processed_chars])
+	if  member_info.get('tot_power') != calc_pwr:
+		member_info['tot_power']      = calc_pwr
+		member_info['last_update']    = datetime.datetime.now()
+
+	# Add the 'clean' parsed data to our list of processed players.
+	member_info['processed_chars'] = processed_chars
+	member_info['other_data']      = other_data
+	
+	# Do I really USE the display_name?
+	member_info['display_name']    = member
+
+	# Temporary fix. Calculate values if possible.
+	calc_lvl             = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars]) if processed_chars else 0
+	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
+	calc_tcc             = len([char for char in processed_chars if processed_chars[char]['power']])
+	member_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
+	member_info['stars'] = sum([processed_chars[char]['yel'] for char in processed_chars])
+	member_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
+
+	# Only use calculated TCP, STP, and TCC if higher than the recorded values in Alliance Info.
+	member_info['level'] = max(calc_lvl, alliance_info['members'].get(member,{}).get('level',0))
+	member_info['tcp']   = max(calc_pwr, alliance_info['members'].get(member,{}).get('tcp',0))
+	member_info['stp']   = max(calc_stp, alliance_info['members'].get(member,{}).get('stp',0))
+	member_info['tcc']   = max(calc_tcc, alliance_info['members'].get(member,{}).get('tcc',0))
 
 
 
 # Parse the Diamond data directly from the roster.csv file.
 @timed(level=3)
-def parse_roster_csv_data(roster_csv, char_portraits):
+def parse_roster_csv_data(roster_csv, char_portraits, roster_csv_data={}, member_order=[]):
 
-	roster_csv_data = {}
-
-	# Can't parse if diamond data is unavailable.
+	# Can't parse if roster.csv is unavailable.
 	if not os.path.exists(roster_csv):
-		return roster_csv_data
+		print ('No roster.csv found. Cannot parse roster.csv')
+		return
 
-	# Pull full Roster Info from the roster.csv file.
-	roster_csv = open(roster_csv, 'r', encoding='utf-8').readlines()
+	# SHOULD NOT HAPPEN.
+	if not member_order:
+		print ('No member_order supplied. Cannot parse roster.csv')
+		return
 
 	# Build char name lookup from portrait listing.
 	char_lookup = {}
 	for name in char_portraits:
 		char_lookup[char_portraits[name].rsplit('_',1)[0]] = name
-		
-	# Build up an index of the fields.
-	index_line = roster_csv[0].strip().split(',')
-	index_dict = {}
-	for idx, item in enumerate(index_line):
-		if item.count('.')<2:
-			continue
-		item = item.split('.',2)
-		entry = index_dict.setdefault(item[1],{})
-		entry[item[-1]] = idx
+
+	# Pull full Roster Info from the roster.csv file.
+	roster_csv_file = open(roster_csv, 'r', encoding='utf-8').readlines()
 
 	# Iterate through each entry, building up a member dict with stats for each.
-	for member_row in roster_csv[1:]:
+	for entry_row in roster_csv_file[1:]:
 
-		member = {}
+		entry = entry_row.split(',')
 
-		member_row  = member_row.split(',')
-		member_name = remove_tags(member_row[1])
+		member_name = remove_tags(entry[0])
 		
-		for item in index_dict:
-			char_id_idx  = index_dict[item].get('id')
-			char_red_idx = index_dict[item].get('activeRed')
-			char_cls_idx = index_dict[item].get('iso8.active')
+		# TEMP: PULL NAMES FROM member_order AS NECESSARY.
+		if not member_name:
+			member_name = member_order[0]
+		
+		member_info = roster_csv_data.setdefault(member_name, {'processed_chars':{}, 'other_data':{}})
+		
+		char_name = char_lookup.get(entry[1])
+		
+		# SHOULD NOT HAPPEN. If lookup failed, we're missing the translation. Can't insert this data.
+		if not char_name:
+			print ("missing translation for",entry[1])
+			continue
+		
+		# TEMP: IF CHAR_NAME ALREADY EXISTS, MOVE ON TO NEXT NAME.
+		if char_name in member_info['processed_chars']:
+			member_order.pop(0)
+			member_name = member_order[0]
+			member_info = roster_csv_data.setdefault(member_name, {'processed_chars':{}, 'other_data':{}})
+		
+		char_info = member_info['processed_chars'].setdefault(char_name,{})
+		
+		char_info['lvl']   = int(entry[2]) if entry[2] else 0
+		char_info['power'] = int(entry[3]) if entry[3] else 0
+		char_info['yel']   = int(entry[4]) if entry[4] else 0
+		
+		active_red = int(entry[5]) if entry[5] else 0
+		char_info['red']   = active_red   if active_red < 7 else 7 
+		char_info['dmd']   = active_red-7 if active_red > 7 else 0
+		
+		char_info['tier']  = int(entry[6]) if entry[6] else 0
 
-			# Should not happen.
-			if not char_id_idx:
-				continue
+		bas = entry[7]  if entry[7]  else '0' 
+		spc = entry[8]  if entry[8]  else '0'
+		ult = entry[9]  if entry[9]  else '0'
+		pas = entry[10] if entry[10] else '0'
 
-			# Abort if no char defined -- member hasn't recruited all heroes yet.
-			char_id = member_row[char_id_idx]
-			if not char_id:
-				continue
-				
-			# Translate from internal ID to human readable name.
-			char_name = char_lookup.get(char_id)
+		char_info['abil'] = int(bas+spc+ult+pas)
+		
+		iso_class = entry[11] if entry[11] else 0
 
-			# Should not happen.
-			if not char_name:
-				print ('ERROR: Could not find translation for:',char_id)
-				continue
+		if iso_class == 'fortifier':
+			member_info['other_data'][char_name] = 1
+			char_info['iso'] = int(entry[14]) if entry[14] else 0
+		elif iso_class == 'healer':
+			member_info['other_data'][char_name] = 2
+			char_info['iso'] = int(entry[15]) if entry[15] else 0
+		elif iso_class == 'skirmisher':
+			member_info['other_data'][char_name] = 3
+			char_info['iso'] = int(entry[17]) if entry[17] else 0
+		elif iso_class == 'raider':
+			member_info['other_data'][char_name] = 4
+			char_info['iso'] = int(entry[16]) if entry[16] else 0
+		elif iso_class == 'striker':
+			member_info['other_data'][char_name] = 5
+			char_info['iso'] = int(entry[13]) if entry[13] else 0
+		elif not iso_class:
+			member_info['other_data'][char_name] = 0
+			char_info['iso'] = 0
+	
+	# Fill out entries for toons not yet collected.
+	for member in roster_csv_data:
+		for char_name in [char for char in char_lookup if char not in roster_csv_data[member]['processed_chars']]:
+			roster_csv_data[member]['processed_chars'][char_name] = {'power':0, 'lvl':0, 'tier':0, 'iso':0, 'yel':0, 'red':0, 'dmd':0, 'abil':0}
+			roster_csv_data[member]['other_data'][char_name]      = 0
 
-			# Create the entry to hold data.
-			char_entry = roster_csv_data.setdefault(member_name,{}).setdefault(char_name, {})
-
-			# Translate from Active Red to Diamond count.
-			if char_red_idx:
-				char_red = member_row[char_red_idx]
-				char_dmd = max(0,int(char_red)-7) if char_red else 0
-				char_entry['dmd'] = char_dmd
-
-			# Translate from ISO Class literal to internal representation.
-			if char_cls_idx:
-				char_cls = member_row[char_cls_idx]
-				char_cls = {
-					'fortifier': 1,
-					'healer': 2,
-					'skirmisher': 3,
-					'raider': 4,
-					'striker': 5,
-				}.get(char_cls,0)
-
-				# Add this entry to the roster_csv_data.
-				char_entry['cls'] = char_cls
-
-	return roster_csv_data
