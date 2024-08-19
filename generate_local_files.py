@@ -23,7 +23,7 @@ def generate_strike_teams(alliance_info):
 
 	strike_teams = alliance_info.setdefault('strike_teams',{})
 
-	for raid_type in ('incur','spotlight'):
+	for raid_type in ('incur','spotlight','orchis'):
 
 		if not strike_teams.get(raid_type):
 
@@ -50,7 +50,8 @@ strike_teams = {}
 '''
 
 	# Create each strike_team definition.
-	new_file += generate_strike_team('incur', strike_teams['incur'], 'Used for Incursion Raid output.')
+	new_file += generate_strike_team('orchis',    strike_teams['orchis'],    'Used for Orchis Raid output.')
+	new_file += generate_strike_team('incur',     strike_teams['incur'],     'Used for Incursion Raid output.')
 	new_file += generate_strike_team('spotlight', strike_teams['spotlight'], 'Used for Spotlight Raids and other output.')
 
 	# Write it to disk.
@@ -128,6 +129,29 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 
 	tables = {}
 
+	# Meta Heroes for use in Orchis Raid
+	tables['orchis'] = { 'name': 'Orchis Raid',
+						'min_iso': 10,
+						'max_others': 0,
+						'raid_type': 'split',
+						'strike_teams': 'orchis',
+						'sort_char_by': 'avail',
+						'inc_keys': ['power','lvl','tier','iso'],
+						'lanes':[ [
+								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot'], 'label':'Mutant<br>(X-Treme)'},
+								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
+								{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
+								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'}, 
+								{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
+								] ],
+						'lanes_alt':[ [
+								{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'},
+								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'},
+								{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'},
+								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
+								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot'], 'label':'Mutant<br>(X-Treme)'}
+								] ]
+						}
 
 	# Meta Heroes for use in Spotlight Raid
 	tables['spotlight'] = { 'name': 'Spotlight Raid',

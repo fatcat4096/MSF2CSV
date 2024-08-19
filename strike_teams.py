@@ -1,7 +1,6 @@
 # This file contains the Strike Teams used for HTML file output.
 #
 # Move entries between strike teams and reorder players within strike teams.
-# Include lane dividers, i.e. "----" to indicate which players are in which lanes/clusters.
 #
 # Also, you can add entries in strike_teams dict and use them in output in msf2csv.py.
 # These teams will be saved and included in cached alliance information.
@@ -13,65 +12,65 @@ strike_teams = {}
 # Used for Incursion Raid output.
 strike_teams["incur"] = [
 [### Strike team 1 ###]
-	"Drankou",
+	"Silentwitness",
+	"Dblade21X",
+	"Flashie",
 	"Jutch",
-	"Schvotz",
-	"Hillboy3.0",
-	"RadicalEvil",
-	"Daner",
 	"Shika",
+	"CK125",
 	"Joey",
+	"Daner",
 ],
 [### Strike team 2 ###]
-	"BigDiesel",
+	"Groot",
 	"Jay",
-	"sjhughes",
-	"Flashie",
-	"FatCat",
+	"RayLogan85",
+	"RadicalEvil",
+	"Zilean",
 	"EXfieldy",
-	"silentwitness",
 	"Shammy",
+	"FatCat",
 ],
 [### Strike team 3 ###]
 	"Zen Master",
-	"LUCKY_BASTARD",
 	"Grizzera",
-	"Incredibad",
-	"Fenrir",
+	"BigDiesel",
 	"Bestiafa",
 	"Unclad",
-	"Zairyuu",
+	"Incredibad",
+	"Fenrir",
+	"Kaladin",
 ]]
 
 # Used for Spotlight Raids and other output.
 strike_teams["spotlight"] = [
 [### Strike team 1 ###]
-	"Hillboy3.0",
+	"Dblade21X",
 	"Daner",
 	"Flashie",
 	"Joey",
-	"Schvotz",
-	"Jutch",
-	"Drankou",
+	"CK125",
 	"Shika",
+	"BigDiesel",
+	"Jutch",
 ],
 [### Strike team 2 ###]
 	"RadicalEvil",
-	"FatCat",
-	"sjhughes",
-	"EXfieldy",
 	"Shammy",
+	"EXfieldy",
+	"Zilean",
+	"RayLogan85",
 	"Jay",
-	"BigDiesel",
-	"silentwitness",
+	"Groot",
+	"FatCat",
 ],
 [### Strike team 3 ###]
-	"LUCKY_BASTARD",
+	"Kaladin",
 	"Grizzera",
 	"Fenrir",
 	"Zen Master",
 	"Bestiafa",
 	"Unclad",
 	"Incredibad",
-	"Zairyuu",
+	"Silentwitness",
 ]]

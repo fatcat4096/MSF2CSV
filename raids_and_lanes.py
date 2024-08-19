@@ -55,6 +55,30 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 							] ]
 					}
 
+# Meta Heroes for use in Orchis Raid
+tables['orchis'] = { 'name': 'Orchis Raid',
+					'min_iso': 10,
+					'max_others': 0,
+					'raid_type': 'split',
+					'strike_teams': 'orchis',
+					'sort_char_by': 'avail',
+					'inc_keys': ['power','lvl','tier','iso'],
+					'lanes':[ [
+							{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot'], 'label':'Mutant<br>(X-Treme)'},
+							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
+							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
+							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'}, 
+							{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
+							] ],
+					'lanes_alt':[ [
+							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'},
+							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'},
+							{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'},
+							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
+							{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot'], 'label':'Mutant<br>(X-Treme)'}
+							] ]
+					}
+
 # Meta Heroes for use in Incursion 2 Raid
 tables['incur'] = { 'name': 'Incursion 2 Raid',
 					'min_iso': 9,
@@ -70,6 +94,7 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'},
 							] ]
 					}
+
 
 # Meta Heroes for use in Incursion 1.x Raid
 tables['old_incur'] = { 'name': 'Incursion 1.x Raid',
@@ -114,7 +139,6 @@ tables['dd7'] = { 'name': 'Dark Dimension 7',
 					'inc_avail': True,
 					'traits_req': 'all', 
 					'lanes':[ [
-							{'traits': ['All'], 'label':'Gear Tier 19'},
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'City'],   'label':'City'},
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'Global'], 'label':'Global'},
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'Cosmic'], 'label':'Cosmic'},
