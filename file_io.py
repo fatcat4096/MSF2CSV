@@ -27,7 +27,6 @@ TAG_RE = re.compile(r'<[^>]+>')
 
 
 # Sanitize Alliance Names and player names of any HTML tags.
-@timed(level=3)
 def remove_tags(text):
 
 	# Cleaned text is without HTML tags. Also removing hashtags.
@@ -36,6 +35,7 @@ def remove_tags(text):
 	# If nothing remains, then < > was decorative, return the original entry.
 	return cleaned or text
 	
+
 
 @timed(level=3)
 def get_local_path():
@@ -47,6 +47,7 @@ def get_local_path():
 		path = os.path.dirname(sys.executable)
 
 	return os.path.realpath(path) + os.sep
+
 
 
 @timed(level=3)
@@ -81,6 +82,7 @@ def write_file(pathname, file_content, print_path=True):
 		files_generated.append(filename)
 		
 	return files_generated
+
 
 
 @timed(level=3)
@@ -143,6 +145,7 @@ def html_to_images(html_files=[], print_path=True):
 	return files_generated
 
 
+
 @timed(level=3)
 def load_cached_data(file_or_alliance=''):
 	cached_data = {}
@@ -175,6 +178,7 @@ def load_cached_data(file_or_alliance=''):
 			cached_data['file_path'] = os.path.realpath(file_or_alliance)
 
 	return cached_data
+
 
 
 @timed(level=3)
@@ -233,14 +237,20 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
 	traits = [trait for trait in sorted(alliance_info.get('traits',{})) if trait not in invalid_traits]
 
+	# Ensure the enclosing directory exists.
+	cached_path = get_local_path() + 'cached_data' + os.sep
+	if not os.path.exists(cached_path):
+		os.makedirs(cached_path)
+
 	# Caching traits and char lists for Discord autocomplete.
-	pickle.dump((char_list,traits), open(get_local_path() + os.sep + 'cached_lists', 'wb'))
+	pickle.dump((char_list,traits), open(cached_path + 'cached_lists', 'wb'))
+
 
 
 def load_char_list():
 	char_list=[]
 
-	file_path = get_local_path() + os.sep + 'cached_lists'
+	file_path = get_local_path() + 'cached_data' + os.sep + 'cached_lists'
 
 	if os.path.exists(file_path):
 		(char_list,traits) =  pickle.load(open(file_path,'rb'))
@@ -248,10 +258,11 @@ def load_char_list():
 	return char_list
 
 
+
 def load_trait_list():
 	traits=[]
 
-	file_path = get_local_path() + os.sep + 'cached_lists'
+	file_path = get_local_path() + 'cached_data' + os.sep + 'cached_lists'
 
 	if os.path.exists(file_path):
 		(char_list,traits) =  pickle.load(open(file_path,'rb'))
@@ -259,12 +270,10 @@ def load_trait_list():
 	return traits
 
 
+
 # Has it been less than 24 hours since last update of cached_data?
 @timed(level=3)
-def fresh_enough(alliance_info):
-
-	# TEMPORARY PATCH UNTIL WORKING AGAIN, NO REFRESH
-	return True
+def fresh_enough(alliance_info, age_of=False):
 
 	# If a name of an alliance is passed in, find the relevant alliance_info instead.
 	if type(alliance_info) is str:
@@ -274,7 +283,13 @@ def fresh_enough(alliance_info):
 	if not alliance_info:
 		return False
 
-	return time.time()-os.path.getmtime(alliance_info['file_path']) < 86400
+	last_refresh = time.time()-os.path.getmtime(alliance_info['file_path'])
+	
+	if age_of:
+		return last_refresh
+	
+	return last_refresh < 86400
+
 
 
 # Handle the file list cleanly.
@@ -315,6 +330,7 @@ def find_cached_data(file_or_alliance=''):
 	return alliance_info
 
 
+
 # Check to see if a subdirectory exists with this alliance_name and if it contains valid python files.
 # If so, change the import path to include this directory and source the files to use their definitions.
 @timed(level=3)
@@ -344,6 +360,7 @@ def check_import_path(alliance_name):
 			tables = raids_and_lanes.tables
 
 
+
 # Offer standardized process for building alliance name from alliance_info data.
 def get_alliance_name(alliance_info):
 
@@ -354,6 +371,7 @@ def get_alliance_name(alliance_info):
 	
 	return alliance_name
 	
+
 
 # Insert the local directory at the front of path to override packaged versions.
 sys.path.insert(0, get_local_path())
