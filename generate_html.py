@@ -291,7 +291,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			html_file += generate_team_power_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
-		for section, section_idx in enumerate(lane):
+		for section_idx, section in enumerate(lane):
 
 			#
 			# HACK. SHOULDN'T NEED TO EXPLICITLY CALC section_idx.

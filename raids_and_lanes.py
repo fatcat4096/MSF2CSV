@@ -51,7 +51,6 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 							{'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Non-Mythic'},
 							{'traits': ['SpiderSociety'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)']},
 							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
-							{'traits': ['All'],  'label':'Final Boss'},
 							] ]
 					}
 
