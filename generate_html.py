@@ -270,8 +270,8 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 	inc_summary = get_table_value(table_format, table, key='inc_summary')
 
 	# Iterate through all the lanes. Showing tables for each section. 
-	for lane in lanes:
-
+	for lane_idx, lane in enumerate(lanes):
+	
 		# Display each lane in a separate tab.
 		divider_id = ['Hist','Lane'][not hist_date] + str(lanes.index(lane)+1)
 		
@@ -291,9 +291,16 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 			html_file += generate_team_power_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
-		for section in lane:
+		for section, section_idx in enumerate(lane):
 
-			last_section = lane.index(section) == len(lane)-1
+			#
+			# HACK. SHOULDN'T NEED TO EXPLICITLY CALC section_idx.
+			# ROUTINE ABOVE CALLS THIS REPEATEDLY WITH ONE LANE/SECTION EACH CALL
+			# SHOULD NOTE ABOVE WHETHER IS SPLIT RAID AND PASS IN ALT **OR** MAKE BOTH CALLS ABOVE?
+			#
+			
+			section_idx = table.get('lanes')[0].index(section)
+			last_section = section_idx == len(lane)-1
 		
 			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
 
@@ -351,6 +358,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, inline_hist)
 
 			span_data = get_table_value(table_format, table, section, key='span', default=False)
+			split_raid = get_table_value(table_format, table, section, key='raid_type') == 'split'
 
 			# Special code for Spanning format here. It's a very narrow window of applicability.
 			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not (only_team or only_members):
@@ -381,6 +389,39 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, us
 					html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_team, table_lbl, stp_list, html_cache, hist_date)
 					html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
+			# Split raid format requested. Generate info from two different lane definitions
+			elif other_chars and not meta_chars and split_raid and [x for x in strike_teams if '----' in x]:
+			
+				# Generate left
+				html_file += generate_table(alliance_info, table, section, table_format, other_chars, [x[:4] for x in strike_teams], table_lbl, stp_list, html_cache, hist_date)
+				html_file += '  </td>\n  <td><br></td>\n  <td>\n'
+				
+				# Generate Right
+				section_alt = table['lanes_alt'][lane_idx][section_idx]
+
+				meta_chars_alt, other_chars_alt = get_meta_other_chars(alliance_info, table, section_alt, table_format)
+
+				table_lbl = section_alt.get('label','').upper()
+				if not table_lbl:
+
+					# Make a table label based on the included traits.
+					traits = section_alt.get('traits',[])
+					if type(traits) == str:
+						traits = [traits]
+				
+					# Truncate Table Label after 4 entries, if more than 4, use first 3 plus "AND MORE"
+					traits = [translate_name(trait).upper() for trait in traits] 
+					if len(traits) > 4:
+						traits = traits[:3] + ['AND MORE']
+					table_lbl = '<br>'.join(traits)
+					
+					if section_alt.get('meta'):
+						table_lbl += '<br><span class="sub">META</span>'
+					
+				stp_list_alt = get_stp_list(alliance_info, meta_chars_alt+other_chars_alt, hist_date)
+
+				html_file += generate_table(alliance_info, table, section, table_format, other_chars_alt, [x[-4:] for x in strike_teams], table_lbl, stp_list_alt, html_cache, hist_date)
+		
 			# We are NOT spanning. Standard table generation.
 			else:
 				html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, hist_date)
