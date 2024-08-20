@@ -400,7 +400,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			for char in line_chars:
 				for key in keys:
 					width = 'p' if key == 'power' else ''
-					html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'iso':'ISO','stp':'STP'}.get(key,key.title()))
+					html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'power':'Pwr','iso':'ISO','stp':'STP'}.get(key,key.title()))
 					col_idx += 1
 
 				# Include a header for ISO Class info if requested.

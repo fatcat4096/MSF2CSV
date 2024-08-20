@@ -134,19 +134,19 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 
 		html_file += '  <td>%s</td>\n' % (member_stats.get('level','n/a'))
 		html_file += '  <td>%s</td>\n' % (member_role)
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   html_cache, stale_data), f'{member_stats.get("tcp",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stp_range,   member_stats.get('stp',0),   html_cache, stale_data), f'{member_stats.get("stp",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color_ext(max(tcc_range)-5, max(tcc_range),   member_stats.get('tcc',0),   html_cache, stale_data), f'{member_stats.get("tcc",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(max_range,   member_stats.get('max',0),   html_cache, stale_data), f'{member_stats.get("max",0):,}')
+		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("tcp",0):,}')
+		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stp_range,   member_stats.get('stp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("stp",0):,}')
+		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcc_range,   member_stats.get('tcc',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("tcc",0):,}')
+		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(max_range,   member_stats.get('max',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("max",0):,}')
 
 		# Conditionally include columns.
 		if ARENA_BLITZ_ENABLED:
 			html_file += '  <td class="%s">%s</td>\n' % (get_value_color_ext(max(arena_range), min(arena_range), member_stats.get('arena',0), html_cache, stale_data), f'{member_stats.get("arena",0):,}')
 			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(blitz_range, member_stats.get('blitz',0), html_cache, stale_data), f'{member_stats.get("blitz",0):,}')
 			
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(mvp_range,   member_stats.get('mvp',0),   html_cache, stale_data), f'{member_stats.get("mvp",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stars_range, member_stats.get('stars',0), html_cache, stale_data), f'{member_stats.get("stars",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(red_range,   member_stats.get('red',0),   html_cache, stale_data), f'{member_stats.get("red",0):,}')
+		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(mvp_range,   member_stats.get('mvp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("mvp",0):,}')
+		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stars_range, member_stats.get('stars',0), html_cache, stale_data, use_range='set'), f'{member_stats.get("stars",0):,}')
+		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(red_range,   member_stats.get('red',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("red",0):,}')
 
 		if 'last_update' in member_stats:
 			last_update = datetime.datetime.now() - member_stats['last_update']

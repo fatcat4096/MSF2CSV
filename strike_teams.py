@@ -9,6 +9,39 @@
 
 strike_teams = {}
 
+# Used for Orchis Raid output.
+strike_teams["orchis"] = [
+[### Strike team 1 ###]
+	"Silentwitness",
+	"Dblade21X",
+	"Flashie",
+	"Jutch",
+	"Shika",
+	"CK125",
+	"Joey",
+	"Daner",
+],
+[### Strike team 2 ###]
+	"Groot",
+	"Jay",
+	"RayLogan85",
+	"RadicalEvil",
+	"Zilean",
+	"EXfieldy",
+	"Shammy",
+	"BigDiesel",
+],
+[### Strike team 3 ###]
+	"Zen Master",
+	"FatCat",
+	"Grizzera",
+	"Bestiafa",
+	"Unclad",
+	"Incredibad",
+	"Fenrir",
+	"Allanon",
+]]
+
 # Used for Incursion Raid output.
 strike_teams["incur"] = [
 [### Strike team 1 ###]
@@ -29,17 +62,17 @@ strike_teams["incur"] = [
 	"Zilean",
 	"EXfieldy",
 	"Shammy",
-	"FatCat",
+	"BigDiesel",
 ],
 [### Strike team 3 ###]
 	"Zen Master",
 	"Grizzera",
-	"BigDiesel",
+	"FatCat",
 	"Bestiafa",
 	"Unclad",
 	"Incredibad",
 	"Fenrir",
-	"Kaladin",
+	"Allanon",
 ]]
 
 # Used for Spotlight Raids and other output.
@@ -65,7 +98,7 @@ strike_teams["spotlight"] = [
 	"FatCat",
 ],
 [### Strike team 3 ###]
-	"Kaladin",
+	"Allanon",
 	"Grizzera",
 	"Fenrir",
 	"Zen Master",

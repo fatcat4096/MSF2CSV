@@ -53,7 +53,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 }
 /* Blue Button, Power -- slightly wider */
 .blubp {
-  min-width   : 50px;
+  min-width   : 35px;
 }
 .blubp:hover {
   background  : DodgerBlue;
@@ -75,7 +75,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   font-weight : 700;
   background  : DarkRed;
   color       : white;
-  min-width   : 50px;
+  min-width   : 45px;
   height      : 30px;
 }
 .redb:hover {
@@ -92,7 +92,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 }
 /* Black Button, Power -- slightly wider */
 .blkbp {
-  min-width   : 55px;
+  min-width   : 35px;
 }
 .blkbp:hover {
   background  : SlateGray;
@@ -180,6 +180,10 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   min-width   : 130px;
 }
 .sub {
+  font-size   : 12pt;
+  font-weight : normal;
+}
+.SUB {
   font-size   : 12pt;
   font-weight : normal;
 }
