@@ -11,6 +11,7 @@ import string
 import copy
 import re
 
+from parse_cache import update_parse_cache
 
 @timed(level=3)
 def get_hist_date(alliance_info, table_format):
@@ -489,6 +490,8 @@ def update_history(alliance_info):
 	hist_list = list(hist)
 	hist_list.remove(today)
 	
+	parse_cache = {}
+	
 	for member in alliance_members:
 	
 		# Can only examine those with processed roster information.
@@ -496,7 +499,13 @@ def update_history(alliance_info):
 
 			# Get a little closer to our work.
 			member_info = alliance_members[member]
-			
+
+			# Optimize the leaves.
+			for char_name in alliance_members[member]['processed_chars']:
+
+				# Look for a duplicate entry in our cache and point both to the same entry if possible.
+				update_parse_cache(alliance_members[member]['processed_chars'],char_name,parse_cache)
+		
 			# Compare today's information vs the previous run.
 			if member_info['processed_chars'] == hist[max(hist_list)][member]:
 
@@ -505,11 +514,25 @@ def update_history(alliance_info):
 				member_info['processed_chars'] = hist[max(hist_list)][member]
 				today_info[member] = hist[max(hist_list)][member]
 
-	# Keep the oldest entry, plus one per ISO calendar week. Also, purge any entries > 60 days. 
+	# Keep every day for a week, keep every other day after a week, keep one per week after two weeks, keep one per month after two months, anything over 270 days is deleted
+	prev_month = None
+	prev_week  = None
+	prev_day   = None
+
 	for key in hist_list:
-		if (key.isocalendar().week == today.isocalendar().week and key is not min(hist)) or today-key > datetime.timedelta(90):
+		date_diff = (today-key).days
+
+		key_month = int(date_diff/30)
+		key_week  = key.isocalendar().week
+		key_day   = int(key.timetuple().tm_yday/2)
+		
+		if date_diff > 270 or (date_diff > 60 and key_month == prev_month) or (date_diff > 14 and key_week == prev_week) or (date_diff > 7 and key_day == prev_day):
 			del alliance_info['hist'][key]
 
+		prev_month = key_month
+		prev_week  = key_week
+		prev_day   = key_day
+		
 
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
 @timed(level=3)
