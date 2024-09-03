@@ -88,8 +88,8 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 		status += process_rosters(driver, alliance_info, [member], roster_csv_data)
 
 	# If anything was updated, do some additional work.
-	status = ''.join([line[17:] for line in status])
-	if 'UPD' in status:
+	status = ''.join([line[15:] for line in status])
+	if 'UPD' in status or 'NEW' in status:
 	
 		# Keep a copy of critical stats from today's run for historical analysis.
 		update_history(alliance_info)
@@ -148,6 +148,9 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 		if only_process and member not in only_process:
 			continue
 
+		# Take note of the original TCP size.
+		tcp_start = members[member].get('tot_power',0)
+
 		# If member's info is in the roster_csv_data, use that.
 		if member in roster_csv_data:
 
@@ -165,7 +168,7 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 				print ('could not find member',member,'in roster_csv_data:',roster_csv_data.keys())
 
 			process_roster_html(driver, alliance_info, member)
-			
+
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
 		time_now    = datetime.datetime.now()
@@ -176,61 +179,93 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 		member_stale = is_stale(alliance_info, member)
 		members[member]['is_stale'] = member_stale
 
-		# Report our findings
+		# Report changes to TCP.
+		tcp_end  = members[member].get('tot_power',0)
+		tcp_diff = tcp_end - tcp_start
+
+		if   tcp_end > 10**6:	tcp_end  = f'{tcp_end/10**6:>6.1f}M'
+		elif tcp_end > 1000:	tcp_end  = f'{tcp_end/1000:>6.1f}K'
+		else:					tcp_end  = f'{tcp_end:>6.1f} '
+
+		if   abs(tcp_diff) > 10**6:	tcp_diff = f'{tcp_diff/10**6:>+6.1f}M'
+		elif abs(tcp_diff) > 1000:	tcp_diff = f'{tcp_diff/1000:>+6.0f}K'
+		else:					tcp_diff = f'{tcp_diff:>+6.0f} '
 
 		# Used CSV for Roster update
 		if updated:
-			result = 'UPDATED'
+			# If roster is NEW say so
+			if not tcp_start:
+				result = f'NEW:{tcp_end}'
+			else:
+				result = f'UPD:{tcp_diff}'
 		# Roster not available on website.
 		elif member not in roster_csv_data and not members[member].get('avail'):
-			result = 'UNAVAIL'
+			result = 'NOT AVAIL'
 		# Never received Roster page to parse.
 		elif member not in roster_csv_data and len(driver.page_source) < 700000: 
 			result = 'TIMEOUT'
 		# No update. Just report how long it's been.
 		else:
 			time_since = time_now - last_update
-			result =  f'{max(0,time_since.days):>2}d {int(time_since.seconds/3600)}h'
 
-		# One for the bot, one for the screen.
-		rosters_output.append(f'{member:17}{result}')
+			days  = f'{time_since.days}d' if time_since.days else ''
+			hours = f'{int(time_since.seconds/3600)}h'
+			mins  = f'{int(time_since.seconds%3600/60):0>2}m'
+
+			# After 10 hours, just report days.
+			if days or time_since.seconds > 36000:
+				time_since = f'{days} {hours}'
+			else:
+				time_since = f'{hours} {mins}'
+
+			result =  f'OLD:{time_since:>7}'
+
+		# Format line depending on whether entry available.
+		if ':' in result:
+			rosters_output.append(f'{member[:14]:14} {result}')
+		else:
+			rosters_output.append(f'{member:16} {result:>9}')
+
 		print(f'Found: {rosters_output[-1]}')
 
 	return rosters_output
 
 
-
+	
 @timed(level=3)
 def roster_results(alliance_info, start_time, rosters_output=[]):
 	
-	summary = []
+	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
+	UPD = len([x for x in rosters_output if 'UPD' in x[15:]])
+	OLD = len([x for x in rosters_output if 'OLD' in x[15:]])
 
-	# And make note of when we end.
-	time_now = datetime.datetime.now()
-	summary.append('\n**Total time:** %s seconds' % ((time_now - start_time).seconds))
-	print (summary[-1].replace('**',''))
+	NEW = f'**{NEW}** new'     if NEW else ''
+	UPD = f'**{UPD}** upd'     if UPD else ''
+	OLD = f'**{OLD}** old'     if OLD else ''
 
-	# Get a little closer to our work. 
-	members = alliance_info['members']
+	SUMMARY = [NEW, UPD, OLD]
+	while '' in SUMMARY:
+		SUMMARY.remove('')
 
-	# Quick report of our findings.
-	updated = len([member for member in alliance_info['members'] if alliance_info['members'][member].get('last_update',start_time) > start_time])
-	stale   = len([member for member in members if members[member].get('is_stale', True)])
-	
+	REQ = (datetime.datetime.now()-start_time).seconds
+
 	# Summarize the results of processing
-	summary.append(f'Found **{updated}** new, **{len(members)-updated}** old, **{stale}** stale')
+	summary = [f'Found {", ".join(SUMMARY)} in {REQ}s']
 	print (summary[-1].replace('**',''))
 
 	# If roster_output included, generate Key for footer as well.
-	status = ''.join([line[17:] for line in rosters_output])
-
 	status_key = [] 
 
-	if 'UNAVAIL' in status:
-		status_key.append("* **UNAVAIL** - Change Sharing to **ALLIANCE ONLY**")
+	NOT_AVAIL = [f'* `{x[:16].strip()}`' for x in rosters_output if 'NOT AVAIL' in x]
+	TIMEOUT   = [f'* `{x[:16].strip()}`' for x in rosters_output if 'TIMEOUT'   in x]
 
-	if 'TIMEOUT' in status:
-		status_key.append('* **TIMEOUT** - Website slow/down. Try later')
+	if NOT_AVAIL:
+		status_key.append("Ask to share w/ **ALLIANCE ONLY**:")
+		status_key += NOT_AVAIL
+
+	if TIMEOUT:
+		status_key.append('* **TIMEOUT** - MSF.gg slow/down. Could not refresh:')
+		status_key += TIMEOUT
 
 	if status_key:
 		summary += [''] + status_key
