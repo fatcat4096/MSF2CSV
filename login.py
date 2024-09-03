@@ -97,6 +97,7 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 	except TimeoutException:
 		print("Timed out. Unable to complete login.")
 
+		# Failed. Return None for driver
 		return
 
 	# Click on the Accept Cookies button if it is presented. This dialog prevents roster processing.
@@ -105,7 +106,34 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 		accept_cookies_btn[0].click()
 
 	# Pull out the current username and alliance_name. 
-	extract_user_and_alliance(driver)
+	try:
+		# We will be waiting for elements to appear.
+		wait = WebDriverWait(driver, 10)
+
+		# Open the user menu
+		button = wait.until(EC.element_to_be_clickable((By.XPATH, "//div[@class='navbar-menu']//a[@role='button']")))
+		button.click()
+
+		# Make note of Username
+		username = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='navbar-menu']//div[@id='graphic-menu-title']")))
+		driver.username       = remove_tags(username.text)
+
+		# Make note of Alliance Name
+		alliance_name = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='navbar-menu']//div[@id='alliance-graphic-menu-title']")))
+		driver.alliance_name  = remove_tags(alliance_name.text).strip()
+		driver.alliance_color = alliance_name.get_attribute('innerHTML')			# We will use this for color naming.
+
+		# Close the menu after information extracted
+		button.click()
+
+	except TimeoutException:
+		print("Timed out. user-menu-trigger never became available.")
+
+		soup = BeautifulSoup(driver.page_source, 'html.parser')
+		write_file ('./TimeoutException.html', soup.prettify())
+
+		# Failed. Return None for driver
+		return
 	
 	# Download the related CSV files and remember their paths
 	driver.info_csv   = download_csv_file(driver, 'info')
@@ -241,53 +269,3 @@ def download_csv_file(driver, filetype):
 	os.replace(csv_file, new_csv)
 	
 	return new_csv
-
-
-
-def extract_user_and_alliance(driver):
-
-	# Unsure if I really need the try/except setup.
-	try:
-		# Open the user menu
-		buttons = []
-		while not buttons:
-			buttons = [button for button in driver.find_elements(By.CLASS_NAME, 'user-menu-trigger') if button.aria_role == 'button']
-
-		# Open the user menu
-		buttons[0].click()
-
-		# Make note of Username
-		username = []
-		while not username:
-			username = [elem for elem in driver.find_elements(By.ID, 'graphic-menu-title') if elem.aria_role == 'generic' and elem.text]
-
-		# Make note of Alliance Name
-		alliance_name = []
-		while not alliance_name:
-			alliance_name = [elem for elem in driver.find_elements(By.ID, 'alliance-graphic-menu-title') if elem.aria_role == 'generic' and elem.text]
-
-		# Close the menu after information extracted
-		buttons[0].click()
-
-		# May need to make note of color information here. 
-		driver.username       = remove_tags(username[0].text)
-		driver.alliance_name  = remove_tags(alliance_name[0].text).strip()
-		driver.alliance_color = alliance_name[0].get_attribute('innerHTML')			# We will use this for color naming.
-
-	except TimeoutException:
-		print("Timed out. user-menu-trigger never became available.")
-
-		soup = BeautifulSoup(driver.page_source, 'html.parser')
-		write_file ('./TimeoutException.html', soup.prettify())
-		raise
-
-	except ElementClickInterceptedException:
-		print ("ElementClickInterceptedException")
-
-		soup = BeautifulSoup(driver.page_source, 'html.parser')
-		write_file ('./InterceptedException.html', soup.prettify())
-		raise
-
-	return
-		
-
