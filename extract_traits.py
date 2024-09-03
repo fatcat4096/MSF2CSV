@@ -117,8 +117,16 @@ def update_traits(extracted_traits):
 		del extracted_traits['Annhilator']
 		updated = True
 
+	if 'Pym Tech' in extracted_traits:
+		del extracted_traits['Pym Tech']
+		updated = True
+
+	if extracted_traits and 'X23' in extracted_traits['WeaponX']:
+		del extracted_traits['WeaponX']['X23']
+		updated = True
+
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'Annihilator' not in extracted_traits:
+	if extracted_traits and 'X-23' not in extracted_traits['WeaponX']:
 
 		manual_traits =	{
 						# Ares
@@ -154,13 +162,19 @@ def update_traits(extracted_traits):
 						'Mister Fantastic'     :['Illuminati'],
 						'Black Panther (Shuri)':['Illuminati', 'Hero', 'Global', 'Mystic', 'Controller', 'Wakandan'], 
 						'Captain Britain'      :['Illuminati', 'Hero', 'Global', 'Mystic', 'Protector', 'Epic'],
-						'Hank Pym'             :['Illuminati', 'Hero', 'Global', 'Tech', 'Support', 'Pym Tech', 'Avenger'],
+						'Hank Pym'             :['Illuminati', 'Hero', 'Global', 'Tech', 'Support', 'PymTech', 'Avenger'],
 						# Mercs For Money
 						'Deadpool'             :['MercsForMoney'],
 						'Deathpool'            :['MercsForMoney'], 
 						'Daken'                :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
 						'Old Man Logan'        :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
 						'Pandapool'            :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
+						# Orchis
+						'Lady Deathstrike'     :['Orchis'],
+						'Scientist Supreme'    :['Orchis'],
+						'Nimrod'               :['Orchis','Tech','Global','Blaster'],
+						'Sentinel'             :['Orchis','Tech','Global','Protector'],
+						'Omega Sentinel'       :['Orchis','Tech','Global','Support'],
 						# Out of Time
 						'Captain America'      :['OutOfTime'],
 						'Captain Carter'       :['OutOfTime'],
@@ -178,7 +192,7 @@ def update_traits(extracted_traits):
 						# Spider-Verse
 						'Spider-Woman'         :['SpiderVerse'],
 						# Weapon X
-						'X23'                  :['WeaponX'],
+						'X-23'                 :['WeaponX'],
 						}
 
 		# Parse information into the needed structure.
