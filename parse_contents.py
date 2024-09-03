@@ -393,10 +393,6 @@ def parse_roster_csv_data(roster_csv, char_portraits, roster_csv_data={}, member
 
 		member_name = remove_tags(entry[0])
 		
-		# TEMP: PULL NAMES FROM member_order AS NECESSARY.
-		if not member_name:
-			member_name = member_order[0]
-		
 		member_info = roster_csv_data.setdefault(member_name, {'processed_chars':{}, 'other_data':{}})
 		
 		char_name = char_lookup.get(entry[1])
@@ -405,12 +401,6 @@ def parse_roster_csv_data(roster_csv, char_portraits, roster_csv_data={}, member
 		if not char_name:
 			print ("missing translation for",entry[1])
 			continue
-		
-		# TEMP: IF CHAR_NAME ALREADY EXISTS, MOVE ON TO NEXT NAME.
-		if char_name in member_info['processed_chars']:
-			member_order.pop(0)
-			member_name = member_order[0]
-			member_info = roster_csv_data.setdefault(member_name, {'processed_chars':{}, 'other_data':{}})
 		
 		char_info = member_info['processed_chars'].setdefault(char_name,{})
 		
