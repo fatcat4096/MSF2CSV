@@ -96,16 +96,6 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 	members  = {}
 	captains = []
 
-	#
-	# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
-	#
-
-	html_rows = soup.find('div', attrs = {'class':'alliance-member-table'}).findAll('tr')[1:]
-	
-	#
-	# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
-	#
-
 	# Pull base Member Info from the info.csv file.
 	info_csv = open(driver.info_csv, 'r', encoding='utf-8').readlines()
 	
@@ -113,20 +103,10 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 	for idx, member_row in enumerate(info_csv[1:]):
 		member = {}
 
-		#
-		# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
-		#
-
-		member_name = remove_tags(html_rows[idx].findAll('td')[0].find('div', attrs={'class':'name'}).text.strip().replace(' [ME]',''))
-
-		#
-		# TEMPORARY FIX, PARSE MEMBER NAME FROM HTML
-		#
-
 		member_row = member_row.strip().split(',')
 
-		"""# Remove HTML tags if present.
-		member_name = remove_tags(member_row[2])"""
+		# Remove HTML tags if present.
+		member_name = remove_tags(member_row[2])
 
 		# Process role information.
 		member_role     = member_row[1]
@@ -136,6 +116,11 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 			captains.append(member_name)
 
 		member['url']   = member_row[0]
+		
+		# Store URL in driver if this is the login user.
+		if member_name.lower() == driver.username.lower():
+			driver.url = member_row[0]
+
 		member['image'] = member_row[3].split('Portrait_')[-1][:-4]
 		member['frame'] = member_row[4].split('ICON_FRAME_')[-1][:-4]
 		member['level'] = int(member_row[5])  if member_row[5] else 0
@@ -189,7 +174,6 @@ def parse_roster_html(contents, alliance_info, member=''):
 
 	processed_chars  = {}
 	other_data       = {}
-	char_portraits   = {}
 	
 	chars  = soup.findAll('li', attrs = {'class':'character'})
 
@@ -200,11 +184,6 @@ def parse_roster_html(contents, alliance_info, member=''):
 		char_name = char.find('h4').text.strip()
 		if not char_name:
 			continue
-
-		# Keep the path to the image for each character.
-		char_portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1][:-4]
-		
-		char_portraits[char_name] = char_portrait
 
 		# Stats available only if character is recruited.
 		char_stats = char.find('div', attrs = {'id':'toon-stats'})
@@ -320,16 +299,45 @@ def parse_roster_html(contents, alliance_info, member=''):
 	# Finally, merge the processed roster into our Alliance Info
 	merge_roster(alliance_info, member, processed_chars, other_data)
 
-	# Update alliance_info with portrait information.
-	alliance_info['portraits'] = char_portraits
-
-	# Keep the scripts in use up to date in alliance_info. Will be used by extract_traits.
-	scripts = [script.get('src') for script in soup.findAll('script', attrs = {'type':'text/javascript'}) if script.get('src') and 'static' in script.get('src')]
-	if scripts:
-		alliance_info['scripts'] = scripts
-
 
 	
+# Parse the character file out of MHTML or the page_source directly from the website.
+@timed(level=3)
+def parse_portraits(contents):
+	soup = BeautifulSoup(contents, 'html.parser')
+
+	portraits   = {}
+	
+	chars  = soup.findAll('li', attrs = {'class':'character'})
+
+	# Iterate through each toon that we found.
+	for char in chars:
+		
+		# If no char_name defined, last entry on page. Skip.
+		char_name = char.find('h4').text.strip()
+		if not char_name:
+			continue
+
+		# Keep the path to the image for each character.
+		portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1][:-4]
+		
+		portraits[char_name] = portrait
+
+	# Update alliance_info with portrait information.
+	return portraits
+
+
+
+# Parse the character file out of MHTML or the page_source directly from the website.
+@timed(level=3)
+def parse_scripts(contents):
+	soup = BeautifulSoup(contents, 'html.parser')
+
+	# Keep the scripts in use up to date in alliance_info. Will be used by extract_traits.
+	return [script.get('src') for script in soup.findAll('script', attrs = {'type':'text/javascript'}) if script.get('src') and 'static' in script.get('src')]
+
+
+
 def merge_roster(alliance_info, member, processed_chars, other_data):
 
 	# Get a little closer to our work. 
@@ -366,7 +374,7 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 
 # Parse the Diamond data directly from the roster.csv file.
 @timed(level=3)
-def parse_roster_csv_data(roster_csv, char_portraits, roster_csv_data={}, member_order=[]):
+def parse_roster_csv_data(roster_csv, char_lookup, roster_csv_data={}, member_order=[]):
 
 	# Can't parse if roster.csv is unavailable.
 	if not os.path.exists(roster_csv):
@@ -377,11 +385,6 @@ def parse_roster_csv_data(roster_csv, char_portraits, roster_csv_data={}, member
 	if not member_order:
 		print ('No member_order supplied. Cannot parse roster.csv')
 		return
-
-	# Build char name lookup from portrait listing.
-	char_lookup = {}
-	for name in char_portraits:
-		char_lookup[char_portraits[name].rsplit('_',1)[0]] = name
 
 	# Pull full Roster Info from the roster.csv file.
 	roster_csv_file = open(roster_csv, 'r', encoding='utf-8').readlines()

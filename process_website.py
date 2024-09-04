@@ -23,7 +23,7 @@ from parse_contents       import *
 from generate_local_files import *
 from file_io              import *
 from login                import get_driver, login
-from extract_traits       import add_extracted_traits
+from extract_traits       import extract_traits_from_scripts
 from alliance_info        import *
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
@@ -46,7 +46,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 		# If no alliance_name specified but we found one obvious candidate, report that we are using it.
 		if not alliance_name:
 			alliance_name = cached_alliance_info['name']
-			print (f"Defaulting to alliance from cached_data: {alliance_name}.")
+			print (f"Defaulting to alliance from cached_data: {alliance_name}")
 
 	# Start by logging into the website.
 	driver = login(prompt, headless, scopely_login=scopely_login)
@@ -56,21 +56,21 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# If no alliance_name specified, use the login's alliance.
 	if not alliance_name:
 		alliance_name = website_alliance_info['name']
-		print (f"Defaulting to alliance from website login: {alliance_name}.")
+		print (f"Defaulting to alliance from website login: {alliance_name}")
+
+	# If the alliance requested is NOT the one from the login, fail gracefully. 
+	elif alliance_name.lower() != website_alliance_info['name'].lower():
+		print (f"Alliance requested ({alliance_name}) doesn't match login alliance ({website_alliance_info['name']}). Aborting.")
+		return
 
 	# Now that we're guaranteed to have an alliance_name check one last time for a matching cached_data file. 
 	if not cached_alliance_info:
 		cached_alliance_info = find_cached_data(alliance_name)
 
-	# If we haven't found cached_data and the alliance requested is NOT the one from the login, fail gracefully. 
-	if alliance_name.lower() != website_alliance_info['name'].lower():
-		print (f"Alliance requested doesn't match login alliance: {alliance_name}. Aborting.")
-		return
-
-	# If working_from_website, the website_alliance_info will be our baseline. 
+	# The website_alliance_info will be our baseline. 
 	alliance_info = website_alliance_info
 
-	# If we found cached_alliance_info, should we use it as-is or update the website info?
+	# If we found cached_alliance_info, update the website info.
 	if cached_alliance_info:
 
 		# Update the fresh alliance_info from website with extra info from cached_data.
@@ -80,28 +80,25 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	start_time = datetime.datetime.now()
 
 	# Initialize structures used during refresh.
-	status          = []
+	rosters_output  = []
 	roster_csv_data = {}
 
 	# Work the website or cached URLs to update alliance_info 
 	for member in list(alliance_info['members']):
-		status += process_rosters(driver, alliance_info, [member], roster_csv_data)
+		rosters_output += process_rosters(driver, alliance_info, [member], roster_csv_data)
 
 	# If anything was updated, do some additional work.
-	status = ''.join([line[15:] for line in status])
+	status = ''.join([line[15:] for line in rosters_output])
 	if 'UPD' in status or 'NEW' in status:
 	
 		# Keep a copy of critical stats from today's run for historical analysis.
 		update_history(alliance_info)
 
-		# Update traits info if necessary.
-		add_extracted_traits(alliance_info)
-
 	# Close the Selenium session.
 	driver.close()
 
 	# Print a summary of the results.
-	roster_results(alliance_info, start_time)
+	roster_results(alliance_info, start_time, rosters_output)
 
 	# Make sure we have a valid strike_team for Incursion and Other. 
 	updated = get_valid_strike_teams(alliance_info) 
@@ -110,7 +107,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	if updated or 'strike_teams' not in globals():
 		generate_strike_teams(alliance_info)
 
-	# Write the collected roster info to disk in a subdirectory.
+	# Write the collected roster info to disk.
 	write_cached_data(alliance_info)
 
 	return alliance_info
@@ -130,14 +127,11 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 	# TEMP: Pull expected member order out of info.csv.
 	member_order = [member for member in alliance_info['members'] if alliance_info['members'][member].get('avail')]
 
-	# Need to make note of which entry had [ME] in it. Store that in Driver. 
-	# When parsing info.csv, URL for [ME] should be stored in Driver.
-
-	# Make routine that fills portraits from disk, or if cached_file is more than 24 hours old
-	# builds a NEW one from the URL for [ME] and saves it to disk.
+	# Download fresh portrait information if cached data is stale.
+	char_lookup = get_char_lookup(driver)
 	
-	if not roster_csv_data and alliance_info.get('portraits'):
-		parse_roster_csv_data(driver.roster_csv, alliance_info.get('portraits'), roster_csv_data, member_order)
+	if not roster_csv_data and char_lookup:
+		parse_roster_csv_data(driver.roster_csv, char_lookup, roster_csv_data, member_order)
 
 	# Let's iterate through the member names in alliance_info.
 	for member in list(members):
@@ -167,7 +161,9 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 			if roster_csv_data:
 				print ('could not find member',member,'in roster_csv_data:',roster_csv_data.keys())
 
-			process_roster_html(driver, alliance_info, member)
+			page_source = get_roster_html(driver, members[member]['url'], member, alliance_info)
+			if page_source:
+				parse_roster_html(page_source, alliance_info, member)
 
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
@@ -240,7 +236,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	OLD = len([x for x in rosters_output if 'OLD' in x[15:]])
 
 	NEW = f'**{NEW}** new'     if NEW else ''
-	UPD = f'**{UPD}** upd'     if UPD else ''
+	UPD = f'**{UPD}** updated' if UPD else ''
 	OLD = f'**{OLD}** old'     if OLD else ''
 
 	SUMMARY = [NEW, UPD, OLD]
@@ -274,14 +270,13 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 
 
 
-def process_roster_html(driver, alliance_info, member):
+def get_roster_html(driver, member_url, member='', alliance_info={}):
 
 	# Start by defining the number of retries and time limit for each attempt. 
 	retries    = 3
 	time_limit = 6
 
 	page_source = ''
-	MEMBER_URL = alliance_info['members'][member]['url']
 	
 	while retries:
 		try:
@@ -289,58 +284,88 @@ def process_roster_html(driver, alliance_info, member):
 			start_time = datetime.datetime.now()
 
 			# Start by getting to Profile page.
-			driver.get(f"https://marvelstrikeforce.com/en/member/{MEMBER_URL}/info")
+			driver.get(f"https://marvelstrikeforce.com/en/member/{member_url}/info")
 
-			try:
-				# Parse the Player Stats on the Profile page.
-				player_stats = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.CLASS_NAME, "player-stats-table")))
-				parse_player_stats(player_stats.get_attribute('innerHTML'), alliance_info['members'][member])
-
-			# If we timeout on the Player Profile page, handle it in stride.
-			except TimeoutException as exc:
-				# Report the error and move on to the Roster Page.
-				print ("\nTIMEOUT on Player Profile tab. Moving on to Roster tab instead.")
-			
-			# Look for the Roster Button.
-			buttons = []
-			while not buttons:
-				time.sleep(0.25)
-				buttons = driver.find_elements(By.XPATH,f'//a[@href="/member/{MEMBER_URL}/characters"]')
-			
-			# Navigate from Profile tab to Roster tab.
-			buttons[0].click()
-			
-			#print ('Calling process_roster_htmls(), loading roster tab...')
+			# Click on the Roster button when available.
+			button = WebDriverWait(driver, 6).until(EC.element_to_be_clickable((By.XPATH,f'//a[@href="/member/{member_url}/characters"]')))
+			button.click()
 			
 			# Page loads in sections, will be > 700K after roster information loads.
-			while (datetime.datetime.now()-start_time).seconds < time_limit and len(page_source)<700000:
+			while (datetime.datetime.now()-start_time).seconds < time_limit:
 
 				# Give it a moment, then see what's loaded.
 				time.sleep(0.25)
 				page_source = driver.page_source
 
-			# If page loaded, extract stats and exit.
-			if len(page_source)>700000:
-				#print (f'Parsing page for member: {member} - {len(page_source)} bytes')
-				return parse_roster_html(page_source, alliance_info, member)
+				# If page fully loaded, return this
+				if len(page_source)>700000:
+					return page_source
 
-			# If we got here, we exceeded the time limit and our page still hasn't fully loaded.
-			retries -= 1
-			print ("TIMED OUT! Retries remaining...",retries, )
+			# Timed out and page hasn't fully loaded.
+			raise TimeoutException
 
-		except (NoSuchElementException, TimeoutException, WebDriverException) as exc:
-			# Still have retries available?
-			if retries:
-				retries -= 1
-				print (f"Retries left {retries}, continuing on {traceback.format_exc()}")
-			# Too many retries, time to give up and bail.
-			else:
-				raise
 		except Exception as exc:
-			print (traceback.format_exc())
-			raise
-			
-			
+			retries -= 1
+
+			# Just a timeout?
+			if isinstance(exc, TimeoutException):
+				print (f'TIMED OUT!', end=' ')
+
+			# If not, display the exception.
+			else:
+				print (f'EXCEPTION! {type(exc).__name__}: {exc}', end=' ')
+
+			print (f'{retries} retries remaining...')
+
+			# Too many retries, report exception and bail.
+			if not retries:
+				print (traceback.format_exc())
+				raise
+
+				
+
+# Return cached portrait information and update portraits and trait data if stale.
+def get_char_lookup(driver=None):
+	
+	char_lookup = {}
+	
+	# If we have a driver and the cached_portraits aren't fresh enough, build new ones.
+	if driver and not fresh_enough('char_lookup'):
+
+		# Get the roster page to work with.
+		page_source = get_roster_html(driver, driver.url, driver.username)
+
+		# THIS IS A TRIGGER FOR FIVE THINGS:
+		# 1. Extract the portraits
+		portraits = parse_portraits(page_source)
+		write_cached_file(portraits, 'portraits')
+
+		# 2. Build char name lookup from portrait listing.
+		for name in portraits:
+			char_lookup[portraits[name].rsplit('_',1)[0]] = name
+		write_cached_file(char_lookup, 'char_lookup')
+
+		# 3. Write cached_char_list for MSF RosterBot use.
+		char_list = sorted(portraits)
+		write_cached_file(char_list, 'char_list')
+
+		# 4. Extract the scripts, then run these through extract_traits
+		scripts = parse_scripts(page_source)
+		traits  = extract_traits_from_scripts(scripts)
+		write_cached_file(traits, 'traits')
+
+		# 5. Filter out invalid traits and write cached_trait_list for MSF RosterBot use.
+		invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
+		trait_list     = [trait for trait in sorted(traits) if trait not in invalid_traits]
+		write_cached_file(trait_list, 'trait_list')
+
+	# If no driver or fresh enough, load the cached_portraits:
+	if not char_lookup:
+		char_lookup = load_cached_file('char_lookup')
+		
+	return char_lookup
+
+
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
 @timed(level=3)
@@ -350,9 +375,6 @@ def update_strike_teams(alliance_info):
 
 	# Temporary update strike team definitions to remove dividers and 'incur2'.
 	updated = migrate_strike_teams(alliance_info)
-
-	# Transition 'extracted_traits' to 'traits' and update missing traits.
-	updated = add_extracted_traits(alliance_info) or updated
 
 	# Iterate through each defined strike team.
 	for raid_type in ('incur','orchis','spotlight'):

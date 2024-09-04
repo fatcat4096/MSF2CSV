@@ -23,6 +23,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from alliance_info import get_char_list
 
+
 TAG_RE = re.compile(r'<[^>]+>')
 
 
@@ -227,6 +228,10 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	# Stash the path and filename inside of alliance_info. 
 	alliance_info['file_path'] = file_path
 	
+	#
+	# TEMP -- TRANSITION AWAY FROM THIS, USE A VERSION BUILT DAILY ALONG WITH PORTRAITS AND TRAITS
+	#
+	"""
 	# Cache the char_list and trait list from this alliance_info for bot use.
 	char_list = get_char_list(alliance_info)
 
@@ -243,51 +248,64 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 		os.makedirs(cached_path)
 
 	# Caching traits and char lists for Discord autocomplete.
-	pickle.dump((char_list,traits), open(cached_path + 'cached_lists', 'wb'))
+	pickle.dump(char_list, open(cached_path + 'cached_char_list', 'wb'))
+	pickle.dump(traits,    open(cached_path + 'cached_trait_list', 'wb'))
+	"""
+	#
+	# TEMP -- TRANSITION AWAY FROM THIS, USE A VERSION BUILT DAILY ALONG WITH PORTRAITS AND TRAITS
+	#
+	
 
 
+# Load a pickled cache file from cached_data directory
+def load_cached_file(file):
+	data=[]
 
-def load_char_list():
-	char_list=[]
-
-	file_path = get_local_path() + 'cached_data' + os.sep + 'cached_lists'
-
-	if os.path.exists(file_path):
-		(char_list,traits) =  pickle.load(open(file_path,'rb'))
-
-	return char_list
-
-
-
-def load_trait_list():
-	traits=[]
-
-	file_path = get_local_path() + 'cached_data' + os.sep + 'cached_lists'
+	file_path = get_local_path() + f'cached_data{os.sep}cached_{file}'
 
 	if os.path.exists(file_path):
-		(char_list,traits) =  pickle.load(open(file_path,'rb'))
+		data = pickle.load(open(file_path,'rb'))
 
-	return traits
+	return data
+
+
+
+# Load a pickled cache file from cached_data directory
+def write_cached_file(data, file):
+
+	# Ensure the enclosing directory exists.
+	cached_path = get_local_path() + f'cached_data{os.sep}'
+	if not os.path.exists(cached_path):
+		os.makedirs(cached_path)	
+
+	pickle.dump(data, open(cached_path + f'cached_{file}', 'wb'))
 
 
 
 # Has it been less than 24 hours since last update of cached_data?
 @timed(level=3)
-def fresh_enough(alliance_info, age_of=False):
+def fresh_enough(alliance_or_file):
 
 	# If a name of an alliance is passed in, find the relevant alliance_info instead.
-	if type(alliance_info) is str:
-		alliance_info = find_cached_data(alliance_info)
-		
-	# Base case, couldn't find a matching cached_data for this alliance.
-	if not alliance_info:
-		return False
+	# If alliance_info was passed in, just use it directly.
+	alliance_info = find_cached_data(alliance_or_file) if type(alliance_or_file) is str else alliance_or_file
 
-	last_refresh = time.time()-os.path.getmtime(alliance_info['file_path'])
+	# Use modification date info for the Alliance Info found.
+	if alliance_info and type(alliance_info) is dict:
+		last_refresh = time.time()-os.path.getmtime(alliance_info['file_path'])
 	
-	if age_of:
-		return last_refresh
-	
+	# Couldn't find a matching cached_data for this alliance, asking about a file instead?
+	else:
+		cached_file = get_local_path() + f'cached_data{os.sep}cached_{alliance_or_file}' 
+
+		# Not a file either, return False.
+		if not os.path.exists(cached_file):
+			return False
+
+		# Use modification date info for the file found.
+		last_refresh = time.time()-os.path.getmtime(cached_file)
+
+	# If it's less than 24 hours old, it's fresh enough.
 	return last_refresh < 86400
 
 

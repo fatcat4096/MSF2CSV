@@ -8,40 +8,22 @@ Quick hack to pull live trait data from MSF.gg
 import urllib.request
 
 
-# Update the Character Trait information in alliance_info using the latest info from website.
-def add_extracted_traits(alliance_info):
+# Removed add_extracted_traits
 
-	updated = False
+# Download and return fresh trait information using the latest info from website.
+def extract_traits_from_scripts(scripts):
 
-	# Temporary, rename 'extracted_traits' as 'traits'.
-	if 'extracted_traits' in alliance_info:
-		alliance_info['traits'] = alliance_info.pop('extracted_traits')
-		updated = True
+	traits = {}
 
-	# Update with traits missing from JSON file.
-	traits  = alliance_info.setdefault('traits',{})
+	for script in scripts:
+		traits = extract_traits(script)
 
-	updated = update_traits(traits) or updated
-
-	# If the old trait file isn't being used, traits needs to be updated.
-	if not traits or alliance_info.get('trait_file') not in alliance_info.setdefault('scripts',[]):
-
-		for script in alliance_info.get('scripts'):
-			traits = extract_traits(script)
-
-			# If this file was correctly parsed, store this new trait file.
-			if not traits:
-				continue
-				
-			print ("Found traits info in",script)
-
-			# Remember which script was the valid trait file
-			alliance_info['trait_file'] = script
-			alliance_info['traits']     = traits
-			updated = True
+		# If this file parsed correctly, stop looking.
+		if traits:
 			break
 
-	return updated
+	return traits
+
 
 
 # Parse the provided js file to hopefully find trait information.
@@ -104,26 +86,9 @@ def extract_traits(file=''):
 	return extracted_traits
 
 
+
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
-
-	updated = False
-
-	if 'AlphaStar' in extracted_traits:
-		del extracted_traits['AlphaStar']
-		updated = True
-
-	if 'Annhilator' in extracted_traits:
-		del extracted_traits['Annhilator']
-		updated = True
-
-	if 'Pym Tech' in extracted_traits:
-		del extracted_traits['Pym Tech']
-		updated = True
-
-	if extracted_traits and 'X23' in extracted_traits['WeaponX']:
-		del extracted_traits['WeaponX']['X23']
-		updated = True
 
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
 	if extracted_traits and 'X-23' not in extracted_traits['WeaponX']:
@@ -198,10 +163,8 @@ def update_traits(extracted_traits):
 		# Parse information into the needed structure.
 		for char in manual_traits:
 			for trait in manual_traits[char]:
-				extracted_traits.setdefault(trait,{})[char]=1
-				extracted_traits[trait]
-	
-		# Indicate extracted_traits has been Updated.
-		updated = True
-
-	return updated
+				# Report if we can remove some of these manual definitions.
+				if extracted_traits.setdefault(trait,{}).get(char):
+					print (f"No longer need def for extracted_traits['{char}']['{trait}']")
+				else:
+					extracted_traits[trait][char]=1

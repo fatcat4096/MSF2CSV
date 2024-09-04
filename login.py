@@ -134,7 +134,7 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 
 		# Failed. Return None for driver
 		return
-	
+
 	# Download the related CSV files and remember their paths
 	driver.info_csv   = download_csv_file(driver, 'info')
 	driver.roster_csv = download_csv_file(driver, 'roster')
@@ -215,7 +215,7 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 			# Find login field and enter password to complete login process.
 			pass_field = wait.until(EC.presence_of_element_located((By.XPATH,f'//input[@data-test-id="InputPassword"]')))	
 			pass_field.send_keys(scopely_pass)
-\
+
 			while not button:
 				time.sleep(0.05)
 				button = [button for button in driver.find_elements(By.TAG_NAME, 'button') if button.text == 'Sign in']

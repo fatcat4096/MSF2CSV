@@ -10,9 +10,13 @@ from alliance_info import *
 from html_cache    import *
 from html_shared   import *
 
+from file_io import load_cached_file
+
 # Generate individual tables for Meta/Other chars for each raid section.
 @timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None, team_power_summary=False):
+
+	portraits = load_cached_file('portraits')
 
 	# Pick a color scheme.
 	if 'OTHERS' not in table_lbl:
@@ -157,7 +161,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).replace(", ","<br>")}</div></td>\n'
 				
 			else:
-				url = f"https://assets.marvelstrikeforce.com/imgs/Portrait_{alliance_info['portraits'].get(char,'')}.png"
+				url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char]}.png'
 
 				# Default value to start
 				onclick = ''
