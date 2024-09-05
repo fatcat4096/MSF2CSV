@@ -7,6 +7,7 @@ Generate the tab for By Character output.
 from log_utils import *
 
 from alliance_info  import *
+from cached_info    import get_cached
 from html_shared    import *
 from generate_table import *
 
@@ -26,7 +27,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_
 	# Get the list of usable characters for analysis.
 	char_list = sorted(html_cache.get('chars',{}))
 	if not char_list:
-		char_list = table_format.get('inc_chars',get_char_list(alliance_info))
+		char_list = table_format.get('inc_chars',get_cached('char_list'))
 
 	table = {}
 

@@ -21,7 +21,6 @@ except:	pass
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from alliance_info import get_char_list
 
 
 TAG_RE = re.compile(r'<[^>]+>')
@@ -228,38 +227,11 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	# Stash the path and filename inside of alliance_info. 
 	alliance_info['file_path'] = file_path
 	
-	#
-	# TEMP -- TRANSITION AWAY FROM THIS, USE A VERSION BUILT DAILY ALONG WITH PORTRAITS AND TRAITS
-	#
-	"""
-	# Cache the char_list and trait list from this alliance_info for bot use.
-	char_list = get_char_list(alliance_info)
-
-	# If less, this is an older version. Keep our existing list.
-	if len(char_list) < len(load_char_list()):
-		return
-	
-	invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
-	traits = [trait for trait in sorted(alliance_info.get('traits',{})) if trait not in invalid_traits]
-
-	# Ensure the enclosing directory exists.
-	cached_path = get_local_path() + 'cached_data' + os.sep
-	if not os.path.exists(cached_path):
-		os.makedirs(cached_path)
-
-	# Caching traits and char lists for Discord autocomplete.
-	pickle.dump(char_list, open(cached_path + 'cached_char_list', 'wb'))
-	pickle.dump(traits,    open(cached_path + 'cached_trait_list', 'wb'))
-	"""
-	#
-	# TEMP -- TRANSITION AWAY FROM THIS, USE A VERSION BUILT DAILY ALONG WITH PORTRAITS AND TRAITS
-	#
-	
 
 
 # Load a pickled cache file from cached_data directory
 def load_cached_file(file):
-	data=[]
+	data={}
 
 	file_path = get_local_path() + f'cached_data{os.sep}cached_{file}'
 

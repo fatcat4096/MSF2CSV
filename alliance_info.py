@@ -12,6 +12,7 @@ import copy
 import re
 
 from parse_cache import update_parse_cache
+from cached_info import get_cached
 
 @timed(level=3)
 def get_hist_date(alliance_info, table_format):
@@ -29,15 +30,6 @@ def get_hist_date(alliance_info, table_format):
 
 	return hist_date
 
-
-# Bring back a sorted list of characters from alliance_info
-@timed(level=3)
-def get_char_list(alliance_info):
-
-	# We only keep images for heroes that at least one person has recruited.
-	char_list = sorted(alliance_info.get('portraits',{}))
-
-	return char_list
 
 
 # Bring back a sorted list of players from alliance_info
@@ -70,8 +62,6 @@ def get_player_list(alliance_info, sort_by='', stp_list={}, table={}, char_list=
 
 
 
-
-
 # Pull out STP values from either Meta Chars or all Active Chars.
 def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
 	
@@ -89,12 +79,13 @@ def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
 	return team_pwr_dict
 
 
+
 # Split meta chars from other chars. Filter others based on provided traits.
 @timed(level=3)
 def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Get the list of usable characters
-	char_list = get_char_list (alliance_info)
+	char_list = get_cached('char_list')
 
 	# Meta Chars not subject to min requirements. Filter out only uncollected heroes.
 	meta_chars = sorted(section.get('meta',[]))
@@ -107,7 +98,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	player_list = get_player_list(alliance_info)
 
 	# Get extracted_traits from alliance_info
-	extracted_traits = alliance_info.get('traits',{})
+	extracted_traits = get_cached('traits')
 
 	# Only use trait filters for other_chars.
 	traits = section.get('traits',[])
@@ -242,6 +233,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	return meta_chars, other_chars
 
 
+
 def remove_min_iso_tier(alliance_info, table_format, table, section, player_list, char_list):
 
 	# Load up arguments from table, with defaults if necessary.
@@ -258,6 +250,7 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'iso' )[0] for player in player_list]) >= min_iso]
 
 	return char_list
+
 
 
 # Return the correct strike_team definitions, depending on formatting flags.
@@ -302,6 +295,7 @@ def get_strike_teams(alliance_info, table, table_format):
 	return strike_teams
 
 
+
 # Insert dividers based on the type of team. 
 @timed
 def insert_dividers(strike_teams, raid_type):
@@ -338,6 +332,7 @@ def insert_dividers(strike_teams, raid_type):
 				team.insert(4,'----')
 
 	return strike_teams
+	
 	
 
 # Find this member's oldest entry in our historical entries.
@@ -443,6 +438,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 	return 0,other_data
 
 
+
 # Archive the current run into the 'hist' tag for future analysis.
 @timed(level=3)
 def update_history(alliance_info):	
@@ -534,6 +530,7 @@ def update_history(alliance_info):
 		prev_day   = key_day
 		
 
+
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
 @timed(level=3)
 def is_stale(alliance_info, member_name):
@@ -558,6 +555,7 @@ def is_stale(alliance_info, member_name):
 	return percent_growth < (1-(max_growth/100)) or last_update > 60*60*24*max_age
 
 
+
 # All settings, we build up the same way
 def get_table_value(table_format, table, section={}, key='', default=None):
 
@@ -576,6 +574,7 @@ def get_table_value(table_format, table, section={}, key='', default=None):
 	return value
 
 
+
 # parse a string containing roster URLs, return only the first old format User ID.
 @timed(level=3)
 def find_old_format_roster_url(field_value):
@@ -588,6 +587,7 @@ def find_old_format_roster_url(field_value):
 		found_url = found_urls[0]
 		
 	return found_url
+
 
 
 # parse a string containing roster URLs, looking for old format user IDs.
@@ -611,6 +611,7 @@ def find_old_format_roster_urls(field_value):
 	return found_urls
 
 
+
 # Validate user_id formatting.
 @timed(level=3)
 def is_old_format_user_id(s):
@@ -621,6 +622,7 @@ def is_old_format_user_id(s):
 	elif len(s) == 36 and s[8]+s[13]+s[18]+s[23] == '----' and s.count('-') == 4 and set(s).issubset(string.hexdigits+'-'):
 		return True
 	return False
+
 
 
 ## parse a string containing roster_urls, return only the first valid alliance ID.
@@ -635,6 +637,7 @@ def find_valid_alliance_url(field_value):
 		found_url = found_urls[0]
 		
 	return found_url
+
 
 
 # parse a string containing alliance_urls, looking for valid alliance IDs.
@@ -661,10 +664,12 @@ def find_valid_alliance_urls(field_value):
 	return found_urls
 
 
+
 # Validate user_id formatting.
 @timed(level=3)
 def is_valid_alliance_id(s):
 	return re.fullmatch(r"^[-:0-9a-fA-F]+$", s or "") and len(s)==48
+
 
 
 # Update the fresh alliance_info from website with extra info from cached_data.

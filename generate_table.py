@@ -10,13 +10,14 @@ from alliance_info import *
 from html_cache    import *
 from html_shared   import *
 
-from file_io import load_cached_file
+from cached_info import get_cached
+
 
 # Generate individual tables for Meta/Other chars for each raid section.
 @timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None, team_power_summary=False):
 
-	portraits = load_cached_file('portraits')
+	portraits = get_cached('portraits')
 
 	# Pick a color scheme.
 	if 'OTHERS' not in table_lbl:

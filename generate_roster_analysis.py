@@ -8,10 +8,9 @@ from log_utils import timed
 
 import copy
 
-from alliance_info import get_char_list
+from cached_info   import get_cached
 from html_cache    import make_next_table_id
 from html_shared   import *
-
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
@@ -387,7 +386,7 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 	member_list = list(alliance_info.get('members',{}))
 
 	# Get the list of usable characters for analysis.
-	char_list = get_char_list(alliance_info)
+	char_list = get_cached('char_list')
 	
 	# Start by doing stat analysis.	
 	for member in member_list:

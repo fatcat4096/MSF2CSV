@@ -25,6 +25,7 @@ from file_io              import *
 from login                import get_driver, login
 from extract_traits       import extract_traits_from_scripts
 from alliance_info        import *
+from cached_info          import get_cached, set_cached
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 @timed(level=3)
@@ -338,30 +339,30 @@ def get_char_lookup(driver=None):
 		# THIS IS A TRIGGER FOR FIVE THINGS:
 		# 1. Extract the portraits
 		portraits = parse_portraits(page_source)
-		write_cached_file(portraits, 'portraits')
+		set_cached('portraits', portraits)
 
 		# 2. Build char name lookup from portrait listing.
 		for name in portraits:
 			char_lookup[portraits[name].rsplit('_',1)[0]] = name
-		write_cached_file(char_lookup, 'char_lookup')
+		set_cached('char_lookup', char_lookup)
 
 		# 3. Write cached_char_list for MSF RosterBot use.
 		char_list = sorted(portraits)
-		write_cached_file(char_list, 'char_list')
+		set_cached('char_list', char_list)
 
 		# 4. Extract the scripts, then run these through extract_traits
 		scripts = parse_scripts(page_source)
 		traits  = extract_traits_from_scripts(scripts)
-		write_cached_file(traits, 'traits')
+		set_cached('traits', traits)
 
 		# 5. Filter out invalid traits and write cached_trait_list for MSF RosterBot use.
 		invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
 		trait_list     = [trait for trait in sorted(traits) if trait not in invalid_traits]
-		write_cached_file(trait_list, 'trait_list')
+		set_cached('trait_list', trait_list)
 
 	# If no driver or fresh enough, load the cached_portraits:
 	if not char_lookup:
-		char_lookup = load_cached_file('char_lookup')
+		char_lookup = get_cached('char_lookup')
 		
 	return char_lookup
 

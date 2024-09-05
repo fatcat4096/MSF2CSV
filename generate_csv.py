@@ -4,8 +4,8 @@
 Takes the processed alliance / roster data and generates original format .csv files.  
 """
 
-from alliance_info import get_player_list, get_char_list
-
+from alliance_info import get_player_list
+from cached_info   import get_cached
 from copy import deepcopy
 
 
@@ -24,7 +24,7 @@ def generate_csv(alliance_info):
 	csv_file = ['Name,AllianceName,CharacterId,Favorite,Level,Power,Stars,RedStar,GearLevel,Basic,Special,Ultimate,Passive,ISO Class,ISO Level,ISO Armor,ISO Damage,ISO Focus,ISO Health,ISO Resist']
 	
 	player_list = get_player_list(alliance_info)
-	char_list   = get_char_list (alliance_info)
+	char_list   = get_cached('char_list')
 		
 	alliance_name = alliance_info['name']
 			
