@@ -443,6 +443,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 @timed(level=3)
 def update_history(alliance_info):	
 
+	# Get a little closer to our work.
 	alliance_members = alliance_info['members']
 
 	# Create the 'hist' key if it doesn't already exist.
@@ -459,6 +460,10 @@ def update_history(alliance_info):
 	# Start with today as a reference. 
 	prev_entry = today_info
 
+	# Let's clean things up.
+	parse_cache = {}
+	char_list = get_cached('portraits')
+	
 	# Clean up any old / unnecessary entries in 'hist':
 	for entry in sorted(hist,reverse=True):
 	
@@ -467,12 +472,6 @@ def update_history(alliance_info):
 			if member not in alliance_members:
 				del hist[entry][member]
 
-			## Temp code to clean up junk data in hist entries for old cached_data files.
-			## DELETE IN 2024
-			else:
-				if 'tot_power'   in hist[entry][member]:	del hist[entry][member]['tot_power']
-				if 'last_update' in hist[entry][member]:	del hist[entry][member]['last_update']
-
 		# If someone in the alliance isn't in the older hist entry, copy the earliest entry in to normalize hist data.
 		for member in prev_entry:
 			if member not in hist[entry]:
@@ -480,13 +479,25 @@ def update_history(alliance_info):
 
 		# Change frame of reference to this historical entry as we move backward
 		prev_entry = hist[entry]
+
+	# One more loop through to clean up toon entries.
+	for entry in sorted(hist):
+		for member in list(hist[entry]):
+			# Start by cleaning up toon entries.
+			for char_name in list(hist[entry][member]):
+
+				# Delete errant information added when name translations not available.
+				if char_name not in char_list:
+					del hist[entry][member][char_name]
+					continue
+
+				# Look for a duplicate entry in our cache and point both to the same entry if possible.
+				update_parse_cache(hist[entry][member],char_name,parse_cache)
 		
 	# Compare today's data vs. the most recent History entry. 
 	# If anything identical to previous entry, point today's entry at the previous entry.
 	hist_list = list(hist)
 	hist_list.remove(today)
-	
-	parse_cache = {}
 	
 	for member in alliance_members:
 	
@@ -497,7 +508,12 @@ def update_history(alliance_info):
 			member_info = alliance_members[member]
 
 			# Optimize the leaves.
-			for char_name in alliance_members[member]['processed_chars']:
+			for char_name in list(alliance_members[member]['processed_chars']):
+
+				# Delete errant information added when name translations not available.
+				if char_name not in char_list:
+					del alliance_members[member]['processed_chars'][char_name]
+					continue
 
 				# Look for a duplicate entry in our cache and point both to the same entry if possible.
 				update_parse_cache(alliance_members[member]['processed_chars'],char_name,parse_cache)
