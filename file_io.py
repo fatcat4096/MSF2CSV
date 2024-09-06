@@ -194,8 +194,6 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 		if key in alliance_info:
 			del alliance_info[key]
 
-	if 'traits' in alliance_inf
-
 	# Ensure we are just using the path name
 	if os.path.isfile(file_path):
 		file_path = os.path.realpath(os.path.dirname(file_path))

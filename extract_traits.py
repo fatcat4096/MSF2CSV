@@ -8,8 +8,6 @@ Quick hack to pull live trait data from MSF.gg
 import urllib.request
 
 
-# Removed add_extracted_traits
-
 # Download and return fresh trait information using the latest info from website.
 def extract_traits_from_scripts(scripts):
 
