@@ -10,14 +10,14 @@ from file_io import load_cached_file, write_cached_file
 
 # Load up the cached_info global at launch.
 cached_info = {}
-for key in ('char_list','char_lookup','portraits','trait_list','traits'):
-	cached_info[key] = load_cached_file(key)
-
-
 
 # Just return a value from the global
 def get_cached(key):
 	global cached_info
+
+	# Load at first request - 'char_list','char_lookup','portraits','trait_list','traits'
+	if key not in cached_info:
+		cached_info[key] = load_cached_file(key)
 	
 	return copy(cached_info.get(key))
 	

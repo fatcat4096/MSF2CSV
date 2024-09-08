@@ -128,6 +128,8 @@ if __name__ == '__main__':
 						help='only output ONE lane of a given format')
 	parser.add_argument('--only_section', type=int, metavar='N',
 						help='only output ONE section of a given lane')
+	parser.add_argument('--only_side', type=str, metavar='SIDE', choices=['left','right','all','both'],
+						help="split table and output 'left', 'right', or 'both' sides")
 	parser.add_argument('--only_team', type=int, metavar='N', choices=[0, 1, 2, 3],
 						help='only output info for one strike team, 0 is ignore strike teams')
 	parser.add_argument('--only_summary', action='store_true', 
@@ -140,6 +142,8 @@ if __name__ == '__main__':
 						help='generate HTML files and push to GitHub pages', default='')					
 	parser.add_argument('--sections_per', type=int, metavar='N',
 						help='include N sections per file.')
+	parser.add_argument('--side_hist', action='store_true', default=None,
+						help='display history at right, not under')
 	parser.add_argument('--sort_by', type=str, metavar='SORT', choices=['alpha','stp','tcp'],
 						help="ignore strike teams, sort players by 'alpha', 'stp', or 'tcp'")
 	parser.add_argument('--sort_char_by', type=str, metavar='SORT', choices=['alpha','power','avail'],
@@ -189,6 +193,7 @@ if __name__ == '__main__':
 					'max_others'    : args.max_others,
 					'only_lane'     : args.only_lane,
 					'only_section'  : args.only_section,
+					'only_side'     : args.only_side,
 					'only_team'     : args.only_team,
 					'only_summary'  : args.only_summary,
 					'only_image'    : args.only_image,
@@ -196,6 +201,7 @@ if __name__ == '__main__':
 					'output_format' : output_format,
 					'publish'       : args.publish,
 					'sections_per'  : args.sections_per,
+					'side_hist'     : args.side_hist,
 					'sort_by'       : args.sort_by,
 					'sort_char_by'  : args.sort_char_by,
 					'span'          : args.span}
