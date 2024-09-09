@@ -377,7 +377,7 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 def parse_roster_csv_data(roster_csv, char_lookup, roster_csv_data={}, member_order=[]):
 
 	# Can't parse if roster.csv is unavailable.
-	if not os.path.exists(roster_csv):
+	if not roster_csv or not os.path.exists(roster_csv):
 		print ('No roster.csv found. Cannot parse roster.csv')
 		return
 
