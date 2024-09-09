@@ -39,6 +39,9 @@ def generate_html(alliance_info, table, table_format, output=''):
 	# If we have a table, we're generating output for a raid.
 	if table:
 
+		# Make a copy before we make any changes.
+		table = copy.deepcopy(table)
+
 		lanes      = table.get('lanes',default_lanes)[:]
 		table_name = table.get('name','')
 
@@ -54,8 +57,12 @@ def generate_html(alliance_info, table, table_format, output=''):
 		if only_lane and only_lane in range(1,len(lanes)+1):
 			lanes = [lanes[only_lane-1]]
 
+		# Are we rendering this in sections?
+		start_lane    = table_format.get('lane_idx',0)
+		start_section = table_format.get('section_idx',0)
+	
 		# Special handling if we want each section individually in a single lane format -- process each section individually.
-		for lane_idx in range(len(lanes)):
+		for lane_idx in range(start_lane,len(lanes)):
 
 			lane = lanes[lane_idx]
 
@@ -86,7 +93,15 @@ def generate_html(alliance_info, table, table_format, output=''):
 			if side_hist:
 				side_hist, hist_date = hist_date, False
 
-			for section_idx in range(0,len(lane),sections_per):
+			for section_idx in range(start_section, len(lane), sections_per):
+
+				# If we're rendering in sections, see whether we've rendered enough.
+				if table_format.get('render_sections') and (len(html_files)==4 or (len(html_files)==1 and not start_lane and not start_section)):
+
+					# That's it. Insert bookmarks and bail.
+					table_format['lane_idx']    = lane_idx
+					table_format['section_idx'] = section_idx
+					return html_files
 
 				# Find out whether we're including Team Power Summary.
 				inc_summary  = get_table_value(table_format, table, key='inc_summary')
@@ -142,7 +157,10 @@ def generate_html(alliance_info, table, table_format, output=''):
 				# Finsh it by adding the CSS to the top with all the defined colors.
 				html_file  = add_css_header(table_name, html_cache=html_cache) + html_file + '</body>\n</html>\n'		
 				html_files[output+'%s%s.html' % (file_num, section_num)] = html_file
-		
+
+			# Manually resetting the loop.
+			start_section = 0
+
 	# If not, it's one of the supporting tabs.
 	else:
 		html_file = ''
@@ -175,6 +193,9 @@ def generate_html(alliance_info, table, table_format, output=''):
 		# Wrap it up and add it to the collection.
 		html_file += '</body>\n</html>\n'
 		html_files[output+'.html'] = html_file	
+
+	if 'render_sections' in table_format:
+		del table_format['render_sections']
 
 	return html_files
 
