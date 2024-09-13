@@ -16,6 +16,10 @@ import sys
 import time
 import glob
 
+import json
+import tempfile
+from functools import reduce
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -36,23 +40,108 @@ if getattr(sys, 'frozen', False):
 # If imported, work in the same directory as the importing file.
 elif hasattr(__main__, '__file__'):
 	base_file_path = os.path.dirname(os.path.abspath(__main__.__file__))
-# Establish where csv files will be downloaded to.
-csv_file_path = os.path.realpath(base_file_path) + os.sep + 'csv' + os.sep
-if not os.path.exists(csv_file_path):
-	os.makedirs(csv_file_path)
+
+
+
+class ChromeWithPrefs(webdriver.Chrome):
+	def __init__(self, *args, options=None, user_data_dir='', profile_dir='Default', **kwargs):
+		if options:
+			self._handle_prefs(options, user_data_dir, profile_dir)
+
+		super().__init__(*args, options=options, **kwargs)
+
+		# If path not specified, remove the user_data_dir when quitting
+		if not user_data_dir:
+			self.keep_user_data_dir = False
+
+	@staticmethod
+	def _handle_prefs(options, user_data_dir, profile_dir):
+		if prefs := options.experimental_options.get("prefs"):
+
+			# turn a (dotted key, value) into a proper nested dict
+			def undot_key(key, value):
+				if "." in key:
+					key, rest = key.split(".", 1)
+					value = undot_key(rest, value)
+				return {key: value}
+
+			# undot prefs dict keys
+			undot_prefs = reduce(
+				lambda d1, d2: {**d1, **d2},  # merge dicts
+				(undot_key(key, value) for key, value in prefs.items()),
+			)
+
+			# create a user_data_dir and add its path to the options
+			user_data_dir = os.path.normpath(tempfile.mkdtemp() if not user_data_dir else user_data_dir)
+			options.add_argument(f"--user-data-dir={user_data_dir}")
+			options.add_argument(f'--profile-directory={profile_dir}')
+
+			# create the preferences json file in its default directory
+			default_dir = os.path.join(user_data_dir, profile_dir)
+			if not os.path.exists(default_dir):
+				os.makedirs(default_dir)
+
+			prefs_file = os.path.join(default_dir, "Preferences")
+			with open(prefs_file, encoding="latin1", mode="w") as f:
+				json.dump(undot_prefs, f)
+
+			# remove the experimental_options to avoid an error
+			del options._experimental_options["prefs"]
+
+
+
+@timed(level=3)
+def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='1', headless=False):
+
+	global base_file_path
+
+	# Establish where csv files will be downloaded to.
+	csv_file_path = os.path.realpath(base_file_path) + os.sep + 'csv' + os.sep
+
+	# Create a directory for the Selenium session
+	user_data_dir = csv_file_path + 'chromium' + os.sep + str(session) + os.sep
+
+	options = webdriver.ChromeOptions()
+	options.add_argument('--log-level=3')
+	options.add_argument('--accept-lang=en-US')
+	options.add_experimental_option('excludeSwitches', ['enable-logging'])
+
+	# Make sure we know where the CSV files will be downloaded to
+	prefs = {"download.default_directory" : csv_file_path}
+	options.add_experimental_option("prefs",prefs)
+
+	# If headless requested, run this as a headless server
+	if headless:
+		options.add_argument('--headless=new')
+
+	driver = ChromeWithPrefs(options=options, user_data_dir=user_data_dir, profile_dir=scopely_login)
+	driver.scopely_login = scopely_login
+	driver.session       = session
+	driver.csv_file_path = csv_file_path
+
+	# Start at the alliance_info page.
+	driver.get('https://marvelstrikeforce.com/en/alliance/members')
+
+	return driver
 
 
 
 @timed(level=3)
 def get_driver(headless=False):
 
-	global csv_file_path
+	global base_file_path
+	
+	# Establish where csv files will be downloaded to.
+	csv_file_path = os.path.realpath(base_file_path) + os.sep + 'csv' + os.sep
+	if not os.path.exists(csv_file_path):
+		os.makedirs(csv_file_path)
 	
 	# Build the driver
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')	
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
+	options.add_experimental_option('excludeSwitches', ['enable-automation'])
 	
 	prefs = {"download.default_directory" : csv_file_path}
 	options.add_experimental_option("prefs",prefs)
@@ -64,30 +153,37 @@ def get_driver(headless=False):
 	driver = webdriver.Chrome(options=options)
 	driver.csv_file_path = csv_file_path
 	
+	# Start at the alliance_info page.
+	driver.get('https://marvelstrikeforce.com/en/alliance/members')
+
 	return driver
-
-
+	
+	
 
 # Login to the website. Return a Selenium Driver object for a given login.
 #
 # If no login specified, use the default login
 
 @timed(level=3)
-def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
+def login(prompt=False, session='1', headless=False, driver=None, scopely_login=''):
 
 	# If we were passed in a cached driver, we're ready to go.
-	if external_driver:
-		driver = external_driver
+	if driver:
 
-	# If a new driver, still need to login:
-	else:
-		# Start by checking to see if we have / need credentials.
-		scopely_login, scopely_pass = get_scopely_creds(prompt, scopely_login)
+		# Pull internal varibles back out. 
+		session       = driver.session
+		scopely_login = driver.scopely_login
 
+	# Start by checking to see if we have / need credentials.
+	scopely_login, scopely_pass = get_scopely_creds(prompt, scopely_login)
+
+	# If we don't have a driver yet, grab one.
+	if not driver:
 		driver = get_driver(headless)
+		#driver = alt_get_driver(scopely_login, session, headless)
 
-		# Start at the alliance_info page.
-		scopely_website_login(driver, scopely_login, scopely_pass)
+	# Login if we aren't already.
+	scopely_website_login(driver, scopely_login, scopely_pass)
 
 	# Waiting while you login manually, automatically, or approve login via 2FA.
 	try:
@@ -95,7 +191,7 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 
 	# If our page doesn't include the Alliance Members table, never successfully logged in. 
 	except TimeoutException:
-		print("Timed out. Unable to complete login.")
+		print("Timed out. Never found Alliance Info.")
 
 		# Failed. Return None for driver
 		return
@@ -116,7 +212,7 @@ def login(prompt=False, headless=False, external_driver=None, scopely_login=''):
 
 		# Make note of Username
 		username = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='navbar-menu']//div[@id='graphic-menu-title']")))
-		driver.username       = remove_tags(username.text)
+		driver.username = remove_tags(username.text)
 
 		# Make note of Alliance Name
 		alliance_name = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='navbar-menu']//div[@id='alliance-graphic-menu-title']")))
@@ -177,12 +273,15 @@ def get_scopely_creds(prompt=False, scopely_login=''):
 # Auto Login via Scopely authentication using cached credentials.
 @timed(level=4)
 def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
+	if driver.current_url == 'https://marvelstrikeforce.com/en/alliance/members':
+		return
+
+	# If we didn't end up at the Alliance Info screen, we are going through authentication.
+	driver.new_auth = True
+
 	try:
 		wait = WebDriverWait(driver, 10)
 	
-		# Start at the alliance_info page.
-		driver.get('https://marvelstrikeforce.com/en/alliance/members')
-
 		# Click on the Scopely Login button.
 		login = wait.until(EC.element_to_be_clickable((By.ID, 'scopely-login')))
 		login.click()
@@ -191,6 +290,7 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 		login_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'ant-input')))
 		login_field.send_keys(scopely_user)
 
+		# Click on the Submit button.
 		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'submitButton')))
 		login_button.click()
 
@@ -211,6 +311,8 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 				button = [button for button in driver.find_elements(By.TAG_NAME, 'button') if button.text == 'Send me a sign in link instead']
 
 		else:
+	
+			print('waiting for Input Password???')
 	
 			# Find login field and enter password to complete login process.
 			pass_field = wait.until(EC.presence_of_element_located((By.XPATH,f'//input[@data-test-id="InputPassword"]')))	

@@ -550,4 +550,8 @@ def generate_team_power_summary(alliance_info, table, lanes, table_format, team_
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'
 
+	# Nothing more to do.
+	if 'render_sections' in table_format:
+		del table_format['render_sections']
+
 	return html_file

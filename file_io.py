@@ -257,8 +257,17 @@ def write_cached_file(data, file):
 
 
 # Has it been less than 24 hours since last update of cached_data?
-@timed(level=3)
+@timed
 def fresh_enough(alliance_or_file):
+
+	last_refresh = age_of(alliance_or_file) < 86400
+
+	return last_refresh and last_refresh < 86400
+		
+
+
+# Returns second since last refresh.
+def age_of(alliance_or_file):
 
 	# If a name of an alliance is passed in, find the relevant alliance_info instead.
 	# If alliance_info was passed in, just use it directly.
@@ -280,7 +289,7 @@ def fresh_enough(alliance_or_file):
 		last_refresh = time.time()-os.path.getmtime(cached_file)
 
 	# If it's less than 24 hours old, it's fresh enough.
-	return last_refresh < 86400
+	return last_refresh
 
 
 

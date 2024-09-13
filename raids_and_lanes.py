@@ -64,10 +64,13 @@ tables['orchis'] = { 'name': 'Orchis Raid',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
 							{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
-							{'traits': ['Mystic'], 'meta': ['Loki', 'Loki (Teen)', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Bifrost)'},
+							{'traits': ['Mystic'], 'meta': ['Loki', 'Loki (Teen)', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost)'},
+							{'traits': ['Mystic'], 'meta': ['Loki', 'Ultimus', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost Ult)'},
+							{'traits': ['Mystic'], 'meta': ['Sylvie', 'Mephisto', 'Vahl', 'Dormammu', 'Deathpool'], 'label':"Mystic<br>(Dorky's Comp)"},
 							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
-							{'traits': ['Tech'], 'meta': ['Doctor Octopus', 'Green Goblin (Classic)', 'Mysterio', 'Vulture', 'Kang the Conqueror'], 'label':'Tech<br>(S6 Kang)'}, 
+							{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Peni Parker'], 'label':'Tech<br>(Orchis)'}, 
 							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'}, 
+							{'traits': ['Tech'], 'meta': ['Doctor Octopus', 'Green Goblin (Classic)', 'Mysterio', 'Vulture', 'Kang the Conqueror'], 'label':'Tech<br>(S6 Kang)'}, 
 							{'traits': ['Bio'], 'meta': ['Carnage', 'Super Skrull', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
 							] ],
 					}
@@ -107,7 +110,7 @@ tables['old_incur'] = { 'name': 'Incursion 1.x Raid',
 
 # Meta Heroes for use in Dark Dimension 8
 tables['dd8'] = { 'name': 'Dark Dimension 8',
-					'min_tier': 19,
+					'min_tier': 18,
 					'min_iso': 13,
 					'max_others': 10,
 					'sort_by': 'avail',
@@ -118,7 +121,7 @@ tables['dd8'] = { 'name': 'Dark Dimension 8',
 							{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
 							{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
 							{'traits': ['Non-Legendary', 'Global', 'Villain'], 'label':'Global Villain'},
-							{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'Global Hero'},
+							{'traits': ['Non-Legendary', 'Global', 'Hero'],    'label':'Global Hero'},
 							{'traits_req':'any', 'traits': ['Cosmic', 'Legendary'],   'label':'Cosmic or<br>Legendary'},
 							] ]
 					}
