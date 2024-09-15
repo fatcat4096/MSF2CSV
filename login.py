@@ -155,6 +155,7 @@ def get_driver(headless=False):
 	
 	# Start at the alliance_info page.
 	driver.get('https://marvelstrikeforce.com/en/alliance/members')
+	time.sleep(0.3)
 
 	return driver
 	

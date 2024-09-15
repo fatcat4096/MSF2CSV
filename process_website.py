@@ -131,7 +131,7 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 	# Download fresh portrait information if cached data is stale.
 	char_lookup = get_char_lookup(driver)
 	
-	if not roster_csv_data and char_lookup:
+	if not roster_csv_data and member_order and char_lookup:
 		parse_roster_csv_data(driver.roster_csv, char_lookup, roster_csv_data, member_order)
 
 	# Let's iterate through the member names in alliance_info.
@@ -257,7 +257,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	TIMEOUT   = [f'* `{x[:16].strip()}`' for x in rosters_output if 'TIMEOUT'   in x]
 
 	if NOT_AVAIL:
-		status_key.append("Ask to share w/ **ALLIANCE ONLY**:")
+		status_key.append(f"**{len(NOT_AVAIL)}** need roster shared w/ **ALLIANCE ONLY**:")
 		status_key += NOT_AVAIL
 
 	if TIMEOUT:
@@ -271,6 +271,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 
 
 
+@timed(level=3)
 def get_roster_html(driver, member_url, member='', alliance_info={}):
 
 	# Start by defining the number of retries and time limit for each attempt. 
@@ -326,6 +327,7 @@ def get_roster_html(driver, member_url, member='', alliance_info={}):
 				
 
 # Return cached portrait information and update portraits and trait data if stale.
+@timed(level=3)
 def get_char_lookup(driver=None):
 	
 	char_lookup = {}

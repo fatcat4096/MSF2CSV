@@ -381,11 +381,6 @@ def parse_roster_csv_data(roster_csv, char_lookup, roster_csv_data={}, member_or
 		print ('No roster.csv found. Cannot parse roster.csv')
 		return
 
-	# SHOULD NOT HAPPEN.
-	if not member_order:
-		print ('No member_order supplied. Cannot parse roster.csv')
-		return
-
 	# Pull full Roster Info from the roster.csv file.
 	roster_csv_file = open(roster_csv, 'r', encoding='utf-8').readlines()
 

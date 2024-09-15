@@ -3,6 +3,8 @@
 """cached_info.py
 Create a global cached_info structure.  
 """
+from log_utils import *
+
 from copy import copy, deepcopy
 
 from file_io import load_cached_file, write_cached_file
@@ -12,6 +14,7 @@ from file_io import load_cached_file, write_cached_file
 cached_info = {}
 
 # Just return a value from the global
+@timed(level=3)
 def get_cached(key):
 	global cached_info
 
@@ -24,6 +27,7 @@ def get_cached(key):
 
 
 # Update the global with a deepcopy of any value passed in and write to disk.
+@timed(level=3)
 def set_cached(key,value):
 	global cached_info
 	
