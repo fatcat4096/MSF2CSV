@@ -30,7 +30,6 @@ from generate_local_files import *
 from file_io import remove_tags
 
 
-
 # Default value, use the local file path.
 base_file_path = os.path.dirname(__file__)
 
@@ -41,6 +40,11 @@ if getattr(sys, 'frozen', False):
 elif hasattr(__main__, '__file__'):
 	base_file_path = os.path.dirname(os.path.abspath(__main__.__file__))
 
+# Establish where csv and chromium files will reside.
+csv_file_path = os.path.realpath(base_file_path) + os.sep + 'csv' + os.sep
+chromium_path = csv_file_path + 'chromium' + os.sep
+if not os.path.exists(chromium_path):
+	os.makedirs(chromium_path)
 
 
 class ChromeWithPrefs(webdriver.Chrome):
@@ -91,15 +95,13 @@ class ChromeWithPrefs(webdriver.Chrome):
 
 
 @timed(level=3)
-def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='1', headless=False):
+def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='0', headless=False):
 
-	global base_file_path
-
-	# Establish where csv files will be downloaded to.
-	csv_file_path = os.path.realpath(base_file_path) + os.sep + 'csv' + os.sep
+	global csv_file_path
+	global chromium_path
 
 	# Create a directory for the Selenium session
-	user_data_dir = csv_file_path + 'chromium' + os.sep + str(session) + os.sep
+	user_data_dir = chromium_path + session + os.sep
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
@@ -121,6 +123,7 @@ def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='1', headl
 
 	# Start at the alliance_info page.
 	driver.get('https://marvelstrikeforce.com/en/alliance/members')
+	time.sleep(0.3)
 
 	return driver
 
@@ -129,12 +132,7 @@ def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='1', headl
 @timed(level=3)
 def get_driver(headless=False):
 
-	global base_file_path
-	
-	# Establish where csv files will be downloaded to.
-	csv_file_path = os.path.realpath(base_file_path) + os.sep + 'csv' + os.sep
-	if not os.path.exists(csv_file_path):
-		os.makedirs(csv_file_path)
+	global csv_file_path
 	
 	# Build the driver
 	options = webdriver.ChromeOptions()
@@ -166,7 +164,7 @@ def get_driver(headless=False):
 # If no login specified, use the default login
 
 @timed(level=3)
-def login(prompt=False, session='1', headless=False, driver=None, scopely_login=''):
+def login(prompt=False, session='0', headless=False, driver=None, scopely_login=''):
 
 	# If we were passed in a cached driver, we're ready to go.
 	if driver:
@@ -274,7 +272,9 @@ def get_scopely_creds(prompt=False, scopely_login=''):
 # Auto Login via Scopely authentication using cached credentials.
 @timed(level=4)
 def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
-	if driver.current_url == 'https://marvelstrikeforce.com/en/alliance/members':
+
+	# If we already successfully authenticated, no login to perform.
+	if auth_successful(driver):
 		return
 
 	# If we didn't end up at the Alliance Info screen, we are going through authentication.
@@ -372,3 +372,9 @@ def download_csv_file(driver, filetype):
 	os.replace(csv_file, new_csv)
 	
 	return new_csv
+
+
+
+def auth_successful(driver):
+	return driver.current_url == 'https://marvelstrikeforce.com/en/alliance/members'
+

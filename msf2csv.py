@@ -65,6 +65,9 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 			else:
 				html_files = write_file(pathname, html_files)
 
+			# Do a bit of housekeeping. Purge anything over a day old.
+			cleanup_old_files(pathname, 1)
+
 			return html_files
 		else:
 			print("--output FORMAT must be one of the following:\n"+str(valid_output))

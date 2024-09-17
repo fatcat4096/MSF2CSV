@@ -14,7 +14,8 @@ import asyncio
 import inspect
 
 from functools import wraps
-from typing import Callable, Any
+from pathlib   import Path
+from typing    import Callable, Any
 
 import logging
 
@@ -333,3 +334,26 @@ def log_leave(log, ret, **kwarg):
 
 	return
 
+
+
+def cleanup_old_files(local_path, age=7):
+
+	if not os.path.isdir(local_path):
+		local_path = os.path.dirname(local_path)
+
+	cutoff_date = time.time() - age * 24 * 3600
+
+	for item in Path(local_path).expanduser().rglob('*'):
+		if item.is_file():
+			if os.stat(item).st_mtime < cutoff_date:
+				os.remove(item)
+
+	for item in Path(local_path).expanduser().rglob('*'):    
+		if item.is_dir():
+			if len(os.listdir(item)) == 0:
+				os.rmdir(item)
+
+
+
+# Clean up old files at launch.
+cleanup_old_files(log_file_path)
