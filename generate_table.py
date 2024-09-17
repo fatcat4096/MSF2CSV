@@ -314,6 +314,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, use_hist_date)
 								style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or use_hist_date is not None])    
 
+							# Last minute translation for ISO level.
+							if key=='iso' and key_val and not use_hist_date:
+								key_val = (key_val-1) % 5 + 1
+
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 							if key=='red' and key_val>7:
 								field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
@@ -326,7 +330,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						if inc_class and not inline_hist_row:
 
 							# Get the ISO Class in use for this member's toon.
-							iso_code  = (alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)&15)%6								# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
+							iso_code  = alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)%6
 							
 							# Translate it to a code to specify the correct CSS URI.
 							iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]

@@ -106,7 +106,7 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 		member_row = member_row.strip().split(',')
 
 		# Remove HTML tags if present.
-		member_name = remove_tags(member_row[2])
+		member_name = remove_tags(member_row[2]).strip()
 
 		# Process role information.
 		member_role     = member_row[1]
