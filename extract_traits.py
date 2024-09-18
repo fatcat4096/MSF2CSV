@@ -89,7 +89,7 @@ def extract_traits(file=''):
 def update_traits(extracted_traits):
 
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'X-23' not in extracted_traits['WeaponX']:
+	if extracted_traits and 'Odin' not in extracted_traits['Asgardian']:
 
 		manual_traits =	{
 						# Ares
