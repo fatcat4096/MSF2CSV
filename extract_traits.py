@@ -89,7 +89,7 @@ def extract_traits(file=''):
 def update_traits(extracted_traits):
 
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'Odin' not in extracted_traits['Asgardian']:
+	if extracted_traits and 'Odin' not in extracted_traits['Asgard']:
 
 		manual_traits =	{
 						# Ares
@@ -133,7 +133,7 @@ def update_traits(extracted_traits):
 						'Old Man Logan'        :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
 						'Pandapool'            :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
 						# Odin
-						'Odin'                 :['Hero','Cosmic','Mystic','Blaster','Asgardian','Mystic'],
+						'Odin'                 :['Hero','Cosmic','Mystic','Blaster','Asgard','Mythic'],
 						# Orchis
 						'Lady Deathstrike'     :['Orchis'],
 						'Scientist Supreme'    :['Orchis'],
