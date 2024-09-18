@@ -314,13 +314,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, use_hist_date)
 								style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or use_hist_date is not None])    
 
-							# Last minute translation for ISO level.
-							if key=='iso' and key_val and not use_hist_date:
-								key_val = (key_val-1) % 5 + 1
-
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 							if key=='red' and key_val>7:
 								field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
+							elif key=='iso' and key_val and not use_hist_date:
+								field_value = f'{int((key_val+4)/5)}-{(key_val+4)%5+1}'
 							else:
 								field_value = get_field_value(key_val, use_hist_date)
 

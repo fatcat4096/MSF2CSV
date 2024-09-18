@@ -132,6 +132,8 @@ def update_traits(extracted_traits):
 						'Daken'                :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
 						'Old Man Logan'        :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
 						'Pandapool'            :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
+						# Odin
+						'Odin'                 :['Hero','Cosmic','Mystic','Blaster','Asgardian','Mystic'],
 						# Orchis
 						'Lady Deathstrike'     :['Orchis'],
 						'Scientist Supreme'    :['Orchis'],

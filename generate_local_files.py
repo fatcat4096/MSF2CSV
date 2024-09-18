@@ -133,24 +133,21 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	tables['orchis'] = { 'name': 'Orchis Raid',
 						'min_iso': 10,
 						'max_others': 0,
-						'raid_type': 'split',
+						'only_side': 'both',
 						'strike_teams': 'orchis',
 						'sort_char_by': 'avail',
 						'inc_keys': ['power','lvl','tier','iso'],
 						'lanes':[ [
-								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot'], 'label':'Mutant<br>(X-Treme)'},
-								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
+								{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
+								{'traits': ['Mystic'], 'meta': ['Loki', 'Loki (Teen)', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost)'},
+								{'traits': ['Mystic'], 'meta': ['Loki', 'Ultimus', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost Ult)'},
+								{'traits': ['Mystic'], 'meta': ['Sylvie', 'Mephisto', 'Vahl', 'Dormammu', 'Deathpool'], 'label':"Mystic<br>(Dorky's Comp)"},
 								{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
+								{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Peni Parker'], 'label':'Tech<br>(Orchis)'}, 
 								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'}, 
-								{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
+								{'traits': ['Tech'], 'meta': ['Doctor Octopus', 'Green Goblin (Classic)', 'Mysterio', 'Vulture', 'Kang the Conqueror'], 'label':'Tech<br>(S6 Kang)'}, 
+								{'traits': ['Bio'], 'meta': ['Carnage', 'Super Skrull', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
 								] ],
-						'lanes_alt':[ [
-								{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'},
-								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'},
-								{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'},
-								{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
-								{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot'], 'label':'Mutant<br>(X-Treme)'}
-								] ]
 						}
 
 	# Meta Heroes for use in Spotlight Raid
@@ -194,8 +191,8 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 	# Meta Heroes for use in Dark Dimension 8
 	tables['dd8'] = { 'name': 'Dark Dimension 8', 'min_tier': 19, 'min_iso': 13, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
 						'lanes':[ [
-								{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
 								{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
+								{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
 								{'traits': ['Non-Legendary', 'Global', 'Villain'], 'label':'Global Villain'},
 								{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'Global Hero'},
 								{'traits_req':'any', 'traits': ['Cosmic', 'Legendary'],   'label':'Cosmic or<br>Legendary'},
