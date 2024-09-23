@@ -22,45 +22,14 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 
 	alliance = {}
 
-	# ALLIANCE_NAME, USERNAME in Driver already
-	alliance_name = driver.alliance_name
+	# Used for file naming
+	alliance['name'] = driver.alliance_name
 
-	"""# Parse the basic alliance info
-	alliance_name = soup.find('span', attrs = {'class':'alliance-name'})
-	alliance_html = ''.join([str(x) for x in alliance_name.children])
+	# Used for display in reports
+	alliance['display_name'] = driver.alliance_html
 
-	alliance_color = ''
-
-	# Two options for color, either explicit color= indicator
-	if '<color=' in alliance_html:
-		alliance_color = alliance_html[alliance_html.index('<color=')+6:]
-
-	# or just a simple tag with a hex color in it.
-	#elif '<#' in alliance_html:
-	
-	# ONCE COLOR IS LOADED IN ALLIANCE_INFO['COLOR'] NEEDS TO BE USED TO WRITE FILE **AND** USED WHEN STORING DEFAULT ALLIANCE IN DATABASE
-	# ALSO, NEED TO FIND EVERYWHERE THAT WE USE ALLIANCE_INFO['NAME'] FOR FILE NAMING.
-	
-	# Define dict entry even if empty so that existing/old entry won't be copied over. 
-	#alliance['color'] = alliance_color
-
-	alliance_style = ''
-	
-	if '<b>' in alliance_html:
-		alliance_style += 'font-weight:bold;'
-	if '<i>' in alliance_html:
-		alliance_style += 'font-style:italic;'
-	if alliance_color:
-		alliance_style += f'color:{alliance_color};'
-	
-	# Start by removing all formatting.
-	alliance_name = remove_tags(alliance_name.text).strip()
-
-	# Wrap the alliance_name if we found special formatting.
-	if alliance_style:
-		alliance_name = f'<span style="{alliance_style}">{alliance_name}</span>'"""
-
-	alliance['name']      = alliance_name
+	# Used to discriminate if multiple alliances have same base filename
+	alliance['color'] = ''.join([x[6:] for x in driver.alliance_html.split('"') if x.startswith('color:')])
 
 	# Pull Total Power, Average TCP, Trophy Count, OPENINGS?, War Zone, War League, War Rank, Raid Rank from driver.page_source
 	soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -135,9 +104,6 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 
 	alliance['members']  = members
 	alliance['captains'] = captains
-	
-	# Just grab the URLs for the js scripts on the page. Will be used by extract_traits.
-	alliance['scripts']  = [script.get('src') for script in soup.findAll('script', attrs = {'type':'text/javascript'}) if script.get('src') and 'static' in script.get('src')]
 
 	# Finally, fix the driver.username value with proper casing. 
 	match = [member for member in members if member.lower() == driver.username.lower()]
@@ -146,22 +112,6 @@ def parse_alliance(driver):		# contents, discord_user=None, scopely_login=None):
 
 	# Return the parsed alliance info.
 	return alliance
-
-
-
-@timed(level=3)
-def parse_player_stats(contents, member_info):
-	soup = BeautifulSoup(contents, 'html.parser')
-	
-	stats = soup.findAll('span')
-
-	# Parse only information unavailable in info.csv.
-	member_info['max']        = int(re.sub(r"\D", "", stats[4].text))
-	member_info['arena']      = int(re.sub(r"\D", "", stats[5].text))
-	member_info['blitz']      = int(re.sub(r"\D", "", stats[6].text))
-	member_info['blitz_wins'] = int(re.sub(r"\D", "", stats[7].text))
-	member_info['stars']      = int(re.sub(r"\D", "", stats[8].text))
-	member_info['red']        = int(re.sub(r"\D", "", stats[9].text))
 
 
 
@@ -300,6 +250,41 @@ def parse_roster_html(contents, alliance_info, member=''):
 	merge_roster(alliance_info, member, processed_chars, other_data)
 
 
+
+# Break this out as a separate routine so can be used to merge roster.csv data.
+def merge_roster(alliance_info, member, processed_chars, other_data):
+
+	# Get a little closer to our work. 
+	member_info = alliance_info['members'].setdefault(member,{})
+	
+	# Update 'last_update' if the calculated tot_power has changed.
+	calc_pwr = sum([processed_chars[char]['power'] for char in processed_chars])
+	if  member_info.get('tot_power') != calc_pwr:
+		member_info['tot_power']      = calc_pwr
+		member_info['last_update']    = datetime.datetime.now()
+
+	# Add the 'clean' parsed data to our list of processed players.
+	member_info['processed_chars'] = processed_chars
+	member_info['other_data']      = other_data
+	
+	# Do I really USE the display_name?
+	member_info['display_name']    = member
+
+	# Temporary fix. Calculate values if possible.
+	calc_lvl             = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars]) if processed_chars else 0
+	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
+	calc_tcc             = len([char for char in processed_chars if processed_chars[char]['power']])
+	member_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
+	member_info['stars'] = sum([processed_chars[char]['yel'] for char in processed_chars])
+	member_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
+
+	# Only use calculated TCP, STP, and TCC if higher than the recorded values in Alliance Info.
+	member_info['level'] = max(calc_lvl, member_info.get('level',0))
+	member_info['tcp']   = max(calc_pwr, member_info.get('tcp',0))
+	member_info['stp']   = max(calc_stp, member_info.get('stp',0))
+	member_info['tcc']   = max(calc_tcc, member_info.get('tcc',0))
+
+
 	
 # Parse the character file out of MHTML or the page_source directly from the website.
 @timed(level=3)
@@ -338,40 +323,6 @@ def parse_scripts(contents):
 
 
 
-def merge_roster(alliance_info, member, processed_chars, other_data):
-
-	# Get a little closer to our work. 
-	member_info = alliance_info['members'].setdefault(member,{})
-	
-	# Update 'last_update' if the calculated tot_power has changed.
-	calc_pwr = sum([processed_chars[char]['power'] for char in processed_chars])
-	if  member_info.get('tot_power') != calc_pwr:
-		member_info['tot_power']      = calc_pwr
-		member_info['last_update']    = datetime.datetime.now()
-
-	# Add the 'clean' parsed data to our list of processed players.
-	member_info['processed_chars'] = processed_chars
-	member_info['other_data']      = other_data
-	
-	# Do I really USE the display_name?
-	member_info['display_name']    = member
-
-	# Temporary fix. Calculate values if possible.
-	calc_lvl             = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars]) if processed_chars else 0
-	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
-	calc_tcc             = len([char for char in processed_chars if processed_chars[char]['power']])
-	member_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
-	member_info['stars'] = sum([processed_chars[char]['yel'] for char in processed_chars])
-	member_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
-
-	# Only use calculated TCP, STP, and TCC if higher than the recorded values in Alliance Info.
-	member_info['level'] = max(calc_lvl, alliance_info['members'].get(member,{}).get('level',0))
-	member_info['tcp']   = max(calc_pwr, alliance_info['members'].get(member,{}).get('tcp',0))
-	member_info['stp']   = max(calc_stp, alliance_info['members'].get(member,{}).get('stp',0))
-	member_info['tcc']   = max(calc_tcc, alliance_info['members'].get(member,{}).get('tcc',0))
-
-
-
 # Parse the Diamond data directly from the roster.csv file.
 @timed(level=3)
 def parse_roster_csv_data(roster_csv, char_lookup, roster_csv_data={}, member_order=[]):
@@ -389,7 +340,7 @@ def parse_roster_csv_data(roster_csv, char_lookup, roster_csv_data={}, member_or
 
 		entry = entry_row.split(',')
 
-		member_name = remove_tags(entry[0])
+		member_name = remove_tags(entry[0]).strip()
 		
 		member_info = roster_csv_data.setdefault(member_name, {'processed_chars':{}, 'other_data':{}})
 		

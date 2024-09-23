@@ -211,12 +211,12 @@ def login(prompt=False, session='0', headless=False, driver=None, scopely_login=
 
 		# Make note of Username
 		username = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='navbar-menu']//div[@id='graphic-menu-title']")))
-		driver.username = remove_tags(username.text)
+		driver.username = remove_tags(username.text).strip()
 
 		# Make note of Alliance Name
 		alliance_name = wait.until(EC.visibility_of_element_located((By.XPATH, "//div[@class='navbar-menu']//div[@id='alliance-graphic-menu-title']")))
-		driver.alliance_name  = remove_tags(alliance_name.text).strip()
-		driver.alliance_color = alliance_name.get_attribute('innerHTML')			# We will use this for color naming.
+		driver.alliance_name = remove_tags(alliance_name.text).strip()
+		driver.alliance_html = alliance_name.get_attribute('innerHTML')			# We will use this for color naming.
 
 		# Close the menu after information extracted
 		button.click()

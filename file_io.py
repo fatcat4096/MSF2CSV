@@ -30,7 +30,7 @@ TAG_RE = re.compile(r'<[^>]+>')
 def remove_tags(text):
 
 	# Cleaned text is without HTML tags. Also removing hashtags.
-	cleaned = TAG_RE.sub('', text.replace('#',''))
+	cleaned = TAG_RE.sub('', text.replace('#','')).strip()
 
 	# If nothing remains, then < > was decorative, return the original entry.
 	return cleaned or text
@@ -189,8 +189,8 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 		file_path = alliance_info.get('file_path', get_local_path())
 
 	# Remove the file_path temporarily, before we write to disk.
-	# Also permanently remove 'traits' and 'portraits'.
-	for key in ('file_path','traits','portraits'):
+	# Also permanently remove 'traits', 'trait_file', 'scripts', and 'portraits'.
+	for key in ('file_path','traits','portraits','scripts','trait_file'):
 		if key in alliance_info:
 			del alliance_info[key]
 
@@ -201,11 +201,9 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	# Ensure the enclosing directory exists.
 	if not os.path.exists(file_path):
 		os.makedirs(file_path)
-	
-	alliance_name = get_alliance_name(alliance_info)
 
 	# Construct the file name
-	file_path += os.sep + 'cached_data-' + (filename or alliance_name) + '.msf'
+	file_path += os.sep + 'cached_data-' + (filename or alliance_info['name']) + '.msf'
 	
 	# If we don't want to indicate this file has changed, save the current timestamp.
 	if timestamp != 'update':
@@ -361,18 +359,6 @@ def check_import_path(alliance_name):
 		if 'raids_and_lanes' in globals():
 			importlib.reload(raids_and_lanes)
 			tables = raids_and_lanes.tables
-
-
-
-# Offer standardized process for building alliance name from alliance_info data.
-def get_alliance_name(alliance_info):
-
-	alliance_name = remove_tags(alliance_info['name'])
-
-	if alliance_info.get('color'):
-		alliance_name += '-' + alliance_info.get('color')
-	
-	return alliance_name
 	
 
 
