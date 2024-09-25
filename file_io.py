@@ -93,7 +93,11 @@ def html_to_images(html_files=[], print_path=True):
 	# Start by creating a Selenium driver.
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
-	options.add_argument('--headless=new')
+
+	# TEMP FIX --headless=new throwing up white window.
+	#options.add_argument('--headless=new')
+	options.add_argument('--headless=old')
+
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
 	# The html_files list contains paths to the html files.

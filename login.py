@@ -4,8 +4,6 @@
 Log on to MSF.gg and return a driver to use for parsing.
 """
 
-from bs4 import BeautifulSoup
-
 from log_utils import *
 
 import __main__
@@ -106,14 +104,20 @@ def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='0', headl
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')
+	options.add_argument('--disable-notifications')
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
+	options.add_experimental_option('excludeSwitches', ['enable-automation'])
 
 	# Make sure we know where the CSV files will be downloaded to
-	prefs = {"download.default_directory" : csv_file_path}
+	prefs = {	"download.default_directory"       : csv_file_path,
+				"credentials_enable_service"       : False,
+				"profile.password_manager_enabled" : False}
 	options.add_experimental_option("prefs",prefs)
 
 	# If headless requested, run this as a headless server
 	if headless:
+		# TEMP FIX --headless=new throwing up white window.
+		options.add_argument('--window-position=-2400,-2400')
 		options.add_argument('--headless=new')
 
 	driver = ChromeWithPrefs(options=options, user_data_dir=user_data_dir, profile_dir=scopely_login)
@@ -138,14 +142,19 @@ def get_driver(headless=False):
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
 	options.add_argument('--accept-lang=en-US')	
+	options.add_argument('--disable-notifications')
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 	options.add_experimental_option('excludeSwitches', ['enable-automation'])
 	
-	prefs = {"download.default_directory" : csv_file_path}
+	prefs = {	"download.default_directory"       : csv_file_path,
+				"credentials_enable_service"       : False,
+				"profile.password_manager_enabled" : False}
 	options.add_experimental_option("prefs",prefs)
 
 	# If headless requested, run this as a headless server.
 	if headless:
+		# TEMP FIX --headless=new throwing up white window.
+		options.add_argument('--window-position=-2400,-2400')
 		options.add_argument('--headless=new')
 
 	driver = webdriver.Chrome(options=options)
@@ -181,8 +190,11 @@ def login(prompt=False, session='0', headless=False, driver=None, scopely_login=
 		driver = get_driver(headless)
 		#driver = alt_get_driver(scopely_login, session, headless)
 
+	driver.scopely_login = scopely_login
+	driver.scopely_pass  = scopely_pass
+
 	# Login if we aren't already.
-	scopely_website_login(driver, scopely_login, scopely_pass)
+	scopely_website_login(driver)
 
 	# Waiting while you login manually, automatically, or approve login via 2FA.
 	try:
@@ -190,7 +202,7 @@ def login(prompt=False, session='0', headless=False, driver=None, scopely_login=
 
 	# If our page doesn't include the Alliance Members table, never successfully logged in. 
 	except TimeoutException:
-		print("Timed out. Never found Alliance Info.")
+		print(f"Timed out. Never found Alliance Info. {scopely_login=}")
 
 		# Failed. Return None for driver
 		return
@@ -222,10 +234,8 @@ def login(prompt=False, session='0', headless=False, driver=None, scopely_login=
 		button.click()
 
 	except TimeoutException:
-		print("Timed out. user-menu-trigger never became available.")
-
-		soup = BeautifulSoup(driver.page_source, 'html.parser')
-		write_file ('./TimeoutException.html', soup.prettify())
+		print(f"Timed out. user-menu-trigger never became available. {scopely_login=}")
+		driver.save_screenshot('./TimeoutException.png')
 
 		# Failed. Return None for driver
 		return
@@ -239,7 +249,7 @@ def login(prompt=False, session='0', headless=False, driver=None, scopely_login=
 
 
 # Check for saved credentials. If none saved, ask if would like to cache them.
-@timed(level=3)
+@timed(level=4)
 def get_scopely_creds(prompt=False, scopely_login=''):
 
 	# If this is the first launch of a frozen executable, go ahead and prompt for login.
@@ -270,8 +280,8 @@ def get_scopely_creds(prompt=False, scopely_login=''):
 
 
 # Auto Login via Scopely authentication using cached credentials.
-@timed(level=4)
-def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
+@timed(level=3)
+def scopely_website_login(driver):
 
 	# If we already successfully authenticated, no login to perform.
 	if auth_successful(driver):
@@ -289,7 +299,7 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 
 		# Find and enter Scopely ID for login.
 		login_field = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'ant-input')))
-		login_field.send_keys(scopely_user)
+		login_field.send_keys(driver.scopely_login)
 
 		# Click on the Submit button.
 		login_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'submitButton')))
@@ -299,7 +309,7 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 
 		# If user is relying on access e-mail from Scopely, then no password is used.
 		# Return control to the user and allow them to click on the link in the e-mail to complete login.
-		if scopely_pass == 'wait-for-email':
+		if driver.scopely_pass == 'wait-for-email':
 
 			time.sleep(1.5)
 
@@ -313,11 +323,9 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 
 		else:
 	
-			print('waiting for Input Password???')
-	
 			# Find login field and enter password to complete login process.
 			pass_field = wait.until(EC.presence_of_element_located((By.XPATH,f'//input[@data-test-id="InputPassword"]')))	
-			pass_field.send_keys(scopely_pass)
+			pass_field.send_keys(driver.scopely_pass)
 
 			while not button:
 				time.sleep(0.05)
@@ -326,10 +334,11 @@ def scopely_website_login(driver, scopely_user, scopely_pass='wait-for-email'):
 		button[0].click()
 
 	except TimeoutException:
-		print("Timed out. Unable to complete login.")
+		print(f"Timed out. Unable to complete login. {driver.scopely_login=}")
 
 
 
+@timed(level=3)
 def download_csv_file(driver, filetype):
 
 	try:
