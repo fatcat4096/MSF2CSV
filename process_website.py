@@ -52,30 +52,20 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Start by logging into the website.
 	driver = login(prompt, headless, scopely_login=scopely_login)
 
-	website_alliance_info = parse_alliance(driver)
+	alliance_info = parse_alliance(driver)
 
 	# If no alliance_name specified, use the login's alliance.
 	if not alliance_name:
-		alliance_name = website_alliance_info['name']
 		print (f"Defaulting to alliance from website login: {alliance_name}")
 
 	# If the alliance requested is NOT the one from the login, fail gracefully. 
-	elif alliance_name.lower() != website_alliance_info['name'].lower():
-		print (f"Alliance requested ({alliance_name}) doesn't match login alliance ({website_alliance_info['name']}). Aborting.")
+	elif alliance_name.lower() != alliance_info['name'].lower():
+		print (f"Alliance requested ({alliance_name}) doesn't match login alliance ({alliance_info['name']}). Aborting.")
 		return
 
-	# Now that we're guaranteed to have an alliance_name check one last time for a matching cached_data file. 
-	if not cached_alliance_info:
-		cached_alliance_info = find_cached_data(alliance_name)
-
-	# The website_alliance_info will be our baseline. 
-	alliance_info = website_alliance_info
-
-	# If we found cached_alliance_info, update the website info.
-	if cached_alliance_info:
-
-		# Update the fresh alliance_info from website with extra info from cached_data.
-		update_alliance_info_from_cached(alliance_info, cached_alliance_info)
+	# Verify the fresh and old cached data are the same alliance 
+	# Avoid name collisions and merge data if old info available
+	find_cached_and_merge(alliance_info)
 
 	# Make note of when we begin.
 	start_time = datetime.datetime.now()
@@ -132,7 +122,7 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 	char_lookup = get_char_lookup(driver)
 	
 	if not roster_csv_data and member_order and char_lookup:
-		parse_roster_csv_data(driver.roster_csv, char_lookup, roster_csv_data, member_order)
+		parse_roster_csv(driver.roster_csv, char_lookup, roster_csv_data, member_order)
 
 	# Let's iterate through the member names in alliance_info.
 	for member in list(members):
@@ -160,7 +150,7 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 
 			# SHOULD NOT BE USED FOR /ROSTER REFRESH
 			if roster_csv_data:
-				print ('could not find member',member,'in roster_csv_data:',roster_csv_data.keys())
+				print ('SHOULD NOT HAPPEN: Could not find member',member,'in roster_csv_data:',roster_csv_data.keys())
 
 			page_source = get_roster_html(driver, members[member]['url'], member, alliance_info)
 			if page_source:
@@ -321,6 +311,8 @@ def get_roster_html(driver, member_url, member='', alliance_info={}):
 
 			# Too many retries, report exception and bail.
 			if not retries:
+				if isinstance(exc, TimeoutException):
+					return
 				print (traceback.format_exc())
 				raise
 
