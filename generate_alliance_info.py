@@ -50,7 +50,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 
 	html_file += '<tr style="font-size:18px;color:white;">\n'
 	html_file += ' <td colspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
-	html_file += ' <td colspan="%s" class="alliance_name"%s>%s</td>\n' % (8+ 2*ARENA_BLITZ_ENABLED, alt_color, alliance_info['name'].upper())
+	html_file += ' <td colspan="%s" class="alliance_name"%s>%s</td>\n' % (8+ 2*ARENA_BLITZ_ENABLED, alt_color, alliance_info.get('display_name','').upper() or alliance_info.get('name','').upper())
 	html_file += ' <td colspan="2"><div style="image-rendering:crisp-edges; transform:scale(1.5);"><img src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></div></td>\n' % (alliance_info.get('image','EMBLEM_6_dd63d11b'))
 	html_file += '</tr>\n'
 
