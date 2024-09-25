@@ -89,7 +89,7 @@ def extract_traits(file=''):
 def update_traits(extracted_traits):
 
 	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'Odin' not in extracted_traits['Asgard']:
+	if extracted_traits and 'Nimrod' not in extracted_traits['Villain']:
 
 		manual_traits =	{
 						# Ares
@@ -137,9 +137,9 @@ def update_traits(extracted_traits):
 						# Orchis
 						'Lady Deathstrike'     :['Orchis'],
 						'Scientist Supreme'    :['Orchis'],
-						'Nimrod'               :['Orchis','Tech','Global','Blaster'],
-						'Sentinel'             :['Orchis','Tech','Global','Protector'],
-						'Omega Sentinel'       :['Orchis','Tech','Global','Support'],
+						'Nimrod'               :['Orchis','Villain','Tech','Global','Blaster'],
+						'Sentinel'             :['Orchis','Villain','Tech','Global','Protector'],
+						'Omega Sentinel'       :['Orchis','Villain','Tech','Global','Support'],
 						# Out of Time
 						'Captain America'      :['OutOfTime'],
 						'Captain Carter'       :['OutOfTime'],

@@ -143,9 +143,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['Mystic'], 'meta': ['Loki', 'Ultimus', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost Ult)'},
 								{'traits': ['Mystic'], 'meta': ['Sylvie', 'Mephisto', 'Vahl', 'Dormammu', 'Deathpool'], 'label':"Mystic<br>(Dorky's Comp)"},
 								{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
-								{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Peni Parker'], 'label':'Tech<br>(Orchis)'}, 
-								{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'}, 
-								{'traits': ['Tech'], 'meta': ['Doctor Octopus', 'Green Goblin (Classic)', 'Mysterio', 'Vulture', 'Kang the Conqueror'], 'label':'Tech<br>(S6 Kang)'}, 
+								{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Omega Sentinel'], 'label':'Tech<br>(Orchis)'}, 
 								{'traits': ['Bio'], 'meta': ['Carnage', 'Super Skrull', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
 								] ],
 						}
