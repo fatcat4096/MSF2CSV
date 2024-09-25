@@ -11,6 +11,7 @@ import string
 import copy
 import re
 
+from file_io     import find_cached_data
 from parse_cache import update_parse_cache
 from cached_info import get_cached
 
@@ -688,17 +689,40 @@ def is_valid_alliance_id(s):
 
 
 
-# Update the fresh alliance_info from website with extra info from cached_data.
+# Verify the fresh and old cached data are the same alliance 
+# Avoid name collisions and merge data if old info available
 @timed(level=3)
-def update_alliance_info_from_cached(alliance_info, cached_alliance_info):
+def find_cached_and_merge(alliance_info):
+
+	# Look for an existing cached_data file. 
+	cached_info = find_cached_data(alliance_info['name'])
+	
+	# If different members, assume different alliance and use colors in alliance name to differentiate.
+	if cached_info and len(set(alliance_info['members']).intersection(cached_info['members'])) < len(cached_info['members'])*.5:
+
+		# Naming collision. Update name with color if available.
+		if alliance_info.get('color'):
+			print ('Name collision:',alliance_info['name'],alliance_info['name']+f"-{alliance_info.get('color')}")
+			alliance_info['name'] += f"-{alliance_info.get('color')}"
+		else:
+			# SHOULD NOT HAPPEN. Differentiate name with '-alt'
+			print ('Name collision:',alliance_info['name'],alliance_info['name']+'-alt')
+			alliance_info['name'] += f"-alt"
+
+		# See if there's an old cached_data with this filename.
+		cached_info = find_cached_data(alliance_info['name'])
+
+	# Nothing to merge.
+	if not cached_info:
+		return
 
 	# Copy over extra information into freshly downloaded alliance_info.
-	for key in cached_alliance_info:
+	for key in cached_info:
 		if key not in alliance_info:
-			alliance_info[key] = cached_alliance_info[key]
+			alliance_info[key] = cached_info[key]
 			
 	# Also copy over additional information inside the member definitions. 
 	for member in alliance_info['members']:
 		for key in ['processed_chars','url','other_data','max','arena','blitz','blitz_wins','stars','red','tot_power','last_update','discord','scopely']:
-			if key in cached_alliance_info['members'].get(member,{}) and key not in alliance_info['members'][member]:
-				alliance_info['members'][member][key] = cached_alliance_info['members'][member][key]
+			if key in cached_info.get('members',{}).get(member,{}) and key not in alliance_info['members'][member]:
+				alliance_info['members'][member][key] = cached_info['members'][member][key]
