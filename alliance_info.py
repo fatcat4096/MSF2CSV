@@ -552,9 +552,6 @@ def update_history(alliance_info):
 @timed(level=3)
 def is_stale(alliance_info, member_name):
 
-	# TEMPORARY PATH, ALWAYS RETURN FALSE FOR IS_STALE.
-	return False
-	
 	# Load thresholds, if they're explicitly defined.
 	max_growth = alliance_info.get('settings',{}).get('percent_growth', 1.5)
 	max_age    = alliance_info.get('settings',{}).get('older_than', 7)
