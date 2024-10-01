@@ -288,6 +288,45 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
     center center;
     background-size: 16px 16px;
 }
+/* Styles to stack images and frames */
+.lrg_img {
+	background-repeat: no-repeat;
+	background-position: center;
+}
+.lrg_rel {
+	position  : relative;
+	top       : 1px;
+	left      : 0px;
+}
+.sml_img {
+	background-repeat: no-repeat;
+	background-position: bottom;
+}
+.sml_rel {
+	position  : relative;
+	top       : 0px;
+	left      : 0px;
+}
+/* Backing glow for Alliance Info */
+.glow {
+	letter-spacing: 1px;
+	text-shadow: 2px 2px 2px black,
+				-2px 2px 2px black,
+				2px -2px 2px black,
+				-2px -2px 2px black, 
+				0px 2px 2px black,
+				0px -2px 2px black, 
+				2px 0px 2px black,
+				-2px 0px 2px black,
+				5px 5px 5px lightgray,
+				-5px 5px 5px lightgray,
+				5px -5px 5px lightgray,
+				-5px -5px 5px lightgray, 
+				0px 5px 5px lightgray,
+				0px -5px 5px lightgray, 
+				5px 0px 5px lightgray,
+				-5px 0px 5px lightgray;
+}
 .nam {
   min-width   : 130px;
 }
