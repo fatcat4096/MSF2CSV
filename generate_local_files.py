@@ -140,8 +140,8 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						'lanes':[ [
 								{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
 								{'traits': ['Mystic'], 'meta': ['Loki', 'Loki (Teen)', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost)'},
-								{'traits': ['Mystic'], 'meta': ['Loki', 'Ultimus', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost Ult)'},
 								{'traits': ['Mystic'], 'meta': ['Sylvie', 'Mephisto', 'Vahl', 'Dormammu', 'Deathpool'], 'label':"Mystic<br>(Dorky's Comp)"},
+								{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
 								{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
 								{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Omega Sentinel'], 'label':'Tech<br>(Orchis)'}, 
 								{'traits': ['Bio'], 'meta': ['Carnage', 'Super Skrull', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
@@ -175,24 +175,13 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								] ]
 						}
 
-	# Meta Heroes for use in Incursion 1.x Raid
-	tables['old_incur'] = { 'name': 'Incursion 1.x Raid', 'min_iso': 9, 'max_others': 5, 'sort_char_by': 'avail', 'sort_char_by': 'avail', 'strike_teams': 'incur', 'inc_dividers':'incur',
-							'lanes':[ [
-									{'traits': ['Mutant'], 'meta': ['Archangel', 'Nemesis', 'Dark Beast', 'Psylocke', 'Magneto'], 'label':'Mutant<br>(Deathseed)'},
-									{'traits': ['Bio'], 'meta': ['Captain America', 'Captain Carter', 'Super Skrull', 'Winter Soldier', 'U.S. Agent'], 'label':'Bio<br>(Rebirth)'},
-									{'traits': ['Skill'], 'meta': ['Nick Fury', 'Captain America (WWII)', 'Iron Fist (WWII)', 'Bucky Barnes', 'Union Jack'], 'label':'Skill<br>(Invaders)'},
-									{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
-									{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'},
-									] ]
-							}
-
 	# Meta Heroes for use in Dark Dimension 8
 	tables['dd8'] = { 'name': 'Dark Dimension 8', 'min_tier': 19, 'min_iso': 13, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
 								{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
+								{'traits': ['Non-Legendary', 'Global', 'Hero'],    'label':'Global Hero'},
 								{'traits': ['Non-Legendary', 'Global', 'Villain'], 'label':'Global Villain'},
-								{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'Global Hero'},
 								{'traits_req':'any', 'traits': ['Cosmic', 'Legendary'],   'label':'Cosmic or<br>Legendary'},
 								] ]
 						}
@@ -217,16 +206,6 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['Non-Legendary', 'City'],     'label':'City'},
 								{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
 								{'traits_req':'any', 'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
-								] ]
-						}
-
-	# Meta Heroes for use in Dark Dimension 5
-	tables['dd5'] = { 'name': 'Dark Dimension 5', 'min_tier': 16, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
-						'lanes':[ [
-								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
-								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
-								{'traits': ['Non-Legendary', 'City'],     'label':'City'},
-								{'traits': ['Legendary']},
 								] ]
 						}
 
@@ -257,6 +236,8 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 								{'traits': ['MercsForMoney']},
 								{'traits': ['NewAvenger']},
 								{'traits': ['NewWarrior']},
+								{'traits': ['Nightstalkers'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight']},
+								{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
 								{'traits': ['OutOfTime']},
 								{'traits': ['Pegasus']},
 								{'traits': ['PymTech']},
