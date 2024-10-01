@@ -131,9 +131,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Include Available, Include Position, and Include ISO Class flags
 		# Get value from table_format/table, with defaults if necessary.
 
-		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl
-		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False) and 'OTHERS' not in table_lbl
-		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False) and not hist_date
+		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl and not team_power_summary
+		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False) and 'OTHERS' not in table_lbl and not team_power_summary
+		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False) and not hist_date and not team_power_summary
 
 		# Include a column for "# Pos" info if requested.
 		if inc_rank:
@@ -157,9 +157,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Include Images for each of the Characters.
 		for char in line_chars:
 
-			# Do special things if this is the team power report.
+			# TEAM POWER SUMMARY: Create the Label for each section header instead of an Image for each toon.
 			if team_power_summary:
-				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).replace(", ","<br>")}</div></td>\n'
+				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).upper()}</div></td>\n'
 				
 			else:
 				url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char]}.png'
@@ -242,6 +242,13 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# If less than 5 characters, this just doesn't apply.
 				not_ready = num_avail < 5 if len(char_list) >= 5 else False
 
+				# TEAM POWER SUMMARY: Name should be dimmed if any section doesn't have at least 5 toons available.
+				if team_power_summary:
+
+					# Only require 4 for Table=='DD7' char=='Mythic'
+					DD7 = table['name'] == 'Dark Dimension 7'
+					not_ready = any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < 5 - (char=='Mythic' and DD7) for char_name in char_list]) and table['name'] != 'Teams'
+
 				# If inline_hist is requested, we will loop through this code twice for each user.
 				# First pass will generate normal output and second one will generate historical data. 
 				hist_list = [hist_date]
@@ -290,6 +297,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						# Load up arguments from table, with defaults if necessary.
 						under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
 
+						# TEAM POWER SUMMARY: Calculate under_min for a team/section so that the Power/Avail/Rank is dimmed if not 5 toons are available yet.
+						if team_power_summary:
+							under_min = table['name'] != 'Teams' and find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date)[0] < 5 - (char_name=='Mythic' and table['name']=='Dark Dimension 7')
+
 						for key in keys:
 
 							# Get the range of values for this character for all rosters.
@@ -318,7 +329,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							if key=='red' and key_val>7:
 								field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
 							elif key=='iso' and key_val and not use_hist_date:
-								field_value = f'{int((key_val+4)/5)}-{(key_val+4)%5+1}'
+								field_value = f'{(key_val+4)%5+1}'
+								#field_value = f'{int((key_val+4)/5)}-{(key_val+4)%5+1}'
 							else:
 								field_value = get_field_value(key_val, use_hist_date)
 
@@ -350,9 +362,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							else:
 								st_html += f'     <td class="hist{rowspan}">-</td>\n'
 
-					# Include the Strongest Team Power column.
+					# TEAM POWER SUMMARY: Include the Strongest Team Power column.
 					if team_power_summary:
-						# Need to subtract Hist value if use_hist_date
+						# Using TCP instead, because **which** STP would you use?
 						player_tcp = alliance_info['members'][player_name].get('tcp',0)
 
 						# Get the TCP range for heat map shading.

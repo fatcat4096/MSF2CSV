@@ -108,7 +108,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 				only_summary = get_table_value(table_format, table, key='only_summary')
 
 				if only_summary:
-					tab_name = tab_name.replace('INFO','SUMMARY')
+					tab_name = ('TEAM POWER SUMMARY')
 
 				# Include the label for the lane plus the requested sections.
 				html_file = get_tab_header(tab_name)	
@@ -538,14 +538,16 @@ def generate_team_power_summary(alliance_info, table, lanes, table_format, team_
 
 		section = {}
 		
-		table_lbl = 'Team<br>Power<br>Summary'
-		table_format['inc_keys'] = ['power','rank']
+		table_lbl = table['name'].upper().replace(' ','<br>') #'Team<br>Power<br>Summary'
+
+		# Default to including rank
+		if not table_format['inc_keys']:
+			table_format['inc_keys'] = ['power','rank']
+
 		table_format['sort_by'] = 'tcp'
 		
-		team_power_summary = True
-		
 		# Generate a table.
-		html_file += generate_table(alliance_info, table, section, table_format, team_list, strike_teams, table_lbl, stp_list, html_cache, hist_date, team_power_summary=team_power_summary)
+		html_file += generate_table(alliance_info, table, section, table_format, team_list, strike_teams, table_lbl, stp_list, html_cache, hist_date, team_power_summary=True)
 		
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'

@@ -93,7 +93,7 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		color = get_scaled_value(0, 9, 13, value, hist_date)
 	# ISO Level midpoint = Tier 15
 	elif stat == 'tier':
-		color = get_scaled_value(0, 16, 19, value, hist_date)
+		color = get_scaled_value(0, 17, 19, value, hist_date)
 	# Gear Tier midpoint = Level 85
 	elif stat == 'lvl':
 		color = get_scaled_value(0, 85, 100, value, hist_date)
@@ -160,7 +160,14 @@ def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 
 # Quick and dirty translation to shorter or better names.
 def translate_name(value):
-	TRANSLATE_NAME = {	"Avenger": "Avengers",
+	TRANSLATE_NAME = {	"City Hero": "City<br>Hero",
+						"City Villain": "City<br>Villain",
+						"Global Hero": "Global<br>Hero",
+						"Global Villain": "Global<br>Villain",
+						"Cosmic or Legendary": "Cosmic or<br>Legendary",
+						"Legendary Non-Horseman": "Legendary<br>Non-Horse",
+						"Legendary + Apoc": "Legendary<br>+ Apoc",
+						"Avenger": "Avengers",
 						"AForce": "A-Force",
 						"AlphaFlight": "Alpha Flight",
 						"Asgard": "Asgardians",
