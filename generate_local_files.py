@@ -176,7 +176,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in Dark Dimension 8
-	tables['dd8'] = { 'name': 'Dark Dimension 8', 'min_tier': 19, 'min_iso': 13, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
+	tables['dd8'] = { 'name': 'Dark Dimension 8', 'min_tier': 19, 'min_iso': 13, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 'summary_keys': ['stp','avail'],
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
 								{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
@@ -187,7 +187,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in Dark Dimension 7
-	tables['dd7'] = { 'name': 'Dark Dimension 7', 'min_tier': 19, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
+	tables['dd7'] = { 'name': 'Dark Dimension 7', 'min_tier': 19, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 'summary_keys': ['stp','avail'],
 						'lanes':[ [
 								{'traits': ['All'], 'label':'Gear Tier 19'},
 								{'traits': ['Non-Legendary', 'Non-Mythic', 'City'],   'label':'City'},
@@ -199,7 +199,7 @@ if not os.path.exists(get_local_path() + 'raids_and_lanes.py'):
 						}
 
 	# Meta Heroes for use in Dark Dimension 6
-	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 
+	tables['dd6'] = { 'name': 'Dark Dimension 6', 'min_tier': 18, 'max_others': 10, 'sort_by': 'avail', 'sort_char_by': 'avail', 'inc_avail': True, 'traits_req': 'all', 'summary_keys': ['stp','avail'],
 						'lanes':[ [
 								{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 								{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},

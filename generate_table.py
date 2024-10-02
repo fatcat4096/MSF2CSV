@@ -159,7 +159,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# TEAM POWER SUMMARY: Create the Label for each section header instead of an Image for each toon.
 			if team_power_summary:
-				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).upper()}</div></td>\n'
+				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).upper().replace(" (","<br>(")}</div></td>\n'
 				
 			else:
 				url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char]}.png'

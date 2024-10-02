@@ -318,14 +318,14 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 				0px -2px 2px black, 
 				2px 0px 2px black,
 				-2px 0px 2px black,
-				5px 5px 5px lightgray,
-				-5px 5px 5px lightgray,
-				5px -5px 5px lightgray,
-				-5px -5px 5px lightgray, 
-				0px 5px 5px lightgray,
-				0px -5px 5px lightgray, 
-				5px 0px 5px lightgray,
-				-5px 0px 5px lightgray;
+				5px 5px 5px darkgray,
+				-5px 5px 5px darkgray,
+				5px -5px 5px darkgray,
+				-5px -5px 5px darkgray, 
+				0px 5px 5px darkgray,
+				0px -5px 5px darkgray, 
+				5px 0px 5px darkgray,
+				-5px 0px 5px darkgray;
 }
 .nam {
   min-width   : 130px;

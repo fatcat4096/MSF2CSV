@@ -158,6 +158,18 @@ def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 
 
 
+# Generate Labels for each section from either label info or trait names.
+def get_section_label(section):
+	
+	# If a label specified, use it.
+	if section.get('label'):
+		return section.get('label','').replace('-<br>','').replace('<br>',' ')
+
+	# Otherwise, just join the translated traits.
+	return ', '.join([translate_name(trait) for trait in section['traits']]).replace('-<br>','').replace('<br>',' ')
+
+
+
 # Quick and dirty translation to shorter or better names.
 def translate_name(value):
 	TRANSLATE_NAME = {	"City Hero": "City<br>Hero",

@@ -19,7 +19,7 @@ from generate_alliance_info   import *
 from generate_roster_analysis import *
 from generate_by_char         import *
 from generate_table           import *
-
+from generate_summary         import *
 
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
@@ -113,9 +113,6 @@ def generate_html(alliance_info, table, table_format, output=''):
 				# Include the label for the lane plus the requested sections.
 				html_file = get_tab_header(tab_name)	
 
-
-
-
 				# Insert summary if requested, but only if generating entire lane.
 				if only_summary or (inc_summary and not only_section and sections_per == len(lane)):
 
@@ -126,10 +123,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 					strike_teams = get_strike_teams(alliance_info, table, table_format)
 
 					# Add the table to the top!
-					html_file += generate_team_power_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
-
-
-
+					html_file += generate_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
 
 				# If not only summary, generate the rest of the lane.
 				section_num = ''
@@ -317,7 +311,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 			team_list = [get_section_label(section) for section in lane]
 
 			# Add the table to the top!
-			html_file += generate_team_power_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date or side_hist, html_cache=html_cache)
+			html_file += generate_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date or side_hist, html_cache=html_cache)
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section_idx, section in enumerate(lane):
@@ -356,7 +350,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 				if inline_hist:
 					stp_list = get_stp_list(alliance_info, meta_chars, inline_hist)
 
-				html_file += generate_table(alliance_info, table, section, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date, side_hist)
+				html_file += generate_table(alliance_info, table, section, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist)
 
 				html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
@@ -443,7 +437,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 
 			# We are NOT spanning. Standard table generation.
 			else:
-				html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist is not None)
+				html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist)
 				
 				# History to the side also requested.
 				if side_hist:
@@ -467,93 +461,5 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 		# After Lane content is done, close the div for the Tab implementation.
 		if using_tabs:
 			html_file += '</div>\n'
-
-	return html_file
-
-
-
-# Generate Labels for each section from either label info or trait names.
-def get_section_label(section):
-	
-	# If a label specified, use it.
-	if section.get('label'):
-		return section.get('label','').replace('-<br>','').replace('<br>',' ')
-
-	# Otherwise, just join the translated traits.
-	return ', '.join([translate_name(trait) for trait in section['traits']]).replace('-<br>','').replace('<br>',' ')
-
-
-
-# Team Report Summary suggestions
-# * Include graphics for teams in Team Report Summary?
-# * Better team name formatting? 
-# * Can we avoid using deepcopy for everything?
-# * Allow summary_keys to be specified
-# * Change last column to TCP? Sort by TCP?
-# * Dim if <5 available? 
-# * Dim member if <5 available for any entry?
-
-@timed(level=3)
-def generate_team_power_summary(alliance_info, table, lanes, table_format, team_list, strike_teams, hist_date=None, html_cache={}):
-
-	html_file = ''
-
-	# Likely need to deep copy here before moving on -- we're adding elements to the existing dicts.
-	table         = copy.deepcopy(table)
-	alliance_info = copy.deepcopy(alliance_info)
-	table_format  = copy.deepcopy(table_format)
-	
-	# Generate a separate table for each lane. 
-	for lane in lanes:
-
-		# Pre-process the information for the lane, calculating STPs, num_avail, and rank.
-		for section in lane:
-			section_label = get_section_label(section)
-			if section_label in team_list or 1:
-			
-				# Filter down the character list to only those in this section
-				meta_chars,other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
-
-				# Get the STPs for this team. 
-				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
-
-				# Get the rank for this team. 
-				
-				for member in alliance_info['members']:
-					if 'processed_chars' in alliance_info['members'][member]:
-
-						# Pull it from the calculated STP list.
-						stp = stp_list[hist_date][member]
-
-						# Get the num_avail for this team. 
-						avail = len([char for char in table.get('under_min',{}).get(member,{}) if not table.get('under_min',{}).get(member,{}).get(char)])
-						rank  = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(member)+1
-					
-						alliance_info['members'][member]['processed_chars'][section_label] = {'power':stp, 'avail':avail, 'rank':rank}
-
-		stp_list = get_stp_list(alliance_info, [get_section_label(section) for section in lane], hist_date)
-
-		# Let's make it easy on ourselves. Start every section the same way.
-		html_file += '<table>\n <tr>\n  <td>\n'
-
-		section = {}
-		
-		table_lbl = table['name'].upper().replace(' ','<br>') #'Team<br>Power<br>Summary'
-
-		# Default to including rank
-		if not table_format['inc_keys']:
-			table_format['inc_keys'] = ['power','rank']
-
-		table_format['sort_by'] = 'tcp'
-		
-		# Generate a table.
-		html_file += generate_table(alliance_info, table, section, table_format, team_list, strike_teams, table_lbl, stp_list, html_cache, hist_date, team_power_summary=True)
-		
-		# End every section the same way.
-		html_file += '  </td>\n </tr>\n</table>\n'
-
-	# Nothing more to do.
-	if 'render_sections' in table_format:
-		del table_format['render_sections']
 
 	return html_file
