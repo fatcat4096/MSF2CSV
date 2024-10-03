@@ -22,7 +22,7 @@ def get_cached(key):
 	if key not in cached_info:
 		cached_info[key] = load_cached_file(key)
 	
-	return copy(cached_info.get(key))
+	return deepcopy(cached_info.get(key))
 	
 
 

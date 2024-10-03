@@ -88,8 +88,7 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	# Currently includes: Alpha Flight, Cabal, Hive-Mind, MercsForMoney, OutOfTime, and SpiderSociety
-	if extracted_traits and 'Nimrod' not in extracted_traits['Villain']:
+	if extracted_traits and 'Vampire' not in extracted_traits:
 
 		manual_traits =	{
 						# Ares
@@ -132,6 +131,14 @@ def update_traits(extracted_traits):
 						'Daken'                :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
 						'Old Man Logan'        :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
 						'Pandapool'            :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
+						# Morbius
+						'Morbius'              :['Vampire'],
+						# Nightstalkers
+						'Agatha Harkness'      :['Nightstalker'],
+						'Moon Knight'          :['Nightstalker'],
+						'Blade'                :['Nightstalker','Mystic','Hero','Vampire','City','Brawler'],
+						'Man-Thing'            :['Nightstalker','Mystic','Hero','Global','Protector'],
+						'Oath'                 :['Nightstalker','Mystic','Hero','Vampire','City','Controller'],
 						# Odin
 						'Odin'                 :['Hero','Cosmic','Mystic','Blaster','Asgard','Mythic'],
 						# Orchis

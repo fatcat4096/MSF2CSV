@@ -9,9 +9,7 @@
 import time
 import os
 import sys
-import traceback
 import asyncio
-import inspect
 
 from functools import wraps
 from pathlib   import Path
@@ -167,26 +165,51 @@ def log_init(calling_func, context=None):
 	log_file = {'logger':logger, 'stack':[{'func':calling_func,'time_in':time.time()}]}
 
 	# Stash this log file into the calling frame for all to use.
-	inspect.stack()[2][0].f_locals['log_file'] = log_file
+	sys._getframe(2).f_locals['log_file'] = log_file
 	
 	return log_file
 
 
 
-# Find a variable by name in the Python stack
+# Find an existing log_file in the Python stack
 def find_log_file():
+
+	# Skips this frame and the calling function.
+	idx = 2
 	
-	# Skip this frame and the calling function.
-	for frame in inspect.stack()[2:]:
-		
-		# Look for variable explicitly lower in the stack.
-		if 'log_file' in frame[0].f_locals and frame[0].f_locals['log_file']:
-			return frame[0].f_locals['log_file']
+	# Iterate deeper until found.
+	try:
+		while not sys._getframe(idx).f_locals.get('log_file'):
+			idx += 1
+	# No more stack. Didn't find log_file.
+	except ValueError:
+		return
+	# Some other exception? Pass it on.
+	except Exception as exc:
+		raise
+	# Return the log_file for local use.
+	return sys._getframe(idx).f_locals.get('log_file')
 
-	return
 
 
+# Find an existing variable in the Python stack
+def find_var(var='log_file', idx=2):
 
+	# Iterate deeper until found.
+	try:
+		while not sys._getframe(idx).f_locals.get(var):
+			idx += 1
+	# No more stack. Didn't find variable.
+	except ValueError:
+		return
+	# Some other exception? Pass it on.
+	except Exception as exc:
+		raise
+	# Return the variable for local use.
+	return sys._getframe(idx).f_locals.get(var)
+
+	
+	
 # Utility function used by decorator to log and track function calls/returns
 # --------------------------------------------------------------------------
 def log_call(log, call_to_func, *i_arg, **kwarg):
