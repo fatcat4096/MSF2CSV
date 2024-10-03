@@ -41,25 +41,44 @@ def extract_color(alliance_name):
 
 # Translate value to a color from the Heat Map gradient.
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date='', use_range=False):
+
+	# Base case. Return 'hist' if 0.
 	if not val_range or not value:
 		return 'hist'
-	elif use_range=='set':
-		min_val = 0
+	
+	# Even distribution of color
+	elif use_range=='set' or hist_date:
+		min_val = 1
 		max_val = 1000
-		new_range = sorted(set(val_range))
-		value = 1000/len(new_range)*(new_range.index(value)+1)
+
+		# Remove zero from the set when calculating distribution.
+		new_range = sorted(set([x for x in val_range if x]))
+
+		# For historical data, there's always room to grow.
+		if hist_date:
+			new_range.append(new_range[-1]+1)
+
+		# Base case, avoid div by zero error
+		if len(new_range) == 1:
+			value = 1000
+		else:
+			value = 1+1000/(len(new_range)-1)*(new_range.index(value))
+
+	# Weighted distribution, skews higher
 	elif use_range == 'list':
 		min_val = 0
 		max_val = 1000
 		new_range = sorted(val_range, reverse=True)
 		value = 1000/len(new_range)*(len(new_range)-new_range.index(value))
+
+	# Standard handling
 	else:
 		min_val = min(val_range)
 		max_val = max(val_range)
 
 		# Ignore min_val of 0.
 		if not min_val:
-			new_range = [x for x in val_range if x != 0]
+			new_range = [x for x in val_range if x]
 			if new_range:
 				min_val = min(new_range)
 	
@@ -81,26 +100,21 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 	if not value:
 		return 'hist'
 
-	# Special treatment if there's only a single value.
-	#value += min_val == max_val
-	
 	# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 
-	# Midpoint = ISO 8
-	if stat == 'iso' and not hist_date:
-		color = iso_color_scale[value-1]
+	# Force Historical Data to use generic handling
+	if hist_date:
+		mid_val = (((max_val-min_val)*0.5)+min_val)
+		color = get_scaled_value(min_val, mid_val, max_val, value, hist_date)
+	# ISO Coloring is special: green, blue, purple depending on ISO tier
 	elif stat == 'iso':
-		color = get_scaled_value(0, 9, 13, value, hist_date)
-	# ISO Level midpoint = Tier 15
+		color = iso_color_scale[value-1]
 	elif stat == 'tier':
 		color = get_scaled_value(0, 17, 19, value, hist_date)
-	# Gear Tier midpoint = Level 85
 	elif stat == 'lvl':
 		color = get_scaled_value(0, 85, 100, value, hist_date)
-	# Ability midpoint = Level 5
 	elif stat in ('bas','spc','ult'):
 		color = get_scaled_value(0, 6, 7, value, hist_date)
-	# Passive midpoint = Level 3
 	elif stat == 'pas':
 		color = get_scaled_value(0, 4, 5, value, hist_date)
 	elif stat in ('yel'):
@@ -132,12 +146,14 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 # Do the ugly calculations here.
 def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 
-	# If Hist Date, any growth is a positive. Start with +1 as yellow and go to top of range as green
+	# If Hist Date, any growth is a positive. Start with bottom value as orange and go to top of range as green
 	if hist_date:
 		mid_val = min_val
+		yellow_point = 0.33
 
 	# Define midpoint once, in case we'd like to skew it.
-	yellow_point = 0.5
+	else:
+		yellow_point = 0.5
 	
 	# If we're in the lower "half" of our range, calculate the spread from red to yellow
 	if value < mid_val:

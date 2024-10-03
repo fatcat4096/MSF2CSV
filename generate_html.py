@@ -447,8 +447,12 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 
 					# Generate the right table with historical information if available.
 					stp_list = get_stp_list(alliance_info, meta_chars+other_chars, side_hist)
-					table_lbl = table_lbl.replace('META',f'Changes since:<br>{side_hist}')
-					table_lbl = table_lbl.replace('OTHER',f'Changes since:<br>{side_hist}')
+					if 'META' in table_lbl:
+						table_lbl = table_lbl.replace('META',f'Changes since:<br>{side_hist}')
+					elif 'OTHER' in table_lbl:
+						table_lbl = table_lbl.replace('OTHER',f'Changes since:<br>{side_hist}')
+					else:
+						table_lbl += f'<br><span class="sub">Changes since:<br>{side_hist}</span>'
 					html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, side_hist, linked_hist=True)
 
 			# End every section the same way.

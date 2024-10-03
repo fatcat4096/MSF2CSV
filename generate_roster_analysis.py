@@ -268,7 +268,7 @@ def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data
 	else:
 		field_value = f"{member_stat:+.2f}" if hist_date else f"{member_stat:.2f}"
 
-	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, use_range=use_range), field_value)
+	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=hist_date, use_range=use_range), field_value)
 
 
 
