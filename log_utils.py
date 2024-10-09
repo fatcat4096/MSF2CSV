@@ -360,22 +360,24 @@ def log_leave(log, ret, **kwarg):
 
 
 def cleanup_old_files(local_path, age=7):
+	# Let catch all exceptions. Don't let a command fails
+	try:
+		if not os.path.isdir(local_path):
+			local_path = os.path.dirname(local_path)
 
-	if not os.path.isdir(local_path):
-		local_path = os.path.dirname(local_path)
+		cutoff_date = time.time() - age * 24 * 3600
 
-	cutoff_date = time.time() - age * 24 * 3600
+		for item in Path(local_path).expanduser().rglob('*'):
+			if item.is_file():
+				if os.stat(item).st_mtime < cutoff_date:
+					os.remove(item)
 
-	for item in Path(local_path).expanduser().rglob('*'):
-		if item.is_file():
-			if os.stat(item).st_mtime < cutoff_date:
-				os.remove(item)
-
-	for item in Path(local_path).expanduser().rglob('*'):    
-		if item.is_dir():
-			if len(os.listdir(item)) == 0:
-				os.rmdir(item)
-
+		for item in Path(local_path).expanduser().rglob('*'):    
+			if item.is_dir():
+				if len(os.listdir(item)) == 0:
+					os.rmdir(item)
+	except Exception as exc:
+		print (f"EXCEPTION: {type(exc).__name__}: {exc}")
 
 
 # Clean up old files at launch.

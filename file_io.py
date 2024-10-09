@@ -144,7 +144,10 @@ def html_to_images(html_files=[], print_path=True):
 		driver.close()
 
 		# Finally, clean up the original files. 
-		os.remove(file)
+		try:
+			os.remove(file)
+		except Exception as exc:
+			print (f"EXCEPTION: {type(exc).__name__}: {exc}")
 
 	return files_generated
 
