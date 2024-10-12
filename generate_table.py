@@ -239,15 +239,15 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
 				num_avail = len([char for char in table.get('under_min',{}).get(player_name,{}) if not table.get('under_min',{}).get(player_name,{}).get(char)])
 
-				# If less than 5 characters, this just doesn't apply.
-				not_ready = num_avail < 5 if len(char_list) >= 5 else False
+				# Only require 4 for Table=='DD7' section=='Mythic'
+				DD7 = table.get('name') == 'Dark Dimension 7'
 
 				# TEAM POWER SUMMARY: Name should be dimmed if any section doesn't have at least 5 toons available.
 				if team_power_summary:
-
-					# Only require 4 for Table=='DD7' char=='Mythic'
-					DD7 = table['name'] == 'Dark Dimension 7'
-					not_ready = any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < 5 - (char=='Mythic' and DD7) for char_name in char_list]) and table['name'] != 'Teams'
+					not_ready = any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < 5 - (DD7 and char=='Mythic') for char_name in char_list]) and table['name'] != 'Teams'
+				else:
+					# If less than 5 characters, this just doesn't apply.
+					not_ready = num_avail < 5 - (DD7 and section.get('label')=='Mythic') if len(char_list) >= 5 else False
 
 				# If inline_hist is requested, we will loop through this code twice for each user.
 				# First pass will generate normal output and second one will generate historical data. 
@@ -330,7 +330,6 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 								field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
 							elif key=='iso' and key_val and not use_hist_date:
 								field_value = f'{(key_val+4)%5+1}'
-								#field_value = f'{int((key_val+4)/5)}-{(key_val+4)%5+1}'
 							else:
 								field_value = get_field_value(key_val, use_hist_date)
 
@@ -346,7 +345,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
 							
 							# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
-							all_iso_codes = [(alliance_info['members'][player].get('other_data',{}).get(char_name,0)&15)%6 for player in player_list]	# -- REMOVE THE &15 EVENTUALLY. NO LONGER COLLECTING THIS DATA.
+							all_iso_codes = [alliance_info['members'][player].get('other_data',{}).get(char_name,0)%6 for player in player_list]
 							all_iso_codes = [code for code in all_iso_codes if code]
 							
 							# Calculate a confidence for this code based on the tally of all codes in use.
