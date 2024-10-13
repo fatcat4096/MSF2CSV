@@ -173,7 +173,7 @@ def get_driver(headless=False):
 # If no login specified, use the default login
 
 @timed(level=3)
-def login(prompt=False, session='0', headless=False, driver=None, scopely_login=''):
+def login(prompt=False, headless=False, session=None, driver=None, scopely_login=''):
 
 	# If we were passed in a cached driver, we're ready to go.
 	if driver:
@@ -187,8 +187,11 @@ def login(prompt=False, session='0', headless=False, driver=None, scopely_login=
 
 	# If we don't have a driver yet, grab one.
 	if not driver:
-		driver = get_driver(headless)
-		#driver = alt_get_driver(scopely_login, session, headless)
+		# If a session is specified, use the new login mechanism.
+		if session:
+			driver = alt_get_driver(scopely_login, session, headless)
+		else:
+			driver = get_driver(headless)
 
 	driver.scopely_login = scopely_login
 	driver.scopely_pass  = scopely_pass
