@@ -52,11 +52,15 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Start by logging into the website.
 	driver = login(prompt, headless, scopely_login=scopely_login)
 
+	if not driver:
+		print ('Failed to login to MSF website. Aborting.')
+		return
+
 	alliance_info = parse_alliance(driver)
 
 	# If no alliance_name specified, use the login's alliance.
 	if not alliance_name:
-		print (f"Defaulting to alliance from website login: {alliance_name}")
+		print (f"Defaulting to alliance from website login: {alliance_info['name']}")
 
 	# If the alliance requested is NOT the one from the login, fail gracefully. 
 	elif alliance_name.lower() != alliance_info['name'].lower():
