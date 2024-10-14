@@ -86,7 +86,7 @@ def write_file(pathname, file_content, print_path=True):
 
 
 @timed(level=3)
-def html_to_images(html_files=[], print_path=True):
+def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 	
 	files_generated = []
 	
@@ -107,10 +107,10 @@ def html_to_images(html_files=[], print_path=True):
 
 		# Start by opening each file with our Selenium driver.
 		driver.get(r'file:///'+file)
-		
+
 		# Give it just a moment to render the page.
-		time.sleep(0.1)
-		
+		time.sleep(render_wait)
+
 		# Set the height/width of the window accordingly
 		height = driver.execute_script('return document.documentElement.scrollHeight')
 		width  = driver.execute_script('return document.documentElement.scrollWidth')
@@ -127,7 +127,7 @@ def html_to_images(html_files=[], print_path=True):
 				#print ('width exceeded. Index:',table_idx, 'table:',table.rect, 'min_width:',min_width, 'width:',width)
 				break
 
-		driver.set_window_size(min(width,min_width)+22, height+450)
+		driver.set_window_size(min(width,min_width)+8, height+450)
 
 		png_filename = file[:-4]+'png'
 
@@ -143,12 +143,12 @@ def html_to_images(html_files=[], print_path=True):
 		# Close the driver to prevent memory leaks.
 		driver.close()
 
-		# Finally, clean up the original files. 
+		"""# Finally, clean up the original files. 
 		try:
 			os.remove(file)
 		except Exception as exc:
 			print (f"EXCEPTION: {type(exc).__name__}: {exc}")
-
+		"""
 	return files_generated
 
 

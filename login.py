@@ -21,7 +21,7 @@ from functools import reduce
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException
+from selenium.common.exceptions import TimeoutException, ElementClickInterceptedException, StaleElementReferenceException
 from selenium.webdriver.support.ui import WebDriverWait
 
 from generate_local_files import *
@@ -189,8 +189,10 @@ def login(prompt=False, headless=False, session=None, driver=None, scopely_login
 	if not driver:
 		# If a session is specified, use the new login mechanism.
 		if session:
+			print (f'{ansi.ltgrn}SESSION {session}{ansi.reset} -- Using NEW login mechanism.')
 			driver = alt_get_driver(scopely_login, session, headless)
 		else:
+			#print (f'{ansi.ltred}NO SESSION{ansi.reset} -- Using old login mechanism.')
 			driver = get_driver(headless)
 
 	driver.scopely_login = scopely_login
@@ -205,7 +207,7 @@ def login(prompt=False, headless=False, session=None, driver=None, scopely_login
 
 	# If our page doesn't include the Alliance Members table, never successfully logged in. 
 	except TimeoutException:
-		print(f"Timed out. Never found Alliance Info. {scopely_login=}")
+		print(f"{ansi.ltred}EXCEPTION -- Timeout{ansi.reset} -- Never found Alliance Info. {scopely_login=}")
 
 		# Failed. Return None for driver
 		return
@@ -237,7 +239,7 @@ def login(prompt=False, headless=False, session=None, driver=None, scopely_login
 		button.click()
 
 	except TimeoutException:
-		print(f"Timed out. user-menu-trigger never became available. {scopely_login=}")
+		print(f"{ansi.ltred}EXCEPTION -- Timeout{ansi.reset} -- user-menu-trigger never became available. {scopely_login=}")
 		driver.save_screenshot('./TimeoutException.png')
 
 		# Failed. Return None for driver
@@ -322,7 +324,10 @@ def scopely_website_login(driver):
 
 			while not button:
 				time.sleep(0.05)
-				button = [button for button in driver.find_elements(By.TAG_NAME, 'button') if button.text == 'Send me a sign in link instead']
+				try:
+					button = [button for button in driver.find_elements(By.TAG_NAME, 'button') if button.text == 'Send me a sign in link instead']
+				except StaleElementReferenceException:
+					print (f"{ansi.ltred}EXCEPTION -- StaleElement{ansi.reset} -- waiting for Send me a sign in link instead")
 
 		else:
 	
@@ -332,12 +337,15 @@ def scopely_website_login(driver):
 
 			while not button:
 				time.sleep(0.05)
-				button = [button for button in driver.find_elements(By.TAG_NAME, 'button') if button.text == 'Sign in']
-
+				try:
+					button = [button for button in driver.find_elements(By.TAG_NAME, 'button') if button.text == 'Sign in']
+				except StaleElementReferenceException:
+					print (f"{ansi.ltred}EXCEPTION -- StaleElement{ansi.reset} -- waiting for Sign In")
+					
 		button[0].click()
 
 	except TimeoutException:
-		print(f"Timed out. Unable to complete login. {driver.scopely_login=}")
+		print(f"{ansi.ltred}EXCEPTION -- Timeout{ansi.reset} -- Unable to complete login. {driver.scopely_login=}")
 
 
 
@@ -351,7 +359,7 @@ def download_csv_file(driver, filetype):
 		button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'download-button')))
 
 	except TimeoutException:
-		print("Timed out. CSV menu never became available.")
+		print(f"{ansi.ltred}EXCEPTION -- Timeout{ansi.reset} -- CSV menu never became available.")
 		raise
 
 	# Click on the CSV Menu button
@@ -360,12 +368,18 @@ def download_csv_file(driver, filetype):
 	# Get the list of Download Options and focus on the correct entry.
 	downloads = []
 	while not downloads:
-		downloads = [download for download in driver.find_elements(By.CLASS_NAME, 'download-option') if download.text.lower() == filetype]
+		try:
+			downloads = [download for download in driver.find_elements(By.CLASS_NAME, 'download-option') if download.text.lower() == filetype]
+		except StaleElementReferenceException:
+			print (f"{ansi.ltred}EXCEPTION -- StaleElement{ansi.reset} -- waiting for download options")
 	
-	# Focus on the "INFO" button object
+	# Focus on the "INFO" or "ROSTER" button object
 	buttons = []
 	while not buttons:
-		buttons = [button for button in downloads[0].find_elements(By.TAG_NAME, 'button') if button.text.lower() == filetype]
+		try:
+			buttons = [button for button in downloads[0].find_elements(By.TAG_NAME, 'button') if button.text.lower() == filetype]
+		except StaleElementReferenceException:
+			print (f"{ansi.ltred}EXCEPTION -- StaleElement{ansi.reset} -- waiting for download button")
 	
 	# Click on the button to start the download. Looking for CSV files newer than NOW.
 	start_time = time.time()

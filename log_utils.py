@@ -359,6 +359,33 @@ def log_leave(log, ret, **kwarg):
 
 
 
+#Quick definitions of ansi color and formatting definitions
+class ansi():
+	# Colors
+	black   = "\x1b[30m"
+	red     = "\x1b[31m"
+	green   = "\x1b[32m"
+	yellow  = "\x1b[33m"
+	blue    = "\x1b[34m"
+	magenta = "\x1b[35m"
+	cyan    = "\x1b[36m"
+	dkgray  = "\x1b[90m"
+
+	# These colors used when "bolded"
+	ltred   = "\x1b[91m"
+	ltgrn   = "\x1b[92m"
+	ltyel   = "\x1b[93m"
+	ltblu   = "\x1b[94m"
+	ltmag   = "\x1b[95m"
+	ltcyan  = "\x1b[96m"
+	white   = "\x1b[97m"
+
+	# Styles
+	reset   = "\x1b[0m"
+	bold    = "\x1b[1m"
+
+
+
 def cleanup_old_files(local_path, age=7):
 	# Let catch all exceptions. Don't let a command fails
 	try:
@@ -377,7 +404,8 @@ def cleanup_old_files(local_path, age=7):
 				if len(os.listdir(item)) == 0:
 					os.rmdir(item)
 	except Exception as exc:
-		print (f"EXCEPTION: {type(exc).__name__}: {exc}")
+		print (f"{ansi.ltred}EXCEPTION:{ansi.reset} {type(exc).__name__}: {exc}")
+
 
 
 # Clean up old files at launch.
