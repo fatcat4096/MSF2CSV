@@ -215,6 +215,7 @@ def login(prompt=False, headless=False, session=None, driver=None, scopely_login
 	# If our page doesn't include the Alliance Members table, never successfully logged in. 
 	except TimeoutException as exc:
 		print(f"{print_exc(exc)} -- Never found Alliance Info. {scopely_login=}")
+		driver.save_screenshot(f'./Never-clicked-{time.strftime("%Y%m%d-%H%M")}-{scopely_login}.png')
 
 		# Failed. Return None for driver
 		return
@@ -407,8 +408,3 @@ def download_csv_file(driver, filetype):
 
 def auth_successful(driver):
 	return driver.current_url == 'https://marvelstrikeforce.com/en/alliance/members'
-
-
-
-def print_exc(exc):
-	return driver.current_url == f'{ansi.ltred}EXCEPTION:{ansi.reset} {type(exc).__name__}'

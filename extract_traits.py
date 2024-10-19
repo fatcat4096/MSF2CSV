@@ -88,83 +88,84 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	if extracted_traits and 'Vampire' not in extracted_traits:
+	if extracted_traits and 'Scarlet Witch (Zombie)' not in extracted_traits['Epic']:
 
 		manual_traits =	{
 						# Ares
-						'Ares'                 :['Villain','Global','Mystic','Protector'],
+						'Ares'                  :['Villain','Global','Mystic','Protector'],
 						# Alpha Flight
-						'Sunfire'              :['AlphaFlight'],
-						'Wolverine'            :['AlphaFlight'],
-						'Guardian'             :['AlphaFlight','Hero','Global','Tech','Brawler'],
-						'Northstar'            :['AlphaFlight','Hero','Global','Mutant','Controller'],
-						'Sasquatch'            :['AlphaFlight','Hero','Global','Bio','Protector'],
+						'Sunfire'               :['AlphaFlight'],
+						'Wolverine'             :['AlphaFlight'],
+						'Guardian'              :['AlphaFlight','Hero','Global','Tech','Brawler'],
+						'Northstar'             :['AlphaFlight','Hero','Global','Mutant','Controller'],
+						'Sasquatch'             :['AlphaFlight','Hero','Global','Bio','Protector'],
 						# Annihilator
-						'Ultimus'              :['Annihilator'],
-						'Silver Surfer'        :['Annihilator'],
-						'Gladiator'            :['Annihilator','Villain','Cosmic','Bio','Protector'],
-						'Gorr'                 :['Annihilator','Villain','Cosmic','Bio','Controller'],
-						'Thanos (Endgame)'     :['Annihilator','Villain','Cosmic','Skill','Brawler'],
+						'Ultimus'               :['Annihilator'],
+						'Silver Surfer'         :['Annihilator'],
+						'Gladiator'             :['Annihilator','Villain','Cosmic','Bio','Protector'],
+						'Gorr'                  :['Annihilator','Villain','Cosmic','Bio','Controller'],
+						'Thanos (Endgame)'      :['Annihilator','Villain','Cosmic','Skill','Brawler'],
 						# Cabal
-						'Namor'                :['Cabal'],
-						'Iron Patriot'         :['Cabal','Global','Villain','Tech','Blaster'],
-						'The Leader'           :['Cabal','Global','Villain','Bio','Support','Gamma'],
+						'Namor'                 :['Cabal'],
+						'Iron Patriot'          :['Cabal','Global','Villain','Tech','Blaster'],
+						'The Leader'            :['Cabal','Global','Villain','Bio','Support','Gamma'],
 						# Epic
-						'Iron Man (Zombie)'    :['Epic'],
-						'Juggernaut (Zombie)'  :['Epic'],
+						'Iron Man (Zombie)'     :['Epic'],
+						'Juggernaut (Zombie)'   :['Epic'],
+						'Scarlet Witch (Zombie)':['Epic','Villain','Global','Bio','Mystic','Support','Undying'],
 						# Hive-Mind
-						'Carnage'              :['HiveMind'],
-						'Venom'                :['HiveMind'],
-						'Void Knight'          :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','Cosmic','Support'],
-						'Gwenom'               :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','City','Brawler'],
-						'Red Goblin'           :['HiveMind','Bio','SpiderVerse','Symbiote','Villain','City','Protector'],
+						'Carnage'               :['HiveMind'],
+						'Venom'                 :['HiveMind'],
+						'Void Knight'           :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','Cosmic','Support'],
+						'Gwenom'                :['HiveMind','Bio','SpiderVerse','Symbiote','Hero','City','Brawler'],
+						'Red Goblin'            :['HiveMind','Bio','SpiderVerse','Symbiote','Villain','City','Protector'],
 						# Illuminati
-						'Iron Man'             :['Illuminati'],
-						'Black Bolt'           :['Illuminati'],
-						'Mister Fantastic'     :['Illuminati'],
-						'Black Panther (Shuri)':['Illuminati', 'Hero', 'Global', 'Mystic', 'Controller', 'Wakandan'], 
-						'Captain Britain'      :['Illuminati', 'Hero', 'Global', 'Mystic', 'Protector', 'Epic'],
-						'Hank Pym'             :['Illuminati', 'Hero', 'Global', 'Tech', 'Support', 'PymTech', 'Avenger'],
+						'Iron Man'              :['Illuminati'],
+						'Black Bolt'            :['Illuminati'],
+						'Mister Fantastic'      :['Illuminati'],
+						'Black Panther (Shuri)' :['Illuminati','Hero','Global','Mystic','Controller','Wakandan'], 
+						'Captain Britain'       :['Illuminati','Hero','Global','Mystic','Protector','Epic'],
+						'Hank Pym'              :['Illuminati','Hero','Global','Tech','Support','PymTech','Avenger'],
 						# Mercs For Money
-						'Deadpool'             :['MercsForMoney'],
-						'Deathpool'            :['MercsForMoney'], 
-						'Daken'                :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
-						'Old Man Logan'        :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
-						'Pandapool'            :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
+						'Deadpool'              :['MercsForMoney'],
+						'Deathpool'             :['MercsForMoney'], 
+						'Daken'                 :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
+						'Old Man Logan'         :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
+						'Pandapool'             :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
 						# Morbius
-						'Morbius'              :['Vampire'],
+						'Morbius'               :['Vampire'],
 						# Nightstalkers
-						'Agatha Harkness'      :['Nightstalker'],
-						'Moon Knight'          :['Nightstalker'],
-						'Blade'                :['Nightstalker','Mystic','Hero','Vampire','City','Brawler'],
-						'Man-Thing'            :['Nightstalker','Mystic','Hero','Global','Protector'],
-						'Oath'                 :['Nightstalker','Mystic','Hero','Vampire','City','Controller'],
+						'Agatha Harkness'       :['Nightstalker'],
+						'Moon Knight'           :['Nightstalker'],
+						'Blade'                 :['Nightstalker','Mystic','Hero','Vampire','City','Brawler'],
+						'Man-Thing'             :['Nightstalker','Mystic','Hero','Global','Protector'],
+						'Oath'                  :['Nightstalker','Mystic','Hero','Vampire','City','Controller'],
 						# Odin
-						'Odin'                 :['Hero','Cosmic','Mystic','Blaster','Asgard','Mythic'],
+						'Odin'                  :['Hero','Cosmic','Mystic','Blaster','Asgard','Mythic'],
 						# Orchis
-						'Lady Deathstrike'     :['Orchis'],
-						'Scientist Supreme'    :['Orchis'],
-						'Nimrod'               :['Orchis','Villain','Tech','Global','Blaster'],
-						'Sentinel'             :['Orchis','Villain','Tech','Global','Protector'],
-						'Omega Sentinel'       :['Orchis','Villain','Tech','Global','Support'],
+						'Lady Deathstrike'      :['Orchis'],
+						'Scientist Supreme'     :['Orchis'],
+						'Nimrod'                :['Orchis','Villain','Tech','Global','Blaster'],
+						'Sentinel'              :['Orchis','Villain','Tech','Global','Protector'],
+						'Omega Sentinel'        :['Orchis','Villain','Tech','Global','Support'],
 						# Out of Time
-						'Captain America'      :['OutOfTime'],
-						'Captain Carter'       :['OutOfTime'],
-						'Black Knight'         :['OutOfTime','Hero','Global','Skill','Protector'],
-						'Starbrand'            :['OutOfTime','Hero','Global','Mystic','Brawler'],
-						'Cosmic Ghost Rider'   :['OutOfTime','Hero','Cosmic','Mystic','Controller',],
+						'Captain America'       :['OutOfTime'],
+						'Captain Carter'        :['OutOfTime'],
+						'Black Knight'          :['OutOfTime','Hero','Global','Skill','Protector'],
+						'Starbrand'             :['OutOfTime','Hero','Global','Mystic','Brawler'],
+						'Cosmic Ghost Rider'    :['OutOfTime','Hero','Cosmic','Mystic','Controller',],
 						# Spider Society
-						'Ghost-Spider'         :['SpiderSociety','Skill'],
-						'Spider-Man (Noir)'    :['SpiderSociety','Skill'],
-						'Peni Parker'          :['SpiderSociety','SpiderVerse','Hero','City','Skill','Tech','Protector',],
-						'Peter B. Parker'      :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Support'],
-						'Spider-Man (Pavitr)'  :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Brawler'],
+						'Ghost-Spider'          :['SpiderSociety','Skill'],
+						'Spider-Man (Noir)'     :['SpiderSociety','Skill'],
+						'Peni Parker'           :['SpiderSociety','SpiderVerse','Hero','City','Skill','Tech','Protector',],
+						'Peter B. Parker'       :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Support'],
+						'Spider-Man (Pavitr)'   :['SpiderSociety','SpiderVerse','Hero','City','Skill','Bio','Brawler'],
 						# Mephisto
-						'Mephisto'             :['Mythic','Villain','Cosmic','Mystic','Protector'],
+						'Mephisto'              :['Mythic','Villain','Cosmic','Mystic','Protector'],
 						# Spider-Verse
-						'Spider-Woman'         :['SpiderVerse'],
+						'Spider-Woman'          :['SpiderVerse'],
 						# Weapon X
-						'X-23'                 :['WeaponX'],
+						'X-23'                  :['WeaponX'],
 						}
 
 		# Parse information into the needed structure.

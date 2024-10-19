@@ -184,9 +184,6 @@ def find_log_file():
 	# No more stack. Didn't find log_file.
 	except ValueError:
 		return
-	# Some other exception? Pass it on.
-	except Exception as exc:
-		raise
 	# Return the log_file for local use.
 	return sys._getframe(idx).f_locals.get('log_file')
 
@@ -202,9 +199,6 @@ def find_var(var='log_file', idx=2):
 	# No more stack. Didn't find variable.
 	except ValueError:
 		return
-	# Some other exception? Pass it on.
-	except Exception as exc:
-		raise
 	# Return the variable for local use.
 	return sys._getframe(idx).f_locals.get(var)
 
@@ -386,6 +380,11 @@ class ansi():
 
 
 
+def print_exc(exc):
+	return f'{ansi.ltred}EXCEPTION:{ansi.reset} {type(exc).__name__}: {exc}'
+
+
+
 def cleanup_old_files(local_path, age=7):
 	# Let catch all exceptions. Don't let a command fails
 	try:
@@ -404,7 +403,7 @@ def cleanup_old_files(local_path, age=7):
 				if len(os.listdir(item)) == 0:
 					os.rmdir(item)
 	except Exception as exc:
-		print (f"{ansi.ltred}EXCEPTION:{ansi.reset} {type(exc).__name__}: {exc}")
+		print (f"{print_exc(exc)}")
 
 
 

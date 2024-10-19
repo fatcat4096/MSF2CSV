@@ -61,6 +61,8 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 		# Base case, avoid div by zero error
 		if len(new_range) == 1:
 			value = 1000
+		elif value not in new_range:
+			value = -1
 		else:
 			value = 1+1000/(len(new_range)-1)*(new_range.index(value))
 
@@ -69,7 +71,10 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 		min_val = 0
 		max_val = 1000
 		new_range = sorted(val_range, reverse=True)
-		value = 1000/len(new_range)*(len(new_range)-new_range.index(value))
+		if value not in new_range:
+			value = -1
+		else:
+			value = 1000/len(new_range)*(len(new_range)-new_range.index(value))
 
 	# Standard handling
 	else:
@@ -304,6 +309,7 @@ def translate_name(value):
 						"S.H.I.E.L.D. Operative":"S.H.I.E.L.D.<br>Operative",
 						"S.H.I.E.L.D. Security":"S.H.I.E.L.D.<br>Security",
 						"S.H.I.E.L.D. Trooper":"S.H.I.E.L.D.<br>Trooper",
+						"Scarlet Witch (Zombie)":"Scarlet Witch<br>(Zombie)",
 						"Scientist Supreme":"Scientist<br>Supreme",
 						"Spider-Man (Big Time)":"Spider-Man<br>(Big Time)",
 						"Spider-Man (Miles)":"Spider-Man<br>(Miles)",
