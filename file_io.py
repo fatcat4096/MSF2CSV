@@ -12,6 +12,7 @@ import time
 import re
 import pickle
 import importlib
+import copy
 
 try:	import strike_teams as strike_temp
 except:	pass
@@ -339,6 +340,25 @@ def find_cached_data(file_or_alliance=''):
 
 
 
+# Define extra formats implicitly for each lane 
+def add_formats_for_lanes(tables)
+	
+	# Check each format for multiple defined lanes.
+	for format in list(tables):
+		if len(tables[format].get('lanes',[])) > 1:
+
+			# What is each Lane called? Lane X, Zone X, etc?
+			lane_name = tables[format].get('lane_name', 'Lane')
+
+			# Customize key, name, and lane definition
+			for idx,lane in enumerate(tables[format]['lanes']):
+				table_key = f'{format}_{lane_name.lower()}{idx+1}'
+				tables[table_key] = copy.deepcopy(tables[format])
+				tables[table_key]['name']  = f"{tables[format]['name']} {lane_name.title()} {idx+1}"
+				tables[table_key]['lanes'] = [lane]
+
+
+
 # Check to see if a subdirectory exists with this alliance_name and if it contains valid python files.
 # If so, change the import path to include this directory and source the files to use their definitions.
 @timed(level=3)
@@ -365,6 +385,7 @@ def check_import_path(alliance_name):
 		# Pull Raid and Lane (table) definitions from a subdirectory if available.
 		if 'raids_and_lanes' in globals():
 			importlib.reload(raids_and_lanes)
+			add_formats_for_lanes(raids_and_lanes.tables)
 			tables = raids_and_lanes.tables
 	
 
