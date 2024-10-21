@@ -48,12 +48,12 @@ def get_player_list(alliance_info, sort_by='', stp_list={}, table={}, char_list=
 		local_stp = {}
 
 		for player in player_list:
-			inc_char = char_list or [char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]
+			inc_char = set([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)] + char_list)
 			pow_list = sorted([find_value_or_diff(alliance_info, player, char_name, 'power')[0] for char_name in inc_char])
 			local_stp[player] = sum(pow_list[-5:])
 
-		return sorted(player_list, key=lambda x: -len([char for char in (char_list or table.get('under_min',{}).get(x,{})) if not table.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
-			
+		return sorted(player_list, key=lambda x: -len([char for char in table.get('under_min',{}).get(x,{}) if not table.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
+
 	# If we weren't provided a list of STPs, fall back to using TCP.
 	elif sort_by in ('tcp','stp','avail'):
 		return sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
