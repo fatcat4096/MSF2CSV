@@ -88,7 +88,7 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	if extracted_traits and 'Scarlet Witch (Zombie)' not in extracted_traits['Epic']:
+	if extracted_traits and 'MsfOriginal' not in extracted_traits:
 
 		manual_traits =	{
 						# Ares
@@ -134,6 +134,11 @@ def update_traits(extracted_traits):
 						'Pandapool'             :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
 						# Morbius
 						'Morbius'               :['Vampire'],
+						# MSF Original
+						'Deathpool'             :['MsfOriginal'],
+						'Kestrel'               :['MsfOriginal'],
+						'Spider-Weaver'         :['MsfOriginal'],
+						'Vahl'                  :['MsfOriginal'],
 						# Nightstalkers
 						'Agatha Harkness'       :['Nightstalker'],
 						'Moon Knight'           :['Nightstalker'],
