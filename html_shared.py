@@ -224,6 +224,7 @@ def translate_name(value):
 						"Mercenary": "Mercs",
 						"MercsForMoney": "Mercs For<br>Money",
 						"Mercs For Money": "Mercs For<br>Money",
+						"MsfOriginal": "MSF Original",
 						"NewAvenger": "New<br>Avengers",
 						"New Avengers": "New<br>Avengers",
 						"NewWarrior": "New<br>Warriors",
