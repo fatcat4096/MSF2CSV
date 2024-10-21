@@ -21,7 +21,7 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 	table         = copy.deepcopy(table)
 	alliance_info = copy.deepcopy(alliance_info)
 	table_format  = copy.deepcopy(table_format)
-	
+
 	# Generate a separate table for each lane. 
 	for lane in lanes:
 
@@ -63,9 +63,9 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 		# Find any defined keys specified for given format. Default to including STP and rank
 		table_format['inc_keys'] = get_table_value(table_format, table, section, key='summary_keys', default=['stp','rank'])
 
-		# Sort by TCP because *which* STP would you sort by?
-		table_format['sort_by'] = 'tcp'
-		
+		# Sort by TCP by default. If 'avail' is included, assume this is the sort_by
+		table_format['sort_by'] = ['tcp','avail']['avail' in table_format['inc_keys']]
+
 		# Let's make it easy on ourselves. Start every section the same way.
 		html_file += '<table>\n <tr>\n  <td>\n'
 
