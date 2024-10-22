@@ -98,56 +98,11 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	# Get the list of Alliance Members we will iterate through as rows.	
 	player_list = get_player_list(alliance_info)
 
-	# Get extracted_traits from alliance_info
-	extracted_traits = get_cached('traits')
-
-	# Only use trait filters for other_chars.
-	traits = section.get('traits',[])
-	if type(traits) is str:
-		traits = [traits]
-
-	# If no traits specified, no other chars will be included.
-	if not traits:
-		other_chars = []
-
 	# Options are 'any' and 'all'. Not currently being used.
 	traits_req = get_table_value(table_format, table, section, key='traits_req', default='any')
 
-	excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
-	traits          = [trait     for trait in traits if trait[:4] != 'Non-']
-
-	for char in other_chars[:]:
-
-		# All is All
-		if 'All' in traits:
-			continue
-
-		# Skip explicitly named characters.
-		if char in traits:
-			continue
-
-		# Does this char have any of the listed traits?
-		trait = ''
-		for trait in traits:
-
-			# any == additive (include if any trait is valid)
-			if traits_req == 'any' and char in extracted_traits.get(trait,[]):
-				break
-
-			# all == reductive (must have all traits for inclusion)
-			if traits_req == 'all' and char not in extracted_traits.get(trait,[]):
-				break
-
-		# If char isn't in the final trait examined, remove it.
-		if trait and char not in extracted_traits.get(trait,[]):
-			other_chars.remove(char)			
-
-		# Final check, does this character have any EXCLUDED traits?
-		for trait in excluded_traits:
-
-			# Character is from an EXCLUDED group. Remove it.
-			if char in extracted_traits.get(trait,[]) and char in other_chars:
-				other_chars.remove(char)
+	# Apply filters to other_char list.
+	other_chars = filter_on_traits(section, traits_req, other_chars)
 
 	# Filter out anyone less than the min_iso / min_tier
 	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
@@ -232,6 +187,63 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		other_chars, meta_chars = meta_chars, other_chars
 
 	return meta_chars, other_chars
+
+
+
+def filter_on_traits(section, traits_req='any', char_list=None):
+
+	# Only use trait filters for other_chars.
+	traits = section.get('traits',[])
+	if type(traits) is str:
+		traits = [traits]
+
+	# If no traits specified, no chars will be included.
+	if not traits:
+		return []
+
+	if not char_list:
+		char_list = get_cached('char_list')[:]
+
+	# Get extracted_traits from alliance_info
+	extracted_traits = get_cached('traits')
+
+	excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
+	included_traits = [trait     for trait in traits if trait[:4] != 'Non-']
+
+	for char in char_list[:]:
+
+		# All is All
+		if 'All' in included_traits:
+			continue
+
+		# Skip explicitly named characters.
+		if char in included_traits:
+			continue
+
+		# Does this char have any of the listed traits?
+		trait = ''
+		for trait in included_traits:
+
+			# any == additive (include if any trait is valid)
+			if traits_req == 'any' and char in extracted_traits.get(trait,[]):
+				break
+
+			# all == reductive (must have all traits for inclusion)
+			if traits_req == 'all' and char not in extracted_traits.get(trait,[]):
+				break
+
+		# If char isn't in the final trait examined, remove it.
+		if trait and char not in extracted_traits.get(trait,[]):
+			char_list.remove(char)			
+
+		# Final check, does this character have any EXCLUDED traits?
+		for trait in excluded_traits:
+
+			# Character is from an EXCLUDED group. Remove it.
+			if char in extracted_traits.get(trait,[]) and char in char_list:
+				char_list.remove(char)
+
+	return char_list
 
 
 
