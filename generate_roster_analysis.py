@@ -273,7 +273,7 @@ def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data
 
 
 @timed(level=3)
-def get_roster_stats(alliance_info, stat_type, hist_date=''):
+def get_roster_stats(alliance_info, stat_type, hist_date=None):
 	
 	hist = alliance_info.get('hist',{})
 	

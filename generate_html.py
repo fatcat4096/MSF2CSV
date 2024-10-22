@@ -94,7 +94,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 
 			# Generate a label for the History Tab if we have History and can include it.
 			hist_date = get_hist_date(alliance_info, table_format)
-			side_hist = get_table_value(table_format, table, key='side_hist', default=False)
+			side_hist = get_table_value(table_format, table, key='side_hist')
 
 			# If side_hist request, send hist_date in this instead.
 			if side_hist:
@@ -234,9 +234,9 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	hist_tab  = get_hist_tab(hist_date, table_format, lanes, tabbed=True)
 
 	# If side_hist request, send hist_date in this instead.
-	side_hist = get_table_value(table_format, table, key='side_hist', default=False)
+	side_hist = get_table_value(table_format, table, key='side_hist')
 	if side_hist:
-		side_hist, hist_date = hist_date, False
+		side_hist, hist_date = hist_date, None
 
 	# Add a tab for each lane. 
 	html_file = generate_lanes(alliance_info, table, lanes, table_format, using_tabs=True, side_hist=side_hist, html_cache=html_cache)

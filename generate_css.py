@@ -340,9 +340,12 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
   min-width   : 42px;
 }
 .summ {
+  min-height  : 40px;
   min-width   : 90px;
+  display     : flex;
   justify-content: center;
   align-items : center;
+  vertical-align : center;
   font-size   : 16px;
   font-weight : 700;
   text-shadow : 2px 2px 2px black,
@@ -408,7 +411,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 	# Finish off the Header.
 	html_file += '</style>\n'
 	html_file += '</head>\n'
-	html_file += '<body class="not-selectable" style="background: #343734; font-family: \'Fira Sans Condensed\', sans-serif; text-align:center;">\n'
+	html_file += '<body style="background: #343734; font-family: \'Fira Sans Condensed\', sans-serif; text-align:center;">\n'
 
 	# If num_lanes == 0, not using the tabbed interface.
 	if num_lanes:
@@ -426,8 +429,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 		# And a tab for Roster Analysis and one for Alliance Info
 		html_file += '''<button class="tlnk" onclick="openPage('RosterAnalysis', this)">ROSTER ANALYSIS</button>''' + '\n'
 		html_file += '''<button class="tlnk" onclick="openPage('AllianceInfo', this)">ALLIANCE INFO</button>''' + '\n'
-		html_file += '''<button class="tlnk" onclick="openPage('ByChar', this)">INFO BY CHAR</button>''' + '\n'
-
+		html_file += '''<button class="tlnk" onclick="openPage('ByChar', this)">INFO BY CHAR</button><br>''' + '\n'
 	return html_file
 
 def add_sort_scripts():

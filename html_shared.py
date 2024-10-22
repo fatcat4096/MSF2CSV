@@ -40,7 +40,7 @@ def extract_color(alliance_name):
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date='', use_range=False):
+def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, use_range=False):
 
 	# Base case. Return 'hist' if 0.
 	if not val_range or not value:
@@ -91,7 +91,7 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 
 
 
-def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=''):
+def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=None):
 	
 	# If we've specified an inverted range, flip the calculation on its head.
 	if min_val > max_val:
