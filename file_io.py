@@ -341,7 +341,7 @@ def find_cached_data(file_or_alliance=''):
 
 
 # Define extra formats implicitly for each lane 
-def add_formats_for_lanes(tables)
+def add_formats_for_lanes(tables):
 	
 	# Check each format for multiple defined lanes.
 	for format in list(tables):

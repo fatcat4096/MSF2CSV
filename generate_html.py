@@ -57,6 +57,13 @@ def generate_html(alliance_info, table, table_format, output=''):
 		if only_lane and only_lane in range(1,len(lanes)+1):
 			lanes = [lanes[only_lane-1]]
 
+		# If doing summary, combine the lanes to start. 
+		# Explicit formats for individual lanes have been generated. 
+		only_summary = get_table_value(table_format, table, key='only_summary')
+		if only_summary:
+			combined_lanes = {get_section_label(x):x for x in sum(lanes,[])}
+			lanes          = [[combined_lanes[x] for x in combined_lanes]]
+
 		# Are we rendering this in sections?
 		start_lane    = table_format.get('lane_idx',0)
 		start_section = table_format.get('section_idx',0)
