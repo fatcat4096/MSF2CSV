@@ -35,7 +35,6 @@
 #		Meta characters aren't subject to filters. And if Meta characters are specified
 #		and the trait indicated doesn't exist, trait will simply be used as a label
 
-
 # Active tables are the files which will be generated.
 tables = {}
 
@@ -58,14 +57,11 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 tables['orchis'] = { 'name': 'Orchis Raid',
 					'min_iso': 10,
 					'max_others': 0,
-					'only_side': 'both',
 					'strike_teams': 'orchis',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
 							{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
-							{'traits': ['Mystic'], 'meta': ['Loki', 'Loki (Teen)', 'Sylvie', 'Vahl', 'Mephisto'], 'label':'Mystic<br>(Mephrost)'},
-							{'traits': ['Mystic'], 'meta': ['Sylvie', 'Mephisto', 'Vahl', 'Dormammu', 'Deathpool'], 'label':"Mystic<br>(Dorky's Comp)"},
 							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
 							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
 							{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Omega Sentinel'], 'label':'Tech<br>(Orchis)'}, 
@@ -92,7 +88,6 @@ tables['incur'] = { 'name': 'Incursion 2 Raid',
 
 # Meta Heroes for use in Dark Dimension 8
 tables['dd8'] = { 'name': 'Dark Dimension 8',
-					'min_tier': 18,
 					'min_iso': 13,
 					'max_others': 10,
 					'sort_by': 'avail',
@@ -100,6 +95,7 @@ tables['dd8'] = { 'name': 'Dark Dimension 8',
 					'inc_avail': True,
 					'traits_req': 'all',
 					'summary_keys': ['stp','avail'],
+					'summary_comp': 'Odin',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
 							{'traits': ['Non-Legendary', 'City', 'Villain'],   'label':'City Villain'},
@@ -118,6 +114,7 @@ tables['dd7'] = { 'name': 'Dark Dimension 7',
 					'inc_avail': True,
 					'traits_req': 'all', 
 					'summary_keys': ['stp','avail'],
+					'summary_comp': 'Mephisto',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'City'],   'label':'City'},
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'Global'], 'label':'Global'},
@@ -136,6 +133,7 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 					'inc_avail': True,
 					'traits_req': 'all', 
 					'summary_keys': ['stp','avail'],
+					'summary_comp': 'Super Skrull',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
@@ -154,12 +152,51 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 					'inc_avail': True,
 					'traits_req': 'all', 
 					'summary_keys': ['stp','avail'],
+					'summary_comp': 'Dormammu',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
 							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
 							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
 							{'traits': ['Legendary']},
 							] ]
+					}
+
+# Meta Heroes for use in Battleworld
+tables['battleworld'] = { 'name': 'Battleworld',
+					'sort_by': 'stp',
+					'span': True,
+					'lanes':[ [  
+							{'traits': ['SuperiorSix']},
+							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
+							{'traits': ['SpiderSociety']},
+							{'traits': ['Bifrost']},
+							{'traits': ['Astral'], 'meta': ['Moon Dragon', 'Doctor Strange']},
+							],[
+							{'traits': ['MercsForMoney']},
+							{'traits': ['Cabal']},
+							{'traits': ['Undying']},
+							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+							{'traits': ['Astral'], 'meta': ['Moon Dragon', 'Doctor Strange']},
+							],[
+							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
+							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
+							{'traits': ['OutOfTime']},
+							{'traits': ['SuperiorSix']},
+							{'traits': ['Astral'], 'meta': ['Moon Dragon', 'Doctor Strange']},
+							],[
+							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+							{'traits': ['XTreme']},
+							{'traits': ['MercsForMoney']},
+							{'traits': ['MsfOriginal'], 'meta': ['Kestrel', 'Deathpool', 'Spider-Weaver', 'Vahl']},
+							{'traits': ['Astral'], 'meta': ['Moon Dragon', 'Doctor Strange']},
+							],[
+							{'traits': ['HiveMind']},
+							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
+							{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
+							{'traits': ['Nightstalkers'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight']},
+							{'traits': ['Astral'], 'meta': ['Moon Dragon', 'Doctor Strange']},
+							] ],
+					'lane_name':'Zone',
 					}
 
 # Meta Heroes for use in Teams
