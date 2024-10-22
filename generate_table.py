@@ -124,6 +124,12 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	while using_chars:
 		line_chars, using_chars = using_chars[:line_wrap],using_chars[line_wrap:]
 
+
+
+		#
+		#	GENERATE IMAGES ROW
+		#
+
 		# WRITE THE IMAGES ROW. #############################################
 		html_file += '    <tr class="%s">\n' % (title_cell) 
 		html_file += '     <td>%s</td>\n' % (table_lbl)
@@ -131,9 +137,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Include Available, Include Position, and Include ISO Class flags
 		# Get value from table_format/table, with defaults if necessary.
 
-		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl and not team_power_summary
+		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl
 		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False) and 'OTHERS' not in table_lbl and not team_power_summary
 		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False) and not hist_date and not team_power_summary
+		inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
 
 		# Include a column for "# Pos" info if requested.
 		if inc_rank:
@@ -181,6 +188,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
 
+		# Include an image of the completion reward if provided.
+		if team_power_summary and inc_comp:
+			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[inc_comp]}.png'
+			html_file += f'     <td class="img" style="width:50px;"><div class="cont"><img src="{url}" alt="" width="50"></div></td>\n'
+
 		# Include a Team Power column if we have more than one.
 		if len(char_list)>1:
 			html_file += '     <td></td>\n'
@@ -188,12 +200,26 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		html_file += '    </tr>\n'
 		# DONE WITH THE IMAGES ROW. #########################################
 
+
+
+		#
+		# GENERATE THE DATA BLOCK / TABLE BODY
+		#
+
 		# Include the Image row and Column headers in the row count.
 		row_idx += 1
 
 		# Find max available heroes for stats/color. Anything under 5 is forced to red.
-		if inc_avail:
-			max_avail = max([len([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]) for player in player_list])
+		avail_range = {}
+		if team_power_summary:
+			avail_range = {player:sum([find_value_or_diff(alliance_info, player, char_name, 'avail', False)[0] for char_name in char_list]) for player in player_list}
+			
+			# Once total avaialble found, we can sort players properly.
+			if sort_by == 'avail':
+				player_list = sorted(player_list, key=lambda x : f'{avail_range[x]:03}{alliance_info["members"][x]["tcp"]:012}', reverse=True)
+
+		elif inc_avail:
+			avail_range = {player:len([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]) for player in player_list}
 
 		# Iterate through each Strike Team.
 		for strike_team in strike_teams:
@@ -226,6 +252,15 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				if inc_dividers == '53':
 						strike_team = insert_dividers([strike_team], inc_dividers)[0]
 
+			# Only require 4 for Table=='DD7' section=='Mythic'
+			DD7 = table.get('name') == 'Dark Dimension 7'
+
+			# Calculate the minimum required to avoid getting dimmed.
+			if team_power_summary:
+				min_count = 'Teams' not in table['name'] and 'Battleworld' not in table['name'] and 5
+			else:
+				min_count = 5 - (DD7 and section.get('label')=='Mythic')
+
 			# BUILD A BLOCK WITH THE DATA FOR EACH ROW. #########################
 			alt_color = False
 			for player_name in strike_team:
@@ -236,18 +271,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					alt_color = not alt_color
 					continue
 
-				# See whether this person has 5 heroes in either meta or other that meet the minimum requirements for this raid section/game mode.
-				num_avail = len([char for char in table.get('under_min',{}).get(player_name,{}) if not table.get('under_min',{}).get(player_name,{}).get(char)])
+				# Get pre-calculated value for available for this section (or all sections for summary)
+				num_avail = avail_range.get(player_name,5)
 
-				# Only require 4 for Table=='DD7' section=='Mythic'
-				DD7 = table.get('name') == 'Dark Dimension 7'
-
-				# TEAM POWER SUMMARY: Name should be dimmed if any section doesn't have at least 5 toons available.
+				# Dim the name if don't have 5 heroes that meet min requirements for this section (or all sections, for summary)
 				if team_power_summary:
-					not_ready = any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < 5 - (DD7 and char=='Mythic') for char_name in char_list]) and table['name'] != 'Teams'
+					not_ready = min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
 				else:
-					# If less than 5 characters, this just doesn't apply.
-					not_ready = num_avail < 5 - (DD7 and section.get('label')=='Mythic') if len(char_list) >= 5 else False
+					not_ready = num_avail < min_count and len(char_list) >= min_count
 
 				# If inline_hist is requested, we will loop through this code twice for each user.
 				# First pass will generate normal output and second one will generate historical data. 
@@ -289,17 +320,18 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 					# Include "# Avail" info if requested.
 					if inc_avail and not inline_hist_row:
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(0, max_avail, [num_avail,-1][not_ready], html_cache, stale_data)+rowspan, num_avail)
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(avail_range.values(), -1 if not_ready and not team_power_summary else num_avail, html_cache, stale_data)+rowspan, num_avail)
 
 					# Write the stat values for each character.
 					for char_name in line_chars:
 
 						# Load up arguments from table, with defaults if necessary.
-						under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
 
 						# TEAM POWER SUMMARY: Calculate under_min for a team/section so that the Power/Avail/Rank is dimmed if not 5 toons are available yet.
 						if team_power_summary:
-							under_min = table['name'] != 'Teams' and find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date)[0] < 5 - (char_name=='Mythic' and table['name']=='Dark Dimension 7')
+							under_min = min_count and find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date)[0] < min_count - (DD7 and char_name=='Mythic')
+						else:
+							under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
 
 						for key in keys:
 
@@ -361,6 +393,24 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							else:
 								st_html += f'     <td class="hist{rowspan}">-</td>\n'
 
+					# Dark Dimension Completed Column
+					
+					if team_power_summary and inc_comp:
+						key_val = find_value_or_diff(alliance_info, player_name, inc_comp, 'yel', use_hist_date)[0]
+						
+						# Green check after two runs.
+						if key_val == 7:
+							field_val = '&#x1f7e2;'
+						# Yellow yield indicates one run done.
+						elif key_val == 5:
+							field_val = '&#x1f7e1;'
+						# Red X indicates not completed.
+						else:
+							field_val = '&#x1f534;'
+						st_html += f'     <td class="hist">{field_val}</td>\n'
+
+					# STP/TCP Column
+
 					# TEAM POWER SUMMARY: Include the Strongest Team Power column.
 					if team_power_summary:
 						# Using TCP instead, because **which** STP would you use?
@@ -387,6 +437,12 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					# Increment the count of data rows by one.
 					st_rows += 1
 			# DONE WITH THE DATA ROWS FOR THIS STRIKE TEAM ##################
+
+
+
+			#
+			# GENERATE THE HEADING ROW FOR EACH STRIKE TEAM
+			#
 
 			# FINALLY WRITE THE HEADING ROW AND PUT IT ALL TOGETHER #########
 			html_file += '    <tr class="%s">\n' % table_header
@@ -425,7 +481,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				if inc_class:
 					html_file += '     <td>Cls</td>\n'
 					col_idx += 1
-			
+	
+			# Insert the Completed column for Dark Dimension Team Power Summaries.
+			if team_power_summary and inc_comp:
+				html_file += '     <td>Done</td>\n'
+	
 			# Insert the Team Power column.
 			if team_power_summary:
 				html_file += f'     <td class="redb" {sort_func % col_idx}>TCP</td>\n'
@@ -436,6 +496,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			
 			row_idx += 1
 			# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
+
+
 
 			# Add in the block of Strike Team Data Rows.
 			html_file += st_html
