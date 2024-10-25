@@ -201,7 +201,7 @@ def filter_on_traits(section, traits_req='any', char_list=None):
 	if not traits:
 		return []
 
-	if not char_list:
+	if char_list is None:
 		char_list = get_cached('char_list')[:]
 
 	# Get extracted_traits from alliance_info
