@@ -35,9 +35,6 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	tot_power = sum([alliance_info['members'][member].get('tcp',0) for member in alliance_info['members']])
 	avg_power = int(tot_power/len(alliance_info['members']))
 
-	# See if name includes a color tag.
-	alt_color = extract_color(alliance_info['name'])
-
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
 		html_file += '<div id="AllianceInfo" class="tcon">\n'
@@ -50,7 +47,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 
 	html_file += '<tr style="font-size:18px;color:white;">\n'
 	html_file += ' <td colspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
-	html_file += ' <td colspan="%s" class="alliance_name glow"%s>%s</td>\n' % (8+ 2*ARENA_BLITZ_ENABLED, alt_color, alliance_info.get('display_name','').upper() or alliance_info.get('name','').upper())
+	html_file += ' <td colspan="%s" class="alliance_name">%s</td>\n' % (8+ 2*ARENA_BLITZ_ENABLED, alliance_info.get('name','').upper())
 	
 	html_file += ' <td colspan="2"><div class="lrg_img" style="background-image:url(https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png);">\n' % (alliance_info.get('image','EMBLEM_6_dd63d11b'))
 	html_file += '  <div class="lrg_rel"><img class="lrg_rel" src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></div>\n' % (alliance_info.get('frame','FRAME_15_174f8048'))
@@ -64,10 +61,10 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	w215 = 'style="min-width:215px;"'
 
 	# Simplify inclusion of the sort function code
-	sort_func = 'class="%s" onclick="sort(%s,\'%s\',3)"' % ("blkb", '%s', table_id)
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',3)"' % ("blub", '%s', table_id)
 
 	# Create the headings for the Alliance Info table
-	html_file += '<tr class="hgra" style="font-size:14pt;position:relative;">\n'
+	html_file += '<tr class="hblu" style="font-size:14pt;position:relative;">\n'
 	html_file += f' <td {w070}></td>\n'
 	html_file += f' <td {sort_func % 1} {w215}>Name</td>\n'            
 	html_file += f' <td {sort_func % 2} {w070}>Level</td>\n'
@@ -83,7 +80,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 		html_file += f' <td {sort_func % 9} {w070}>Blitz<br>Wins</td>\n'
 
 	# Change the sort routine depending on whether Arena/Blitz columns present
-	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',3)"' % ("blkb", '%s', ARENA_BLITZ_ENABLED*2, table_id)
+	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',3)"' % ("blub", '%s', ARENA_BLITZ_ENABLED*2, table_id)
 
 	html_file += f' <td {sort_func % 8} {w070}>War<br>MVP</td>\n'
 	html_file += f' <td {sort_func % 9} {w070}>Total<br>Stars</td>\n'
@@ -112,18 +109,18 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
 		stale_data = member_stats['is_stale']
 		
-		member_color = ['#DCDCDC','#8f8f8f'][stale_data]
+		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
 
 		if member in alliance_info.get('leader',[]):
 			member_role = '<a> Leader </a>'
 		elif member in alliance_info.get('captains',[]):
 			member_role = 'Captain'
-			member_color = ['#A9A9A9','#6d6d6d'][stale_data]		
+			member_color = ['#00BFFF','#A9A9A9'][stale_data]		
 		else:
 			member_role = 'Member'
 
 		html_file += ' <tr style="background:%s; font-size:22px;">\n' % (member_color)
-		html_file += '  <td style="background-color:black;"><div class="sml_img" style="background-size:45px;background-image:url(https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_%s.png);">\n' % (member_stats.get('frame','0_ab6f69b8'))
+		html_file += '  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url(https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_%s.png);">\n' % (member_stats.get('frame','0_ab6f69b8'))
 		html_file += '   <div class="sml_rel"><img height="45" class="sml_rel" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt=""/></div>\n' % (member_stats.get('image','ShieldDmg_Defense_3dea00f7'))
 		html_file += '  </div></td>\n'
 

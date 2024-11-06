@@ -128,7 +128,7 @@ def update_traits(extracted_traits):
 						'Hank Pym'              :['Illuminati','Hero','Global','Tech','Support','PymTech','Avenger'],
 						# Mercs For Money
 						'Deadpool'              :['MercsForMoney'],
-						'Deathpool'             :['MercsForMoney','MsfOriginal'], 
+						'Deathpool'             :['MercsForMoney','Mercenary','MsfOriginal'], 
 						'Daken'                 :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
 						'Old Man Logan'         :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
 						'Pandapool'             :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
