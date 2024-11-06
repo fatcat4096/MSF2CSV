@@ -20,6 +20,7 @@ from generate_roster_analysis import *
 from generate_by_char         import *
 from generate_table           import *
 from generate_summary         import *
+from generate_zone_analysis   import *
 
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
@@ -47,6 +48,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 
 		# Keep for later comparisons
 		len_lanes = len(lanes)
+		lane_name = table.get('lane_name', 'Lane')
 
 		only_lane    = table_format.get('only_lane',0)
 		only_section = table_format.get('only_section',0)
@@ -86,7 +88,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 			file_num = [f'-{lane_num:02}', ''][len_lanes == 1]
 
 			# If there are multiple lanes, specify which lane. If not, just call it Roster Info
-			tab_name = [f'LANE {lane_num}', 'ROSTER INFO'][len(lanes) == 1 and not only_lane]
+			tab_name = [f'{lane_name.upper()} {lane_num}', 'ROSTER INFO'][len(lanes) == 1 and not only_lane]
 
 			# Include the table name if it exists.
 			if table_name:
@@ -156,7 +158,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 				html_file += add_sort_scripts()
 
 				# Finsh it by adding the CSS to the top with all the defined colors.
-				html_file  = add_css_header(table_name, html_cache=html_cache) + html_file + '</body>\n</html>\n'		
+				html_file  = add_css_header(table_name, lane_name=lane_name, html_cache=html_cache) + html_file + '</body>\n</html>\n'		
 				html_files[output+'%s%s.html' % (file_num, section_num)] = html_file
 
 			# Manually resetting the loop.
@@ -177,16 +179,21 @@ def generate_html(alliance_info, table, table_format, output=''):
 		elif output == 'alliance_info':
 			html_file += generate_alliance_tab(alliance_info, hist_date=hist_date, html_cache=html_cache)
 
-		# ...or Alliance Info. Don't use the tab labels for Alliance Info
+		# ...or By Char, generate one entry for each character included in the main report
 		elif output == 'by_char':
 			html_file += generate_by_char_tab(alliance_info, table_format, html_cache=html_cache)
+
+		# ...or Zone Analysis
+		elif output == 'zone_analysis':
+			html_file += generate_zone_analysis(alliance_info, html_cache=html_cache)
 
 		# Include scripts to support sorting.
 		html_file += add_sort_scripts()
 
 		report_descriptions = {	'roster_analysis':'Roster Analysis',
 								'alliance_info'  :'Alliance Info',
-								'by_char'        :'Info by Char'}
+								'by_char'        :'Info by Char',
+								'zone_analysis'  :'Zone Analysis'}
 
 		# Finish by adding the CSS Header to the top.
 		html_file = add_css_header(report_descriptions[output], html_cache=html_cache) + html_file
@@ -216,6 +223,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 
 	lanes      = table.get('lanes',default_lanes)
 	table_name = table.get('name','')
+	lane_name  = table.get('lane_name', 'Lane')
 
 	only_lane    = table_format.get('only_lane',0)
 	only_section = table_format.get('only_section',0)
@@ -249,6 +257,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	html_file += generate_roster_analysis(alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
 	html_file += generate_alliance_tab   (alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
 	html_file += generate_by_char_tab    (alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
+	html_file += generate_zone_analysis  (alliance_info, using_tabs=True, html_cache=html_cache)
 	
 	# Include scripts to support sorting.
 	html_file += add_sort_scripts()
@@ -257,7 +266,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	html_file += add_tabbed_footer()
 		
 	# Finish it with the CSS Header at the top and final lines on the end.
-	html_file = add_css_header(table_name, len(lanes), hist_tab, html_cache=html_cache) + html_file + '</body>\n</html>\n'
+	html_file = add_css_header(table_name, len(lanes), hist_tab, lane_name=lane_name, html_cache=html_cache) + html_file + '</body>\n</html>\n'
 
 	return html_file
 

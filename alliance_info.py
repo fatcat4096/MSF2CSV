@@ -113,10 +113,12 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	# Calculate info for an under_min section, hide it in table for later use. 
 	table['under_min'] = {}
 
-	# Load up arguments from table, with defaults if necessary.
+	# Load up arguments from table, with defaults if necessary
 	min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
 	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
 	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
+	min_yel  = get_table_value(table_format, table, section, key='min_yel',  default=0)
+	min_red  = get_table_value(table_format, table, section, key='min_red',  default=0)
 
 	# Before filtering further, while we have visibility for the entire section...
 	for player_name in player_list:
@@ -130,6 +132,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
 			if min_iso:
 				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < min_iso
+			if min_yel:
+				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'yel' )[0] < min_yel
+			if min_red:
+				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'red' )[0] < min_red
 			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
 	# Start by pulling value from table_format or table.
@@ -164,7 +170,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
 		# If we have min_iso/min_tier criteria, also use this to sort/filter the character list.
 		dict_ready = {}
-		if sort_char_by == 'avail' or min_lvl or min_tier or min_iso:
+		if sort_char_by == 'avail' or min_lvl or min_tier or min_iso or min_yel or min_red:
 			dict_ready = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in player_list]) for char in other_chars}
 				
 		# Determine which players are actually being included and which chars they have at level.
@@ -253,6 +259,8 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 	min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
 	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
 	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
+	min_yel  = get_table_value(table_format, table, section, key='min_yel',  default=0)
+	min_red  = get_table_value(table_format, table, section, key='min_red',  default=0)
  
 	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
 	if min_lvl:
@@ -261,6 +269,10 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'tier')[0] for player in player_list]) >= min_tier]
 	if min_iso:
 		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'iso' )[0] for player in player_list]) >= min_iso]
+	if min_yel:
+		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'yel' )[0] for player in player_list]) >= min_yel]
+	if min_red:
+		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'red' )[0] for player in player_list]) >= min_red]
 
 	return char_list
 

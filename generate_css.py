@@ -1,4 +1,4 @@
-def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
+def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', html_cache={}):
 
 	html_file = '''<!doctype html>
 <html lang="en">
@@ -400,7 +400,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 
 	# Quick and dirty CSS to allow Tabbed implementation for raids with lanes.
 	for num in range(num_lanes):
-		html_file += '#Lane%i {background: #343734;}\n' % (num+1)
+		html_file += '#%s%i {background: #343734;}\n' % (lane_name, num+1)
 
 	if hist_tab:
 		html_file += '#Hist {background: #343734;}\n'
@@ -416,15 +416,15 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', html_cache={}):
 	# If num_lanes == 0, not using the tabbed interface.
 	if num_lanes:
 		for num in range(num_lanes):
-			tab_name = ['ROSTER INFO', 'LANE %s' % (num+1)][num_lanes>1]
+			tab_name = f'{lane_name.upper()} {num+1}' if num_lanes>1 else 'ROSTER INFO'
 
 			if table_name:
 				tab_name = '%s %s' % (table_name.upper(), tab_name)
 
-			html_file += '''<button class="tlnk" onclick="openPage('Lane%i', this)" %s>%s</button>''' % (num+1,['','id="defaultOpen"'][not num],tab_name) + '\n'
+			html_file += f'''<button class="tlnk" onclick="openPage('{lane_name}{num+1}', this)" {'id="defaultOpen"' if not num else ''}>{tab_name}</button>''' + '\n'
 
 		if hist_tab:
-			html_file += '''<button class="tlnk" onclick="openPage('Hist1', this)">%s</button>''' % (hist_tab) + '\n'
+			html_file += f'''<button class="tlnk" onclick="openPage('Hist1', this)">{hist_tab}</button>''' + '\n'
 
 		# And a tab for Roster Analysis and one for Alliance Info
 		html_file += '''<button class="tlnk" onclick="openPage('RosterAnalysis', this)">ROSTER ANALYSIS</button>''' + '\n'

@@ -19,7 +19,7 @@ import datetime
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
 def main(alliance_name='', prompt=False, headless=False, force='', table_format={}, scopely_login='', log_file=None):
-	
+
 	# Were we passed an alliance_info via alliance_name?
 	if type(alliance_name) is dict and 'members' in alliance_name:
 		alliance_info = alliance_name
@@ -37,7 +37,7 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 	output         = table_format.get('output')
 	external_table = table_format.get('external_table')
 	output_format  = table_format.get('output_format','tabbed')
-	valid_output   = list(tables)+['roster_analysis','alliance_info', 'by_char']
+	valid_output   = list(tables)+['roster_analysis','alliance_info','by_char','zone_analysis']
 
 	# Generate CSV?
 	if output == 'csv':
@@ -125,6 +125,10 @@ if __name__ == '__main__':
 						help='minimum Char level for inclusion in output')
 	parser.add_argument('--min_tier', type=int, metavar='N',
 						help='minimum Gear Tier for inclusion in output')
+	parser.add_argument('--min_yel', type=int, metavar='N',
+						help='minimum Yellow Stars for inclusion in output')
+	parser.add_argument('--min_red', type=int, metavar='N',
+						help='minimum Red Stars for inclusion in output')
 	parser.add_argument('--max_others', type=int, metavar='N',
 						help='max characters in Others section; 0 is no max')
 	parser.add_argument('--only_lane', type=int, metavar='N',
@@ -193,6 +197,8 @@ if __name__ == '__main__':
 					'min_iso'       : args.min_iso,
 					'min_lvl'       : args.min_lvl,
 					'min_tier'      : args.min_tier,
+					'min_red'       : args.min_red,
+					'min_yel'       : args.min_yel,
 					'max_others'    : args.max_others,
 					'only_lane'     : args.only_lane,
 					'only_section'  : args.only_section,
