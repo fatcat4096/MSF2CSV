@@ -26,6 +26,7 @@ from login                import get_driver, login
 from extract_traits       import extract_traits_from_scripts
 from alliance_info        import *
 from cached_info          import get_cached, set_cached
+from msf_api              import *
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 @timed(level=3)
@@ -111,7 +112,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, log_file=None):
+def process_rosters(driver=None, alliance_info={}, only_process=[], roster_csv_data={}, log_file=None, AUTH=None):
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
@@ -123,9 +124,9 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 	member_order = [member for member in alliance_info['members'] if alliance_info['members'][member].get('avail')]
 
 	# Download fresh portrait information if cached data is stale.
-	char_lookup = get_char_lookup(driver)
-	
-	if not roster_csv_data and member_order and char_lookup:
+	char_lookup = get_char_lookup(driver, AUTH)
+
+	if not AUTH and not roster_csv_data and member_order and char_lookup:
 		parse_roster_csv(driver.roster_csv, char_lookup, roster_csv_data, member_order)
 
 	# Let's iterate through the member names in alliance_info.
@@ -140,8 +141,23 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 		# Take note of the original TCP size.
 		tcp_start = members[member].get('tot_power',0)
 
+		# If we have AUTH, use that.
+		if AUTH and members[member].get('avail'):
+			processed_chars = {}
+			other_data      = {}
+
+			# Query the Char info, if successful, parse and update all the info. 
+			response = request_member_roster(AUTH['access_token'], memberid=members[member]['url'], asOf=members[member].get('asOf'))
+			
+			# If response was successful, parse the member_roster dict
+			if response and response.ok:
+				parse_roster_api(response, char_lookup, processed_chars, other_data)
+				
+				# Merge the processed roster information into our Alliance Info
+				merge_roster(alliance_info, member, processed_chars, other_data)
+
 		# If member's info is in the roster_csv_data, use that.
-		if member in roster_csv_data:
+		elif member in roster_csv_data:
 
 			processed_chars = roster_csv_data[member]['processed_chars']
 			other_data      = roster_csv_data[member]['other_data']
@@ -193,7 +209,7 @@ def process_rosters(driver, alliance_info, only_process=[], roster_csv_data={}, 
 		elif member not in roster_csv_data and not members[member].get('avail'):
 			result = 'NOT AVAIL'
 		# Never received Roster page to parse.
-		elif member not in roster_csv_data and len(driver.page_source) < 700000: 
+		elif member not in roster_csv_data and driver and len(driver.page_source) < 700000: 
 			result = 'TIMEOUT'
 		# No update. Just report how long it's been.
 		else:
@@ -324,7 +340,7 @@ def get_roster_html(driver, member_url, member='', alliance_info={}):
 
 # Return cached portrait information and update portraits and trait data if stale.
 @timed(level=3)
-def get_char_lookup(driver=None):
+def get_char_lookup(driver=None, AUTH=None):
 	
 	char_lookup = {}
 	
@@ -358,8 +374,52 @@ def get_char_lookup(driver=None):
 		trait_list     = [trait for trait in sorted(traits) if trait not in invalid_traits]
 		set_cached('trait_list', trait_list)
 
-	# If no driver or fresh enough, load the cached_portraits:
-	if not char_lookup:
+	# Do the same but using the official API
+	elif AUTH and not fresh_enough('char_lookup'):
+
+		# Note the hash of the last char refresh
+		char_meta = get_cached('char_meta')
+
+		# Query the Char info, if successful, parse and update all the info. 
+		response = request_char_info(AUTH['access_token'])
+	
+		# If something went wrong, just grab the cached char_lookup
+		if not response or not response.ok:
+			char_lookup = get_cached('char_lookup')
+
+		# If successful, need to determine if anything's changed
+		else:
+			char_dict = response.json()
+			
+			# If nothing's changed, just load the previous char_lookup.
+			if char_dict['meta']['hashes']['chars'] == char_meta:
+				char_lookup = get_cached('char_lookup')
+
+			# Otherwise, we've got some real work to do
+			else:
+				portraits = {}
+				traits    = {}
+
+				# Process the character dictionary
+				parse_char_dict(char_dict, char_lookup, portraits, traits)
+
+				# Write the portraits
+				set_cached('portraits', portraits)
+
+				# Write char_list for MSF RosterBot use
+				set_cached('char_list', sorted(portraits))
+
+				# Write trait_list for MSF RosterBot use
+				set_cached('trait_list', sorted(traits))
+
+				# Only update the char_meta value if everything processed successfully 
+				set_cached('char_meta', char_dict['meta']['hashes']['chars'])
+
+			# Either way, reset the timestamp on char_lookup so we don't check again for 24 hours
+			set_cached('char_lookup')
+
+	# If no driver or fresh enough, load the cached char_lookup:
+	else:
 		char_lookup = get_cached('char_lookup')
 		
 	return char_lookup
