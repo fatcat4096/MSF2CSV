@@ -256,8 +256,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	# After all Lanes are added, add the Roster Analysis, Alliance Info, and ByChars tabs.
 	html_file += generate_roster_analysis(alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
 	html_file += generate_alliance_tab   (alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
-	html_file += generate_by_char_tab    (alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
-	html_file += generate_zone_analysis  (alliance_info, using_tabs=True, html_cache=html_cache)
+	html_file += generate_by_char_tab    (alliance_info, using_tabs=True, hist_date=hist_date or True, html_cache=html_cache)
 	
 	# Include scripts to support sorting.
 	html_file += add_sort_scripts()
@@ -301,6 +300,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 	only_team    = get_table_value(table_format, table, key='only_team')
 	only_members = get_table_value(table_format, table, key='only_members')
 	only_side    = get_table_value(table_format, table, key='only_side')
+	lane_name    = get_table_value(table_format, table, key='lane_name', default='Lane')
 
 	# Special handling required if inline_hist.
 	inline_hist = get_table_value(table_format, table, key='inline_hist')
@@ -312,7 +312,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 	for lane_idx, lane in enumerate(lanes):
 	
 		# Display each lane in a separate tab.
-		divider_id = ['Hist','Lane'][not hist_date] + str(lanes.index(lane)+1)
+		divider_id = ['Hist',lane_name][not hist_date] + str(lanes.index(lane)+1)
 		
 		# Only include Dividers if using as part of a multi-tab document
 		if using_tabs:
