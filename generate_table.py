@@ -103,56 +103,18 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	else:
 		anchor, table_id, linked_id = lookup_table_ids(html_cache, char_list, hist_date)
 
+	# Add requirements to Table label if show_reqs is True
+	table_lbl = add_reqs_to_label(table_lbl, table_format, table, section)
 
+	# Auto-calc the best value for line wrap length
+	line_wrap = calculate_line_wrap(using_chars)
 
-	# Adjust Table lable if show_reqs = True
-	show_reqs = get_table_value(table_format, table, section, key='show_reqs', default=False)
-	
-	if show_reqs and 'META' in table_lbl:
-		reqs = []
-		
-		min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
-		min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
-		min_yel  = get_table_value(table_format, table, section, key='min_yel',  default=0)
-		min_red  = get_table_value(table_format, table, section, key='min_red',  default=0)
-		min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
-		
-		if min_lvl:
-			reqs.append(f'L{min_lvl}')
-		if min_tier:
-			reqs.append(f'T{min_tier}')
-		if min_yel:
-			reqs.append(f'{min_yel}<span style="color:yellow;">&#x2605;</span>')
-		if min_red:
-			red_star = '<span style="color:red;">&#x2605;</span>'
-			reqs.append(f'{(min_red+6)%7+1}{red_star if min_red <= 7 else "&#x1F48E;"}')
-		if min_iso:
-			reqs.append(f'ISO{int((min_iso+4)/5)}-{(min_iso+4)%5+1}')
-	
-		table_lbl = table_lbl.replace('META',f'<b>Req: {" ".join(reqs)}</b>')
-		
-	# Let's get this party started!
-	html_file = '   <table id="%s">\n' % (table_id)
-
-
-
-	# Automate the line_wrap selection.
-	wrap_after = 12
-	lines_used  = 1
-
-	# Calculate an optimal number of lines to wrap to.
-	while len(using_chars) > wrap_after * lines_used:
-		lines_used += 1
-		wrap_after = int( (wrap_after * 4 / 3) + 0.49)
-
-	# Calculate the line_wrap to best fill this number of lines
-	line_wrap = round(len(using_chars)/lines_used + 0.49)
-
-
-	
 	# Initialize the row count. Will add to it with each strike_team section.
 	row_idx = 1
 
+	# Let's get this party started!
+	html_file = '   <table id="%s">\n' % (table_id)
+	
 	while using_chars:
 		line_chars, using_chars = using_chars[:line_wrap],using_chars[line_wrap:]
 
@@ -173,6 +135,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False) and 'OTHERS' not in table_lbl and not team_power_summary
 		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False) and not hist_date and not team_power_summary
 		inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
+		spec_ops  = get_table_value(table_format, table, section, key='spec_ops')
 
 		# Include a column for "# Pos" info if requested.
 		if inc_rank:
@@ -218,7 +181,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					anchor = make_next_anchor_id(html_cache, char, table_id)
 					onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
 
-				html_file += '     <td class="img" colspan="%s"%s><div class="cont"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, ['',' zoom'][not hist_date], url, translate_name(char))
+				# Control background color of Character image if Spec Ops report
+				background_color = spec_ops_background(table, char, player_list, html_cache) if spec_ops else ''
+
+				html_file += '     <td class="img" colspan="%s"%s><div class="cont %s"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, background_color, ['',' zoom'][not hist_date], url, translate_name(char))
 
 		# Include an image of the completion reward if provided.
 		if team_power_summary and inc_comp:
@@ -542,6 +508,70 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 
 
+# Add requirements to Table label if show_reqs is True
+def add_reqs_to_label(table_lbl, table_format, table, section):
+
+	show_reqs = get_table_value(table_format, table, section, key='show_reqs', default=False)
+	
+	# Short circuit if not applicable
+	if not show_reqs or 'META' not in table_lbl:
+		return table_lbl
+
+	reqs = []
+	
+	min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
+	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
+	min_yel  = get_table_value(table_format, table, section, key='min_yel',  default=0)
+	min_red  = get_table_value(table_format, table, section, key='min_red',  default=0)
+	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
+	
+	if min_lvl:
+		reqs.append(f'L{min_lvl}')
+	if min_tier:
+		reqs.append(f'T{min_tier}')
+	if min_yel:
+		reqs.append(f'{min_yel}<span style="color:yellow;">&#x2605;</span>')
+	if min_red:
+		red_star = '<span style="color:red;">&#x2605;</span>'
+		reqs.append(f'{(min_red+6)%7+1}{red_star if min_red <= 7 else "&#x1F48E;"}')
+	if min_iso:
+		reqs.append(f'ISO{int((min_iso+4)/5)}-{(min_iso+4)%5+1}')
+
+	return table_lbl.replace('META',f'<b>Req: {" ".join(reqs)}</b>')
+
+
+
+# Automate the line_wrap selection and hide the messy calcs
+def calculate_line_wrap(using_chars):
+
+	wrap_after = 12
+	lines_used  = 1
+
+	# Calculate an optimal number of lines to wrap to.
+	while len(using_chars) > wrap_after * lines_used:
+		lines_used += 1
+		wrap_after = int( (wrap_after * 4 / 3) + 0.49)
+
+	# Calculate the line_wrap to best fill this number of lines
+	return round(len(using_chars)/lines_used + 0.49)
+
+
+
+# Hide the messy calculations behind Spec Ops background colors
+def spec_ops_background(table, char, player_list, html_cache):
+
+	# Find num above mins for this toon
+	avail_count = 24-sum([table.get('under_min',{}).get(player,{}).get(char,False) for player in player_list])
+
+	# Only dim the background if near the top of the range.
+	darken_amt  = 0 if avail_count<14 else (((avail_count-14)/10)**2) * 0.6
+	
+	# Skew color range and bend color curve to steer mid-range toward yellows
+	return get_value_color_ext(-15**3, 24**3, -25**3 if avail_count<5 else avail_count**3, html_cache, darken_amt=darken_amt)
+	
+
+
+# Format large Power values using K and M
 def get_field_value(value, hist_date):
 	if value:
 		if value > 10**6:

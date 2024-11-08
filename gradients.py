@@ -19,10 +19,10 @@ def RGB_to_hex(RGB):
 						 "{0:x}".format(v) for v in RGB])
 
 
-def darken(hex):
+def darken(hex,darken_amt=0.35):
 	''' Takes in a hex color and returns the same color
 		taken to 60% brightness. '''
-	return RGB_to_hex([int(.65*x) for x in hex_to_RGB(hex)])
+	return RGB_to_hex([int((1-darken_amt)*x) for x in hex_to_RGB(hex)])
 
 
 def grayscale(hex):

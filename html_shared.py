@@ -40,7 +40,7 @@ def extract_color(alliance_name):
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, use_range=False):
+def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, use_range=False, darken_amt=0):
 
 	# Base case. Return 'hist' if 0.
 	if not val_range or not value:
@@ -87,11 +87,11 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 			if new_range:
 				min_val = min(new_range)
 	
-	return get_value_color_ext(min_val, max_val, value, html_cache, stale_data, stat, under_min, hist_date)
+	return get_value_color_ext(min_val, max_val, value, html_cache, stale_data, stat, under_min, hist_date, darken_amt)
 
 
 
-def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=None):
+def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=None, darken_amt=0):
 	
 	# If we've specified an inverted range, flip the calculation on its head.
 	if min_val > max_val:
@@ -138,6 +138,8 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 	# Dim values slightly if under the minimum specified for the report.
 	if under_min and not hist_date:
 		color = darken(color)
+	elif darken_amt:
+		color = darken(color,darken_amt)
 
 	# If data is more than a week old, make grayscale to indicate stale data.
 	if stale_data:
