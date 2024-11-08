@@ -484,8 +484,17 @@ function sortl(n,table_name,header_lines,rows_to_sort,linked_name) {
 			/* Get the two elements you want to compare,
 			one from current row and one from the next: */
 
-			x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "");
-			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "");
+			// Removes commas and + from the numbers being compared, expand K to 000.
+			x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/K$/, "000").replace(/💎$/, "0");
+			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/K$/, "000").replace(/💎$/, "0");
+
+			// Deal with x.xM notation
+			if (x.slice(1,1) == "." && x.endsWith("M")) {
+				x = x.slice(0,1) + x.slice(2).replace(/M$/, "00000");
+			}
+			if (y.slice(1,1) == "." && y.endsWith("M")) {
+				y = y.slice(0,1) + y.slice(2).replace(/M$/, "00000");
+			}
 
 			/* Check if the two rows should switch place,
 			based on the direction, asc or desc: */
