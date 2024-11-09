@@ -545,6 +545,10 @@ def parse_char_dict(char_dict, char_lookup, portraits, traits):
 
 	for char in char_dict['data']:
 
+		# Short circuit if this isn't a valid entry
+		if not char.get('portrait') or not char.get('name'):
+			continue
+
 		char_id   = char['id']    # Internal naming
 		char_name = char['name']  # Human readable
 		

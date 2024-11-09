@@ -104,7 +104,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		anchor, table_id, linked_id = lookup_table_ids(html_cache, char_list, hist_date)
 
 	# Add requirements to Table label if show_reqs is True
-	table_lbl = add_reqs_to_label(table_lbl, table_format, table, section)
+	show_reqs = get_table_value(table_format, table, section, key='show_reqs')
+
+	if show_reqs and 'META' in table_lbl:
+		table_lbl = table_lbl.replace('META',f'<b>Req: {get_min_reqs(table_format, table, section)}</b>')
 
 	# Auto-calc the best value for line wrap length
 	line_wrap = calculate_line_wrap(using_chars)
@@ -394,7 +397,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					# Dark Dimension Completed Column
 					
 					if team_power_summary and inc_comp:
-						key_val = find_value_or_diff(alliance_info, player_name, inc_comp, 'yel', use_hist_date)[0]
+						key_val = find_value_or_diff(alliance_info, player_name, inc_comp, 'yel')[0]
 						
 						# Green check after two runs.
 						if key_val == 7:
@@ -509,13 +512,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 
 # Add requirements to Table label if show_reqs is True
-def add_reqs_to_label(table_lbl, table_format, table, section):
-
-	show_reqs = get_table_value(table_format, table, section, key='show_reqs', default=False)
-	
-	# Short circuit if not applicable
-	if not show_reqs or 'META' not in table_lbl:
-		return table_lbl
+def get_min_reqs(table_format, table, section):
 
 	reqs = []
 	
@@ -537,7 +534,7 @@ def add_reqs_to_label(table_lbl, table_format, table, section):
 	if min_iso:
 		reqs.append(f'ISO{int((min_iso+4)/5)}-{(min_iso+4)%5+1}')
 
-	return table_lbl.replace('META',f'<b>Req: {" ".join(reqs)}</b>')
+	return " ".join(reqs)
 
 
 

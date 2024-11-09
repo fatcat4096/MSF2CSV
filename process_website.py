@@ -26,7 +26,7 @@ from login                import get_driver, login
 from extract_traits       import extract_traits_from_scripts
 from alliance_info        import *
 from cached_info          import get_cached, set_cached
-from msf_api              import *
+from msfgg_api            import *
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 @timed(level=3)
@@ -416,7 +416,7 @@ def get_char_lookup(driver=None, AUTH=None):
 				set_cached('char_meta', char_dict['meta']['hashes']['chars'])
 
 			# Either way, reset the timestamp on char_lookup so we don't check again for 24 hours
-			set_cached('char_lookup')
+			set_cached('char_lookup', char_lookup)
 
 	# If no driver or fresh enough, load the cached char_lookup:
 	else:

@@ -41,7 +41,7 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 
 	# Generate CSV?
 	if output == 'csv':
-		 html_files = write_file(pathname+"csv.csv", generate_csv(alliance_info))
+		 html_files = write_file(pathname+f'{datetime.datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info))
 		 
 		 return html_files
 
