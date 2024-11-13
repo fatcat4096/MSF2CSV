@@ -277,7 +277,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# Dim the name if don't have 5 heroes that meet min requirements for this section (or all sections, for summary)
 				if team_power_summary:
-					not_ready = min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+					not_completed = not get_summary_comp(alliance_info, player_name, inc_comp)
+					not_ready = not_completed and min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
 				else:
 					not_ready = num_avail < min_count and len(char_list) >= min_count
 
@@ -397,8 +398,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					# Dark Dimension Completed Column
 					
 					if team_power_summary and inc_comp:
-						key_val = find_value_or_diff(alliance_info, player_name, inc_comp, 'yel')[0]
 						
+						key_val = get_summary_comp(alliance_info, player_name, inc_comp)
+
 						# Green check after two runs.
 						if key_val == 7:
 							field_val = '&#x1f7e2;'
@@ -581,3 +583,9 @@ def get_field_value(value, hist_date):
 		field_value = '-'
 
 	return field_value
+
+
+
+# Return the # of Yellow Stars on the completion reward if specified.
+def get_summary_comp(alliance_info, player_name, inc_comp):
+	return find_value_or_diff(alliance_info, player_name, inc_comp, 'yel')[0] if inc_comp else None

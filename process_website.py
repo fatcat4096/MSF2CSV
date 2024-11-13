@@ -81,7 +81,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 	# Work the website or cached URLs to update alliance_info 
 	for member in list(alliance_info['members']):
-		rosters_output += process_rosters(driver, alliance_info, [member], roster_csv_data)
+		rosters_output += process_rosters(alliance_info, driver, [member], roster_csv_data)
 
 	# If anything was updated, do some additional work.
 	status = ''.join([line[15:] for line in rosters_output])
@@ -112,7 +112,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(driver=None, alliance_info={}, only_process=[], roster_csv_data={}, log_file=None, AUTH=None):
+def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_data={}, AUTH=None, log_file=None):
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']

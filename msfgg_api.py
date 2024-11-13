@@ -22,16 +22,13 @@ REVOKE_ENDPOINT = 'https://hydra-public.prod.m3.scopelypv.com/oauth2/revoke'
 
 
 # Generate a Session ID and URL to link account
-def get_session_and_link(CLIENT_ID):
+def get_session_and_link(CLIENT_ID, DISCORD_CMD = 'alliance'):
 
 	# Generate the shared secret and use as the session_id
 	SESSION_ID = secrets.token_bytes(32).hex()
 
 	# Specify the requested scopes
 	SCOPE_REQ = quote_plus('openid offline m3p.f.pr.pro m3p.f.ar.pro m3p.f.ar.ros')
-
-	# Discord Command name -- used for /CMD-auth and /CMD-privacy
-	DISCORD_CMD = 'roster'
 
 	# Create the final Link
 	LINK_URL = f'{OAUTH_ENDPOINT}?response_type=code&client_id={CLIENT_ID}&redirect_uri={quote_plus(REDIRECT_URI)}&state={DISCORD_CMD}:keys:{SESSION_ID}&scope={SCOPE_REQ}'

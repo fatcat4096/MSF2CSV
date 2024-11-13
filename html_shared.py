@@ -223,7 +223,6 @@ def translate_name(value):
 						"Invader": "Invaders",
 						"MastersOfEvil": "Masters<br>Of Evil",
 						"Masters Of Evil": "Masters<br>Of Evil",
-						"Mercenary": "Mercs",
 						"MercsForMoney": "Mercs For<br>Money",
 						"Mercs For Money": "Mercs For<br>Money",
 						"MsfOriginal": "MSF Original",

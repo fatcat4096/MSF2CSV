@@ -25,7 +25,7 @@ def generate_zone_analysis(alliance_info, using_tabs=False, html_cache={}):
 
 	for key in zones:
 		html_file += get_tab_header(f'BATTLEWORLD ANALYSIS - ZONE {key}')
-		html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache)
+		html_file += generate_analysis_table(alliance_info, html_cache=html_cache)
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -37,11 +37,8 @@ def generate_zone_analysis(alliance_info, using_tabs=False, html_cache={}):
 
 def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, html_cache={}, use_range='set'):
 
-	# Conditionally include Diamonds columns.
-	DIAMONDS_ENABLED = True
-
 	# Generate the header for the Roster Analysis table
-	html_file = generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache)
+	html_file = generate_analysis_header(stat_type, html_cache)
 
 	# Start by doing stat analysis.	
 	stats = get_roster_stats(alliance_info, stat_type, hist_date)
@@ -53,7 +50,7 @@ def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, h
 
 
 
-def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
+def generate_analysis_header(stat_type, html_cache):
 
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
@@ -82,11 +79,6 @@ def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
 
 	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red 4-7
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
-
-	# Conditionally include Diamonds columns.
-	if DIAMONDS_ENABLED:
-		html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
-		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="200" colspan="6">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
@@ -124,12 +116,6 @@ def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
 	html_file += f' <td {sort_func % 17}>%s</td>\n' % (['5+','5*'][stat_type == 'actual'])
 	html_file += f' <td {sort_func % 18}>%s</td>\n' % (['6+','6*'][stat_type == 'actual'])
 	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
-
-	# Conditionally include Diamonds columns.
-	if DIAMONDS_ENABLED:
-		html_file += f' <td {sort_func % 21}>1&#x1F48E;</td>\n'
-		html_file += f' <td {sort_func % 22}>2&#x1F48E;</td>\n'
-		html_file += f' <td {sort_func % 23}>3&#x1F48E;</td>\n'
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',2)"' % ("ltbb col", '%s', DIAMONDS_ENABLED*4, table_id)

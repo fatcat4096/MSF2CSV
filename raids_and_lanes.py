@@ -162,7 +162,7 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 					}
 
 # Meta Heroes for use in Battleworld
-tables['battleworld'] =  { 'name': 'Battleworld',
+unused =  { 'name': 'Battleworld',
 					'sort_by': 'stp',
 					'span': True,
 					'lanes':[ [  
