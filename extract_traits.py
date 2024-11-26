@@ -81,6 +81,9 @@ def extract_traits(file=''):
 		defender = extracted_traits['Defender']
 		defender.update(extracted_traits['SecretDefender'])
 
+		aforce = extracted_traits['AForce']
+		aforce.update(extracted_traits['AbsoluteAForce'])
+
 	return extracted_traits
 
 
@@ -88,11 +91,17 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	if extracted_traits and 'Astral' not in extracted_traits:
+	if extracted_traits and 'AbsoluteAForce' not in extracted_traits:
 
 		manual_traits =	{
 						# Ares
 						'Ares'                  :['Villain','Global','Mystic','Protector'],
+						# Absolute A-Force
+						'Wasp'                  :['AbsoluteAForce'],
+						'Ironheart'             :['AbsoluteAForce'],
+						'Kahhori'               :['AbsoluteAForce','Hero','Cosmic','Mystic','Controller'],
+						'Medusa'                :['AbsoluteAForce','Hero','Cosmic','Bio','Brawler'],
+						'Ms. Marvel (Classic)'  :['AbsoluteAForce','Hero','Cosmic','Bio','Support','Kree'],
 						# Alpha Flight
 						'Sunfire'               :['AlphaFlight'],
 						'Wolverine'             :['AlphaFlight'],
