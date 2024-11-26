@@ -273,6 +273,7 @@ def translate_name(value):
 						"Doctor Strange":"Doctor<br>Strange",
 						"Doctor Voodoo":"Doctor<br>Voodoo",
 						"Elsa Bloodstone":"Elsa<br>Bloodstone",
+						"Emma Frost (X-Men)":"Emma Frost<br>(X-Men)",
 						"Ghost Rider (Robbie)":"Ghost Rider<br>(Robbie)",
 						"Green Goblin (Classic)":"Green Goblin<br>(Classic)",
 						"Hand Blademaster":"Hand<br>Blademaster",

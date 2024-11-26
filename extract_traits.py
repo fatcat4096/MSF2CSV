@@ -88,7 +88,7 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	if extracted_traits and 'MsfOriginal' not in extracted_traits:
+	if extracted_traits and 'Astral' not in extracted_traits:
 
 		manual_traits =	{
 						# Ares
@@ -105,6 +105,12 @@ def update_traits(extracted_traits):
 						'Gladiator'             :['Annihilator','Villain','Cosmic','Bio','Protector'],
 						'Gorr'                  :['Annihilator','Villain','Cosmic','Bio','Controller'],
 						'Thanos (Endgame)'      :['Annihilator','Villain','Cosmic','Skill','Brawler'],
+						# Astral
+						'Doctor Strange'        :['Astral'],
+						'Moondragon'            :['Astral'],
+						'Ancient One'           :['Astral','Hero','Global','Mystic','Brawler'],
+						'Emma Frost (X-Men)'    :['Astral','Hero','Global','Mutant','Support','Xmen'],
+						'Shadow King'           :['Astral','Villain','Cosmic','Mutant','Controller','Legendary'],
 						# Cabal
 						'Namor'                 :['Cabal'],
 						'Iron Patriot'          :['Cabal','Global','Villain','Tech','Blaster'],

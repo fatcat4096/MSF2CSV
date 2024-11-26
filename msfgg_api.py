@@ -203,7 +203,7 @@ def request_char_info(ACCESS_TOKEN):
 	response = requests.get(
 		headers =  get_headers(ACCESS_TOKEN),
 		url     = f'{API_ENDPOINT}/game/v1/characters',
-		params  = {'stats':'playable'},
+		params  = {'status':'playable'},
 	)
 
 	# If bad response, return None
