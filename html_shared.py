@@ -118,10 +118,8 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		color = get_scaled_value(0, 17, 19, value, hist_date)
 	elif stat == 'lvl':
 		color = get_scaled_value(0, 85, 100, value, hist_date)
-	elif stat in ('bas','spc','ult'):
-		color = get_scaled_value(0, 6, 7, value, hist_date)
-	elif stat == 'pas':
-		color = get_scaled_value(0, 4, 5, value, hist_date)
+	elif stat in ('bas','spc','ult','pas'):
+		color = get_scaled_value(0, max_val-1, max_val, value, hist_date)
 	elif stat in ('yel'):
 		color = get_scaled_value(0, 5, 7, value, hist_date)
 	elif stat in ('red'):
@@ -219,6 +217,7 @@ def translate_name(value):
 						"FantasticFour": "Fantastic<br>Four",
 						"HeroesForHire": "H4H",
 						"HiveMind": "Hive-Mind",
+						"ImmortalXMen": "Immortal<br>X-Men",
 						"InfinityWatch": "Infinity<br>Watch",
 						"Infinity Watch": "Infinity<br>Watch",
 						"Invader": "Invaders",
@@ -226,6 +225,7 @@ def translate_name(value):
 						"Masters Of Evil": "Masters<br>Of Evil",
 						"MercsForMoney": "Mercs For<br>Money",
 						"Mercs For Money": "Mercs For<br>Money",
+						"MightyAvenger": "Mighty<br>Avengers",
 						"MsfOriginal": "MSF Original",
 						"NewAvenger": "New<br>Avengers",
 						"New Avengers": "New<br>Avengers",
@@ -233,6 +233,7 @@ def translate_name(value):
 						"New Warriors": "New<br>Warriors",
 						"OutOfTime": "Out of Time",
 						"Pegasus": "PEGASUS",
+						"PhoenixForce": "Phoenix<br>Force",
 						"PowerArmor": "Power Armor",
 						"PymTech": "Pym Tech",
 						"Ravager": "Ravagers",
@@ -247,6 +248,7 @@ def translate_name(value):
 						"SuperiorSix": "Superior<br>Six",
 						"Symbiote": "Symbiotes",
 						"TangledWeb": "Tangled<br>Web",
+						"UncannyAvenger": "Uncanny<br>Avengers",
 						"Unlimited": "Unlimited<br>X-Men",
 						"Unlimited X-Men": "Unlimited<br>X-Men",
 						"WarDog": "War Dogs",
@@ -303,6 +305,7 @@ def translate_name(value):
 						"Mister Sinister":"Mister<br>Sinister",
 						"Ms. Marvel (Classic)": "Ms. Marvel<br>(Classic)",
 						"Ms. Marvel (Hard Light)": "Ms. Marvel<br>(Hard Light)",
+						"Omega Red (Phoenix Force)":"Omega Red<br>(P. Force)",
 						"Proxima Midnight":"Proxima<br>Midnight",
 						"Ravager Boomer":"Ravager<br>Boomer",
 						"Ravager Bruiser":"Ravager<br>Bruiser",
