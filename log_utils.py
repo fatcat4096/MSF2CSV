@@ -2,7 +2,6 @@
 #
 # TODO:
 # * Rewrite log_leave. Some very old coding styles in here.
-# * Change log_clear() to create Trace/ if doesn't exist and clean up log files that haven't been written to in a week. 
 # * Change to rename only files of same transaction_id, i.e. MSFRosterBot, or base python.log for msf2csv.py from command line.
 
 

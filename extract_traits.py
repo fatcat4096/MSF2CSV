@@ -72,11 +72,14 @@ def extract_traits(file=''):
 		avengers.update(extracted_traits['Wave1Avenger'])
 		avengers.update(extracted_traits['NewAvenger'])
 		avengers.update(extracted_traits['YoungAvenger'])
+		avengers.update(extracted_traits['MightyAvenger'])
+		avengers.update(extracted_traits['UncannyAvenger'])
 
 		xmen = extracted_traits['Xmen']
 		xmen.update(extracted_traits['Astonishing'])
 		xmen.update(extracted_traits['Uncanny'])
 		xmen.update(extracted_traits['Unlimited'])
+		xmen.update(extracted_traits['ImmortalXMen'])
 
 		defender = extracted_traits['Defender']
 		defender.update(extracted_traits['SecretDefender'])
@@ -91,7 +94,7 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	if extracted_traits and 'AbsoluteAForce' not in extracted_traits:
+	if extracted_traits and 'PhoenixForce' not in extracted_traits:
 
 		manual_traits =	{
 						# Ares
@@ -147,6 +150,18 @@ def update_traits(extracted_traits):
 						'Daken'                 :['MercsForMoney','Mutant','Mercenary','Global','Villain','Controller'],
 						'Old Man Logan'         :['MercsForMoney','Mutant','Mercenary','Global','Hero','Controller','Xmen','Legendary'],
 						'Pandapool'             :['MercsForMoney','Mutant','Mercenary','Global','Hero','Protector'],
+						# Mighty Avenger
+						'Hercules'              :['MightyAvenger','UncannyAvenger','Hero','Global','Mystic','Protector'],
+						'Scarlet Witch'         :['MightyAvenger'],
+						'Invisible Woman'       :['MightyAvenger'],
+						'Vision'                :['MightyAvenger'],
+						'Falcon'                :['MightyAvenger','UncannyAvenger'],
+						# Immortal X-Men
+						'Jean Grey'             :['ImmortalXMen','UncannyAvenger','Hero','Global','Mutant','Support'],
+						'Beast'                 :['ImmortalXMen','UncannyAvenger'],
+						'Storm'                 :['ImmortalXMen','UncannyAvenger'],
+						'Polaris'               :['ImmortalXMen'],
+						'Cable'                 :['ImmortalXMen'],
 						# Morbius
 						'Morbius'               :['Vampire'],
 						# MSF Original
@@ -173,6 +188,9 @@ def update_traits(extracted_traits):
 						'Black Knight'          :['OutOfTime','Hero','Global','Skill','Protector'],
 						'Starbrand'             :['OutOfTime','Hero','Global','Mystic','Brawler'],
 						'Cosmic Ghost Rider'    :['OutOfTime','Hero','Cosmic','Mystic','Controller',],
+						# Phoenix Force
+						'Phoenix'               :['PhoenixForce'],
+						'Omega Red (Phoenix Force)':['PhoenixForce','Villain','Global','Mutant','Brawler','Epic'],
 						# Spider Society
 						'Ghost-Spider'          :['SpiderSociety','Skill'],
 						'Spider-Man (Noir)'     :['SpiderSociety','Skill'],

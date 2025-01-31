@@ -211,9 +211,12 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 		# Never received Roster page to parse.
 		elif member not in roster_csv_data and driver and len(driver.page_source) < 700000: 
 			result = 'TIMEOUT'
+		# Not sure what happened here. Side stepping an odd error condition.
+		elif not last_update:
+			result = 'UNKNOWN'
 		# No update. Just report how long it's been.
 		else:
-			time_since = time_now - last_update
+			time_since = time_now - last_update 
 
 			days  = f'{time_since.days}d' if time_since.days else ''
 			hours = f'{int(time_since.seconds/3600)}h'
