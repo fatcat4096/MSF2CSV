@@ -94,7 +94,7 @@ def extract_traits(file=''):
 # Manually add entries for NEW or UPDATED heroes which aren't yet included in JSON file.
 def update_traits(extracted_traits):
 
-	if extracted_traits and 'PhoenixForce' not in extracted_traits:
+	if extracted_traits and 'Liberty' not in extracted_traits:
 
 		manual_traits =	{
 						# Ares
@@ -144,6 +144,12 @@ def update_traits(extracted_traits):
 						'Black Panther (Shuri)' :['Illuminati','Hero','Global','Mystic','Controller','Wakandan'], 
 						'Captain Britain'       :['Illuminati','Hero','Global','Mystic','Protector','Epic'],
 						'Hank Pym'              :['Illuminati','Hero','Global','Tech','Support','PymTech','Avenger'],
+						# Liberty
+						'Captain America (Sam)' :['Liberty'],
+						'War Machine'           :['Liberty'],
+						'Facon (Joaquin)'       :['Liberty','Hero','Global','Tech','Support'],
+						'Patriot'               :['Liberty','Hero','Global','Bio','Brawler'],
+						'Peggy Carter'          :['Liberty','Hero','Global','Skill','Controller'],
 						# Mercs For Money
 						'Deadpool'              :['MercsForMoney'],
 						'Deathpool'             :['MercsForMoney','Mercenary','MsfOriginal'], 

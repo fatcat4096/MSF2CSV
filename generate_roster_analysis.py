@@ -166,13 +166,13 @@ def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
 	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',2)"' % ("ltbb lvl", '%s', DIAMONDS_ENABLED*4, table_id)
 
 	# Level Ranges
-	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['70+', '0-74'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['75+','75-79'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['100', '100' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['75+', '0-79'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['100+','100-4'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['105', '105' ][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -241,7 +241,7 @@ def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, ht
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
-			for key in range(70,105,5):
+			for key in range(75,110,5):
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'lvl', key)
 
 			html_file += '</tr>\n'
@@ -314,7 +314,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 				get_stat_diff(stats, hist_stats, member, 'tier', key)
 
 			# Level Ranges
-			for key in range(65,105,5):
+			for key in range(75,110,5):
 				get_stat_diff(stats, hist_stats, member, 'lvl', key)
 
 			# T4 Abilities
@@ -354,7 +354,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 		get_stat_range(stats, 'tier', key, member_list)
 
 	# Level Ranges
-	for key in range(65,105,5):
+	for key in range(75,110,5):
 		get_stat_range(stats, 'lvl', key, member_list)
 
 	# T4 Abilities
@@ -420,8 +420,8 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 			# If 'progressive', make each entry count in those below it.
 
 			# For either stat_type, combine certain columns for ISO and Level data.
-			if char_stats['lvl'] < 74 and stat_type == 'actual':
-				char_stats['lvl'] = 70
+			if char_stats['lvl'] < 80 and stat_type == 'actual':
+				char_stats['lvl'] = 75
 			else:
 				char_stats['lvl'] -= char_stats['lvl']%5			# Round down to nearest multiple of 5.
 
