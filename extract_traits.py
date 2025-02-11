@@ -207,6 +207,12 @@ def update_traits(extracted_traits):
 						'Mephisto'              :['Mythic','Villain','Cosmic','Mystic','Protector'],
 						# Spider-Verse
 						'Spider-Woman'          :['SpiderVerse'],
+						# Starjammer
+						'Groot'                 :['Starjammer'],
+						'Rocket Raccoon'        :['Starjammer'],
+						'Havok'                 :['Starjammer','Hero','Cosmic','Blaster','Xmen','Mutant'],
+						'Lilandra'              :['Starjammer','Hero','Cosmic','Protector','Skill'],
+						'Howard The Duck'       :['Starjammer','Hero','Cosmic','Blaster','Tech'],
 						# Weapon X
 						'X-23'                  :['WeaponX'],
 						}
