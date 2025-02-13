@@ -179,6 +179,10 @@ def parse_info_api(alliance_members, alliance, captains, members):
 		# Remove HTML tags if present
 		member_name = remove_tags(member_card['name']).strip()
 
+		# Ensure name isn't duplicated
+		if member_name in members:
+			member_name += str(alliance_members.index(alliance_member))
+
 		# Process role information
 		member_role     = alliance_member['rank']
 		if member_role == 'leader':
