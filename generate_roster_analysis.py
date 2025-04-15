@@ -96,7 +96,7 @@ def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
 	html_file += ' <td width="200" colspan="6">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="240" colspan="7">Gear Tier</td>\n'	# Tier 13-19
+	html_file += ' <td width="240" colspan="8">Gear Tier</td>\n'	# Tier 13-20
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="160" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
@@ -154,25 +154,26 @@ def generate_analysis_header(stat_type, DIAMONDS_ENABLED, html_cache):
 	html_file += f' <td {sort_func % 31}>%s</td>\n' % (['16+','16'][stat_type == 'actual'])
 	html_file += f' <td {sort_func % 32}>%s</td>\n' % (['17+','17'][stat_type == 'actual'])
 	html_file += f' <td {sort_func % 33}>%s</td>\n' % (['18+','18'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 34}>%s</td>\n' % (['19' ,'19'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 34}>%s</td>\n' % (['19+','19'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 35}>%s</td>\n' % (['20' ,'20'][stat_type == 'actual'])
 
 	# T4 Abilities
-	html_file += f' <td {sort_func % 36}>Bas</td>\n'
-	html_file += f' <td {sort_func % 37}>Spc</td>\n'
-	html_file += f' <td {sort_func % 38}>Ult</td>\n'
-	html_file += f' <td {sort_func % 39}>Pas</td>\n'
+	html_file += f' <td {sort_func % 37}>Bas</td>\n'
+	html_file += f' <td {sort_func % 38}>Spc</td>\n'
+	html_file += f' <td {sort_func % 39}>Ult</td>\n'
+	html_file += f' <td {sort_func % 40}>Pas</td>\n'
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',2)"' % ("ltbb lvl", '%s', DIAMONDS_ENABLED*4, table_id)
 
 	# Level Ranges
-	html_file += f' <td {sort_func % 41}>%s</td>\n' % (['75+', '0-79'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['100+','100-4'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['105', '105' ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['75+', '0-79'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['80+','80-84'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 47}>%s</td>\n' % (['100+','100-4'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 48}>%s</td>\n' % (['105', '105' ][stat_type == 'actual'])
 
 	html_file += '</tr>\n'
 	
@@ -231,7 +232,7 @@ def generate_analysis_body(alliance_info, stats, DIAMONDS_ENABLED, hist_date, ht
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
-			for key in range(13,20):
+			for key in range(13,21):
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'tier', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
@@ -310,7 +311,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 				get_stat_diff(stats, hist_stats, member, 'iso', key)
 
 			# Gear Tiers
-			for key in range(13,20):
+			for key in range(13,21):
 				get_stat_diff(stats, hist_stats, member, 'tier', key)
 
 			# Level Ranges
@@ -350,7 +351,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 		get_stat_range(stats, 'iso', key, member_list)
 
 	# Gear Tiers
-	for key in range(13,20):
+	for key in range(13,21):
 		get_stat_range(stats, 'tier', key, member_list)
 
 	# Level Ranges
