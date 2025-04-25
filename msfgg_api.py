@@ -55,6 +55,7 @@ def auth_valid(AUTH):
 
 # Headers used for POST requests
 def post_headers(CLIENT_TOKEN):
+
 	return {	'Content-Type' : 'application/x-www-form-urlencoded',
 				'Authorization': f'Basic {CLIENT_TOKEN}' }
 
@@ -62,6 +63,11 @@ def post_headers(CLIENT_TOKEN):
 
 # Headers used for GET requests
 def get_headers(ACCESS_TOKEN):
+
+	# Extract the ACCESS_TOKEN if provided full AUTH
+	if type(ACCESS_TOKEN) is dict:
+		ACCESS_TOKEN = ACCESS_TOKEN['access_token']
+
 	return {	'x-api-key': '17wMKJLRxy3pYDCKG5ciP7VSU45OVumB2biCzzgw',
 				'Authorization': f'Bearer {ACCESS_TOKEN}' }
 
@@ -197,13 +203,13 @@ def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
 
 
 # Request all character information -- used for Char names, Portrait info
-def request_char_info(ACCESS_TOKEN):
+def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
 
 	# Send request for Character Info
 	response = requests.get(
 		headers =  get_headers(ACCESS_TOKEN),
 		url     = f'{API_ENDPOINT}/game/v1/characters',
-		params  = {'status':'playable'},
+		params  = {'status':'playable' if PLAYABLE else 'unplayable'},
 	)
 
 	# If bad response, return None
@@ -213,18 +219,3 @@ def request_char_info(ACCESS_TOKEN):
 	return response
 
 
-
-# Request all trait information -- used for extracted traits
-def request_traits(ACCESS_TOKEN):
-
-	# Send request for Trait List
-	response = requests.get(
-		headers =  get_headers(ACCESS_TOKEN),
-		url     = f'{API_ENDPOINT}/game/v1/traits',
-	)
-
-	# If bad response, return None
-	if not response.ok:
-		return
-
-	return response
