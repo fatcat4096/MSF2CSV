@@ -164,7 +164,22 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# TEAM POWER SUMMARY: Create the Label for each section header instead of an Image for each toon.
 			if team_power_summary:
-				html_file += f'     <td colspan="{num_cols}"><div class="summ">{translate_name(char).upper().replace(" (","<br>(")}</div></td>\n'
+
+				for char_name in portraits:
+
+					# If the Section Name starts with a Character, use that toon's image for the background.
+					if char.startswith(char_name+':'):
+					
+						url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
+						section_name = char.removeprefix(char_name+':').upper().replace(" (","<br>(").replace('-','&#8209')
+
+						html_file += f'     <td class="img" colspan="{num_cols}"><div class="cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{section_name}</div></td>\n'
+						break
+
+				# If we never found a match, just include the formatted Section name as a header.
+				if not char.startswith(char_name+':'):
+					section_name = translate_name(char).upper().replace(" (","<br>(").replace('-','&#8209')
+					html_file += f'     <td colspan="{num_cols}"><div class="summ">{section_name}</div></td>\n'
 				
 			else:
 				url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char]}.png'
@@ -192,7 +207,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Include an image of the completion reward if provided.
 		if team_power_summary and inc_comp:
 			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[inc_comp]}.png'
-			html_file += f'     <td class="img" style="width:50px;"><div class="cont"><img src="{url}" alt="" width="50"></div></td>\n'
+			html_file += f'     <td class="img"><div class="cont"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(inc_comp)}</div></td>\n'
 
 		# Include a Team Power column if we have more than one.
 		if len(char_list)>1:
@@ -266,10 +281,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			alt_color = False
 			for player_name in strike_team:
 			
-				# If strike_team name not in the player_list, it's a divider.
+				# If player name is defined and not in the player_list, it's a divider.
 				# Toggle a flag for each divider to change the color of Player Name slightly
 				if player_name not in player_list:
-					alt_color = not alt_color
+
+					# Only toggle color if a name is defined, i.e. not if simply missing a player.
+					if player_name:
+						alt_color = not alt_color
+
 					continue
 
 				# Get pre-calculated value for available for this section (or all sections for summary)
@@ -403,13 +422,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 						# Green check after two runs.
 						if key_val == 7:
-							field_val = '&#x1f7e2;'
+							field_val = '&#x1f7e2;'		# Green Dot
 						# Yellow yield indicates one run done.
 						elif key_val == 5:
-							field_val = '&#x1f7e1;'
+							field_val = '&#x1f7e1;'		# Yellow Dot
 						# Red X indicates not completed.
 						else:
-							field_val = '&#x1f534;'
+							field_val = '&#x274C;'		# Red X
+							#field_val = '&#x1f534;'	# Red Dot
 						st_html += f'     <td class="hist">{field_val}</td>\n'
 
 					# STP/TCP Column
@@ -477,7 +497,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			for char in line_chars:
 				for key in keys:
 					width = 'p' if key == 'power' else ''
-					html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'power':'Pwr','iso':'ISO','stp':'STP'}.get(key,key.title()))
+					html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}.get(key,key.title()))
 					col_idx += 1
 
 				# Include a header for ISO Class info if requested.
@@ -487,7 +507,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	
 			# Insert the Completed column for Dark Dimension Team Power Summaries.
 			if team_power_summary and inc_comp:
-				html_file += '     <td>Done</td>\n'
+				html_file += '     <td>Complete?</td>\n'
 	
 			# Insert the Team Power column.
 			if team_power_summary:
