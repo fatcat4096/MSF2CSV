@@ -22,9 +22,21 @@ except:	pass
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from urllib.parse import quote, unquote
 
 
 TAG_RE = re.compile(r'<[^>]+>')
+
+# Ensure filename is valid for file system.
+def encode_tags(filename):
+	return quote(filename, safe="!#$%&'()+,;=@[]^`{}~ ")
+
+
+
+# Translate filename from encoded form to readable.
+def recode_tags(filename):
+	return unquote(filename)
+
 
 
 # Sanitize Alliance Names and player names of any HTML tags.
@@ -62,9 +74,13 @@ def write_file(pathname, file_content, print_path=True):
 	# Sanitize to remove HTML tags.
 	pathname = remove_tags(pathname)
 
+	# Safely encode filename before file I/O
+	#pathname = encode_tags(pathname)
+
 	for file in file_content:
 
 		filename = remove_tags(pathname+file)
+		#filename = pathname+encode_tags(file)
 
 		if print_path:
 			print ("Writing %s" % (filename))
@@ -94,10 +110,7 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 	# Start by creating a Selenium driver.
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
-
-	# TEMP FIX --headless=new throwing up white window.
-	#options.add_argument('--headless=new')
-	options.add_argument('--headless=old')
+	options.add_argument('--headless=new')
 
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
@@ -119,7 +132,7 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 		# Look for the farthest right element.
 		tables = driver.find_elements(By.TAG_NAME, "table")
 		
-		min_width = 400
+		min_width = 380
 		for table_idx, table in enumerate(tables):
 			min_width = max(table.rect['x']+table.rect['width'], min_width)
 
@@ -128,7 +141,7 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 				#print ('width exceeded. Index:',table_idx, 'table:',table.rect, 'min_width:',min_width, 'width:',width)
 				break
 
-		driver.set_window_size(min(width,min_width)+8, height+450)
+		driver.set_window_size(min(width,min_width)+20, height+450)
 
 		png_filename = file[:-4]+'png'
 
@@ -154,12 +167,16 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 
 
 
+
 @timed(level=3)
 def load_cached_data(file_or_alliance=''):
 	cached_data = {}
 
 	# Remove any HTML tags in the provided input
 	file_or_alliance = remove_tags(file_or_alliance)
+
+	# Safely encode filename before file I/O
+	#file_or_alliance = encode_tags(file_or_alliance)
 
 	# If the provided filename wasn't a valid file, let's go looking for it.
 	if not os.path.exists(file_or_alliance):
@@ -309,6 +326,9 @@ def find_cached_data(file_or_alliance=''):
 
 	# Remove any HTML tags in the provided input
 	file_or_alliance = remove_tags(file_or_alliance)
+	
+	# Safely encode filename before file I/O
+	#file_or_alliance = encode_tags(file_or_alliance)
 	
 	# If a valid MSF filename passed in, use it as the only entry in file_list.
 	if file_or_alliance[-4:] == ('.msf') and os.path.isfile(file_or_alliance):
