@@ -12,6 +12,7 @@ import datetime
 import re
 
 from file_io import *
+from cached_info          import get_cached
 
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -425,12 +426,15 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 	
 # Parse the Roster data directly from the roster.csv file.
 @timed(level=3)
-def parse_roster_csv(roster_csv, char_lookup, roster_csv_data={}, member_order=[]):
+def parse_roster_csv(roster_csv, roster_csv_data={}, member_order=[]):
 
 	# Can't parse if roster.csv is unavailable.
 	if not roster_csv or not os.path.exists(roster_csv):
 		print ('WARNING: No roster.csv file found. Roster data will come from HTML.')
 		return
+
+	# Load cached char_lookup
+	char_lookup = get_cached('char_lookup')
 
 	# Pull full Roster Info from the roster.csv file.
 	roster_csv_file = open(roster_csv, 'r', encoding='utf-8').readlines()
@@ -448,7 +452,7 @@ def parse_roster_csv(roster_csv, char_lookup, roster_csv_data={}, member_order=[
 		
 		# SHOULD NOT HAPPEN. If lookup failed, we're missing the translation. Can't insert this data.
 		if not char_name:
-			print ("missing translation for",entry[1])
+			print ("missing translation for",entry)
 			continue
 		
 		char_info = member_info['processed_chars'].setdefault(char_name,{})
@@ -499,7 +503,10 @@ def parse_roster_csv(roster_csv, char_lookup, roster_csv_data={}, member_order=[
 
 
 
-def parse_roster_api(response, char_lookup, processed_chars, other_data):
+def parse_roster_api(response, processed_chars, other_data):
+
+	# Load cached char_lookup
+	char_lookup = get_cached('char_lookup')
 
 	# Iterate through each in roster, building up a member dict with stats for each.
 	for entry in response.json()['data']:
@@ -508,7 +515,7 @@ def parse_roster_api(response, char_lookup, processed_chars, other_data):
 		
 		# SHOULD NOT HAPPEN. If lookup failed, we're missing the translation. Can't insert this data.
 		if not char_name:
-			print ("missing translation for",entry[1])
+			print ("missing translation for",entry)
 			continue
 		
 		char_info = processed_chars.setdefault(char_name,{})
@@ -522,6 +529,7 @@ def parse_roster_api(response, char_lookup, processed_chars, other_data):
 		char_info['dmd']   = active_red-7 if active_red > 7 else 0
 		
 		char_info['tier']  = entry.get('gearTier',0)
+		char_info['op']    = entry.get('overpower',0)
 
 		bas = str(entry.get('basic',0))
 		spc = str(entry.get('special',0))
@@ -545,9 +553,10 @@ def parse_roster_api(response, char_lookup, processed_chars, other_data):
 
 
 # Parse character names, traits, portraits all out of API character call
-def parse_char_dict(char_dict, char_lookup, portraits, traits):
+@timed(level=3)
+def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 
-	for char in char_dict['data']:
+	for char in CHAR_DATA:
 
 		# Short circuit if this isn't a valid entry
 		if not char.get('portrait') or not char.get('name'):
@@ -555,19 +564,25 @@ def parse_char_dict(char_dict, char_lookup, portraits, traits):
 
 		char_id   = char['id']    # Internal naming
 		char_name = char['name']  # Human readable
+
+		PLAYABLE = char['status'] == 'playable'
 		
-		# Build char_lookup
+		# Build char_lookup (for name translation)
 		char_lookup[char_id] = char_name
 		
 		# Build portrait lookup
 		portraits[char_name] = char['portrait'].split('Portrait_')[-1][:-4]
 		
-		for trait in char.get('traits',[]):
-			traits.setdefault(trait['id'],{})[char_name] = 1
+		# Only include playable toons in char_list and traits
+		if PLAYABLE:
+			char_list.append(char_name)
 		
-		for trait in char.get('invisibleTraits',[]):
-			if not trait.get('alwaysInvisible'):
+			for trait in char.get('traits',[]):
 				traits.setdefault(trait['id'],{})[char_name] = 1
+			
+			for trait in char.get('invisibleTraits',[]):
+				if not trait.get('alwaysInvisible'):
+					traits.setdefault(trait['id'],{})[char_name] = 1
 			
 	# Add missing trait
 	traits['MsfOriginal'] = {'Deathpool': 1, 'Kestrel': 1, 'Spider-Weaver': 1, 'Vahl': 1}
@@ -575,43 +590,5 @@ def parse_char_dict(char_dict, char_lookup, portraits, traits):
 	# Remove excess trait
 	if 'Ultron' in traits:
 		del traits['Ultron']
-
-
-
-# Parse the character file out of MHTML or the page_source directly from the website.
-@timed(level=3)
-def parse_portraits(contents):
-	soup = BeautifulSoup(contents, 'html.parser')
-
-	portraits   = {}
-	
-	chars  = soup.findAll('li', attrs = {'class':'character'})
-
-	# Iterate through each toon that we found.
-	for char in chars:
-		
-		# If no char_name defined, last entry on page. Skip.
-		char_name = char.find('h4').text.strip()
-		if not char_name:
-			continue
-
-		# Keep the path to the image for each character.
-		portrait = char.find('img',attrs={'class':'portrait is-centered'}).get('src').split('Portrait_')[-1][:-4]
-		
-		portraits[char_name] = portrait
-
-	# Update alliance_info with portrait information.
-	return portraits
-
-
-
-# Parse the character file out of MHTML or the page_source directly from the website.
-@timed(level=3)
-def parse_scripts(contents):
-	soup = BeautifulSoup(contents, 'html.parser')
-
-	# Keep the scripts in use up to date in alliance_info. Will be used by extract_traits.
-	return [script.get('src') for script in soup.findAll('script', attrs = {'type':'text/javascript'}) if script.get('src') and 'static' in script.get('src')]
-
-
-
+	else:
+		print ('no longer need to del trait Ultron.')
