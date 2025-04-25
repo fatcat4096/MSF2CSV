@@ -379,7 +379,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 				table_lbl += '<br><span class="sub">META</span>'
 
 			# If Others, and max_others specified, indicate this.
-			elif max_others:
+			elif max_others and len(other_chars) == max_others:
 				table_lbl += f'<br><span class="sub">TOP {len(other_chars)}</span>'
 
 			# Generate stp_list dict for the Other Table calls.

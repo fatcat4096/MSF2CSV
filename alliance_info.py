@@ -330,14 +330,14 @@ def insert_dividers(strike_teams, raid_type):
 
 	for team in strike_teams:
 
-		# Use 2-3-3 lanes if Incursion 1.x.
+		# Use 2-3-3 lanes if Incursion 1.x -- OBSOLETE, UNUSED
 		if raid_type in ('incur'):
 			if len(team) > 2:
 				team.insert(2,'----')
 			if len(team) > 6:
 				team.insert(6,'----')
 
-		# Use 3-2-3 lanes if Spotlight.
+		# Use 3-2-3 lanes if Spotlight -- OBSOLETE, UNUSED
 		elif raid_type in ('spotlight'):
 			if len(team) > 2:
 				team.insert(2,'----')
