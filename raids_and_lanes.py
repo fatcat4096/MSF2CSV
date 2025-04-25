@@ -11,7 +11,7 @@
 #
 #		The table output will only include Characters that have been built to at least 
 #		this level by at least ONE of the alliance members. Set these for the minimum
-#		required by the level of Incursion, Doom, or Gamma raid you are running.
+#		required by the level of raid you are running.
 #
 #		Note: Character specfied in Meta will ALWAYS be included. Never filtered out.
 #
@@ -52,37 +52,57 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 					}
 
 # Meta Heroes for use in Orchis Raid
-tables['orchis'] = { 'name': 'Orchis Raid',
-					'min_iso': 10,
+tables['chaos'] = { 'name': 'Chaos Raid',
+					'min_iso': 13,
 					'max_others': 0,
-					'strike_teams': 'orchis',
+					'strike_teams': 'chaos',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
-							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
-							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
 							{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Omega Sentinel'], 'label':'Tech<br>(Orchis)'}, 
 							{'traits': ['Bio'], 'meta': ['Carnage', 'Super Skrull', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
+							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
+							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
+							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
+							{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
 							] ],
 					}
 
-# Meta Heroes for use in Incursion 2 Raid
-tables['incur'] = { 'name': 'Incursion 2 Raid',
-					'min_iso': 9,
-					'max_others': 5,
-					'strike_teams': 'incur',
+# Meta Heroes for use in Prof X Saga
+tables['profx'] = { 'name': 'Prof X Saga',
+					'max_others': 10,
+					'sort_by': 'avail',
 					'sort_char_by': 'avail',
-					'inc_keys': ['power','lvl','tier','iso'],
+					'inc_avail': True,
+					'traits_req': 'all',
+					'summary_keys': ['stp','avail'],
+					'summary_comp': 'Professor Xavier',
 					'lanes':[ [
-							{'traits': ['Mystic'], 'meta': ['Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Bifrost)'},
-							{'traits': ['Tech'], 'meta': ['Kestrel', 'Rescue', 'Iron Man (Infinity War)', 'Darkhawk', 'Ironheart (MKII)'], 'label':'Tech<br>(Pegasus)'},
-							{'traits': ['Mutant'], 'meta': ['Cyclops', 'Gambit', 'Nightcrawler', 'Forge', 'Sunspot'], 'label':'Mutant<br>(X-Treme)'},
-							{'traits': ['Bio'], 'meta': ['Carnage', 'Venom', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'},
-							{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'},
+							{'min_tier':20, 'traits': ['City'],             'label':'Gladiator:<br>Heroic &<br>X-Treme<br>(T20 City)'},
+							{'min_tier':20, 'traits': ['Global','Villain'], 'label':'Shadow King:<br>Heroic<br>(T20 Global Villain)'},
+							{'min_tier':20, 'traits': ['Global','Hero'],    'label':'Shadow King:<br>X-Treme<br>(T20 Global Hero)'},
+							{'min_tier':20, 'traits': ['Cosmic','Villain'], 'label':'Dark Xavier:<br>Heroic<br>(T20 Cosmic Villain)'},
+							{'min_tier':20, 'traits': ['Cosmic','Hero'],    'label':'Dark Xavier:<br>X-Treme<br>(T20 Cosmic Hero)'},
 							] ]
 					}
 
+# Meta Heroes for use in Prof X Saga (for sections with T17-19
+tables['profx_low'] = { 'name': 'Prof X Saga (T17-19)',
+					'max_others': 10,
+					'sort_by': 'avail',
+					'sort_char_by': 'avail',
+					'traits_req': 'all',
+					'summary_keys': ['stp','avail'],
+					#'summary_comp': 'Professor Xavier',
+					'lanes':[ [
+							{'min_tier':17, 'traits': ['All'],              'label':'Nimrod:<br>Hard<br>(All T17)'},
+							{'min_tier':18, 'traits': ['All'],              'label':'Nimrod:<br>Heroic<br>(All T18)'},
+							{'min_tier':19, 'traits': ['All'],              'label':'Nimrod:<br>X-Treme<br>(All T19)'},
+							{'min_tier':19, 'traits': ['City'],             'label':'Gladiator:<br>Hard<br>(T19 City)'},
+							{'min_tier':19, 'traits': ['Global'],           'label':'Shadow King:<br>Hard<br>(T19 Global)'},
+							{'min_tier':19, 'traits': ['Cosmic'],           'label':'Dark Xavier:<br>Hard<br>(T19 Cosmic)'},
+							] ]
+					}
 
 # Meta Heroes for use in Dark Dimension 8
 tables['dd8'] = { 'name': 'Dark Dimension 8',
@@ -159,46 +179,9 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 							] ]
 					}
 
-# Meta Heroes for use in Battleworld
-unused =  { 'name': 'Battleworld',
-					'sort_by': 'stp',
-					'span': True,
-					'lanes':[ [  
-							{'traits': ['SuperiorSix']},
-							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
-							{'traits': ['SpiderSociety']},
-							{'traits': ['Bifrost']},
-							{'traits': ['Astral'], 'meta': ['Moondragon', 'Doctor Strange']},
-							],[
-							{'traits': ['MercsForMoney']},
-							{'traits': ['Cabal']},
-							{'traits': ['Undying']},
-							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
-							{'traits': ['Astral'], 'meta': ['Moondragon', 'Doctor Strange']},
-							],[
-							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
-							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
-							{'traits': ['OutOfTime']},
-							{'traits': ['SuperiorSix']},
-							{'traits': ['Astral'], 'meta': ['Moondragon', 'Doctor Strange']},
-							],[
-							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
-							{'traits': ['XTreme']},
-							{'traits': ['MercsForMoney']},
-							{'traits': ['MsfOriginal'], 'meta': ['Kestrel', 'Deathpool', 'Spider-Weaver', 'Vahl']},
-							{'traits': ['Astral'], 'meta': ['Moondragon', 'Doctor Strange']},
-							],[
-							{'traits': ['HiveMind']},
-							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
-							{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
-							{'traits': ['Nightstalkers'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight']},
-							{'traits': ['Astral'], 'meta': ['Moondragon', 'Doctor Strange']},
-							] ],
-					'lane_name':'Zone',
-					}
-
 # Meta Heroes for use in Spec Ops
-tables['spec_ops'] = { 'name': 'Spec Ops',
+#tables['spec_ops'] = { 'name': 'Spec Ops',
+unused = { 'name': 'Spec Ops',
 					'sort_by': 'stp',
 					'span': True,
 					'lanes':[ [ 
@@ -299,11 +282,13 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['SpiderSociety']},
 							{'traits': ['SuperiorSix']},
 							{'traits': ['Starjammer'], 'meta': ['Groot','Rocket Raccoon','Havok','Lilandra','Howard The Duck']},
+							{'traits': ['Thunderbolts'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird']},
 							{'traits': ['Uncanny']},
 							{'traits': ['UncannyAvenger'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm']},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
 							{'traits': ['Undying']},
 							{'traits': ['Unlimited']},
+							{'traits': ['Vigilantes'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra']}, 
 							{'traits': ['WarDog']},
 							{'traits': ['WeaponX']},
 							{'traits': ['XTreme']},
