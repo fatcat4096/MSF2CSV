@@ -330,9 +330,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 .nam {
   min-width   : 130px;
 }
-.tot {
-  min-width   : 80px;
-}
 .col {
   min-width   : 32px;
 }
@@ -340,7 +337,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   min-width   : 42px;
 }
 .summ {
-  min-height  : 40px;
+  min-height  : 55px;
   min-width   : 90px;
   display     : flex;
   justify-content: center;
