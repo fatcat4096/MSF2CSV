@@ -12,6 +12,11 @@ import time
 import sys
 import traceback
 
+import importlib
+import inspect
+import json
+import char_info
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -23,7 +28,6 @@ from parse_contents       import *
 from generate_local_files import *
 from file_io              import *
 from login                import get_driver, login
-from extract_traits       import extract_traits_from_scripts
 from alliance_info        import *
 from cached_info          import get_cached, set_cached
 from msfgg_api            import *
@@ -96,7 +100,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Print a summary of the results.
 	roster_results(alliance_info, start_time, rosters_output)
 
-	# Make sure we have a valid strike_team for Incursion and Other. 
+	# Make sure we have a valid strike_team for Chaos Raids. 
 	updated = get_valid_strike_teams(alliance_info) 
 
 	# Generate strike_teams.py if we updated strike team definitions or if this file doesn't exist locally.
@@ -123,11 +127,17 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 	# TEMP: Pull expected member order out of info.csv.
 	member_order = [member for member in alliance_info['members'] if alliance_info['members'][member].get('avail')]
 
-	# Download fresh portrait information if cached data is stale.
-	char_lookup = get_char_lookup(driver, AUTH)
+	# If calling from the command line.
+	if not AUTH:
 
-	if not AUTH and not roster_csv_data and member_order and char_lookup:
-		parse_roster_csv(driver.roster_csv, char_lookup, roster_csv_data, member_order)
+		# If we're missing char_lookup, or it's a day old
+		# build the temp files with current API responses
+		if not fresh_enough('char_lookup'):
+			update_cached_char_info()
+
+		# Processes roster_csv data on first pass only 
+		if not roster_csv_data and member_order:
+			parse_roster_csv(driver.roster_csv, roster_csv_data, member_order)
 
 	# Let's iterate through the member names in alliance_info.
 	for member in list(members):
@@ -151,10 +161,14 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			
 			# If response was successful, parse the member_roster dict
 			if response and response.ok:
-				parse_roster_api(response, char_lookup, processed_chars, other_data)
+				parse_roster_api(response, processed_chars, other_data)
 				
 				# Merge the processed roster information into our Alliance Info
 				merge_roster(alliance_info, member, processed_chars, other_data)
+
+			# What happens if response is not ok? Interpreted as no change?
+			else:
+				print ("API ROSTER REQUEST: No valid response received")
 
 		# If member's info is in the roster_csv_data, use that.
 		elif member in roster_csv_data:
@@ -339,93 +353,121 @@ def get_roster_html(driver, member_url, member='', alliance_info={}):
 				print (traceback.format_exc())
 				raise
 
-				
 
-# Return cached portrait information and update portraits and trait data if stale.
+
+# Find out who we are
 @timed(level=3)
-def get_char_lookup(driver=None, AUTH=None):
+def get_username_api(AUTH):
+
+	response = request_player_info(AUTH)
+	if not response or not response.ok:
+		return 'Unable to get player information'
 	
-	char_lookup = {}
+	# Return the username from response
+	return remove_tags(response.json()['data']['name']).strip()
+
+
+
+# Make multiple API requests to build up a base alliance_info (no roster info).
+# Also, if char meta hashtag has changed, save responses and rebuild cached char files
+@timed(level=3)
+def get_alliance_api(AUTH):
+
+	# Get the general ALLIANCE information
+	response = request_alliance_info(AUTH)
+	if not response or not response.ok:
+		return response, 'alliance'
+
+	# Extract the alliance_data from response.
+	alliance_data = response.json()['data']
 	
-	# If we have a driver and the cached_portraits aren't fresh enough, build new ones.
-	if driver and not fresh_enough('char_lookup'):
+	# Get the list of alliance MEMBERS
+	response = request_alliance_members(AUTH)
+	if not response or not response.ok:
+		return response, 'member'
 
-		# Get the roster page to work with.
-		page_source = get_roster_html(driver, driver.url, driver.username)
-
-		# THIS IS A TRIGGER FOR FIVE THINGS:
-		# 1. Extract the portraits
-		portraits = parse_portraits(page_source)
-		set_cached('portraits', portraits)
-
-		# 2. Build char name lookup from portrait listing.
-		for name in portraits:
-			char_lookup[portraits[name].rsplit('_',1)[0]] = name
-		set_cached('char_lookup', char_lookup)
-
-		# 3. Write cached_char_list for MSF RosterBot use.
-		char_list = sorted(portraits)
-		set_cached('char_list', char_list)
-
-		# 4. Extract the scripts, then run these through extract_traits
-		scripts = parse_scripts(page_source)
-		traits  = extract_traits_from_scripts(scripts)
-		set_cached('traits', traits)
-
-		# 5. Filter out invalid traits and write cached_trait_list for MSF RosterBot use.
-		invalid_traits = ['Civilian','DoomBomb','DoomBot','InnerDemonSummon','Loki','Operator','PvEDDDoom','Summon','Ultron','XFactorDupe']
-		trait_list     = [trait for trait in sorted(traits) if trait not in invalid_traits]
-		set_cached('trait_list', trait_list)
-
-	# Do the same but using the official API
-	elif AUTH and not fresh_enough('char_lookup'):
-
-		# Note the hash of the last char refresh
-		char_meta = get_cached('char_meta')
-
-		# Query the Char info, if successful, parse and update all the info. 
-		response = request_char_info(AUTH['access_token'])
+	# Extract the alliance_members from response.
+	alliance_members = response.json()['data']
 	
-		# If something went wrong, just grab the cached char_lookup
+	# Extract the current char meta hashtag from response
+	char_meta = response.json()['meta']['hashes']['chars']
+
+	# If char meta hashtag has changed, download fresh char info
+	if char_meta != get_cached('char_meta'):
+
+		# Grab the list of PLAYABLE chars
+		response = request_char_info(AUTH)
 		if not response or not response.ok:
-			char_lookup = get_cached('char_lookup')
+			return response, 'playable char'
 
-		# If successful, need to determine if anything's changed
-		else:
-			char_dict = response.json()
-			
-			# If nothing's changed, just load the previous char_lookup.
-			if char_dict['meta']['hashes']['chars'] == char_meta:
-				char_lookup = get_cached('char_lookup')
+		PLAYABLE = response.json()
+	
+		# Grab the list of UNPLAYABLE chars
+		response = request_char_info(AUTH, PLAYABLE=False)
+		if not response or not response.ok:
+			return response, 'unplayable char'
 
-			# Otherwise, we've got some real work to do
-			else:
-				portraits = {}
-				traits    = {}
+		UNPLAYABLE = response.json()
+	
+		# Write these json structures out and update all cached char info
+		update_cached_char_info(PLAYABLE, UNPLAYABLE)
 
-				# Process the character dictionary
-				parse_char_dict(char_dict, char_lookup, portraits, traits)
+		# Update the cached char meta to current hashtag value
+		set_cached('char_meta', char_meta)
+	
+	# Parse the provided responses into a base alliance_info
+	alliance_info = parse_alliance_api(alliance_data, alliance_members)
 
-				# Write the portraits
-				set_cached('portraits', portraits)
+	return response, alliance_info
 
-				# Write char_list for MSF RosterBot use
-				set_cached('char_list', sorted(portraits))
 
-				# Write trait_list for MSF RosterBot use
-				set_cached('trait_list', sorted(traits))
 
-				# Only update the char_meta value if everything processed successfully 
-				set_cached('char_meta', char_dict['meta']['hashes']['chars'])
+# Rebuild fresh cached character info
+@timed(level=3)
+def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 
-			# Either way, reset the timestamp on char_lookup so we don't check again for 24 hours
-			set_cached('char_lookup', char_lookup)
+	# If we got API response passed in, start by writing
+	if PLAYABLE:
 
-	# If no driver or fresh enough, load the cached char_lookup:
-	else:
-		char_lookup = get_cached('char_lookup')
+		# Combine the json response sent by the API into a single file and dump it to disk
+		PLAYABLE   = json.dumps(PLAYABLE,   indent=2, sort_keys=True)
+		UNPLAYABLE = json.dumps(UNPLAYABLE, indent=2, sort_keys=True)
 		
-	return char_lookup
+		CHAR_INFO  = f'# Defs to allow JSONs to process as dicts\ntrue  = True\nfalse = False\nnull  = None\n\n'
+		CHAR_INFO += f'playable   = {PLAYABLE}\nunplayable = {UNPLAYABLE}' 
+
+		# Write the new module to disk
+		write_file(inspect.getfile(char_info), CHAR_INFO)
+
+		# Refresh the sourced definition
+		importlib.reload(char_info)
+
+	# Combine the data sections from the sourced API responses.
+	CHAR_DATA = char_info.playable['data'] + char_info.unplayable['data']
+	
+	# Let's build the cached char files
+	char_list   = []
+	char_lookup = {}
+	portraits   = {}
+	traits      = {}
+
+	# Process the character dictionary
+	parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits)
+
+	# Write the portraits
+	set_cached('portraits', portraits)
+
+	# Write char_list for MSF RosterBot use
+	set_cached('char_list', sorted(char_list))
+
+	# Write trait_list for MSF RosterBot use
+	set_cached('traits', traits)
+
+	# Write trait_list for MSF RosterBot use
+	set_cached('trait_list', sorted(traits))
+
+	# Finally, cache the value of char_lookup
+	set_cached('char_lookup', char_lookup)
 
 
 
@@ -435,11 +477,11 @@ def update_strike_teams(alliance_info):
 
 	strike_teams_defined = 'strike_teams' in globals()
 
-	# Temporary update strike team definitions to remove dividers and 'incur2'.
+	# Temporary update strike team definitions if necessary
 	updated = migrate_strike_teams(alliance_info)
 
 	# Iterate through each defined strike team.
-	for raid_type in ('incur','orchis','spotlight'):
+	for raid_type in ('chaos','spotlight'):
 
 		# If the global definition of strike_team is valid for this alliance, let's use it. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
@@ -477,10 +519,10 @@ def get_valid_strike_teams(alliance_info):
 
 	strike_teams_defined = 'strike_teams' in globals()
 
-	# Update strike team definitions to remove dividers and 'incur2'.
+	# Update strike team definitions if necessary
 	updated = migrate_strike_teams(alliance_info)
 
-	for raid_type in ('incur','orchis','spotlight'):
+	for raid_type in ('chaos','spotlight'):
 
 		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
@@ -503,31 +545,39 @@ def get_valid_strike_teams(alliance_info):
 
 
 
-# Update strike teams to remove dividers and 'incur2' 
+# Update strike teams if necessary
 @timed(level=3)
 def migrate_strike_teams(alliance_info):
 
 	updated = False
 
-	# Update old format strike team definitions. Key off of the presence of 'incur2'.
+	# Update old format strike team definitions.
 	if 'strike_teams' in globals():
 		
-		temp_list = []
-
-		# Incur defined, but no Orchis yet?
-		if 'incur' in strike_teams and 'orchis' not in strike_teams:
-			strike_teams['orchis'] = strike_teams['incur']
+		# Orchis defined, but no Chaos yet?
+		if 'orchis' in strike_teams and 'chaos' not in strike_teams:
+			strike_teams['chaos'] = strike_teams['orchis']
 			updated = True
+
+		# Look for outdated strike_team definitions
+		for raid_type in ('orchis','incur','gamma'):
+			if raid_type in strike_teams:
+				del strike_teams[raid_type]
+				updated = True
 
 	# Update the alliance_info structure as well, just in case it's all we've got.
 	if 'strike_teams' in alliance_info:
 
-		temp_list = []
-
-		# Incur defined, but no Orchis yet?
-		if 'incur' in alliance_info['strike_teams'] and 'orchis' not in alliance_info['strike_teams']:
-			alliance_info['strike_teams']['orchis'] = alliance_info['strike_teams']['incur']
+		# Orchis defined, but no Chaos yet?
+		if 'orchis' in alliance_info['strike_teams'] and 'chaos' not in alliance_info['strike_teams']:
+			alliance_info['strike_teams']['chaos'] = alliance_info['strike_teams']['orchis']
 			updated = True
+	
+		# Look for outdated strike_team definitions
+		for raid_type in ('orchis','incur','gamma'):
+			if raid_type in alliance_info['strike_teams']:
+				del alliance_info['strike_teams'][raid_type]
+				updated = True
 
 	if 'admin' not in alliance_info:
 		alliance_info['admin'] = {'name':'fatcat4096', 'id':564592015975645184}
@@ -569,6 +619,7 @@ def fix_strike_teams(strike_teams, alliance_info):
 
 
 
+@timed(level=3)
 def clean_strike_team(strike_team, MEMBER_LIST, members_used):
 
 	# Track whether anything has been changed.
@@ -597,6 +648,7 @@ def clean_strike_team(strike_team, MEMBER_LIST, members_used):
 
 
 
+@timed(level=3)
 def fill_strike_team(strike_team, MEMBER_LIST, members_used):
 	
 	# Track whether anything has been changed.
