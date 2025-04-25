@@ -115,11 +115,16 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 	elif stat == 'iso':
 		color = iso_color_scale[value-1]
 	elif stat == 'tier':
-		color = get_scaled_value(0, 17, 19, value, hist_date)
+		mid_val = max(0,max_val-3)
+		color = get_scaled_value(0, mid_val, max_val, value, hist_date)
 	elif stat == 'lvl':
-		color = get_scaled_value(0, 85, 100, value, hist_date)
+		mid_val = max(0,max_val-10)
+		color = get_scaled_value(0, mid_val, max_val, value, hist_date)
+	#elif stat in ('op'):
+	#	color = get_scaled_value(0, 9, 11, value, hist_date)
 	elif stat in ('bas','spc','ult','pas'):
-		color = get_scaled_value(0, max_val-1, max_val, value, hist_date)
+		mid_val = max(0,max_val-1)
+		color = get_scaled_value(0, mid_val, max_val, value, hist_date)
 	elif stat in ('yel'):
 		color = get_scaled_value(0, 5, 7, value, hist_date)
 	elif stat in ('red'):
@@ -154,7 +159,7 @@ def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 	# If Hist Date, any growth is a positive. Start with bottom value as orange and go to top of range as green
 	if hist_date:
 		mid_val = min_val
-		yellow_point = 0.33
+		yellow_point = 0.2
 
 	# Define midpoint once, in case we'd like to skew it.
 	else:
@@ -268,12 +273,12 @@ def translate_name(value):
 						"A.I.M. Researcher":"A.I.M.<br>Researcher",
 						"Agatha Harkness":"Agatha<br>Harkness",
 						"Black Panther (1MM)":"Black Panther<br>(1MM)",
-						'Black Panther (Shuri)':'Black Panther<br>(Shuri)',
+						"Black Panther (Shuri)":"Black Panther<br>(Shuri)",
 						"Captain America":"Captain<br>America",
 						"Captain America (Sam)":"Capt. America<br>(Sam)",
 						"Captain America (WWII)":"Capt. America<br>(WWII)",
-						'Captain Britain':'Captain<br>Britain',
-						'Cosmic Ghost Rider':'Cosmic<br>Ghost Rider',
+						"Captain Britain":"Captain<br>Britain",
+						"Cosmic Ghost Rider":"Cosmic<br>Ghost Rider",
 						"Doctor Octopus":"Doctor<br>Octopus",
 						"Doctor Strange":"Doctor<br>Strange",
 						"Doctor Voodoo":"Doctor<br>Voodoo",

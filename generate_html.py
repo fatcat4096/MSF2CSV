@@ -20,7 +20,6 @@ from generate_roster_analysis import *
 from generate_by_char         import *
 from generate_table           import *
 from generate_summary         import *
-from generate_zone_analysis   import *
 
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
@@ -183,17 +182,12 @@ def generate_html(alliance_info, table, table_format, output=''):
 		elif output == 'by_char':
 			html_file += generate_by_char_tab(alliance_info, table_format, html_cache=html_cache)
 
-		# ...or Zone Analysis
-		elif output == 'zone_analysis':
-			html_file += generate_zone_analysis(alliance_info, html_cache=html_cache)
-
 		# Include scripts to support sorting.
 		html_file += add_sort_scripts()
 
 		report_descriptions = {	'roster_analysis':'Roster Analysis',
 								'alliance_info'  :'Alliance Info',
-								'by_char'        :'Info by Char',
-								'zone_analysis'  :'Zone Analysis'}
+								'by_char'        :'Info by Char'}
 
 		# Finish by adding the CSS Header to the top.
 		html_file = add_css_header(report_descriptions[output], html_cache=html_cache) + html_file

@@ -37,7 +37,7 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 	output         = table_format.get('output')
 	external_table = table_format.get('external_table')
 	output_format  = table_format.get('output_format','tabbed')
-	valid_output   = list(tables)+['roster_analysis','alliance_info','by_char','zone_analysis']
+	valid_output   = list(tables)+['roster_analysis','alliance_info','by_char']
 
 	# Generate CSV?
 	if output == 'csv':
