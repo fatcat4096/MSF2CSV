@@ -71,32 +71,26 @@ def write_file(pathname, file_content, print_path=True):
 	if type(file_content) is str:
 		file_content = {'':file_content}
 
-	# Sanitize to remove HTML tags.
-	pathname = remove_tags(pathname)
+	for filename in file_content:
 
-	# Safely encode filename before file I/O
-	#pathname = encode_tags(pathname)
-
-	for file in file_content:
-
-		filename = remove_tags(pathname+file)
-		#filename = pathname+encode_tags(file)
+		# Get the actual path and filename
+		path,file = os.path.split(pathname+filename)
 
 		if print_path:
-			print ("Writing %s" % (filename))
+			print (f"Writing {os.path.join(path,file)}")
 
 		# Verify enclosing directory exists, if not, create it.
-		if not os.path.exists(os.path.dirname(pathname)):
-			os.makedirs(os.path.dirname(pathname))
+		if not os.path.exists(path):
+			os.makedirs(path)
 
 		# Default output is UTF-8. Attempt to use it as it's more compatible.
 		try:
-			open(filename, 'w', encoding='utf-8').write(file_content[file])
+			open(os.path.join(path,file), 'w', encoding='utf-8').write(file_content[filename])
 		# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
 		except:
-			open(filename, 'w', encoding='utf-16').write(file_content[file])	
+			open(os.path.join(path,file), 'w', encoding='utf-16').write(file_content[filename])	
 
-		files_generated.append(filename)
+		files_generated.append(os.path.join(path,file))
 		
 	return files_generated
 
@@ -132,16 +126,14 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 		# Look for the farthest right element.
 		tables = driver.find_elements(By.TAG_NAME, "table")
 		
-		min_width = 380
+		min_width = 360
 		for table_idx, table in enumerate(tables):
 			min_width = max(table.rect['x']+table.rect['width'], min_width)
 
-			# If we've exceeded the right edge of the frame, no need to crop. 
-			if min_width >= width:
-				#print ('width exceeded. Index:',table_idx, 'table:',table.rect, 'min_width:',min_width, 'width:',width)
-				break
+			# Report table stats. 
+			#print ('Index:',table_idx, 'table:',table.rect, 'min_width:',min_width, 'width:',width)
 
-		driver.set_window_size(min(width,min_width)+20, height+450)
+		driver.set_window_size(min_width+40, height+450)
 
 		png_filename = file[:-4]+'png'
 
@@ -229,6 +221,7 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 
 	# Construct the file name
 	file_path += os.sep + 'cached_data-' + (filename or alliance_info['name']) + '.msf'
+	#file_path += os.sep + 'cached_data-' + encode_tags(filename or alliance_info['name']) + '.msf'
 	
 	# If we don't want to indicate this file has changed, save the current timestamp.
 	if timestamp != 'update':

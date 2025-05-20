@@ -4047,7 +4047,7 @@ playable   = {
         {
           "id": "Harbingers",
           "isEvent": true,
-          "name": "HARBINGERS"
+          "name": "CHAPTER 1 - HARBINGER"
         }
       ],
       "id": "DaredevilModern",
@@ -5364,6 +5364,13 @@ playable   = {
     },
     {
       "description": "A stealthy assassin capable of dealing immense damage to a single target.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
       "id": "Elektra",
       "mission": false,
       "name": "Elektra",
@@ -6190,6 +6197,13 @@ playable   = {
     },
     {
       "description": "Originally trained by S.H.I.E.L.D. as a spy, Ghost now uses her Quantum phasing powers as an untraceable thief.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
       "id": "Ghost",
       "mission": false,
       "name": "Ghost",
@@ -6240,6 +6254,10 @@ playable   = {
           "name": "GLOBAL"
         },
         {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
           "id": "Tech",
           "name": "TECH"
         },
@@ -6250,6 +6268,10 @@ playable   = {
         {
           "id": "PymTech",
           "name": "PYM TECH"
+        },
+        {
+          "id": "Thunderbolt",
+          "name": "THUNDERBOLT"
         }
       ],
       "unlockStars": 2
@@ -7912,7 +7934,7 @@ playable   = {
         {
           "id": "Harbingers",
           "isEvent": true,
-          "name": "HARBINGERS"
+          "name": "CHAPTER 1 - HARBINGER"
         }
       ],
       "id": "HitMonkey",
@@ -8616,6 +8638,83 @@ playable   = {
         }
       ],
       "unlockStars": 1
+    },
+    {
+      "description": "Mark Milton uses his abilities as an Eternal to heal himself and manipulate Taunt on the battlefield.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "Hyperion",
+      "mission": false,
+      "name": "Hyperion",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hyperion_e93791b9.png",
+      "starItems": [
+        {
+          "id": "SHARD_HYPERION"
+        },
+        {
+          "id": "RS_HYPERION_1"
+        },
+        {
+          "id": "RS_HYPERION_2"
+        },
+        {
+          "id": "RS_HYPERION_3"
+        },
+        {
+          "id": "RS_HYPERION_4"
+        },
+        {
+          "id": "RS_HYPERION_5"
+        },
+        {
+          "id": "RS_HYPERION_6"
+        },
+        {
+          "id": "RS_HYPERION_7"
+        },
+        {
+          "id": "PD_HYPERION_1"
+        },
+        {
+          "id": "PD_HYPERION_2"
+        },
+        {
+          "id": "PD_HYPERION_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        },
+        {
+          "id": "Eternal",
+          "name": "ETERNAL"
+        },
+        {
+          "id": "Thunderbolt",
+          "name": "THUNDERBOLT"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "One of the original X-Men, Bobby Drake's mutant power to control cold allows him to slow and freeze his enemies.",
@@ -13069,7 +13168,7 @@ playable   = {
           "name": "DARK HUNTER"
         }
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "A former pupil to Merlin, Morgan Le Fay is a dominating sorceress that uses her abilities to manipulate the past and present.",
@@ -16115,7 +16214,7 @@ playable   = {
         {
           "id": "Harbingers",
           "isEvent": true,
-          "name": "HARBINGERS"
+          "name": "CHAPTER 1 - HARBINGER"
         }
       ],
       "id": "Punisher",
@@ -16321,6 +16420,79 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "With the help of his Quantum Bands, Wendell Vaughn saps his enemy's Health and removes their Charges, but is he an ally S.T.R.I.K.E. can trust?",
+      "id": "Quasar",
+      "invisibleTraits": [
+        {
+          "alwaysInvisible": true,
+          "id": "Exposed",
+          "name": "EXPOSED"
+        }
+      ],
+      "mission": false,
+      "name": "Quasar",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Quasar_d362039d.png",
+      "starItems": [
+        {
+          "id": "SHARD_QUASAR"
+        },
+        {
+          "id": "RS_QUASAR_1"
+        },
+        {
+          "id": "RS_QUASAR_2"
+        },
+        {
+          "id": "RS_QUASAR_3"
+        },
+        {
+          "id": "RS_QUASAR_4"
+        },
+        {
+          "id": "RS_QUASAR_5"
+        },
+        {
+          "id": "RS_QUASAR_6"
+        },
+        {
+          "id": "RS_QUASAR_7"
+        },
+        {
+          "id": "PD_QUASAR_1"
+        },
+        {
+          "id": "PD_QUASAR_2"
+        },
+        {
+          "id": "PD_QUASAR_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "Legendary",
+          "name": "LEGENDARY"
+        }
+      ],
+      "unlockStars": 4
     },
     {
       "description": "Quicksilver, the twin brother of Wanda Maximoff, is a supersonic speedster with undodgeable piercing attacks that wear down his enemies.",
@@ -19059,7 +19231,7 @@ playable   = {
         {
           "id": "Harbingers",
           "isEvent": true,
-          "name": "HARBINGERS"
+          "name": "CHAPTER 1 - HARBINGER"
         }
       ],
       "id": "SilverSable",
@@ -19271,6 +19443,79 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "Melissa Gold, a reformed villain, that uses her sonic abilities to flip her enemies positive effects and defend her allies.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "Songbird",
+      "mission": false,
+      "name": "Songbird",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Songbird_8dc4738d.png",
+      "starItems": [
+        {
+          "id": "SHARD_SONGBIRD"
+        },
+        {
+          "id": "RS_SONGBIRD_1"
+        },
+        {
+          "id": "RS_SONGBIRD_2"
+        },
+        {
+          "id": "RS_SONGBIRD_3"
+        },
+        {
+          "id": "RS_SONGBIRD_4"
+        },
+        {
+          "id": "RS_SONGBIRD_5"
+        },
+        {
+          "id": "RS_SONGBIRD_6"
+        },
+        {
+          "id": "RS_SONGBIRD_7"
+        },
+        {
+          "id": "PD_SONGBIRD_1"
+        },
+        {
+          "id": "PD_SONGBIRD_2"
+        },
+        {
+          "id": "PD_SONGBIRD_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Thunderbolt",
+          "name": "THUNDERBOLT"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "A quick attacker that weakens opponents and evades incoming attacks.",
@@ -21226,6 +21471,13 @@ playable   = {
     },
     {
       "description": "A master of combat mimicry, Taskmaster uses his skill to steal positive effects from enemies.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
       "id": "Taskmaster",
       "mission": false,
       "name": "Taskmaster",
@@ -21276,6 +21528,10 @@ playable   = {
           "name": "GLOBAL"
         },
         {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
           "id": "Skill",
           "name": "SKILL"
         },
@@ -21290,6 +21546,10 @@ playable   = {
         {
           "id": "Underworld",
           "name": "UNDERWORLD"
+        },
+        {
+          "id": "Thunderbolt",
+          "name": "THUNDERBOLT"
         }
       ],
       "unlockStars": 2
@@ -22741,6 +23001,87 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "The sharp-minded and pragmatic strategist behind Project A.E.G.I.S., Victoria Hand is a powerful healer that clears negative effects.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "VictoriaHand",
+      "mission": false,
+      "name": "Victoria Hand",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_VictoriaHand_c94d3da0.png",
+      "starItems": [
+        {
+          "id": "SHARD_VICTORIAHAND"
+        },
+        {
+          "id": "RS_VICTORIAHAND_1"
+        },
+        {
+          "id": "RS_VICTORIAHAND_2"
+        },
+        {
+          "id": "RS_VICTORIAHAND_3"
+        },
+        {
+          "id": "RS_VICTORIAHAND_4"
+        },
+        {
+          "id": "RS_VICTORIAHAND_5"
+        },
+        {
+          "id": "RS_VICTORIAHAND_6"
+        },
+        {
+          "id": "RS_VICTORIAHAND_7"
+        },
+        {
+          "id": "PD_VICTORIAHAND_1"
+        },
+        {
+          "id": "PD_VICTORIAHAND_2"
+        },
+        {
+          "id": "PD_VICTORIAHAND_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Support",
+          "name": "SUPPORT"
+        },
+        {
+          "id": "Shield",
+          "name": "S.H.I.E.L.D."
+        },
+        {
+          "id": "Thunderbolt",
+          "name": "THUNDERBOLT"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "A synthetic being that avoids enemy attacks and disables his foes.",
@@ -24205,15 +24546,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "b3146e39b3d53c6440c2",
-      "chars": "07e5a7f00bfdb8c90948",
-      "drops": "f868d171f3e84c66c242",
-      "events": "0171b220a63756c5cef5",
-      "locs": "b4fa2ad1baf6d6ba3b7f",
-      "nodes": "219f6b8a7e5a195c757f",
-      "other": "427210a53af92bff04b8"
+      "all": "480b39c74d1e655b6906",
+      "chars": "842453a949850bcaee99",
+      "drops": "825db16682f9c4a893b2",
+      "events": "b77487db72c7032059ad",
+      "locs": "14fc5a90941383387539",
+      "nodes": "26b5a6515d8e46e6ba32",
+      "other": "8aa2e8206f923cffa9bc"
     },
-    "perTotal": 320,
+    "perTotal": 324,
     "version": 1
   }
 }
@@ -25209,13 +25550,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "2e308e1bcad6cd6238d1",
-      "chars": "07e5a7f00bfdb8c90948",
-      "drops": "f868d171f3e84c66c242",
-      "events": "8245dea40908c8201136",
-      "locs": "b4fa2ad1baf6d6ba3b7f",
-      "nodes": "219f6b8a7e5a195c757f",
-      "other": "427210a53af92bff04b8"
+      "all": "480b39c74d1e655b6906",
+      "chars": "842453a949850bcaee99",
+      "drops": "825db16682f9c4a893b2",
+      "events": "b77487db72c7032059ad",
+      "locs": "14fc5a90941383387539",
+      "nodes": "26b5a6515d8e46e6ba32",
+      "other": "8aa2e8206f923cffa9bc"
     },
     "perTotal": 28,
     "version": 1
