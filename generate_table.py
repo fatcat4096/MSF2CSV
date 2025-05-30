@@ -109,6 +109,17 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	if show_reqs and 'META' in table_lbl:
 		table_lbl = table_lbl.replace('META',f'<b>Req: {get_min_reqs(table_format, table, section)}</b>')
 
+	# Replace table_lbl with fancy entry if label includes a char name.
+	for char_name in portraits:
+
+		# If the Section Name starts with a Character, use that toon's image for the background.
+		if table_lbl.startswith(char_name.upper()+':<BR>'):
+			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
+			table_lbl = table_lbl.removeprefix(char_name.upper()+':<BR>').upper().replace(" (","<BR>(").replace('-','&#8209')
+
+			table_lbl = f'<div class="img cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{table_lbl}</div>'
+			break
+
 	# Auto-calc the best value for line wrap length
 	line_wrap = calculate_line_wrap(using_chars)
 
@@ -129,7 +140,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		# WRITE THE IMAGES ROW. #############################################
 		html_file += '    <tr class="%s">\n' % (title_cell) 
-		html_file += '     <td>%s</td>\n' % (table_lbl)
+		html_file += '     <td class="tlbl">%s</td>\n' % (table_lbl)
 
 		# Include Available, Include Position, and Include ISO Class flags
 		# Get value from table_format/table, with defaults if necessary.

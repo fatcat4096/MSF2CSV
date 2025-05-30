@@ -18,6 +18,11 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   font-weight : 700;
   font-size   : 48pt;
 }
+/* Table Label */
+.tlbl {
+  min-width : 130px;
+  max-width : 130px;
+}
 /* Title Black */
 .tblk {
   font-weight : 700;
@@ -121,7 +126,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #B0E0E6;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 /* Name Blue Dim */
 .nblud {
@@ -129,7 +133,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #729195;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 /* Name Alt (LtB) */
 .nalt {
@@ -137,7 +140,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #00BFFF;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 /* Name Alt Dim */
 .naltd {
@@ -145,7 +147,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #007ca5;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 /* Name Gray */
 .ngra {
@@ -153,7 +154,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #DCDCDC;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 /* Name Gray Dim */
 .ngrad {
@@ -161,7 +161,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #8f8f8f;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 /* Name Gray Alt (LtG) */
 .ngalt {
@@ -169,7 +168,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #A9A9A9;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 /* Name Gray Alt Dim */
 .ngaltd {
@@ -177,7 +175,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #6d6d6d;
   white-space : nowrap;
   color       : black;
-  min-width   : 130px;
 }
 .sub {
   font-size   : 12pt;
