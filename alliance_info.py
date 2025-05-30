@@ -744,6 +744,6 @@ def find_cached_and_merge(alliance_info):
 			
 	# Also copy over additional information inside the member definitions. 
 	for member in alliance_info['members']:
-		for key in ['processed_chars','url','other_data','max','arena','blitz','blitz_wins','stars','red','tot_power','last_update','discord','scopely']:
+		for key in ['processed_chars','url','other_data','max','arena','blitz','blitz_wins','stars','red','tot_power','last_update','discord','scopely','auth']:
 			if key in cached_info.get('members',{}).get(member,{}) and key not in alliance_info['members'][member]:
 				alliance_info['members'][member][key] = cached_info['members'][member][key]
