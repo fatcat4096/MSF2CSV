@@ -1291,6 +1291,11 @@ playable   = {
           "id": "Archenemy",
           "isEvent": true,
           "name": "ARCHENEMY"
+        },
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
         }
       ],
       "id": "BaronMordo",
@@ -1357,6 +1362,10 @@ playable   = {
         {
           "id": "DarkHunter",
           "name": "DARK HUNTER"
+        },
+        {
+          "id": "Accursed",
+          "name": "ACCURSED"
         }
       ],
       "unlockStars": 2
@@ -9841,6 +9850,11 @@ playable   = {
           "id": "PoolPals",
           "isEvent": true,
           "name": "POOL PALS"
+        },
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
         }
       ],
       "id": "Juggernaut",
@@ -9909,6 +9923,10 @@ playable   = {
         {
           "id": "Brotherhood",
           "name": "BROTHERHOOD"
+        },
+        {
+          "id": "Accursed",
+          "name": "ACCURSED"
         }
       ],
       "unlockStars": 2
@@ -24546,13 +24564,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "480b39c74d1e655b6906",
-      "chars": "842453a949850bcaee99",
-      "drops": "825db16682f9c4a893b2",
-      "events": "b77487db72c7032059ad",
-      "locs": "14fc5a90941383387539",
-      "nodes": "26b5a6515d8e46e6ba32",
-      "other": "8aa2e8206f923cffa9bc"
+      "all": "058427c8dd4241b914ac",
+      "chars": "3f3862e8c9761b3e00f6",
+      "drops": "e2477f13b1071fccce6d",
+      "events": "71a2e0dbc9ea613db211",
+      "locs": "bce097484eb23b1dc857",
+      "nodes": "265a9e779ef62c3787dd",
+      "other": "c8993e4264109513fe31"
     },
     "perTotal": 324,
     "version": 1
@@ -25460,6 +25478,41 @@ unplayable = {
       "unlockStars": 7
     },
     {
+      "description": "A robot created for the purpose of hunting and exterminating Mutants, the Sentinel summons reinforcements to overwhelm their prey.",
+      "id": "PVE_Sentinel_RogueLike",
+      "mission": false,
+      "name": "Sentinel (Prime)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Sentinel_c523c357.png",
+      "status": "unplayable",
+      "summonIds": [
+        "Sentinel_Sword",
+        "Sentinel_Gun"
+      ],
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        },
+        {
+          "id": "Orchis",
+          "name": "ORCHIS"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
       "id": "PVE_StrangeSupreme_Incursion",
       "invisibleTraits": [
         {
@@ -25550,15 +25603,15 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "480b39c74d1e655b6906",
-      "chars": "842453a949850bcaee99",
-      "drops": "825db16682f9c4a893b2",
-      "events": "b77487db72c7032059ad",
-      "locs": "14fc5a90941383387539",
-      "nodes": "26b5a6515d8e46e6ba32",
-      "other": "8aa2e8206f923cffa9bc"
+      "all": "058427c8dd4241b914ac",
+      "chars": "3f3862e8c9761b3e00f6",
+      "drops": "e2477f13b1071fccce6d",
+      "events": "71a2e0dbc9ea613db211",
+      "locs": "bce097484eb23b1dc857",
+      "nodes": "265a9e779ef62c3787dd",
+      "other": "c8993e4264109513fe31"
     },
-    "perTotal": 28,
+    "perTotal": 29,
     "version": 1
   }
 }

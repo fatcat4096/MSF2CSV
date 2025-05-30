@@ -172,7 +172,8 @@ def generate_html(alliance_info, table, table_format, output=''):
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
 			use_range = table_format.get('use_range','set')
-			html_file += generate_roster_analysis(alliance_info, hist_date=hist_date, html_cache=html_cache, use_range=use_range)
+			inc_prog  = table_format.get('progress', True)
+			html_file += generate_roster_analysis(alliance_info, inc_prog=inc_prog, hist_date=hist_date, html_cache=html_cache, use_range=use_range)
 
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':

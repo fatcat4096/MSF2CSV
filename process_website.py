@@ -45,6 +45,10 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 		if force == 'stale' or (not force and not prompt and fresh_enough(cached_alliance_info)):
 			print ("Using cached_data from file:", cached_alliance_info['file_path'])
 
+			# If forced stale, make no changes.
+			if force == 'stale':
+				return cached_alliance_info
+
 			# Update the strike team info if we have valid teams in strike_teams.py
 			update_strike_teams(cached_alliance_info)
 			return cached_alliance_info

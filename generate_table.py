@@ -298,8 +298,12 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				if team_power_summary:
 					not_completed = not get_summary_comp(alliance_info, player_name, inc_comp)
 					not_ready = not_completed and min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+				# If Strike Teams are in use, this is raid output -- verify all team members are available.
+				elif len(strike_teams)>1:
+					not_ready = any([table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in char_list])
+				# Otherwise, check for Dark Dimension readiness.
 				else:
-					not_ready = num_avail < min_count and len(char_list) >= min_count
+					not_ready = num_avail < min_count and len(char_list) >= min_count 
 
 				# If inline_hist is requested, we will loop through this code twice for each user.
 				# First pass will generate normal output and second one will generate historical data. 

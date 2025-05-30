@@ -14,7 +14,7 @@ from html_shared   import *
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_roster_analysis(alliance_info, using_tabs=False, hist_date=None, html_cache={}, use_range='set'):
+def generate_roster_analysis(alliance_info, inc_prog=True, using_tabs=False, hist_date=None, html_cache={}, use_range='set'):
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -24,8 +24,9 @@ def generate_roster_analysis(alliance_info, using_tabs=False, hist_date=None, ht
 	html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache, use_range=use_range)
 
 	# Add the progressive form in as well. :)
-	html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
-	html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache, use_range=use_range)
+	if inc_prog:
+		html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
+		html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache, use_range=use_range)
 		
 	# Add the historical form in if hist_date is available.
 	if hist_date:
