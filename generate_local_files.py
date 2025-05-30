@@ -21,15 +21,18 @@ except:
 	raise
 
 import inspect
+import importlib
 
 # Create a new strike_teams.py if an outdated one exists.
 def generate_strike_teams(alliance_info):
 
-	strike_teams = alliance_info.setdefault('strike_teams',{})
+	global strike_teams
+
+	new_teams = alliance_info.setdefault('strike_teams',{})
 
 	for raid_type in ('chaos','spotlight'):
 
-		if not strike_teams.get(raid_type):
+		if not new_teams.get(raid_type):
 
 			# If not there, just put the member list in generic groups of 8.
 			print (f"Valid {raid_type} strike_team definition not found. Creating default strike_team from member list.")
@@ -38,7 +41,7 @@ def generate_strike_teams(alliance_info):
 			members = sorted(alliance_info['members'],key=str.lower)
 
 			# Break it up into chunks and add the appropriate dividers.
-			strike_teams[raid_type] = [members[:8], members[8:16], members[16:]]
+			new_teams[raid_type] = [members[:8], members[8:16], members[16:]]
 	
 	# Create header
 	new_file  = '''# This file contains the Strike Teams used for HTML file output.
@@ -54,8 +57,8 @@ strike_teams = {}
 '''
 
 	# Create each strike_team definition
-	new_file += generate_strike_team('chaos',     strike_teams['chaos'],    'Used for Chaos Raid output.')
-	new_file += generate_strike_team('spotlight', strike_teams['spotlight'], 'Used for Spotlight Raids and other output.')
+	new_file += generate_strike_team('chaos',     new_teams['chaos'],    'Used for Chaos Raid output.')
+	new_file += generate_strike_team('spotlight', new_teams['spotlight'], 'Used for Spotlight Raids and other output.')
 
 	# Write it to disk.
 
@@ -63,10 +66,15 @@ strike_teams = {}
 	if 'strike_temp' in globals():
 		write_file(inspect.getfile(strike_temp), new_file)
 
+		importlib.reload(strike_temp)
+		strike_teams = strike_temp.strike_teams
+
 	# Otherwise, just write it into the local path.
 	else:
 		write_file(get_local_path()+'strike_teams.py', new_file)
-		
+		strike_teams = new_teams
+
+
 
 # Take the strike_team variable and create the text for the team definition in strike_teams.py
 def generate_strike_team(type,strike_team,desc):
