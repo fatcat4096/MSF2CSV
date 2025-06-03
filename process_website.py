@@ -77,7 +77,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 		return
 
 	# Verify the fresh and old cached data are the same alliance 
-	# Avoid name collisions and merge data if old info available
+	# Merge data if old info available
 	find_cached_and_merge(alliance_info)
 
 	# Make note of when we begin.

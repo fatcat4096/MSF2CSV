@@ -711,28 +711,13 @@ def is_valid_alliance_id(s):
 
 
 # Verify the fresh and old cached data are the same alliance 
-# Avoid name collisions and merge data if old info available
+# Merge data if old info available
 @timed(level=3)
 def find_cached_and_merge(alliance_info):
 
 	# Look for an existing cached_data file. 
 	cached_info = find_cached_data(alliance_info['name'])
 	
-	# If different members, assume different alliance and use colors in alliance name to differentiate.
-	if cached_info and len(set(alliance_info['members']).intersection(cached_info['members'])) < len(cached_info['members'])*.5:
-
-		# Naming collision. Update name with color if available.
-		if alliance_info.get('color'):
-			print ('Name collision:',alliance_info['name'],alliance_info['name']+f"-{alliance_info.get('color')}")
-			alliance_info['name'] += f"-{alliance_info.get('color')}"
-		else:
-			# SHOULD NOT HAPPEN. Differentiate name with '-alt'
-			print ('Name collision:',alliance_info['name'],alliance_info['name']+'-alt')
-			alliance_info['name'] += f"-alt"
-
-		# See if there's an old cached_data with this filename.
-		cached_info = find_cached_data(alliance_info['name'])
-
 	# Nothing to merge.
 	if not cached_info:
 		return
@@ -741,9 +726,15 @@ def find_cached_and_merge(alliance_info):
 	for key in cached_info:
 		if key not in alliance_info:
 			alliance_info[key] = cached_info[key]
-			
+	
 	# Also copy over additional information inside the member definitions. 
 	for member in alliance_info['members']:
-		for key in ['processed_chars','url','other_data','max','arena','blitz','blitz_wins','stars','red','tot_power','last_update','discord','scopely','auth']:
+		for key in ['processed_chars','other_data','display_name','url','image','max','arena','blitz','blitz_wins','stars','red','tot_power','last_update','discord','auth']:
 			if key in cached_info.get('members',{}).get(member,{}) and key not in alliance_info['members'][member]:
 				alliance_info['members'][member][key] = cached_info['members'][member][key]
+
+	# Explicitly bring over missing 'hist' entries as well. 
+	for key in cached_info.get('hist',{}):
+		if key not in alliance_info.setdefault('hist',{}):
+			alliance_info['hist'][key] = cached_info['hist'][key]
+	
