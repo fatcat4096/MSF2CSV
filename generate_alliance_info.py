@@ -8,6 +8,7 @@ from log_utils import timed
 
 import datetime
 
+from file_io     import remove_tags
 from html_cache  import make_next_table_id
 from html_shared import *
 
@@ -18,9 +19,6 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 
 	html_file = ''
 	
-	# Conditionally include Arena/Blitz columns.
-	ARENA_BLITZ_ENABLED = False
-
 	# Start by sorting members by TCP.
 	alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 	
@@ -47,7 +45,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 
 	html_file += '<tr style="font-size:18px;color:white;">\n'
 	html_file += ' <td colspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
-	html_file += ' <td colspan="%s" class="alliance_name">%s</td>\n' % (8+ 2*ARENA_BLITZ_ENABLED, alliance_info.get('name','').upper())
+	html_file += ' <td colspan="8" class="alliance_name">%s</td>\n' % (remove_tags(alliance_info.get('name','').upper()))
 	
 	html_file += ' <td colspan="2"><div class="lrg_img" style="background-image:url(https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png);">\n' % (alliance_info.get('image','EMBLEM_6_dd63d11b'))
 	html_file += '  <div class="lrg_rel"><img class="lrg_rel" src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></div>\n' % (alliance_info.get('frame','FRAME_15_174f8048'))
@@ -73,15 +71,6 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	html_file += f' <td {sort_func % 5} {w110}>Strongest<br>Team</td>\n'
 	html_file += f' <td {sort_func % 6} {w110}>Total<br>Collected</td>\n'
 	html_file += f' <td {sort_func % 7} {w070}>Max<br>Stars</td>\n'
-
-	# Conditionally include columns.
-	if ARENA_BLITZ_ENABLED:
-		html_file += f' <td {sort_func % 8} {w070}>Arena<br>Rank</td>\n'
-		html_file += f' <td {sort_func % 9} {w070}>Blitz<br>Wins</td>\n'
-
-	# Change the sort routine depending on whether Arena/Blitz columns present
-	sort_func = 'class="%s" onclick="sort(%s+%s,\'%s\',3)"' % ("blub", '%s', ARENA_BLITZ_ENABLED*2, table_id)
-
 	html_file += f' <td {sort_func % 8} {w070}>War<br>MVP</td>\n'
 	html_file += f' <td {sort_func % 9} {w070}>Total<br>Stars</td>\n'
 	html_file += f' <td {sort_func % 10} {w070}>Total<br>Red</td>\n'
@@ -93,12 +82,6 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	tcc_range   = [alliance_info['members'][member].get('tcc',0)   for member in member_list]
 	mvp_range   = [alliance_info['members'][member].get('mvp',0)   for member in member_list]
 	max_range   = [alliance_info['members'][member].get('max',0)   for member in member_list]
-	
-	# Conditionally include columns.
-	if ARENA_BLITZ_ENABLED:
-		arena_range = [alliance_info['members'][member].get('arena',0) for member in member_list]
-		blitz_range = [alliance_info['members'][member].get('blitz',0) for member in member_list]
-	
 	stars_range = [alliance_info['members'][member].get('stars',0) for member in member_list]
 	red_range   = [alliance_info['members'][member].get('red',0)   for member in member_list]
 	
@@ -146,12 +129,6 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stp_range,   member_stats.get('stp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("stp",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcc_range,   member_stats.get('tcc',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("tcc",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(max_range,   member_stats.get('max',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("max",0):,}')
-
-		# Conditionally include columns.
-		if ARENA_BLITZ_ENABLED:
-			html_file += '  <td class="%s">%s</td>\n' % (get_value_color_ext(max(arena_range), min(arena_range), member_stats.get('arena',0), html_cache, stale_data), f'{member_stats.get("arena",0):,}')
-			html_file += '  <td class="%s">%s</td>\n' % (get_value_color(blitz_range, member_stats.get('blitz',0), html_cache, stale_data), f'{member_stats.get("blitz",0):,}')
-			
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(mvp_range,   member_stats.get('mvp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("mvp",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stars_range, member_stats.get('stars',0), html_cache, stale_data, use_range='set'), f'{member_stats.get("stars",0):,}')
 		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(red_range,   member_stats.get('red',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("red",0):,}')
