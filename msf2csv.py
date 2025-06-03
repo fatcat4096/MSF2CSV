@@ -31,8 +31,8 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 	if not alliance_info:
 		return
 
-	# Build a default path and filename. 
-	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'reports' + os.sep + alliance_info['name'] + '-'
+	# Build a default path and filename for writing output
+	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'reports' + os.sep + remove_tags(alliance_info['name']) + '-'
 
 	output         = table_format.get('output')
 	external_table = table_format.get('external_table')

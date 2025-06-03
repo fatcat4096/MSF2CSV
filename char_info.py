@@ -7862,6 +7862,79 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "After being killed by Sabretooth and revived by the demon Bagra-ghul, Daken harnesses the power of the Spirit of Vengeance, exposing his enemies with his piercing attacks.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "Hellverine",
+      "mission": false,
+      "name": "Hellverine",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hellverine_ceeca87c.png",
+      "starItems": [
+        {
+          "id": "SHARD_HELLVERINE"
+        },
+        {
+          "id": "RS_HELLVERINE_1"
+        },
+        {
+          "id": "RS_HELLVERINE_2"
+        },
+        {
+          "id": "RS_HELLVERINE_3"
+        },
+        {
+          "id": "RS_HELLVERINE_4"
+        },
+        {
+          "id": "RS_HELLVERINE_5"
+        },
+        {
+          "id": "RS_HELLVERINE_6"
+        },
+        {
+          "id": "RS_HELLVERINE_7"
+        },
+        {
+          "id": "PD_HELLVERINE_1"
+        },
+        {
+          "id": "PD_HELLVERINE_2"
+        },
+        {
+          "id": "PD_HELLVERINE_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "Accursed",
+          "name": "ACCURSED"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "With the strength of a demigod and the heart of a hero, Hercules charges into the fight using his immense power to control the battlefield.",
       "id": "Hercules",
       "invisibleTraits": [
@@ -17842,6 +17915,79 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Satana, a half-human, half-demon, uses her hell-spawned powers to steal the health of her targets, redistributing it to herself and her allies.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "Satana",
+      "mission": false,
+      "name": "Satana",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Satana_c988b3c2.png",
+      "starItems": [
+        {
+          "id": "SHARD_SATANA"
+        },
+        {
+          "id": "RS_SATANA_1"
+        },
+        {
+          "id": "RS_SATANA_2"
+        },
+        {
+          "id": "RS_SATANA_3"
+        },
+        {
+          "id": "RS_SATANA_4"
+        },
+        {
+          "id": "RS_SATANA_5"
+        },
+        {
+          "id": "RS_SATANA_6"
+        },
+        {
+          "id": "RS_SATANA_7"
+        },
+        {
+          "id": "PD_SATANA_1"
+        },
+        {
+          "id": "PD_SATANA_2"
+        },
+        {
+          "id": "PD_SATANA_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Support",
+          "name": "SUPPORT"
+        },
+        {
+          "id": "Accursed",
+          "name": "ACCURSED"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "Scarlet Spider, a clone of Peter Parker that goes by Ben Reilly, uses his spider powers to debilitate enemies and strip them of their defenses.",
       "eventTraits": [
         {
@@ -21787,6 +21933,79 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Parker Robbins dons a demonic cloak and boots, becoming The Hood, whose magical bullets prevent his heroic enemies from using their abilities and gaining positive status effects.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "TheHood",
+      "mission": false,
+      "name": "The Hood",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_TheHood_dfeee4ba.png",
+      "starItems": [
+        {
+          "id": "SHARD_THEHOOD"
+        },
+        {
+          "id": "RS_THEHOOD_1"
+        },
+        {
+          "id": "RS_THEHOOD_2"
+        },
+        {
+          "id": "RS_THEHOOD_3"
+        },
+        {
+          "id": "RS_THEHOOD_4"
+        },
+        {
+          "id": "RS_THEHOOD_5"
+        },
+        {
+          "id": "RS_THEHOOD_6"
+        },
+        {
+          "id": "RS_THEHOOD_7"
+        },
+        {
+          "id": "PD_THEHOOD_1"
+        },
+        {
+          "id": "PD_THEHOOD_2"
+        },
+        {
+          "id": "PD_THEHOOD_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Accursed",
+          "name": "ACCURSED"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "After being exposed to gamma radiation, Samuel Sterns became a hyper-intelligent mastermind who exploits enemy weaknesses and empowers his nefarious allies.",
       "id": "TheLeader",
       "invisibleTraits": [
@@ -24564,15 +24783,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "058427c8dd4241b914ac",
-      "chars": "3f3862e8c9761b3e00f6",
-      "drops": "e2477f13b1071fccce6d",
-      "events": "71a2e0dbc9ea613db211",
-      "locs": "bce097484eb23b1dc857",
-      "nodes": "265a9e779ef62c3787dd",
-      "other": "c8993e4264109513fe31"
+      "all": "e02e52c15920434b5548",
+      "chars": "4d6e7dc389d51c227697",
+      "drops": "fe1ca422f8b67b5f9792",
+      "events": "e3d04ada963a9e8bac55",
+      "locs": "031ad045f49922184714",
+      "nodes": "0d6cd0f8bab6ef22b666",
+      "other": "c997d8a455203c77670a"
     },
-    "perTotal": 324,
+    "perTotal": 327,
     "version": 1
   }
 }
@@ -25603,13 +25822,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "058427c8dd4241b914ac",
-      "chars": "3f3862e8c9761b3e00f6",
-      "drops": "e2477f13b1071fccce6d",
-      "events": "71a2e0dbc9ea613db211",
-      "locs": "bce097484eb23b1dc857",
-      "nodes": "265a9e779ef62c3787dd",
-      "other": "c8993e4264109513fe31"
+      "all": "770da9cb860db3e62267",
+      "chars": "4d6e7dc389d51c227697",
+      "drops": "fe1ca422f8b67b5f9792",
+      "events": "cc6e37d970fa91c29091",
+      "locs": "031ad045f49922184714",
+      "nodes": "0d6cd0f8bab6ef22b666",
+      "other": "c997d8a455203c77670a"
     },
     "perTotal": 29,
     "version": 1

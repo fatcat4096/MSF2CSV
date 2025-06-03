@@ -132,10 +132,10 @@ def parse_alliance_api(alliance_data, alliance_members):
 	alliance = {}
 
 	# Used for file naming
-	alliance['name'] = remove_tags(alliance_data['name']).strip()
+	alliance['name'] = alliance_data['name']
 
-	# Used for display in reports
-	alliance['display_name'] = alliance_data['name'] # Needs additional processing to add <span> and color=tags.
+	# Used for display in reports -- this is the clean version for reports.
+	alliance['display_name'] = remove_tags(alliance_data['name'])
 
 	# Used to discriminate if multiple alliances have same base filename					# Need a complete rewrite, possibly along with the above.
 	#alliance['color'] = ''.join([x[6:] for x in driver.alliance_html.split('"') if x.startswith('color:')])

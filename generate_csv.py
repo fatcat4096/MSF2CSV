@@ -21,32 +21,6 @@ def generate_csv(alliance_info, format='old'):
 	keys1 = ['lvl','power','yel','red+dmd','tier']
 	keys2 = ['iso','iso','iso','iso','iso','iso']
 	
-	"""csv_file_new = ['Name,Character Id,Level,Power,Stars,Red Stars,Gear Tier,Basic,Special,Ultimate,Passive,ISO Class,ISO Matrix,Striker,Fortifier,Healer,Raider,Skirmisher,ISO Health,ISO Damage,ISO Armor,ISO Focus,ISO Resist']
-
-	player_list = get_player_list(alliance_info)
-	char_list   = get_cached('char_list')
-
-	alliance_name = alliance_info['name']
-
-	for player_name in player_list:
-		processed_chars = member_info[player_name].get('processed_chars',{})
-		other_data      = member_info[player_name].get('other_data',{})
-
-		# Only include entries for recruited characters.
-		for char_name in char_list:
-			if processed_chars.get(char_name,{}).get('lvl'):
-				iso_class = ['','Fortifier','Healer','Skirmisher','Raider','Striker'][other_data.get(char_name,0)%6]
-				favorite  = ['false','true'][int(other_data.get(char_name,0)/6)]
-				
-				bas,abil = divmod(processed_chars[char_name]['abil'],1000)
-				spc,abil = divmod(abil,100)
-				ult,pas  = divmod(abil,10)
-				abil_stats = [str(abil) for abil in [bas, spc, ult, pas]]
-
-				csv_file.append(','.join([player_name, char_name] + [str(processed_chars[char_name][key]) for key in keys1] + abil_stats + [iso_class] + [str(processed_chars[char_name][key]) for key in keys2]))
-
-	return '\n'.join(csv_file)"""
-
 	csv_file = ['Name,AllianceName,CharacterId,Favorite,Level,Power,Stars,RedStar,GearLevel,Basic,Special,Ultimate,Passive,ISO Class,ISO Level,ISO Armor,ISO Damage,ISO Focus,ISO Health,ISO Resist']
 	
 	player_list = get_player_list(alliance_info)
