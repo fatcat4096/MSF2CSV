@@ -13,6 +13,7 @@ import re
 import pickle
 import importlib
 import copy
+import glob
 
 try:	import strike_teams as strike_temp
 except:	pass
@@ -73,8 +74,8 @@ def write_file(pathname, file_content, print_path=True):
 
 	for filename in file_content:
 
-		# Get the actual path and filename
-		path,file = os.path.split(pathname+filename)
+		# Get the actual path and filename (sanitize this path)
+		path,file = os.path.split(remove_tags(pathname+filename))
 
 		if print_path:
 			print (f"Writing {os.path.join(path,file)}")
@@ -159,47 +160,8 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 
 
 
-
 @timed(level=3)
-def load_cached_data(file_or_alliance=''):
-	cached_data = {}
-
-	# Remove any HTML tags in the provided input
-	file_or_alliance = remove_tags(file_or_alliance)
-
-	# Safely encode filename before file I/O
-	#file_or_alliance = encode_tags(file_or_alliance)
-
-	# If the provided filename wasn't a valid file, let's go looking for it.
-	if not os.path.exists(file_or_alliance):
-		local_path = get_local_path()
-
-		# If Alliance Name was passed in, fix it.
-		if '.msf' not in file_or_alliance:
-			file_or_alliance = 'cached_data-'+file_or_alliance+'.msf'
-
-		# Look in local directory.
-		if os.path.exists(local_path + file_or_alliance):
-			file_or_alliance = local_path + file_or_alliance
-	
-		# If a cached_data directory exists, search it.
-		elif os.path.exists(local_path + 'cached_data') and os.path.exists(local_path + 'cached_data' + os.sep + file_or_alliance):
-			file_or_alliance = local_path + 'cached_data' + os.sep + file_or_alliance
-
-	# If a file was found, load it.
-	if os.path.exists(file_or_alliance):
-		cached_data = pickle.load(open(file_or_alliance,'rb'))
-
-		# Stash the path away inside alliance_info for later use. 
-		if type(cached_data) is dict:
-			cached_data['file_path'] = os.path.realpath(file_or_alliance)
-
-	return cached_data
-
-
-
-@timed(level=3)
-def write_cached_data(alliance_info, file_path='', timestamp='update', filename=''):
+def write_cached_data(alliance_info, file_path='', timestamp='update', filename='', encode=True):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
 	if not file_path:
@@ -219,9 +181,12 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	if not os.path.exists(file_path):
 		os.makedirs(file_path)
 
-	# Construct the file name
-	file_path += os.sep + 'cached_data-' + (filename or alliance_info['name']) + '.msf'
-	#file_path += os.sep + 'cached_data-' + encode_tags(filename or alliance_info['name']) + '.msf'
+	# Construct the file name and encode if invalid characters are included.
+	file_name = filename or alliance_info.get('name')
+	if encode:
+		file_name = encode_tags(file_name)
+		
+	file_path += os.sep + 'cached_data-' + file_name + '.msf'
 	
 	# If we don't want to indicate this file has changed, save the current timestamp.
 	if timestamp != 'update':
@@ -317,38 +282,48 @@ def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
 
-	# Remove any HTML tags in the provided input
-	file_or_alliance = remove_tags(file_or_alliance)
-	
-	# Safely encode filename before file I/O
-	#file_or_alliance = encode_tags(file_or_alliance)
-	
-	# If a valid MSF filename passed in, use it as the only entry in file_list.
-	if file_or_alliance[-4:] == ('.msf') and os.path.isfile(file_or_alliance):
-		file_list = [file_or_alliance]
+	# Something was passed in:
+	if file_or_alliance:
 
-	# If an Alliance name was specified, look for that specific Alliance name.
-	elif file_or_alliance:
-		check_import_path(file_or_alliance)
-		file_name = 'cached_data-'+file_or_alliance+'.msf'
-		file_list = [file_name] if os.path.isfile(file_name) else []
-	# Just look at the local directory for any file matching our naming format.
-	else:
-		file_list = [file for file in os.listdir(get_local_path()) if os.path.isfile(file) and file.startswith('cached_data-') and file.endswith('.msf')]
+		# Check the local directory for something named exactly this
+		path, file = os.path.split(file_or_alliance)
 
-	# If alliance_name provided but didn't find a conclusive result, go deeper 
-	if len(file_list) != 1 and file_or_alliance:
-
-		# Search 1) a folder named `alliance_name` and 2) the cached_data directory, if either exists.
-		for file_path in [get_local_path()+file_or_alliance+os.sep, get_local_path()+'cached_data'+os.sep]:
-			if os.path.isdir(file_path) and os.path.isfile(file_path+file_name):
-				file_list = [file_path+file_name]
+		for file_list in [glob.glob(os.path.join(path,file)),
+						  glob.glob(os.path.join(path,encode_tags(file)))]:
+			if len(file_list) == 1:
 				break
-	
-	# If a single MSF file was found, use it, otherwise search was inconclusive.
-	if len(file_list) == 1:
-		alliance_info = load_cached_data(file_list[0])
 		
+		# Check local directories and deeper
+		if len(file_list) != 1:
+		
+			# Look in local directory, subdirectory named for alliance, and cached_data directory
+			for local_path in [get_local_path(), get_local_path()+os.sep+file_or_alliance, get_local_path()+os.sep+'cached_data']:
+
+				# Look for name with encoding, without encoding, and do a reverse search ignoring tags and encoding
+				for file_list in [glob.glob(os.path.join(local_path,f'cached_data-{file_or_alliance}.msf')),
+								  glob.glob(os.path.join(local_path,f'cached_data-{encode_tags(file_or_alliance)}.msf')),
+								  [x for x in glob.iglob(os.path.join(local_path,f'cached_data-*.msf')) if remove_tags(recode_tags(x)).lower().endswith(f'{os.sep}cached_data-{file_or_alliance}.msf')]]:
+					if len(file_list) == 1:
+						break
+				if len(file_list) == 1:
+					break
+
+	# No value passed in, check local directory for single cached_data.msf file
+	else:
+		file_list = glob.glob(os.path.join(get_local_path,'cached_data-*.msf'))
+
+	# If a single MSF file was found, use it, otherwise search was ambiguous.
+	if len(file_list) == 1:
+		alliance_info = pickle.load(open(file_list[0],'rb'))
+
+		# Stash the path away inside alliance_info for later use. 
+		if type(alliance_info) is dict:
+			alliance_info['file_path'] = os.path.realpath(file_list[0])
+		
+		# Update file paths if we're using entry from a subdirectory named for alliance
+		if f'{os.sep+file_or_alliance+os.sep}' in file_list[0]:
+			check_import_path(file_or_alliance)
+
 	return alliance_info
 
 
