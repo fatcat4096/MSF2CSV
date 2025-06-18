@@ -26,9 +26,9 @@ strike_teams["chaos"] = [
 	"Fany",
 	"FatCat",
 	"Shika",
-	"Amatërass",
-	"Grednas",
+	"Shammy",
 	"RadicalEvil",
+	"Grednas",
 	"BigDiesel",
 ],
 [### Strike team 3 ###]
@@ -59,9 +59,9 @@ strike_teams["spotlight"] = [
 	"Fany",
 	"FatCat",
 	"Shika",
-	"Amatërass",
-	"Grednas",
+	"Shammy",
 	"RadicalEvil",
+	"Grednas",
 	"BigDiesel",
 ],
 [### Strike team 3 ###]

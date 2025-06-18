@@ -54,6 +54,12 @@ def generate_html(alliance_info, table, table_format, output=''):
 		only_image   = table_format.get('only_image',False)
 		sections_per = table_format.get('sections_per',0)
 
+		# Integrate Custom Teams in Table output if all entries requested
+		if table_name == 'Teams' and not only_section:
+			custom_teams = alliance_info.get('custom_teams',{})
+			custom_teams = [{'label':entry,'meta':custom_teams[entry]} for entry in custom_teams]
+			lanes[0] = sorted(lanes[0]+custom_teams, key=lambda x: x.get('label','').lower() or x.get('traits')[0].lower())
+
 		# Alter format to only process a specific lane if requested.
 		if only_lane and only_lane in range(1,len(lanes)+1):
 			lanes = [lanes[only_lane-1]]

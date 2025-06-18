@@ -2188,6 +2188,13 @@ playable   = {
     },
     {
       "description": "Named \"The Daywalker\" by the vampires he hunts and exterminates, Blade uses his martial arts mastery and half-vampire powers to make sure no one suffers at the hands of the undead ever again.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Blade",
       "mission": false,
       "name": "Blade",
@@ -3028,6 +3035,13 @@ playable   = {
     },
     {
       "description": "A living conduit to the Darkforce Dimension, Cloak drains the health and offensive power of vulnerable enemies.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Cloak",
       "mission": false,
       "name": "Cloak",
@@ -4421,6 +4435,13 @@ playable   = {
     },
     {
       "description": "A soldier reanimated with cybernetic technology, Deathlok eviscerates the enemy team with debilitating blasts and boosts Bionic Avenger allies.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Deathlok",
       "invisibleTraits": [
         {
@@ -5666,6 +5687,13 @@ playable   = {
     },
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Falcon",
       "invisibleTraits": [
         {
@@ -9194,6 +9222,11 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Ironheart",
@@ -10374,6 +10407,11 @@ playable   = {
           "id": "Archenemy",
           "isEvent": true,
           "name": "ARCHENEMY"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Killmonger",
@@ -11682,6 +11720,11 @@ playable   = {
           "id": "Couples",
           "isEvent": true,
           "name": "COUPLES"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "LukeCage",
@@ -12799,6 +12842,13 @@ playable   = {
     },
     {
       "description": "Misty Knight is the tough-as-nails leader of the Heroes for Hire who uses her cybernetic arm to break through her enemies' defenses.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "MistyKnight",
       "invisibleTraits": [
         {
@@ -14312,6 +14362,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "NickFury",
@@ -15523,6 +15578,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Patriot",
@@ -15912,6 +15972,11 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Photon",
@@ -17772,6 +17837,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "SamWilson",
@@ -20782,6 +20852,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Storm",
@@ -23567,6 +23642,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "WarMachine",
@@ -24783,13 +24863,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "e02e52c15920434b5548",
-      "chars": "4d6e7dc389d51c227697",
-      "drops": "fe1ca422f8b67b5f9792",
-      "events": "e3d04ada963a9e8bac55",
-      "locs": "031ad045f49922184714",
-      "nodes": "0d6cd0f8bab6ef22b666",
-      "other": "c997d8a455203c77670a"
+      "all": "4bea9a6062675e029db4",
+      "chars": "989f396a6c382dc222bc",
+      "drops": "dcf05b8b5736ee5afdd4",
+      "events": "ab246ec51037a6285d33",
+      "locs": "dfae1fff330995920442",
+      "nodes": "37c34ef112b8ca7a2bc3",
+      "other": "827437d0fd1b55477670"
     },
     "perTotal": 327,
     "version": 1
@@ -25822,13 +25902,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "770da9cb860db3e62267",
-      "chars": "4d6e7dc389d51c227697",
-      "drops": "fe1ca422f8b67b5f9792",
-      "events": "cc6e37d970fa91c29091",
-      "locs": "031ad045f49922184714",
-      "nodes": "0d6cd0f8bab6ef22b666",
-      "other": "c997d8a455203c77670a"
+      "all": "4bea9a6062675e029db4",
+      "chars": "989f396a6c382dc222bc",
+      "drops": "dcf05b8b5736ee5afdd4",
+      "events": "ab246ec51037a6285d33",
+      "locs": "dfae1fff330995920442",
+      "nodes": "37c34ef112b8ca7a2bc3",
+      "other": "827437d0fd1b55477670"
     },
     "perTotal": 29,
     "version": 1

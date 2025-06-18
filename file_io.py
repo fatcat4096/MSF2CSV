@@ -35,7 +35,7 @@ def encode_tags(filename):
 
 
 # Translate filename from encoded form to readable.
-def recode_tags(filename):
+def decode_tags(filename):
 	return unquote(filename)
 
 
@@ -282,6 +282,10 @@ def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
 
+	# Short circuit for bad data
+	if type(file_or_alliance) is not str:
+		return alliance_info
+
 	# Something was passed in:
 	if file_or_alliance:
 
@@ -302,7 +306,7 @@ def find_cached_data(file_or_alliance=''):
 				# Look for name with encoding, without encoding, and do a reverse search ignoring tags and encoding
 				for file_list in [glob.glob(os.path.join(local_path,f'cached_data-{file_or_alliance}.msf')),
 								  glob.glob(os.path.join(local_path,f'cached_data-{encode_tags(file_or_alliance)}.msf')),
-								  [x for x in glob.iglob(os.path.join(local_path,f'cached_data-*.msf')) if remove_tags(recode_tags(x)).lower().endswith(f'{os.sep}cached_data-{file_or_alliance}.msf')]]:
+								  [x for x in glob.iglob(os.path.join(local_path,f'cached_data-*.msf')) if remove_tags(decode_tags(x)).lower().endswith(f'{os.sep}cached_data-{file_or_alliance}.msf')]]:
 					if len(file_list) == 1:
 						break
 				if len(file_list) == 1:
