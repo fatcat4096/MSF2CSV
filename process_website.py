@@ -30,7 +30,7 @@ from file_io              import *
 from login                import get_driver, login
 from alliance_info        import *
 from cached_info          import get_cached, set_cached
-from msfgg_api            import *
+from msf_api              import *
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
 @timed(level=3)
