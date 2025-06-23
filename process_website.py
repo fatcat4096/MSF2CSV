@@ -58,6 +58,11 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 			alliance_name = cached_alliance_info['name']
 			print (f"Defaulting to alliance from cached_data: {alliance_name}")
 
+	# Didn't find a cached data file, but requested stale
+	elif force == 'stale':
+		print (f'No cached_data found for {alliance_name}. Aborting.')
+		return
+
 	# Start by logging into the website.
 	driver = login(prompt, headless, scopely_login=scopely_login)
 
