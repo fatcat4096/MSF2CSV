@@ -30,9 +30,6 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	member_list += [member for member in alliance_order if member in alliance_info.get('captains',[])]
 	member_list += [member for member in alliance_order if member not in member_list]
 
-	tot_power = sum([alliance_info['members'][member].get('tcp',0) for member in alliance_info['members']])
-	avg_power = int(tot_power/len(alliance_info['members']))
-
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
 		html_file += '<div id="AllianceInfo" class="tcon">\n'
@@ -47,6 +44,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	html_file += ' <td colspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
 	html_file += ' <td colspan="8" class="alliance_name">%s</td>\n' % (remove_tags(alliance_info.get('name','').upper()))
 	
+	# Frame and Image for Alliance
 	html_file += ' <td colspan="2"><div class="lrg_img" style="background-image:url(https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png);">\n' % (alliance_info.get('image','EMBLEM_6_dd63d11b'))
 	html_file += '  <div class="lrg_rel"><img class="lrg_rel" src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></div>\n' % (alliance_info.get('frame','FRAME_15_174f8048'))
 	html_file += ' </div></td>\n'
@@ -77,6 +75,7 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	html_file += f' <td {sort_func % 11} {w215}>Last Updated:</td>\n'
 	html_file += '</tr>\n'
 	
+	# Find ranges to use for color calculations
 	tcp_range   = [alliance_info['members'][member].get('tcp',0)   for member in member_list]
 	stp_range   = [alliance_info['members'][member].get('stp',0)   for member in member_list]
 	tcc_range   = [alliance_info['members'][member].get('tcc',0)   for member in member_list]
@@ -84,12 +83,25 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	max_range   = [alliance_info['members'][member].get('max',0)   for member in member_list]
 	stars_range = [alliance_info['members'][member].get('stars',0) for member in member_list]
 	red_range   = [alliance_info['members'][member].get('red',0)   for member in member_list]
-	
-	for member in member_list:
-		# Get a little closer to what we're working with.
-		member_stats = alliance_info['members'][member]
 
-		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
+	for member in member_list:
+	
+		# Get a little closer to what we're working with
+		member_stats = alliance_info['members'][member]
+		hist_stats   = alliance_info['hist'][hist_date][member] if hist_date else {}
+
+		# Calculate stats if we're working with Historical Data
+		hist_calcs = {}
+		if hist_stats:
+			hist_calcs['tcp']   = sum([hist_stats[char]['power'] for char in hist_stats])
+			hist_calcs['level'] = max([hist_stats[char_name].get('lvl',0) for char_name in hist_stats])
+			hist_calcs['stp']   = sum(sorted([hist_stats[member]['power'] for member in hist_stats], reverse=True)[:5])
+			hist_calcs['tcc']   = len([char for char in hist_stats if hist_stats[char]['power']])
+			hist_calcs['max']   = len([char for char in hist_stats if hist_stats[char]['yel']==7])
+			hist_calcs['stars'] = sum([hist_stats[char]['yel'] for char in hist_stats])
+			hist_calcs['red']   = sum([hist_stats[char]['red'] for char in hist_stats])			
+
+		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output
 		stale_data = member_stats['is_stale']
 		
 		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
@@ -102,50 +114,75 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 		else:
 			member_role = 'Member'
 
-		html_file += ' <tr style="background:%s; font-size:22px;">\n' % (member_color)
-		html_file += '  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url(https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_%s.png);">\n' % (member_stats.get('frame','0_ab6f69b8'))
-		html_file += '   <div class="sml_rel"><img height="45" class="sml_rel" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt=""/></div>\n' % (member_stats.get('image','ShieldDmg_Defense_3dea00f7'))
-		html_file += '  </div></td>\n'
-
 		member_url = ''
 		if member_stats.get('avail'):
 			member_url = f' href="https://marvelstrikeforce.com/en/member/{member_stats.get("url")}/characters" target="_blank"'
 
-		# If hist_date was requested, add date under the name field.
-		second_line = ''
-		# If no hist_date, see if we have a discord name to include.
+		member_name = member_stats.get('display_name',member)
+
+		# Do we need a second line for the Name cell?
+		name_second = ''
+		lvl_second = ''
+
+		# If no hist_date, see if we have a discord name to include
 		if member_stats.get('discord'):
-			second_line = f'<br><span style="font-size:16px">@{member_stats.get("discord",{}).get("name","")}</span>'
+			name_second = f'<br><span class="sub">@{member_stats.get("discord",{}).get("name","")}</span>'
+		# If hist_date was requested, add date under the name field
+		elif hist_date:
+			name_second = f'<br><span class="sub">(since {hist_date.strftime("%m/%d/%y")})</span>'
+
+		# Do we need a second line for the Level cell?
+		lvl_second = ''
+
+		# Calculations for previous level
+		curr_lvl = member_stats.get('level')
+		hist_lvl = hist_calcs.get('level')
+
+		# If hist_date was requested and level has changed, add under the level field
+		if curr_lvl and hist_lvl and curr_lvl != hist_lvl:
+			lvl_second = f'<br><span class="sub">({curr_lvl-hist_lvl:+,})</span>'
 
 		#
-		# Can we wrap this STYLE inside of the class? 
+		# STARTING THE TABLE ROWS
 		#
 
-		html_file += '  <td class="urlb"><a style="text-decoration:none; color:black;"%s><span class="bd">%s</span>%s</a></td>\n' % (member_url, member_stats.get('display_name',member), second_line)
+		html_file += f' <tr style="background:{member_color}; font-size:22px; line-height:100%; vertical-align:middle;">\n'
 
-		html_file += '  <td>%s</td>\n' % (member_stats.get('level','n/a'))
-		html_file += '  <td>%s</td>\n' % (member_role)
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcp_range,   member_stats.get('tcp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("tcp",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stp_range,   member_stats.get('stp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("stp",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(tcc_range,   member_stats.get('tcc',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("tcc",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(max_range,   member_stats.get('max',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("max",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(mvp_range,   member_stats.get('mvp',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("mvp",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(stars_range, member_stats.get('stars',0), html_cache, stale_data, use_range='set'), f'{member_stats.get("stars",0):,}')
-		html_file += '  <td class="%s">%s</td>\n' % (get_value_color(red_range,   member_stats.get('red',0),   html_cache, stale_data, use_range='set'), f'{member_stats.get("red",0):,}')
+		# Frame and Image
+		html_file += '  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url(https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_%s.png);">\n' % (member_stats.get('frame','0_ab6f69b8'))
+		html_file += '   <div class="sml_rel"><img height="45" class="sml_rel" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt=""/></div>\n' % (member_stats.get('image','ShieldDmg_Defense_3dea00f7'))
+		html_file += '  </div></td>\n'
 
+		# Name Field
+		html_file += f'  <td class="urlb"><a class="urlb"{member_url}><span class="bd">{member_name}</span>{name_second}</a></td>\n'
+
+		# Level and Member Role
+		html_file += f'  <td>{curr_lvl or "n/a"}{lvl_second}</td>\n'
+		html_file += f'  <td>{member_role}</td>\n'
+
+		# Member Stats
+		html_file += alliance_info_cell(tcp_range,   'tcp',   member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(stp_range,   'stp',   member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(tcc_range,   'tcc',   member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(max_range,   'max',   member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(mvp_range,   'mvp',   member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(stars_range, 'stars', member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(red_range,   'red',   member_stats, hist_calcs, html_cache, stale_data)
+
+		# Last Update formatting
 		if 'last_update' in member_stats:
 			last_update = datetime.datetime.now() - member_stats['last_update']
 			time_color  = get_value_color_ext(4*86400, 0, last_update.total_seconds(), html_cache, stale_data)
 			
 			if stale_data:
-				time_value = f'<b><i> {("Stale. Re-sync.","EMPTY. Please Sync.")[not member_stats.get("tot_power")]} </i></b><br>%s, %sd ago' % (member_stats['last_update'].strftime('%b %d'), last_update.days)
+				time_value = f'<b><i> {("Stale. Re-sync.","EMPTY. Please Sync.")[not member_stats.get("tot_power")]} </i></b><br>%s, {last_update.days}d ago' % (member_stats['last_update'].strftime('%b %d'), )
 			else:
 				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
 		else:
 			time_color = get_value_color_ext(0, 1, 0, html_cache)
 			time_value = 'ROSTER NOT SHARED<br><i>Set to <b>ALLIANCE ONLY</b></i>'
 		
-		html_file += '  <td class="%s" style="font-size:18px;white-space:nowrap">%s</td>\n' % (time_color, time_value)
+		html_file += f'  <td class="{time_color}" style="font-size:18px;white-space:nowrap">{time_value}</td>\n'
 		html_file += ' </tr>\n'
 
 	html_file += '</table>\n'
@@ -155,3 +192,18 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 		html_file += '</div>\n'
 
 	return html_file
+
+
+
+def alliance_info_cell(value_range, key, member_stats, hist_calcs, html_cache, stale_data):
+	
+	# Calculate the Difference if we need a second line
+	curr_value = member_stats.get(key,0)
+	hist_value = hist_calcs.get(key,0)
+	diff_value = f'<br><span class="sub"><i>({curr_value-hist_value:+,})</i></span>' if hist_value else '' 
+	
+	# Determine field color
+	field_color = get_value_color(value_range, curr_value, html_cache, stale_data, use_range='set')
+
+	# Return the completed cell
+	return f'  <td class="{field_color}">{curr_value:,}{diff_value}</td>\n'

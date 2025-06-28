@@ -12,7 +12,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 /* Styles for table cells */
 .bd {
   font-weight : bold;
-  color       : black;
 }
 .alliance_name {
   font-weight : 700;
@@ -104,8 +103,12 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   cursor      : pointer;  
 }
 /* URL Button */
+.urlb {
+  text-decoration:none;
+  color:black;
+}
 .urlb:hover {
-  font-weight : 900;  
+  color:darkblue;  
 }
 /* Header Gray */
 .hgra {
@@ -179,10 +182,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 .sub {
   font-size   : 12pt;
   font-weight : normal;
-}
-.SUB {
-  font-size   : 12pt;
-  font-weight : normal;
+  font-style  : italic;
 }
 .img {
   background  : #202020;

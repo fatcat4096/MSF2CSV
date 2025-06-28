@@ -2188,13 +2188,6 @@ playable   = {
     },
     {
       "description": "Named \"The Daywalker\" by the vampires he hunts and exterminates, Blade uses his martial arts mastery and half-vampire powers to make sure no one suffers at the hands of the undead ever again.",
-      "eventTraits": [
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
-        }
-      ],
       "id": "Blade",
       "mission": false,
       "name": "Blade",
@@ -3035,13 +3028,6 @@ playable   = {
     },
     {
       "description": "A living conduit to the Darkforce Dimension, Cloak drains the health and offensive power of vulnerable enemies.",
-      "eventTraits": [
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
-        }
-      ],
       "id": "Cloak",
       "mission": false,
       "name": "Cloak",
@@ -4435,13 +4421,6 @@ playable   = {
     },
     {
       "description": "A soldier reanimated with cybernetic technology, Deathlok eviscerates the enemy team with debilitating blasts and boosts Bionic Avenger allies.",
-      "eventTraits": [
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
-        }
-      ],
       "id": "Deathlok",
       "invisibleTraits": [
         {
@@ -5687,13 +5666,6 @@ playable   = {
     },
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
-      "eventTraits": [
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
-        }
-      ],
       "id": "Falcon",
       "invisibleTraits": [
         {
@@ -8335,6 +8307,13 @@ playable   = {
     },
     {
       "description": "A hotheaded Blaster, the Human Torch burns his enemies and boosts his allies' offense.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
       "id": "HumanTorch",
       "mission": false,
       "name": "Human Torch",
@@ -9222,11 +9201,6 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "Ironheart",
@@ -10407,11 +10381,6 @@ playable   = {
           "id": "Archenemy",
           "isEvent": true,
           "name": "ARCHENEMY"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "Killmonger",
@@ -11720,11 +11689,6 @@ playable   = {
           "id": "Couples",
           "isEvent": true,
           "name": "COUPLES"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "LukeCage",
@@ -12842,13 +12806,6 @@ playable   = {
     },
     {
       "description": "Misty Knight is the tough-as-nails leader of the Heroes for Hire who uses her cybernetic arm to break through her enemies' defenses.",
-      "eventTraits": [
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
-        }
-      ],
       "id": "MistyKnight",
       "invisibleTraits": [
         {
@@ -14362,11 +14319,6 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "NickFury",
@@ -15578,11 +15530,6 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "Patriot",
@@ -15972,11 +15919,6 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "Photon",
@@ -17837,11 +17779,6 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "SamWilson",
@@ -20852,11 +20789,6 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "Storm",
@@ -22158,6 +22090,13 @@ playable   = {
     },
     {
       "description": "The Thing is a rocky Brawler who deals massive damage to single targets.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
       "id": "Thing",
       "invisibleTraits": [
         {
@@ -23642,11 +23581,6 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
-        },
-        {
-          "id": "Juneteenth",
-          "isEvent": true,
-          "name": "JUNETEENTH"
         }
       ],
       "id": "WarMachine",
@@ -24863,13 +24797,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "7b9505278fe6594aeca2",
-      "chars": "8495f9332e8155d135f8",
-      "drops": "5549a7a34866ad9ff2a7",
-      "events": "170f7fffb99682d04570",
-      "locs": "e9bb2536172aa8a34fa7",
-      "nodes": "78882af4bd55cafefa6b",
-      "other": "4b2ed86c9358f85cbfc6"
+      "all": "9202b366347a90c76ad7",
+      "chars": "593668eb7773a028d2ce",
+      "drops": "71c3f91e331bcda29e54",
+      "events": "88b58478188dd296090d",
+      "locs": "7b0abf539fc082d74970",
+      "nodes": "c4f2ad309c33e88aed86",
+      "other": "08b65cd89d9297a328a7"
     },
     "perTotal": 327,
     "version": 1
@@ -25902,13 +25836,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "7b9505278fe6594aeca2",
-      "chars": "8495f9332e8155d135f8",
-      "drops": "5549a7a34866ad9ff2a7",
-      "events": "170f7fffb99682d04570",
-      "locs": "e9bb2536172aa8a34fa7",
-      "nodes": "78882af4bd55cafefa6b",
-      "other": "4b2ed86c9358f85cbfc6"
+      "all": "9202b366347a90c76ad7",
+      "chars": "593668eb7773a028d2ce",
+      "drops": "71c3f91e331bcda29e54",
+      "events": "88b58478188dd296090d",
+      "locs": "7b0abf539fc082d74970",
+      "nodes": "c4f2ad309c33e88aed86",
+      "other": "08b65cd89d9297a328a7"
     },
     "perTotal": 29,
     "version": 1
