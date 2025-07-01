@@ -6042,6 +6042,85 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "The son of Reed Richards and Sue Storm, Franklin uses his abilities to speed up his allies, locks the battlefield to suppress enemy strategies, and hinders his enemies with negative status buffs that shut down their ability to influence the fight.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "FranklinRichards",
+      "invisibleTraits": [
+        {
+          "id": "FantasticFour",
+          "name": "FANTASTIC FOUR"
+        }
+      ],
+      "mission": false,
+      "name": "Franklin Richards",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_FranklinRichards_658b845f.png",
+      "starItems": [
+        {
+          "id": "SHARD_FRANKLINRICHARDS"
+        },
+        {
+          "id": "RS_FRANKLINRICHARDS_1"
+        },
+        {
+          "id": "RS_FRANKLINRICHARDS_2"
+        },
+        {
+          "id": "RS_FRANKLINRICHARDS_3"
+        },
+        {
+          "id": "RS_FRANKLINRICHARDS_4"
+        },
+        {
+          "id": "RS_FRANKLINRICHARDS_5"
+        },
+        {
+          "id": "RS_FRANKLINRICHARDS_6"
+        },
+        {
+          "id": "RS_FRANKLINRICHARDS_7"
+        },
+        {
+          "id": "PD_FRANKLINRICHARDS_1"
+        },
+        {
+          "id": "PD_FRANKLINRICHARDS_2"
+        },
+        {
+          "id": "PD_FRANKLINRICHARDS_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "FantasticFourMCU",
+          "name": "FANTASTIC FOUR (MCU)"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "With a dash of Cajun charm, Gambit fights alongside the X-Men using his mutant ability to charge objects with kinetic energy, transforming them into deadly explosives.",
       "eventTraits": [
         {
@@ -8315,6 +8394,12 @@ playable   = {
         }
       ],
       "id": "HumanTorch",
+      "invisibleTraits": [
+        {
+          "id": "FantasticFour",
+          "name": "FANTASTIC FOUR"
+        }
+      ],
       "mission": false,
       "name": "Human Torch",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_HumanTorch_c034d13c.png",
@@ -8372,8 +8457,8 @@ playable   = {
           "name": "BLASTER"
         },
         {
-          "id": "FantasticFour",
-          "name": "FANTASTIC FOUR"
+          "id": "FantasticFourMCU",
+          "name": "FANTASTIC FOUR (MCU)"
         }
       ],
       "unlockStars": 2
@@ -9051,6 +9136,85 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "A damage dealer and battlefield manipulator, Invisible Woman weakens enemies with crippling negative status effects, pulls enemies into clusters and sets up her team to deal brutal strikes.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "InvisibleWomanMCU",
+      "invisibleTraits": [
+        {
+          "id": "FantasticFour",
+          "name": "FANTASTIC FOUR"
+        }
+      ],
+      "mission": false,
+      "name": "Invisible Woman (MCU)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_InvisibleWomanMCU_07da6224.png",
+      "starItems": [
+        {
+          "id": "SHARD_INVISIBLEWOMANMCU"
+        },
+        {
+          "id": "RS_INVISIBLEWOMANMCU_1"
+        },
+        {
+          "id": "RS_INVISIBLEWOMANMCU_2"
+        },
+        {
+          "id": "RS_INVISIBLEWOMANMCU_3"
+        },
+        {
+          "id": "RS_INVISIBLEWOMANMCU_4"
+        },
+        {
+          "id": "RS_INVISIBLEWOMANMCU_5"
+        },
+        {
+          "id": "RS_INVISIBLEWOMANMCU_6"
+        },
+        {
+          "id": "RS_INVISIBLEWOMANMCU_7"
+        },
+        {
+          "id": "PD_INVISIBLEWOMANMCU_1"
+        },
+        {
+          "id": "PD_INVISIBLEWOMANMCU_2"
+        },
+        {
+          "id": "PD_INVISIBLEWOMANMCU_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "FantasticFourMCU",
+          "name": "FANTASTIC FOUR (MCU)"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "A versatile martial artist with healing abilities and a powerful single target attack.",
@@ -13423,6 +13587,85 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "A stalwart and resilient guardian, Mr. Fantastic shields his allies with barriers, purges harmful effects, and delivers punishing blows while ensuring his team stays protected.",
+      "eventTraits": [
+        {
+          "id": "Harbingers",
+          "isEvent": true,
+          "name": "CHAPTER 1 - HARBINGER"
+        }
+      ],
+      "id": "MrFantasticMCU",
+      "invisibleTraits": [
+        {
+          "id": "FantasticFour",
+          "name": "FANTASTIC FOUR"
+        }
+      ],
+      "mission": false,
+      "name": "Mister Fantastic (MCU)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_MrFantasticMCU_457897f0.png",
+      "starItems": [
+        {
+          "id": "SHARD_MRFANTASTICMCU"
+        },
+        {
+          "id": "RS_MRFANTASTICMCU_1"
+        },
+        {
+          "id": "RS_MRFANTASTICMCU_2"
+        },
+        {
+          "id": "RS_MRFANTASTICMCU_3"
+        },
+        {
+          "id": "RS_MRFANTASTICMCU_4"
+        },
+        {
+          "id": "RS_MRFANTASTICMCU_5"
+        },
+        {
+          "id": "RS_MRFANTASTICMCU_6"
+        },
+        {
+          "id": "RS_MRFANTASTICMCU_7"
+        },
+        {
+          "id": "PD_MRFANTASTICMCU_1"
+        },
+        {
+          "id": "PD_MRFANTASTICMCU_2"
+        },
+        {
+          "id": "PD_MRFANTASTICMCU_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        },
+        {
+          "id": "FantasticFourMCU",
+          "name": "FANTASTIC FOUR (MCU)"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "An underworld boss whose Darkforce abilities can flip enemies' positive effects, creating openings for his gang of Inner Demons' debilitating attacks.",
@@ -22102,6 +22345,10 @@ playable   = {
         {
           "id": "Avenger",
           "name": "AVENGER"
+        },
+        {
+          "id": "FantasticFour",
+          "name": "FANTASTIC FOUR"
         }
       ],
       "mission": false,
@@ -22161,8 +22408,8 @@ playable   = {
           "name": "BRAWLER"
         },
         {
-          "id": "FantasticFour",
-          "name": "FANTASTIC FOUR"
+          "id": "FantasticFourMCU",
+          "name": "FANTASTIC FOUR (MCU)"
         },
         {
           "id": "NewAvenger",
@@ -24797,15 +25044,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "9202b366347a90c76ad7",
-      "chars": "593668eb7773a028d2ce",
-      "drops": "71c3f91e331bcda29e54",
-      "events": "88b58478188dd296090d",
-      "locs": "7b0abf539fc082d74970",
-      "nodes": "c4f2ad309c33e88aed86",
-      "other": "08b65cd89d9297a328a7"
+      "all": "ba6ceba105353f863db8",
+      "chars": "b2c61c41776c63c9ab7f",
+      "drops": "e37e4c09962d8aa8df50",
+      "events": "6bd89176a5730edcf726",
+      "locs": "d39e2dd6dea9103451f4",
+      "nodes": "e42bc86f3aaf502107cb",
+      "other": "d263a575d8a8b16a01a5"
     },
-    "perTotal": 327,
+    "perTotal": 330,
     "version": 1
   }
 }
@@ -25836,13 +26083,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "9202b366347a90c76ad7",
-      "chars": "593668eb7773a028d2ce",
-      "drops": "71c3f91e331bcda29e54",
-      "events": "88b58478188dd296090d",
-      "locs": "7b0abf539fc082d74970",
-      "nodes": "c4f2ad309c33e88aed86",
-      "other": "08b65cd89d9297a328a7"
+      "all": "ba6ceba105353f863db8",
+      "chars": "b2c61c41776c63c9ab7f",
+      "drops": "e37e4c09962d8aa8df50",
+      "events": "6bd89176a5730edcf726",
+      "locs": "d39e2dd6dea9103451f4",
+      "nodes": "e42bc86f3aaf502107cb",
+      "other": "d263a575d8a8b16a01a5"
     },
     "perTotal": 29,
     "version": 1
