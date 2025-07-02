@@ -220,6 +220,7 @@ def translate_name(value):
 						"Defender": "Defenders",
 						"Eternal": "Eternals",
 						"FantasticFour": "Fantastic<br>Four",
+						"FantasticFourMCU": "Fantastic<br>Four (MCU)",
 						"HeroesForHire": "H4H",
 						"HiveMind": "Hive-Mind",
 						"ImmortalXMen": "Immortal<br>X-Men",
