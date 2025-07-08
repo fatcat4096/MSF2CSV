@@ -22,10 +22,14 @@ REVOKE_ENDPOINT = 'https://hydra-public.prod.m3.scopelypv.com/oauth2/revoke'
 
 
 # Generate a Session ID and URL to link account
-def get_session_and_link(CLIENT_ID, DISCORD_CMD = 'alliance'):
+def get_session_and_link(CLIENT_ID, SESSION_ID=None):
 
-	# Generate the shared secret and use as the session_id
-	SESSION_ID = secrets.token_bytes(32).hex()
+	# Name of the slash command in MSF RosterBot
+	DISCORD_CMD = 'alliance'
+
+	# Generate the shared secret (if not provided) and use as the session_id
+	if not SESSION_ID:
+		SESSION_ID = secrets.token_bytes(32).hex()
 
 	# Specify the requested scopes
 	SCOPE_REQ = quote_plus('openid offline m3p.f.pr.pro m3p.f.ar.pro m3p.f.ar.ros')
