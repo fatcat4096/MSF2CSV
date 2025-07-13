@@ -119,7 +119,7 @@ def refresh_auth(AUTH, CLIENT_TOKEN):
 
 
 # Update AUTH with info from Response
-def parse_auth(auth_token, AUTH={}):
+def parse_auth(auth_token, AUTH={}, discord_id=None):
 
 	token_data = auth_token.json()
 
@@ -131,6 +131,9 @@ def parse_auth(auth_token, AUTH={}):
 		'token_type'   : token_data['token_type'],
 		'updated'      : True	# Flag to update DB
 	})
+
+	if discord_id:
+		AUTH['discord_id'] = discord_id
 
 	return AUTH
 

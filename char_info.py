@@ -2188,6 +2188,13 @@ playable   = {
     },
     {
       "description": "Named \"The Daywalker\" by the vampires he hunts and exterminates, Blade uses his martial arts mastery and half-vampire powers to make sure no one suffers at the hands of the undead ever again.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Blade",
       "mission": false,
       "name": "Blade",
@@ -3028,6 +3035,13 @@ playable   = {
     },
     {
       "description": "A living conduit to the Darkforce Dimension, Cloak drains the health and offensive power of vulnerable enemies.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Cloak",
       "mission": false,
       "name": "Cloak",
@@ -4421,6 +4435,13 @@ playable   = {
     },
     {
       "description": "A soldier reanimated with cybernetic technology, Deathlok eviscerates the enemy team with debilitating blasts and boosts Bionic Avenger allies.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Deathlok",
       "invisibleTraits": [
         {
@@ -5666,6 +5687,13 @@ playable   = {
     },
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "Falcon",
       "invisibleTraits": [
         {
@@ -9365,6 +9393,11 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Ironheart",
@@ -10545,6 +10578,11 @@ playable   = {
           "id": "Archenemy",
           "isEvent": true,
           "name": "ARCHENEMY"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Killmonger",
@@ -11853,6 +11891,11 @@ playable   = {
           "id": "Couples",
           "isEvent": true,
           "name": "COUPLES"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "LukeCage",
@@ -12970,6 +13013,13 @@ playable   = {
     },
     {
       "description": "Misty Knight is the tough-as-nails leader of the Heroes for Hire who uses her cybernetic arm to break through her enemies' defenses.",
+      "eventTraits": [
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
+        }
+      ],
       "id": "MistyKnight",
       "invisibleTraits": [
         {
@@ -14562,6 +14612,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "NickFury",
@@ -15773,6 +15828,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Patriot",
@@ -16162,6 +16222,11 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Photon",
@@ -16764,6 +16829,12 @@ playable   = {
     },
     {
       "description": "With the help of his Quantum Bands, Wendell Vaughn saps his enemy's Health and removes their Charges, but is he an ally S.T.R.I.K.E. can trust?",
+      "eventTraits": [
+        {
+          "id": "StrikeAsset",
+          "isEvent": true
+        }
+      ],
       "id": "Quasar",
       "invisibleTraits": [
         {
@@ -18022,6 +18093,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "SamWilson",
@@ -21032,6 +21108,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "Storm",
@@ -23828,6 +23909,11 @@ playable   = {
           "id": "AnniversaryElite",
           "isEvent": true,
           "name": "ANNIVERSARY ELITE"
+        },
+        {
+          "id": "Juneteenth",
+          "isEvent": true,
+          "name": "JUNETEENTH"
         }
       ],
       "id": "WarMachine",
@@ -25044,13 +25130,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "ba6ceba105353f863db8",
-      "chars": "b2c61c41776c63c9ab7f",
-      "drops": "e37e4c09962d8aa8df50",
-      "events": "6bd89176a5730edcf726",
-      "locs": "d39e2dd6dea9103451f4",
-      "nodes": "e42bc86f3aaf502107cb",
-      "other": "d263a575d8a8b16a01a5"
+      "all": "e69e135a4d927686441f",
+      "chars": "03dc39b8f5aea62746da",
+      "drops": "5d0dd37258868e849043",
+      "events": "5941b464637615dbcf37",
+      "locs": "2873ebf0d60d609e01d9",
+      "nodes": "95bfe6e8106d93a0a86c",
+      "other": "ce9d52a6ac887302c094"
     },
     "perTotal": 330,
     "version": 1
@@ -26083,13 +26169,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "ba6ceba105353f863db8",
-      "chars": "b2c61c41776c63c9ab7f",
-      "drops": "e37e4c09962d8aa8df50",
-      "events": "6bd89176a5730edcf726",
-      "locs": "d39e2dd6dea9103451f4",
-      "nodes": "e42bc86f3aaf502107cb",
-      "other": "d263a575d8a8b16a01a5"
+      "all": "e69e135a4d927686441f",
+      "chars": "03dc39b8f5aea62746da",
+      "drops": "5d0dd37258868e849043",
+      "events": "5941b464637615dbcf37",
+      "locs": "2873ebf0d60d609e01d9",
+      "nodes": "95bfe6e8106d93a0a86c",
+      "other": "ce9d52a6ac887302c094"
     },
     "perTotal": 29,
     "version": 1
