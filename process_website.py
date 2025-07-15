@@ -276,6 +276,10 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	UPD = f'**{UPD}** updated' if UPD else ''
 	OLD = f'**{OLD}** old'     if OLD else ''
 
+	# Change OLD output if nothing was updated.
+	if not (NEW or UPD):
+		OLD = f'**NO UPDATED INFO**'
+
 	SUMMARY = [NEW, UPD, OLD]
 	while '' in SUMMARY:
 		SUMMARY.remove('')
