@@ -217,7 +217,8 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 def load_cached_file(file):
 	data={}
 
-	file_path = get_local_path() + f'cached_data{os.sep}cached_{file}'
+	# Load the requested information if it exists
+	file_path = get_local_path() + f'cached_data{os.sep}defaults{os.sep}cached_{file}'
 
 	if os.path.exists(file_path):
 		data = pickle.load(open(file_path,'rb'))
@@ -231,7 +232,8 @@ def load_cached_file(file):
 def write_cached_file(data, file):
 
 	# Ensure the enclosing directory exists.
-	cached_path = get_local_path() + f'cached_data{os.sep}'
+	cached_path = get_local_path() + f'cached_data{os.sep}defaults{os.sep}'
+
 	if not os.path.exists(cached_path):
 		os.makedirs(cached_path)	
 
