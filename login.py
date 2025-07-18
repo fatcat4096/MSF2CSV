@@ -41,8 +41,7 @@ elif hasattr(__main__, '__file__'):
 # Establish where csv and chromium files will reside.
 csv_file_path = os.path.realpath(base_file_path) + os.sep + 'csv' + os.sep
 chromium_path = csv_file_path + 'chromium' + os.sep
-if not os.path.exists(chromium_path):
-	os.makedirs(chromium_path)
+
 
 
 class ChromeWithPrefs(webdriver.Chrome):
@@ -100,6 +99,8 @@ def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='0', headl
 
 	# Create a directory for the Selenium session
 	user_data_dir = chromium_path + session + os.sep
+	if not os.path.exists(user_data_dir):
+		os.makedirs(user_data_dir)
 
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')
@@ -137,7 +138,9 @@ def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='0', headl
 def get_driver(headless=False):
 
 	global csv_file_path
-	
+	if not os.path.exists(csv_file_path):
+		os.makedirs(csv_file_path)
+		
 	# Build the driver
 	options = webdriver.ChromeOptions()
 	options.add_argument('--log-level=3')

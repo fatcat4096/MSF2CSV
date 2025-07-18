@@ -16832,7 +16832,8 @@ playable   = {
       "eventTraits": [
         {
           "id": "StrikeAsset",
-          "isEvent": true
+          "isEvent": true,
+          "name": "S.T.R.I.K.E. ASSET"
         }
       ],
       "id": "Quasar",
@@ -25130,13 +25131,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "e69e135a4d927686441f",
-      "chars": "03dc39b8f5aea62746da",
-      "drops": "5d0dd37258868e849043",
-      "events": "5941b464637615dbcf37",
-      "locs": "2873ebf0d60d609e01d9",
-      "nodes": "95bfe6e8106d93a0a86c",
-      "other": "ce9d52a6ac887302c094"
+      "all": "987d5bfa209c5fbdf842",
+      "chars": "b430bae9febe13c8b1d2",
+      "drops": "3dbef33b7c7b3b2f106b",
+      "events": "eafe1e58850c1420e819",
+      "locs": "52e69c2be1443271bae3",
+      "nodes": "0a550bfbf8345002f732",
+      "other": "418808b5b9ed879ea6f7"
     },
     "perTotal": 330,
     "version": 1
@@ -26169,13 +26170,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "e69e135a4d927686441f",
-      "chars": "03dc39b8f5aea62746da",
-      "drops": "5d0dd37258868e849043",
-      "events": "5941b464637615dbcf37",
-      "locs": "2873ebf0d60d609e01d9",
-      "nodes": "95bfe6e8106d93a0a86c",
-      "other": "ce9d52a6ac887302c094"
+      "all": "987d5bfa209c5fbdf842",
+      "chars": "b430bae9febe13c8b1d2",
+      "drops": "3dbef33b7c7b3b2f106b",
+      "events": "eafe1e58850c1420e819",
+      "locs": "52e69c2be1443271bae3",
+      "nodes": "0a550bfbf8345002f732",
+      "other": "418808b5b9ed879ea6f7"
     },
     "perTotal": 29,
     "version": 1
