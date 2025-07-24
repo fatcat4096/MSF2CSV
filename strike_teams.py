@@ -13,10 +13,10 @@ strike_teams = {}
 strike_teams["chaos"] = [
 [### Strike team 1 ###]
 	"Jutch",
-	"Medicus",
+	"OXX",
 	"Silentwitness",
 	"ThatDudeFerbs",
-	"Kingsmanbr",
+	"KG Monster",
 	"Ratty",
 	"Jay",
 	"LSJ",
@@ -46,10 +46,10 @@ strike_teams["chaos"] = [
 strike_teams["spotlight"] = [
 [### Strike team 1 ###]
 	"Jutch",
-	"Medicus",
+	"OXX",
 	"Silentwitness",
 	"ThatDudeFerbs",
-	"Kingsmanbr",
+	"KG Monster",
 	"Ratty",
 	"Jay",
 	"LSJ",

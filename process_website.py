@@ -603,7 +603,14 @@ def migrate_strike_teams(alliance_info):
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
 @timed(level=3)
 def valid_strike_team(strike_team, alliance_info):
-	return len(set(sum(strike_team,[])).intersection(alliance_info['members'])) > len(alliance_info['members'])*.5	
+	return same_members(sum(strike_team,[]), alliance_info['members'])
+
+
+
+# Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
+@timed(level=3)
+def same_members(member_list_1, member_list_2):
+	return len(set(member_list_1).intersection(member_list_2)) > len(member_list_2)*.5	
 
 
 
