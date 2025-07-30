@@ -713,10 +713,10 @@ def is_valid_alliance_id(s):
 # Verify the fresh and old cached data are the same alliance 
 # Merge data if old info available
 @timed(level=3)
-def find_cached_and_merge(alliance_info):
+def find_cached_and_merge(alliance_info, old_alliance_name=None):
 
-	# Look for an existing cached_data file. 
-	cached_info = find_cached_data(alliance_info['name'])
+	# Look for an existing cached_data file with the old name (if provided) or the current one 
+	cached_info = find_cached_data(old_alliance_name or alliance_info['name'])
 	
 	# Nothing to merge.
 	if not cached_info:
@@ -729,8 +729,8 @@ def find_cached_and_merge(alliance_info):
 	
 	# Also copy over additional information inside the member definitions. 
 	for member in alliance_info['members']:
-		for key in ['processed_chars','other_data','display_name','url','image','max','arena','blitz','blitz_wins','stars','red','tot_power','last_update','discord','auth']:
-			if key in cached_info.get('members',{}).get(member,{}) and key not in alliance_info['members'][member]:
+		for key in cached_info.get('members',{}).get(member,{}):
+			if key not in alliance_info['members'][member]:
 				alliance_info['members'][member][key] = cached_info['members'][member][key]
 
 	# Explicitly bring over missing 'hist' entries as well. 
@@ -738,3 +738,6 @@ def find_cached_and_merge(alliance_info):
 		if key not in alliance_info.setdefault('hist',{}):
 			alliance_info['hist'][key] = cached_info['hist'][key]
 	
+	# If we merged with the old alliance name first, repeat the process with the current name
+	if old_alliance_name:
+		find_cached_and_merge(alliance_info)
