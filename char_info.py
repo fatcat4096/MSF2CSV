@@ -1285,6 +1285,76 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "A ruthless teleporter and master of surprise, Azazel strikes from the shadows to deliver multiple blows against his enemies.",
+      "id": "Azazel",
+      "mission": false,
+      "name": "Azazel",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Azazel_c3414ebf.png",
+      "starItems": [
+        {
+          "id": "SHARD_AZAZEL"
+        },
+        {
+          "id": "RS_AZAZEL_1"
+        },
+        {
+          "id": "RS_AZAZEL_2"
+        },
+        {
+          "id": "RS_AZAZEL_3"
+        },
+        {
+          "id": "RS_AZAZEL_4"
+        },
+        {
+          "id": "RS_AZAZEL_5"
+        },
+        {
+          "id": "RS_AZAZEL_6"
+        },
+        {
+          "id": "RS_AZAZEL_7"
+        },
+        {
+          "id": "PD_AZAZEL_1"
+        },
+        {
+          "id": "PD_AZAZEL_2"
+        },
+        {
+          "id": "PD_AZAZEL_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Mutant",
+          "name": "MUTANT"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "HellfireClub",
+          "name": "HELLFIRE CLUB"
+        },
+        {
+          "id": "Accursed",
+          "name": "ACCURSED"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "A powerful sorcerer who weakens his enemies with forbidden magic.",
       "eventTraits": [
         {
@@ -2262,6 +2332,72 @@ playable   = {
         }
       ],
       "unlockStars": 3
+    },
+    {
+      "description": "Known as the Living Bomb-Burst, Blastaar is a brutal warlord from the Negative Zone with a body built to withstand extreme punishment and a savage thirst for conquest and domination.",
+      "id": "Blastaar",
+      "mission": false,
+      "name": "Blastaar",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Blastaar_2b823cfe.png",
+      "starItems": [
+        {
+          "id": "SHARD_BLASTAAR"
+        },
+        {
+          "id": "RS_BLASTAAR_1"
+        },
+        {
+          "id": "RS_BLASTAAR_2"
+        },
+        {
+          "id": "RS_BLASTAAR_3"
+        },
+        {
+          "id": "RS_BLASTAAR_4"
+        },
+        {
+          "id": "RS_BLASTAAR_5"
+        },
+        {
+          "id": "RS_BLASTAAR_6"
+        },
+        {
+          "id": "RS_BLASTAAR_7"
+        },
+        {
+          "id": "PD_BLASTAAR_1"
+        },
+        {
+          "id": "PD_BLASTAAR_2"
+        },
+        {
+          "id": "PD_BLASTAAR_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Legendary",
+          "name": "LEGENDARY"
+        }
+      ],
+      "unlockStars": 4
     },
     {
       "description": "Blob is a mutant Protector whose immense mass absorbs damage and Deflects attacks aimed at allies.",
@@ -5611,6 +5747,10 @@ playable   = {
         {
           "id": "Controller",
           "name": "CONTROLLER"
+        },
+        {
+          "id": "HellfireClub",
+          "name": "HELLFIRE CLUB"
         }
       ],
       "unlockStars": 2
@@ -12041,6 +12181,10 @@ playable   = {
         {
           "id": "Marauders",
           "name": "MARAUDER"
+        },
+        {
+          "id": "HellfireClub",
+          "name": "HELLFIRE CLUB"
         }
       ],
       "unlockStars": 2
@@ -16991,6 +17135,82 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "A powerful telepath and time-displaced mutant, Rachel Summers overwhelms her enemies by spreading negative status effects and a passive attack that targets any enemy who is stunned or moving too fast to think clearly.",
+      "id": "RachelSummers",
+      "invisibleTraits": [
+        {
+          "id": "Xmen",
+          "name": "X-MEN"
+        }
+      ],
+      "mission": false,
+      "name": "Rachel Summers",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_RachelSummers_593f2e8d.png",
+      "starItems": [
+        {
+          "id": "SHARD_RACHELSUMMERS"
+        },
+        {
+          "id": "RS_RACHELSUMMERS_1"
+        },
+        {
+          "id": "RS_RACHELSUMMERS_2"
+        },
+        {
+          "id": "RS_RACHELSUMMERS_3"
+        },
+        {
+          "id": "RS_RACHELSUMMERS_4"
+        },
+        {
+          "id": "RS_RACHELSUMMERS_5"
+        },
+        {
+          "id": "RS_RACHELSUMMERS_6"
+        },
+        {
+          "id": "RS_RACHELSUMMERS_7"
+        },
+        {
+          "id": "PD_RACHELSUMMERS_1"
+        },
+        {
+          "id": "PD_RACHELSUMMERS_2"
+        },
+        {
+          "id": "PD_RACHELSUMMERS_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mutant",
+          "name": "MUTANT"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "HellfireClub",
+          "name": "HELLFIRE CLUB"
+        },
+        {
+          "id": "ImmortalXMen",
+          "name": "IMMORTAL X-MEN"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "A heavily armed space pirate who supports his allies with plasma cannon fire.",
       "id": "RavagerDmg_AoE",
       "invisibleTraits": [
@@ -18628,6 +18848,72 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "A power-absorbing tyrant with a taste for control, Sebastian Shaw converts his charges into stunning strength, hitting his foes with a force that leaves them helpless.",
+      "id": "SebastianShaw",
+      "mission": false,
+      "name": "Sebastian Shaw",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SebastianShaw_4709caef.png",
+      "starItems": [
+        {
+          "id": "SHARD_SEBASTIANSHAW"
+        },
+        {
+          "id": "RS_SEBASTIANSHAW_1"
+        },
+        {
+          "id": "RS_SEBASTIANSHAW_2"
+        },
+        {
+          "id": "RS_SEBASTIANSHAW_3"
+        },
+        {
+          "id": "RS_SEBASTIANSHAW_4"
+        },
+        {
+          "id": "RS_SEBASTIANSHAW_5"
+        },
+        {
+          "id": "RS_SEBASTIANSHAW_6"
+        },
+        {
+          "id": "RS_SEBASTIANSHAW_7"
+        },
+        {
+          "id": "PD_SEBASTIANSHAW_1"
+        },
+        {
+          "id": "PD_SEBASTIANSHAW_2"
+        },
+        {
+          "id": "PD_SEBASTIANSHAW_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mutant",
+          "name": "MUTANT"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        },
+        {
+          "id": "HellfireClub",
+          "name": "HELLFIRE CLUB"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "A robot created for the purpose of hunting and exterminating Mutants, the Sentinel summons reinforcements to overwhelm their prey.",
@@ -25131,20 +25417,51 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "f78c67ced937e9f8ff74",
-      "chars": "a8f7c6de613192bc0e1a",
+      "all": "b61ce0116249e216c46b",
+      "chars": "2b9a87246ffcec18d5e6",
       "drops": "854363aacb7f1ca2fc83",
-      "events": "c1e79f441f9943a2c861",
-      "locs": "60da2a2c112061e8831b",
-      "nodes": "4ebaab95797ce54fca1e",
-      "other": "75035571402067a34213"
+      "events": "be50d4279034e8b25a1c",
+      "locs": "b5e9471d44d3c0bf672a",
+      "nodes": "acf87fe6260684697ffe",
+      "other": "f28f25ad2bb9a3b2ad8a"
     },
-    "perTotal": 330,
+    "perTotal": 334,
     "version": 1
   }
 }
 unplayable = {
   "data": [
+    {
+      "description": "The tyrant of the Negative Zone who uses the Cosmic Control Rod to eliminate all that might threaten him.",
+      "id": "PVE_Annihilus_Tower",
+      "mission": false,
+      "name": "Annihilus",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Annihilus_38efc4a8.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Mythic",
+          "name": "MYTHIC"
+        }
+      ],
+      "unlockStars": 7
+    },
     {
       "description": "The Lord of the Abyss and God of the symbiotes, Knull yearns to use his awesome power to plunge the universe into darkness.",
       "id": "PVE_Boss_Knull",
@@ -26170,15 +26487,15 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "f9628f8e171c58056a78",
-      "chars": "a8f7c6de613192bc0e1a",
+      "all": "b61ce0116249e216c46b",
+      "chars": "2b9a87246ffcec18d5e6",
       "drops": "854363aacb7f1ca2fc83",
-      "events": "dde5b500403c2d578fa2",
-      "locs": "60da2a2c112061e8831b",
-      "nodes": "4ebaab95797ce54fca1e",
-      "other": "75035571402067a34213"
+      "events": "be50d4279034e8b25a1c",
+      "locs": "b5e9471d44d3c0bf672a",
+      "nodes": "acf87fe6260684697ffe",
+      "other": "f28f25ad2bb9a3b2ad8a"
     },
-    "perTotal": 29,
+    "perTotal": 30,
     "version": 1
   }
 }
