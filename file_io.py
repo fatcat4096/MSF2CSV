@@ -280,6 +280,25 @@ def age_of(alliance_or_file):
 
 # Handle the file list cleanly.
 @timed(level=3)
+def retire_cached_data(file_or_alliance=''):
+
+	# Find the original file based on the alliance_name provided
+	alliance_info = find_cached_data(file_or_alliance)
+	
+	# Pull out the resolved file path
+	OLD_PATH = alliance_info.get('file_path')
+	NEW_PATH = OLD_PATH.replace('\\cached_data-','\\OLD_DATA-')
+
+	if os.path.exists(NEW_PATH):
+		NEW_PATH += str(len(glob.glob(f'{NEW_PATH}*'))+1)
+
+	# Attempt the rename of this file
+	os.rename(OLD_PATH, NEW_PATH)
+
+
+
+# Handle the file list cleanly.
+@timed(level=3)
 def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
