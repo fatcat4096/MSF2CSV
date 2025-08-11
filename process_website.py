@@ -289,15 +289,14 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	if not (NEW or UPD):
 		OLD = f'**NO UPDATED INFO**'
 
-	SUMMARY = [NEW, UPD, OLD]
-	while '' in SUMMARY:
-		SUMMARY.remove('')
-
+	SUMMARY = ", ".join([x for x in (NEW, UPD, OLD) if x])
 	REQ = (datetime.datetime.now()-start_time).seconds
 
 	# Summarize the results of processing
-	summary = [f'Found {", ".join(SUMMARY)} in {REQ}s']
-	print (summary[-1].replace('**',''))
+	summary = [f'Found {SUMMARY} in {REQ}s']
+
+	# Make the log output pretty
+	print (f'{ansi.ltcyan}Refresh complete!{ansi.reset} Found {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.reset} in {ansi.ltyel}{REQ}s{ansi.reset}')
 
 	# If roster_output included, generate Key for footer as well.
 	status_key = [] 
