@@ -26,6 +26,7 @@ from selenium.webdriver.common.by import By
 from urllib.parse import quote, unquote
 
 
+
 TAG_RE = re.compile(r'<[^>]+>')
 
 # Ensure filename is valid for file system.
@@ -78,7 +79,7 @@ def write_file(pathname, file_content, print_path=True):
 		path,file = os.path.split(remove_tags(pathname+filename))
 
 		if print_path:
-			print (f"Writing {os.path.join(path,file)}")
+			print (f'Writing {format_filename(os.path.join(path,file))}')
 
 		# Verify enclosing directory exists, if not, create it.
 		if not os.path.exists(path):
@@ -140,7 +141,7 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 
 		# Report the file being written.
 		if print_path:
-			print ("Writing %s" % (png_filename))		
+			print (f"Writing {format_filename(png_filename)}")
 
 		# Then use Selenium to render these pages to disk as images. 
 		body = driver.find_element(By.TAG_NAME, "body")
@@ -157,6 +158,11 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 			print (f"EXCEPTION: {type(exc).__name__}: {exc}")
 		"""
 	return files_generated
+
+
+
+def format_filename(filename):
+	return f'{ansi.cyan}{os.path.dirname(filename)}{os.sep}{ansi.bold}{os.path.basename(filename)}{ansi.reset}'
 
 
 

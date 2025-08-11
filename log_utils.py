@@ -376,6 +376,7 @@ class ansi():
 	# Styles
 	reset   = "\x1b[0m"
 	bold    = "\x1b[1m"
+	under   = "\x1b[4m"
 
 
 

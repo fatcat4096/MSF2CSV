@@ -13796,6 +13796,10 @@ playable   = {
         {
           "id": "FantasticFour",
           "name": "FANTASTIC FOUR"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Chargeable"
         }
       ],
       "mission": false,
@@ -25417,13 +25421,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "b61ce0116249e216c46b",
-      "chars": "2b9a87246ffcec18d5e6",
-      "drops": "854363aacb7f1ca2fc83",
-      "events": "be50d4279034e8b25a1c",
-      "locs": "b5e9471d44d3c0bf672a",
-      "nodes": "acf87fe6260684697ffe",
-      "other": "f28f25ad2bb9a3b2ad8a"
+      "all": "b801ec18cc303d4a0e16",
+      "chars": "cacadd2a5026e2240db6",
+      "drops": "380090c4056f6971ed9f",
+      "events": "33dfd9e0e86e05e9c4bb",
+      "locs": "e3c1ae36ca2626872684",
+      "nodes": "e4f8d00efc75989a76f0",
+      "other": "cce32c1d3cab4ca543e7"
     },
     "perTotal": 334,
     "version": 1
@@ -25506,6 +25510,10 @@ unplayable = {
         {
           "id": "Symbiote",
           "name": "SYMBIOTE"
+        },
+        {
+          "id": "Mythic",
+          "name": "MYTHIC"
         }
       ],
       "unlockStars": 7
@@ -26487,13 +26495,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "b61ce0116249e216c46b",
-      "chars": "2b9a87246ffcec18d5e6",
-      "drops": "854363aacb7f1ca2fc83",
-      "events": "be50d4279034e8b25a1c",
-      "locs": "b5e9471d44d3c0bf672a",
-      "nodes": "acf87fe6260684697ffe",
-      "other": "f28f25ad2bb9a3b2ad8a"
+      "all": "b801ec18cc303d4a0e16",
+      "chars": "cacadd2a5026e2240db6",
+      "drops": "380090c4056f6971ed9f",
+      "events": "33dfd9e0e86e05e9c4bb",
+      "locs": "e3c1ae36ca2626872684",
+      "nodes": "e4f8d00efc75989a76f0",
+      "other": "cce32c1d3cab4ca543e7"
     },
     "perTotal": 30,
     "version": 1

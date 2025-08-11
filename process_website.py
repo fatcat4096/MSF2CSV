@@ -226,17 +226,22 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			# If roster is NEW say so
 			if not tcp_start:
 				result = f'NEW:{tcp_end}'
+				format = ansi.ltgrn
 			else:
 				result = f'UPD:{tcp_diff}'
+				format = ansi.ltyel
 		# Roster not available on website.
 		elif member not in roster_csv_data and not members[member].get('avail'):
 			result = 'NOT AVAIL'
+			format = ansi.ltred
 		# Never received Roster page to parse.
 		elif member not in roster_csv_data and driver and len(driver.page_source) < 700000: 
 			result = 'TIMEOUT'
+			format = ansi.ltred
 		# Not sure what happened here. Side stepping an odd error condition.
 		elif not last_update:
 			result = 'UNKNOWN'
+			format = ansi.ltred
 		# No update. Just report how long it's been.
 		else:
 			time_since = time_now - last_update 
@@ -252,6 +257,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 				time_since = f'{hours} {mins}'
 
 			result =  f'OLD:{time_since:>7}'
+			format = ansi.yellow
 
 		# Format line depending on whether entry available.
 		if ':' in result:
@@ -259,7 +265,10 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 		else:
 			rosters_output.append(f'{member:16} {result:>9}')
 
-		print(f'Found: {rosters_output[-1]}')
+		# Grab the last line. Add formatting
+		formatted_output = f'{rosters_output[-1][:15]}{ansi.reset}{format}{rosters_output[-1][15:]}'
+
+		print(f'Found: {ansi.bold}{formatted_output}{ansi.reset}')
 
 	return rosters_output
 
@@ -293,15 +302,15 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	# If roster_output included, generate Key for footer as well.
 	status_key = [] 
 
-	NOT_AVAIL = [f'* `{x[:16].strip()}`' for x in rosters_output if 'NOT AVAIL' in x]
-	TIMEOUT   = [f'* `{x[:16].strip()}`' for x in rosters_output if 'TIMEOUT'   in x]
+	NOT_AVAIL = [f'* *{x[:16].strip()}*' for x in rosters_output if 'NOT AVAIL' in x]
+	TIMEOUT   = [f'* {x[:16].strip()}' for x in rosters_output if 'TIMEOUT'   in x]
 
 	if NOT_AVAIL:
 		status_key.append(f"**{len(NOT_AVAIL)}** need roster shared w/ **ALLIANCE ONLY**:")
 		status_key += NOT_AVAIL
 
 	if TIMEOUT:
-		status_key.append('* **TIMEOUT** - MSF.gg slow/down. Could not refresh:')
+		status_key.append('**TIMEOUT** website slow/down. Not updated:')
 		status_key += TIMEOUT
 
 	if status_key:
