@@ -175,7 +175,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 				# Merge the processed roster information into our Alliance Info
 				merge_roster(alliance_info, member, processed_chars, other_data)
 
-			# What happens if response is not ok? Interpreted as no change?
+			# API request failed. Old info will be used.
 			else:
 				print ("API ROSTER REQUEST: No valid response received")
 
@@ -235,7 +235,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			result = 'NOT AVAIL'
 			format = ansi.ltred
 		# Never received Roster page to parse.
-		elif member not in roster_csv_data and driver and len(driver.page_source) < 700000: 
+		elif (AUTH and not response.ok) or (member not in roster_csv_data and driver and len(driver.page_source) < 700000): 
 			result = 'TIMEOUT'
 			format = ansi.ltred
 		# Not sure what happened here. Side stepping an odd error condition.
@@ -309,7 +309,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 		status_key += NOT_AVAIL
 
 	if TIMEOUT:
-		status_key.append('**TIMEOUT** website slow/down. Not updated:')
+		status_key.append('**TIMEOUT** API failed. Not updated:')
 		status_key += TIMEOUT
 
 	if status_key:

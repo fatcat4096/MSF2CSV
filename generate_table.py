@@ -243,7 +243,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			
 			# Once total avaialble found, we can sort players properly.
 			if sort_by == 'avail':
-				player_list = sorted(player_list, key=lambda x : f'{avail_range[x]:03}{alliance_info["members"][x]["tcp"]:012}', reverse=True)
+				player_list = sorted(player_list, key=lambda x : f'{avail_range[x]:03}{alliance_info["members"][x].get("tcp",0):012}', reverse=True)
 
 		elif inc_avail:
 			avail_range = {player:len([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]) for player in player_list}
@@ -347,7 +347,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready]+rowspan, name_field)
 
 					# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-					stale_data = alliance_info['members'][player_name]['is_stale']
+					stale_data = alliance_info['members'][player_name].get('is_stale', False)
 
 					# Include "# Pos" info if requested.
 					if inc_rank and not inline_hist_row:
