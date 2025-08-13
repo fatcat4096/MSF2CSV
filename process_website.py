@@ -502,7 +502,7 @@ def update_strike_teams(alliance_info):
 	updated = migrate_strike_teams(alliance_info)
 
 	# Iterate through each defined strike team.
-	for raid_type in ('chaos','spotlight'):
+	for raid_type in ('chaos','spotlight','annihilation'):
 
 		# If the global definition of strike_team is valid for this alliance, let's use it. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
@@ -543,7 +543,7 @@ def get_valid_strike_teams(alliance_info):
 	# Update strike team definitions if necessary
 	updated = migrate_strike_teams(alliance_info)
 
-	for raid_type in ('chaos','spotlight'):
+	for raid_type in ('chaos','spotlight','annihilation'):
 
 		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
 		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
@@ -576,8 +576,8 @@ def migrate_strike_teams(alliance_info):
 	if 'strike_teams' in globals():
 		
 		# Orchis defined, but no Chaos yet?
-		if 'orchis' in strike_teams and 'chaos' not in strike_teams:
-			strike_teams['chaos'] = strike_teams['orchis']
+		if 'chaos' in strike_teams and 'annihilation' not in strike_teams:
+			strike_teams['annihilation'] = strike_teams['chaos']
 			updated = True
 
 		# Look for outdated strike_team definitions
@@ -590,8 +590,8 @@ def migrate_strike_teams(alliance_info):
 	if 'strike_teams' in alliance_info:
 
 		# Orchis defined, but no Chaos yet?
-		if 'orchis' in alliance_info['strike_teams'] and 'chaos' not in alliance_info['strike_teams']:
-			alliance_info['strike_teams']['chaos'] = alliance_info['strike_teams']['orchis']
+		if 'chaos' in alliance_info['strike_teams'] and 'annihilation' not in alliance_info['strike_teams']:
+			alliance_info['strike_teams']['chaos'] = alliance_info['strike_teams']['chaos']
 			updated = True
 	
 		# Look for outdated strike_team definitions

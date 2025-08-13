@@ -69,6 +69,42 @@ tables['chaos'] = { 'name': 'Chaos Raid',
 							] ],
 					}
 
+# Meta Heroes for use in Annihilation Raid (D8-9)
+tables['anni'] = { 'name': 'Annihilation Raid',
+					'min_iso': 13,
+					'max_others': 0,
+					'strike_teams': 'annihilation',
+					'sort_char_by': 'avail',
+					'inc_keys': ['power','lvl','tier','iso'],
+					'lanes':[ [
+							{'traits': ['Tech'], 'meta': ['Shocker', 'Hobgoblin', 'Scorpion', 'Vulture', 'Spider-Man (Superior)'], 'label':'Tech<br>(Insidious Six)'}, 
+							#{'traits': ['Bio'], 'meta': ['Carnage', 'Super Skrull', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
+							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunderbolts)'}, 
+							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
+							#{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
+							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
+							{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
+							] ],
+					}
+
+# Meta Heroes for use in Annihilation Raid (D6-7)
+tables['anni_low'] = { 'name': 'Annihilation Raid (D6-7)',
+					'min_iso': 13,
+					'max_others': 0,
+					'strike_teams': 'annihilation',
+					'sort_char_by': 'avail',
+					'inc_keys': ['power','lvl','tier','iso'],
+					'lanes':[ [
+							{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Omega Sentinel'], 'label':'Tech<br>(Orchis)'}, 
+							#{'traits': ['Bio'], 'meta': ['Carnage', 'Super Skrull', 'Void Knight', 'Gwenom', 'Red Goblin'], 'label':'Bio<br>(Hive-Mind)'}, 
+							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunderbolts)'}, 
+							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
+							#{'traits': ['Skill'], 'meta': ['Peni Parker', 'Ghost-Spider', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Spider Society)'}, 
+							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
+							{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
+							] ],
+					}
+
 # Meta Heroes for use in Prof X Saga
 tables['profx'] = { 'name': 'Prof X Saga',
 					'max_others': 10,
@@ -209,6 +245,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['ImmortalXMen'], 'meta': ['Jean Grey','Beast','Storm','Polaris','Cable']},
 							{'traits': ['Infestation']},
 							{'traits': ['InfinityWatch']},
+							{'traits': ['InsidiousSix'] 'meta': ['Shocker', 'Hobgoblin', 'Scorpion', 'Vulture', 'Spider-Man (Superior)']},
 							{'traits': ['Invader']},
 							{'traits': ['Knowhere']},
 							{'traits': ['Liberty'], 'meta': ['Captain America (Sam)','War Machine','Falcon (Joaquin)','Patriot','Peggy Carter']},
