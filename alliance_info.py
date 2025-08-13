@@ -88,9 +88,11 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	# Get the list of usable characters
 	char_list = get_cached('char_list')
 
-	# Meta Chars not subject to min requirements. Filter out only uncollected heroes.
-	meta_chars = sorted(section.get('meta',[]))
-	meta_chars = [char for char in char_list if char in meta_chars]
+	# Meta Chars not subject to min requirements. Filter out only uncollected heroes
+	meta_chars   = section.get('meta',[])
+	sort_char_by = None if '---' in meta_chars else 'alpha'
+	
+	meta_chars = [char for char in meta_chars if char in char_list]
 
 	# Other is everything left over. 
 	other_chars = [char for char in char_list if not char in meta_chars]
@@ -153,7 +155,8 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		other_chars = []
 
 	# Default sort is still 'alpha'.
-	sort_char_by = get_table_value(table_format, table, section, key='sort_char_by', default='alpha')
+	if sort_char_by:
+		sort_char_by = get_table_value(table_format, table, section, key='sort_char_by', default=sort_char_by)
 
 	# This section sorts other_chars by power or availability, not by name.
 	# If max_others, this order is also used to select which we keep. 
@@ -185,7 +188,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		if max_others:
 			other_chars = other_chars[:max_others]
 		
-	if sort_char_by == 'alpha':
+	elif sort_char_by == 'alpha':
 		other_chars.sort()
 
 	# If only meta specified, just move it to others so we don't have to do anything special.
