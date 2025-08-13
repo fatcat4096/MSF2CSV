@@ -44,7 +44,7 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 						stp = stp_list[hist_date][member]
 
 						# Get the num_avail for this team. 
-						avail = len([char for char in table.get('under_min',{}).get(member,{}) if not table.get('under_min',{}).get(member,{}).get(char)])
+						avail = len([char for char in table.get('under_min',{}).get(member,{}) if char in meta_chars+other_chars and not table.get('under_min',{}).get(member,{}).get(char)])
 
 						# Find Rank for this member's team
 						rank  = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(member)+1

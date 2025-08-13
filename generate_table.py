@@ -284,7 +284,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Calculate the minimum required to avoid getting dimmed.
 			if team_power_summary:
-				min_count = 'Teams' not in table['name'] and 'Battleworld' not in table['name'] and 5
+				min_count = 'Teams' not in table['name'] and 5
 			else:
 				min_count = 5 - (DD7 and section.get('label')=='Mythic')
 
@@ -308,10 +308,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# Dim the name if don't have 5 heroes that meet min requirements for this section (or all sections, for summary)
 				if team_power_summary:
 					not_completed = not get_summary_comp(alliance_info, player_name, inc_comp)
-					not_ready = not_completed and min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+					not_ready = min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+					#not_ready = not_completed and min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
-					not_ready = any([table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in char_list])
+					not_ready = sum([not table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in char_list]) < 5
 				# Otherwise, check for Dark Dimension readiness.
 				else:
 					not_ready = num_avail < min_count and len(char_list) >= min_count 
