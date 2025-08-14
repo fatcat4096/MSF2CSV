@@ -235,7 +235,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			result = 'NOT AVAIL'
 			format = ansi.ltred
 		# Never received Roster page to parse.
-		elif (AUTH and not response.ok) or (member not in roster_csv_data and driver and len(driver.page_source) < 700000): 
+		elif (AUTH and not (response and response.ok)) or (member not in roster_csv_data and driver and len(driver.page_source) < 700000): 
 			result = 'TIMEOUT'
 			format = ansi.ltred
 		# Not sure what happened here. Side stepping an odd error condition.
