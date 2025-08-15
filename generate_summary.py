@@ -17,9 +17,10 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 
 	html_file = ''
 
-	# Likely need to deep copy here before moving on -- we're adding elements to the existing dicts.
-	table         = copy.deepcopy(table)
+	# Likely need to deep copy here before moving on -- we're adding elements to the existing dicts
 	alliance_info = copy.deepcopy(alliance_info)
+	table         = copy.deepcopy(table)
+	lanes         = copy.deepcopy(lanes)
 	table_format  = copy.deepcopy(table_format)
 
 	# Generate a separate table for each lane. 
@@ -29,7 +30,10 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 		for section in lane:
 			section_label = get_section_label(section)
 			if section_label in team_list or 1:
-			
+
+				# Force get_meta_other_chars to return ALL valid characters
+				section['max_others'] = 0
+
 				# Filter down the character list to only those in this section
 				meta_chars,other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
 
