@@ -110,11 +110,11 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 
 	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
+	driver = webdriver.Chrome(options=options)
+
 	# The html_files list contains paths to the html files.
 	for file in html_files:
 		
-		driver = webdriver.Chrome(options=options)
-
 		# Start by opening each file with our Selenium driver.
 		driver.get(r'file:///'+file)
 
@@ -148,15 +148,16 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 		body.screenshot(png_filename)
 		files_generated.append(png_filename)
 
-		# Close the driver to prevent memory leaks.
-		driver.close()
-
 		"""# Finally, clean up the original files. 
 		try:
 			os.remove(file)
 		except Exception as exc:
 			print (f"EXCEPTION: {type(exc).__name__}: {exc}")
 		"""
+
+	# Close the driver to prevent memory leaks.
+	driver.close()
+
 	return files_generated
 
 
