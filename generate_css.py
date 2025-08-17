@@ -12,6 +12,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 /* Styles for table cells */
 .bd {
   font-weight : bold;
+  color       : black;
 }
 .alliance_name {
   font-weight : 700;
