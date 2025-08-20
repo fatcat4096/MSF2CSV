@@ -348,7 +348,13 @@ def log_leave(log, ret, **kwarg):
 	logger.info(f'<<<{level}    Leaving {func}(), return value = {log_repr(ret)}')
 	logger.info(f'<<<{level} Now in {new_func}()')
 
-	return
+	# If we're back to 0, the call is over
+	if not level:
+
+		# Tidy up so that log files can be removed
+		for handler in logger.handlers[:]:
+			logger.removeHandler(handler)
+			handler.close()
 
 
 
