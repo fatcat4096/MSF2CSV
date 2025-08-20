@@ -109,8 +109,8 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 	# Print a summary of the results.
 	roster_results(alliance_info, start_time, rosters_output)
 
-	# Make sure we have a valid strike_team for Chaos Raids. 
-	updated = get_valid_strike_teams(alliance_info) 
+	# Make sure we have a valid strike_team for Raids. 
+	updated = update_strike_teams(alliance_info) 
 
 	# Generate strike_teams.py if we updated strike team definitions or if this file doesn't exist locally.
 	if updated or 'strike_teams' not in globals():
@@ -496,71 +496,24 @@ def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 @timed(level=3)
 def update_strike_teams(alliance_info):
 
-	strike_teams_defined = 'strike_teams' in globals()
-
 	# Temporary update strike team definitions if necessary
 	updated = migrate_strike_teams(alliance_info)
 
 	# Iterate through each defined strike team.
 	for raid_type in ('chaos','spotlight','annihilation'):
 
-		# If the global definition of strike_team is valid for this alliance, let's use it. 
-		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]), alliance_info):
-
-			# Make some common sense fixes and then update the alliance_info dict.
-			updated = fix_strike_teams(strike_teams[raid_type], alliance_info) or updated
-
-			# Only 'updated' if we changed the cached value.
-			if alliance_info.get('strike_teams',{}).get(raid_type) != strike_teams[raid_type]:
-				alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
-				updated = True
-
 		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
-		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
+		if 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
 	
-			# Fix any issues. We will just update this info in cached_data.
+			# Fix any issues. We will just update this info in cached_data
 			updated = fix_strike_teams(alliance_info['strike_teams'][raid_type], alliance_info) or updated
 
-	# Refresh the is_stale data in the file.
+	# Refresh the is_stale data in the file
 	update_is_stale(alliance_info)
 
 	# If a change was made, update the cached_data file, but do not change the modification date.
 	if updated:
 		write_cached_data(alliance_info, timestamp='keep')
-
-	# If no valid strike_teams.py exists, use this info as the basis.
-	if not strike_teams_defined:
-		generate_strike_teams(alliance_info)
-
-
-
-# Go through a multi-stage process to find a valid strike_team definition to use.
-@timed(level=3)
-def get_valid_strike_teams(alliance_info):
-
-	strike_teams_defined = 'strike_teams' in globals()
-
-	# Update strike team definitions if necessary
-	updated = migrate_strike_teams(alliance_info)
-
-	for raid_type in ('chaos','spotlight','annihilation'):
-
-		# If a valid strike_team definition is in strike_teams.py --- USE THAT. 
-		if strike_teams_defined and valid_strike_team(strike_teams.get(raid_type,[]),alliance_info):
-
-			# If we update or fix the definition, write it to disk before we're done.
-			updated = fix_strike_teams(strike_teams[raid_type], alliance_info) or updated
-			
-			# Store the result in alliance_info.
-			alliance_info.setdefault('strike_teams',{})[raid_type] = strike_teams[raid_type]
-
-		# If strike_teams.py is missing or invalid, check for strike_teams cached in the alliance_info
-		elif 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
-	
-			# Fix any issues. We will just update this info in cached_data.
-			fix_strike_teams(alliance_info['strike_teams'][raid_type], alliance_info)
-
-	update_is_stale(alliance_info)
 
 	return updated
 
