@@ -75,27 +75,13 @@ tables['anni'] = { 'name': 'Annihilation Raid',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Spider-Man (Superior)', 'Vulture'], 'label':'Tech<br>(Insidious Six)'}, 
-							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunderbolts)'}, 
+							{'traits': ['Tech'], 'meta': ['Lady Deathstrike', 'Nimrod', 'Omega Sentinel', 'Scientist Supreme', 'Sentinel'], 'label':'Tech<br>(Orchis)'}, 
+							#{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Spider-Man (Superior)', 'Vulture'], 'label':'Tech<br>(Insidious Six)'}, 
 							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
+							{'traits': ['Global'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm'], 'label':'Global<br>(Uncanny<br>Avengers)'},
 							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
+							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunderbolts)'}, 
 							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'label':'Mutant<br>(Hellfire Club)'},
-							] ],
-					}
-
-# Meta Heroes for use in Annihilation Raid (D6-7)
-tables['anni_low'] = { 'name': 'Annihilation Raid (D6-7)',
-					'min_iso': 13,
-					'max_others': 0,
-					'strike_teams': 'annihilation',
-					'sort_char_by': 'avail',
-					'inc_keys': ['power','lvl','tier','iso'],
-					'lanes':[ [
-							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Spider-Man (Superior)', 'Vulture', '---', 'Lady Deathstrike', 'Nimrod', 'Omega Sentinel', 'Scientist Supreme', 'Sentinel'], 'label':'Tech<br>(Insidious Six<br>or Orchis)'}, 
-							{'traits': ['Bio'], 'meta': ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand', '---', 'Carnage', 'Gwenom', 'Red Goblin', 'Venom', 'Void Knight'], 'label':'Bio<br>(Thunderbolts<br>or Hive-Mind)'}, 
-							{'traits': ['Mystic'], 'meta': ['Agatha Harkness', 'Blade', 'Man-Thing', 'Moon Knight', 'Oath', '---', 'Beta Ray Bill', 'Loki', 'Loki (Teen)', 'Sylvie', 'Vahl'], 'label':'Mystic<br>(Nightstalkers<br>or Bifrost)'},
-							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable', '---', 'Ghost-Spider', 'Peni Parker', 'Peter B. Parker', 'Spider-Man (Noir)', 'Spider-Man (Pavitr)'], 'label':'Skill<br>(Vigilantes or<br>Spider Society)'}, 
-							{'traits': ['Mutant'], 'meta': ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw', '---', 'Cyclops', 'Forge', 'Gambit', 'Nightcrawler', 'Sunspot'], 'label':'Mutant<br>(Hellfire Club<br>or X-Treme)'},
 							] ],
 					}
 
@@ -114,24 +100,6 @@ tables['profx'] = { 'name': 'Prof X Saga',
 							{'min_tier':20, 'traits': ['Global','Hero'],    'label':'Shadow King:<br>X-Treme<br>(T20 Global Hero)'},
 							{'min_tier':20, 'traits': ['Cosmic','Villain'], 'label':'Dark Xavier:<br>Heroic<br>(T20 Cosmic Villain)'},
 							{'min_tier':20, 'traits': ['Cosmic','Hero'],    'label':'Dark Xavier:<br>X-Treme<br>(T20 Cosmic Hero)'},
-							] ]
-					}
-
-# Meta Heroes for use in Prof X Saga (for sections with T17-19
-tables['profx_low'] = { 'name': 'Prof X Saga (T17-19)',
-					'max_others': 10,
-					'sort_by': 'avail',
-					'sort_char_by': 'avail',
-					'traits_req': 'all',
-					'summary_keys': ['stp','avail'],
-					#'summary_comp': 'Professor Xavier',
-					'lanes':[ [
-							{'min_tier':17, 'traits': ['All'],              'label':'Nimrod:<br>Hard<br>(All T17)'},
-							{'min_tier':18, 'traits': ['All'],              'label':'Nimrod:<br>Heroic<br>(All T18)'},
-							{'min_tier':19, 'traits': ['All'],              'label':'Nimrod:<br>X-Treme<br>(All T19)'},
-							{'min_tier':19, 'traits': ['City'],             'label':'Gladiator:<br>Hard<br>(T19 City)'},
-							{'min_tier':19, 'traits': ['Global'],           'label':'Shadow King:<br>Hard<br>(T19 Global)'},
-							{'min_tier':19, 'traits': ['Cosmic'],           'label':'Dark Xavier:<br>Hard<br>(T19 Cosmic)'},
 							] ]
 					}
 
@@ -256,6 +224,7 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['PymTech']},
 							{'traits': ['Rebirth']},
 #							{'traits': ['SecretDefender']},
+							{'traits': ['SecretWarrior'], 'meta': ['Yo-Yo','Quake','Domino','Negasonic','Phantom Rider']},
 #							{'traits': ['Shadowland']},
 							{'traits': ['SpiderSociety']},
 							{'traits': ['SuperiorSix']},
