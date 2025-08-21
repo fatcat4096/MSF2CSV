@@ -51,6 +51,10 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 			# Update the strike team info if we have valid teams in strike_teams.py
 			update_strike_teams(cached_alliance_info)
+
+			# Refresh the is_stale data in the file
+			update_is_stale(cached_alliance_info)
+
 			return cached_alliance_info
 
 		# If no alliance_name specified but we found one obvious candidate, report that we are using it.
@@ -118,6 +122,9 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 	# Write the collected roster info to disk.
 	write_cached_data(alliance_info)
+
+	# Refresh the is_stale data in the file
+	update_is_stale(alliance_info)
 
 	return alliance_info
 
@@ -496,20 +503,19 @@ def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 @timed(level=3)
 def update_strike_teams(alliance_info):
 
-	# Temporary update strike team definitions if necessary
-	updated = migrate_strike_teams(alliance_info)
+	updated = False
 
-	# Iterate through each defined strike team.
+	# Fix missing people in each defined strike team.
 	for raid_type in ('chaos','spotlight','annihilation'):
 
 		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
-		if 'strike_teams' in alliance_info and valid_strike_team(alliance_info['strike_teams'].get(raid_type,[]), alliance_info):
+		if 'strike_teams' in alliance_info and raid_type in alliance_info['strike_teams'] and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
 	
 			# Fix any issues. We will just update this info in cached_data
 			updated = fix_strike_teams(alliance_info['strike_teams'][raid_type], alliance_info) or updated
 
-	# Refresh the is_stale data in the file
-	update_is_stale(alliance_info)
+	# Update strike team definitions if necessary
+	updated = migrate_strike_teams(alliance_info) or updated
 
 	# If a change was made, update the cached_data file, but do not change the modification date.
 	if updated:
@@ -542,9 +548,9 @@ def migrate_strike_teams(alliance_info):
 	# Update the alliance_info structure as well, just in case it's all we've got.
 	if 'strike_teams' in alliance_info:
 
-		# Orchis defined, but no Chaos yet?
+		# Chaos defined, but no Annihilation yet?
 		if 'chaos' in alliance_info['strike_teams'] and 'annihilation' not in alliance_info['strike_teams']:
-			alliance_info['strike_teams']['chaos'] = alliance_info['strike_teams']['chaos']
+			alliance_info['strike_teams']['annihilation'] = alliance_info['strike_teams']['chaos']
 			updated = True
 	
 		# Look for outdated strike_team definitions
