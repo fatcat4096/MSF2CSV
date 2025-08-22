@@ -51,22 +51,6 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 							] ]
 					}
 
-# Meta Heroes for use in Orchis Raid
-tables['chaos'] = { 'name': 'Chaos Raid',
-					'min_iso': 13,
-					'max_others': 0,
-					'strike_teams': 'chaos',
-					'sort_char_by': 'avail',
-					'inc_keys': ['power','lvl','tier','iso'],
-					'lanes':[ [
-							{'traits': ['Tech'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Nimrod', 'Omega Sentinel'], 'label':'Tech<br>(Orchis)'}, 
-							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunderbolts)'}, 
-							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
-							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
-							{'traits': ['Mutant'], 'meta': ['Gambit', 'Nightcrawler', 'Forge', 'Sunspot', 'Old Man Logan'], 'label':'Mutant<br>(X-Treme)'},
-							] ],
-					}
-
 # Meta Heroes for use in Annihilation Raid (D8-9)
 tables['anni'] = { 'name': 'Annihilation Raid',
 					'min_iso': 13,

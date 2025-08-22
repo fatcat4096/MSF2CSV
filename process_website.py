@@ -506,7 +506,7 @@ def update_strike_teams(alliance_info):
 	updated = False
 
 	# Fix missing people in each defined strike team.
-	for raid_type in ('chaos','spotlight','annihilation'):
+	for raid_type in ('spotlight','annihilation'):
 
 		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
 		if 'strike_teams' in alliance_info and raid_type in alliance_info['strike_teams'] and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
@@ -540,7 +540,7 @@ def migrate_strike_teams(alliance_info):
 			updated = True
 
 		# Look for outdated strike_team definitions
-		for raid_type in ('orchis','incur','gamma'):
+		for raid_type in ('chaos','orchis','incur','gamma'):
 			if raid_type in strike_teams:
 				del strike_teams[raid_type]
 				updated = True
@@ -554,7 +554,7 @@ def migrate_strike_teams(alliance_info):
 			updated = True
 	
 		# Look for outdated strike_team definitions
-		for raid_type in ('orchis','incur','gamma'):
+		for raid_type in ('chaos','orchis','incur','gamma'):
 			if raid_type in alliance_info['strike_teams']:
 				del alliance_info['strike_teams'][raid_type]
 				updated = True

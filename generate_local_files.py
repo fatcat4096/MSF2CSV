@@ -30,7 +30,7 @@ def generate_strike_teams(alliance_info):
 
 	new_teams = alliance_info.setdefault('strike_teams',{})
 
-	for raid_type in ('chaos','spotlight'):
+	for raid_type in ('annihilation','spotlight'):
 
 		if not new_teams.get(raid_type):
 
@@ -57,8 +57,8 @@ strike_teams = {}
 '''
 
 	# Create each strike_team definition
-	new_file += generate_strike_team('chaos',     new_teams['chaos'],    'Used for Chaos Raid output.')
-	new_file += generate_strike_team('spotlight', new_teams['spotlight'], 'Used for Spotlight Raids and other output.')
+	new_file += generate_strike_team('annihilation', new_teams['annihilation'], 'Used for Annihilation Raid output.')
+	new_file += generate_strike_team('spotlight',    new_teams['spotlight'],    'Used for Spotlight Raids and other output.')
 
 	# Write it to disk.
 

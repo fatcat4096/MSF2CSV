@@ -10,7 +10,7 @@
 strike_teams = {}
 
 # Used for Chaos Raid output.
-strike_teams["chaos"] = [
+strike_teams["annihilation"] = [
 [### Strike team 1 ###]
 	"Jutch",
 	"Medicus",
