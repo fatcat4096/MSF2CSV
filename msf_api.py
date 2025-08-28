@@ -142,87 +142,91 @@ def parse_auth(auth_token, AUTH={}, discord_id=None):
 # Need this for the name of the Player 	
 def request_player_info(ACCESS_TOKEN):
 
-	# Send request for Alliance Info
-	response = requests.get(
-		headers = get_headers(ACCESS_TOKEN),
-		url     = f'{API_ENDPOINT}/player/v1/card', 
-	)
+	# Attempt up to three times
+	for x in range(3):
 
-	return response
+		# Send request for Alliance Info
+		response = requests.get(
+			headers = get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/player/v1/card', 
+		)
+
+		# Exit loop if we got a successful response
+		if response.ok:
+			return response
 
 
 
 # Need this for the Alliance name and stats
 def request_alliance_info(ACCESS_TOKEN):
 
-	# Send request for Alliance Info
-	response = requests.get(
-		headers = get_headers(ACCESS_TOKEN),
-		url     = f'{API_ENDPOINT}/player/v1/alliance/card', 
-	)
+	# Attempt up to three times
+	for x in range(3):
 
-	# If bad response, return None
-	if not response.ok:
-		return
+		# Send request for Alliance Info
+		response = requests.get(
+			headers = get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/player/v1/alliance/card', 
+		)
 
-	return response
+		# Exit loop if we got a successful response
+		if response.ok:
+			return response
 
 
 
 # Need this for the Alliance members 	
 def request_alliance_members(ACCESS_TOKEN):
 
-	# Send request for Alliance Info
-	response = requests.get(
-		headers = get_headers(ACCESS_TOKEN),
-		url     = f'{API_ENDPOINT}/player/v1/alliance/members',
-	)
+	# Attempt up to three times
+	for x in range(3):
 
-	# If bad response, return None
-	if not response.ok:
-		return
+		# Send request for Alliance Info
+		response = requests.get(
+			headers = get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/player/v1/alliance/members',
+		)
 
-	return response
+		# Exit loop if we got a successful response
+		if response.ok:
+			return response
 
 
 
 # Need this for the Roster information 	
 def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
 
-	# Send request for new access_token
-	response = requests.get(
-		headers = get_headers(ACCESS_TOKEN),
-		url     = f'{API_ENDPOINT}/player/v1/roster/member/{memberid}',	# Individual roster request  
-		params  = {'since':asOf} if asOf else {}, 						# Hash for previous API request
-	)
+	# Attempt up to three times
+	for x in range(3):
 
-	# May not need. See what's in response.json()
-	if response.status_code == 344:
-		print (f'Data is UNCHANGED. Nothing to update.')
-		print (f'{response.json()=}')
-		return {}
-	# If bad response, return None
-	elif not response.ok:
-		return
+		# Send request for new access_token
+		response = requests.get(
+			headers = get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/player/v1/roster/member/{memberid}',	# Individual roster request  
+			params  = {'since':asOf} if asOf else {}, 						# Hash for previous API request
+		)
 
-	return response
+		# Exit loop if we got a successful response
+		if response.ok:
+			return response
 
 
 
 # Request all character information -- used for Char names, Portrait info
 def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
 
-	# Send request for Character Info
-	response = requests.get(
-		headers =  get_headers(ACCESS_TOKEN),
-		url     = f'{API_ENDPOINT}/game/v1/characters',
-		params  = {'status':'playable' if PLAYABLE else 'unplayable'},
-	)
+	# Attempt up to three times
+	for x in range(3):
 
-	# If bad response, return None
-	if not response.ok:
-		return
+		# Send request for Character Info
+		response = requests.get(
+			headers =  get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/game/v1/characters',
+			params  = {'status':'playable' if PLAYABLE else 'unplayable'},
+		)
 
-	return response
+		# Exit loop if we got a successful response
+		if response.ok:
+			return response
 
 
