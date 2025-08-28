@@ -172,19 +172,23 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			processed_chars = {}
 			other_data      = {}
 
-			# Query the Char info, if successful, parse and update all the info. 
+			# Query the Char info, if successful, parse and update all the info
 			response = request_member_roster(AUTH['access_token'], memberid=members[member]['url'], asOf=members[member].get('asOf'))
 			
 			# If response was successful, parse the member_roster dict
-			if response and response.ok:
+			if response and response.ok and response.status_code != 344:
+				
 				parse_roster_api(response, processed_chars, other_data)
 				
 				# Merge the processed roster information into our Alliance Info
 				merge_roster(alliance_info, member, processed_chars, other_data)
 
-			# API request failed. Old info will be used.
-			else:
-				print ("API ROSTER REQUEST: No valid response received")
+				# Update the asof tag
+				alliance_info['members'][member]['asOf'] = response.json()['meta']['asOf']
+
+			# If response was UNSUCCESSFUL note the error
+			elif not (response or response.ok):
+				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received")
 
 		# If member's info is in the roster_csv_data, use that.
 		elif member in roster_csv_data:
