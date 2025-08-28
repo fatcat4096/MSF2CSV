@@ -105,12 +105,9 @@ def html_to_images(html_files=[], print_path=True, render_wait=0.1):
 	
 	# Start by creating a Selenium driver.
 	options = webdriver.ChromeOptions()
-	options.add_argument('--log-level=3')
 	options.add_argument('--headless=new')
-
-	options.add_experimental_option('excludeSwitches', ['enable-logging'])
-
-	driver = webdriver.Chrome(options=options)
+	service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
+	driver  = webdriver.Chrome(service=service, options=options)
 
 	# The html_files list contains paths to the html files.
 	for file in html_files:
