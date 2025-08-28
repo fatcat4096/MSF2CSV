@@ -339,12 +339,12 @@ def translate_name(value):
 						"Spider-Man (Miles)":"Spider-Man<br>(Miles)",
 						"Spider-Man (Noir)":"Spider-Man<br>(Noir)",
 						"Spider-Man (Pavitr)":"Spider-Man<br>(Pavitr)",
-						"Spider-Man (Superior)":"Spider-Man<br>(Superior)",
 						"Spider-Man (Symbiote)":"Spider-Man<br>(Symbiote)",
 						"Spider-Man 2099":"Spider-Man<br>2099",
 						"Star-Lord (Annihilation)":"Star-Lord<br>(Annihilation)",
 						"Star-Lord (T'Challa)":"Star-Lord<br>(T'Challa)",
 						"Strange (Heartless)":"Strange<br>(Heartless)",
+						"Superior Spider-Man":"Superior<br>Spider-Man",
 						"Thor (Infinity War)":"Thor<br>(Infinity War)",
 						"X23":"X-23",
 						}

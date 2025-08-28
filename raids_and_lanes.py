@@ -60,7 +60,7 @@ tables['anni'] = { 'name': 'Annihilation Raid',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
 							{'traits': ['Tech'], 'meta': ['Lady Deathstrike', 'Nimrod', 'Omega Sentinel', 'Scientist Supreme', 'Sentinel'], 'label':'Tech<br>(Orchis)'}, 
-							#{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Spider-Man (Superior)', 'Vulture'], 'label':'Tech<br>(Insidious Six)'}, 
+							#{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superiod Spider-Man', 'Vulture'], 'label':'Tech<br>(Insidious Six)'}, 
 							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
 							{'traits': ['Global'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm'], 'label':'Global<br>(Uncanny<br>Avengers)'},
 							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
