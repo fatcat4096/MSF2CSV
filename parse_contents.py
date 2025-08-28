@@ -167,7 +167,7 @@ def parse_alliance_api(alliance_data, alliance_members):
 
 
 
-# Parse the Member data directly from the info.csv file.
+# Parse the Member data directly from the API call
 def parse_info_api(alliance_members, alliance, captains, members):
 
 	# Iterate through each entry, building up a member dict with stats for each.

@@ -5076,6 +5076,10 @@ playable   = {
         {
           "id": "Xforce",
           "name": "X-FORCE"
+        },
+        {
+          "id": "SecretWarrior",
+          "name": "SECRET WARRIOR"
         }
       ],
       "unlockStars": 2
@@ -8326,6 +8330,80 @@ playable   = {
         {
           "id": "Vigilante",
           "name": "VIGILANTE"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
+      "description": "After discovering and stealing Green Goblin's gear, Roderick Kingsley takes the mantle of Hobgoblin! Control the battlefield with his explosive pumpkin bombs.",
+      "id": "Hobgoblin",
+      "mission": false,
+      "name": "Hobgoblin",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hobgoblin_87dc6735.png",
+      "starItems": [
+        {
+          "id": "SHARD_HOBGOBLIN"
+        },
+        {
+          "id": "RS_HOBGOBLIN_1"
+        },
+        {
+          "id": "RS_HOBGOBLIN_2"
+        },
+        {
+          "id": "RS_HOBGOBLIN_3"
+        },
+        {
+          "id": "RS_HOBGOBLIN_4"
+        },
+        {
+          "id": "RS_HOBGOBLIN_5"
+        },
+        {
+          "id": "RS_HOBGOBLIN_6"
+        },
+        {
+          "id": "RS_HOBGOBLIN_7"
+        },
+        {
+          "id": "PD_HOBGOBLIN_1"
+        },
+        {
+          "id": "PD_HOBGOBLIN_2"
+        },
+        {
+          "id": "PD_HOBGOBLIN_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "City",
+          "name": "CITY"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "SpiderVerse",
+          "name": "SPIDER-VERSE"
+        },
+        {
+          "id": "SinisterSix",
+          "name": "SINISTER SIX"
+        },
+        {
+          "id": "InsidiousSix",
+          "name": "INSIDIOUS SIX"
         }
       ],
       "unlockStars": 3
@@ -14676,6 +14754,10 @@ playable   = {
         {
           "id": "Xforce",
           "name": "X-FORCE"
+        },
+        {
+          "id": "SecretWarrior",
+          "name": "SECRET WARRIOR"
         }
       ],
       "unlockStars": 2
@@ -16274,6 +16356,72 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Charging into battle alongside his trusty steed Banshee, Phantom Rider uses his quick wits and quicker draw to outgun enemies and lay down protections for his team.",
+      "id": "PhantomRider",
+      "mission": false,
+      "name": "Phantom Rider",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_PhantomRider_4d4df490.png",
+      "starItems": [
+        {
+          "id": "SHARD_PHANTOMRIDER"
+        },
+        {
+          "id": "RS_PHANTOMRIDER_1"
+        },
+        {
+          "id": "RS_PHANTOMRIDER_2"
+        },
+        {
+          "id": "RS_PHANTOMRIDER_3"
+        },
+        {
+          "id": "RS_PHANTOMRIDER_4"
+        },
+        {
+          "id": "RS_PHANTOMRIDER_5"
+        },
+        {
+          "id": "RS_PHANTOMRIDER_6"
+        },
+        {
+          "id": "RS_PHANTOMRIDER_7"
+        },
+        {
+          "id": "PD_PHANTOMRIDER_1"
+        },
+        {
+          "id": "PD_PHANTOMRIDER_2"
+        },
+        {
+          "id": "PD_PHANTOMRIDER_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "City",
+          "name": "CITY"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "SecretWarrior",
+          "name": "SECRET WARRIOR"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "Jean Grey absorbs her enemies negative status effects, being reborn as Dark Phoenix if she falls in battle.",
       "eventTraits": [
         {
@@ -16971,6 +17119,10 @@ playable   = {
         {
           "id": "Inhuman",
           "name": "INHUMAN"
+        },
+        {
+          "id": "SecretWarrior",
+          "name": "SECRET WARRIOR"
         }
       ],
       "unlockStars": 2
@@ -18776,6 +18928,84 @@ playable   = {
         {
           "id": "Orchis",
           "name": "ORCHIS"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
+      "description": "Mac Gargan was a PI who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
+      "id": "Scorpion",
+      "mission": false,
+      "name": "Scorpion",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Scorpion_5848a3e7.png",
+      "starItems": [
+        {
+          "id": "SHARD_SCORPION"
+        },
+        {
+          "id": "RS_SCORPION_1"
+        },
+        {
+          "id": "RS_SCORPION_2"
+        },
+        {
+          "id": "RS_SCORPION_3"
+        },
+        {
+          "id": "RS_SCORPION_4"
+        },
+        {
+          "id": "RS_SCORPION_5"
+        },
+        {
+          "id": "RS_SCORPION_6"
+        },
+        {
+          "id": "RS_SCORPION_7"
+        },
+        {
+          "id": "PD_SCORPION_1"
+        },
+        {
+          "id": "PD_SCORPION_2"
+        },
+        {
+          "id": "PD_SCORPION_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "City",
+          "name": "CITY"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "SpiderVerse",
+          "name": "SPIDER-VERSE"
+        },
+        {
+          "id": "SinisterSix",
+          "name": "SINISTER SIX"
+        },
+        {
+          "id": "InsidiousSix",
+          "name": "INSIDIOUS SIX"
+        },
+        {
+          "id": "Infestation",
+          "name": "INFESTATION"
         }
       ],
       "unlockStars": 3
@@ -21787,6 +22017,84 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "Otto Octavius takes over Spider-Man's body and becomes a more brutal and efficient hero, believing himself to be \"superior.\" Use his new tech to heal and apply positive status effects on allies.",
+      "id": "SuperiorSpiderMan",
+      "mission": false,
+      "name": "Superior Spider-Man",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SuperiorSpiderMan_1d666ce8.png",
+      "starItems": [
+        {
+          "id": "SHARD_SUPERIORSPIDERMAN"
+        },
+        {
+          "id": "RS_SUPERIORSPIDERMAN_1"
+        },
+        {
+          "id": "RS_SUPERIORSPIDERMAN_2"
+        },
+        {
+          "id": "RS_SUPERIORSPIDERMAN_3"
+        },
+        {
+          "id": "RS_SUPERIORSPIDERMAN_4"
+        },
+        {
+          "id": "RS_SUPERIORSPIDERMAN_5"
+        },
+        {
+          "id": "RS_SUPERIORSPIDERMAN_6"
+        },
+        {
+          "id": "RS_SUPERIORSPIDERMAN_7"
+        },
+        {
+          "id": "PD_SUPERIORSPIDERMAN_1"
+        },
+        {
+          "id": "PD_SUPERIORSPIDERMAN_2"
+        },
+        {
+          "id": "PD_SUPERIORSPIDERMAN_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "City",
+          "name": "CITY"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Support",
+          "name": "SUPPORT"
+        },
+        {
+          "id": "SpiderVerse",
+          "name": "SPIDER-VERSE"
+        },
+        {
+          "id": "SinisterSix",
+          "name": "SINISTER SIX"
+        },
+        {
+          "id": "InsidiousSix",
+          "name": "INSIDIOUS SIX"
+        },
+        {
+          "id": "SuperiorSix",
+          "name": "SUPERIOR SIX"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "With the combined powers of Earth's Fantastic Four, Super Skrull packs a punch and camouflages seamlessly into his team, becoming more heroic - or villainous - depending on who is around.",
@@ -25116,6 +25424,10 @@ playable   = {
         {
           "id": "Inhuman",
           "name": "INHUMAN"
+        },
+        {
+          "id": "SecretWarrior",
+          "name": "SECRET WARRIOR"
         }
       ],
       "unlockStars": 2
@@ -25421,15 +25733,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "a86b2dc7c36c058c1d8d",
-      "chars": "bc14a499feff4785ba00",
-      "drops": "a9135e4106463ec80719",
-      "events": "56c03cd9e587ad521690",
-      "locs": "e69bea6eea1467258ed2",
-      "nodes": "fb68e5f65c1ba1aa5e7f",
-      "other": "67d911c00d1aea2f6d03"
+      "all": "b588a8530de22f0c9159",
+      "chars": "4139909711ff08ff5ed7",
+      "drops": "43f11452d402503e9dbc",
+      "events": "3fbb191f12ff404e11d5",
+      "locs": "1211fa742c0937547ae7",
+      "nodes": "821bf4301e58aa06d78f",
+      "other": "600d169dc21f1a569e35"
     },
-    "perTotal": 334,
+    "perTotal": 338,
     "version": 1
   }
 }
@@ -25462,6 +25774,82 @@ unplayable = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_Ares_SentryBoss",
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Ares_d23d50ad.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_BlackWidow_SentryBoss",
+      "invisibleTraits": [
+        {
+          "id": "Avenger",
+          "name": "AVENGER"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Wave1"
+        }
+      ],
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_BlackWidow_ad4f751d.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Skill",
+          "name": "SKILL"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "Shield",
+          "name": "S.H.I.E.L.D."
+        },
+        {
+          "id": "Wave1Avenger",
+          "name": "WAVE I - AVENGER"
+        },
+        {
+          "id": "Military",
+          "name": "MILITARY"
+        },
+        {
+          "id": "Infestation",
+          "name": "INFESTATION"
         }
       ],
       "unlockStars": 7
@@ -25514,6 +25902,97 @@ unplayable = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_Boss_Sentry",
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_PVE_Boss_Sentry_032ed805.png",
+      "status": "unplayable",
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_Bullseye_SentryBoss",
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Bullseye_b56d5281.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "City",
+          "name": "CITY"
+        },
+        {
+          "id": "Skill",
+          "name": "SKILL"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Mercenary",
+          "name": "MERCENARY"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_CaptainAmerica_SentryBoss",
+      "invisibleTraits": [
+        {
+          "id": "Avenger",
+          "name": "AVENGER"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Wave1"
+        }
+      ],
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        },
+        {
+          "id": "Shield",
+          "name": "S.H.I.E.L.D."
+        },
+        {
+          "id": "Military",
+          "name": "MILITARY"
+        },
+        {
+          "id": "Wave1Avenger",
+          "name": "WAVE I - AVENGER"
+        },
+        {
+          "id": "Rebirth",
+          "name": "REBIRTH"
+        },
+        {
+          "id": "OutOfTime",
+          "name": "OUT OF TIME"
         }
       ],
       "unlockStars": 7
@@ -25807,6 +26286,39 @@ unplayable = {
       "unlockStars": 7
     },
     {
+      "id": "PVE_Daken_SentryBoss",
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Daken_fad050d8.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mutant",
+          "name": "MUTANT"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "Mercenary",
+          "name": "MERCENARY"
+        },
+        {
+          "id": "MercsForMoney",
+          "name": "MERCS FOR MONEY"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
       "id": "PvE_DDDoctorDoom",
       "mission": false,
       "name": "Doctor Doom",
@@ -26052,6 +26564,96 @@ unplayable = {
       "unlockStars": 7
     },
     {
+      "id": "PVE_Hawkeye_SentryBoss",
+      "invisibleTraits": [
+        {
+          "id": "Avenger",
+          "name": "AVENGER"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Wave1"
+        }
+      ],
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hawkeye_4f015df2.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Skill",
+          "name": "SKILL"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "Shield",
+          "name": "S.H.I.E.L.D."
+        },
+        {
+          "id": "Wave1Avenger",
+          "name": "WAVE I - AVENGER"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_Hulk_SentryBoss",
+      "invisibleTraits": [
+        {
+          "id": "Avenger",
+          "name": "AVENGER"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Wave1"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Chargeable"
+        }
+      ],
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hulk_71f97638.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        },
+        {
+          "id": "Wave1Avenger",
+          "name": "WAVE I - AVENGER"
+        },
+        {
+          "id": "Gamma",
+          "name": "GAMMA"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
       "id": "PVE_Hulkbuster_Incursion",
       "invisibleTraits": [
         {
@@ -26087,6 +26689,90 @@ unplayable = {
         {
           "id": "BionicAvenger",
           "name": "BIONIC AVENGER"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_IronMan_SentryBoss",
+      "invisibleTraits": [
+        {
+          "id": "Avenger",
+          "name": "AVENGER"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Wave1"
+        }
+      ],
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_IronMan_55dadf73.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Wave1Avenger",
+          "name": "WAVE I - AVENGER"
+        },
+        {
+          "id": "PowerArmor",
+          "name": "POWER ARMOR"
+        },
+        {
+          "id": "BionicAvenger",
+          "name": "BIONIC AVENGER"
+        },
+        {
+          "id": "Illuminati",
+          "name": "ILLUMINATI"
+        },
+        {
+          "id": "Legendary",
+          "name": "LEGENDARY"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_IronPatriot_SentryBoss",
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_IronPatriot_0b6c142a.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Cabal",
+          "name": "CABAL"
         }
       ],
       "unlockStars": 7
@@ -26171,6 +26857,35 @@ unplayable = {
         {
           "id": "Military",
           "name": "MILITARY"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_Moonstone_SentryBoss",
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Moonstone_84b2b72c.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "MastersOfEvil",
+          "name": "MASTERS OF EVIL"
         }
       ],
       "unlockStars": 7
@@ -26467,6 +27182,85 @@ unplayable = {
       "unlockStars": 7
     },
     {
+      "id": "PVE_Thor_SentryBoss",
+      "invisibleTraits": [
+        {
+          "id": "Avenger",
+          "name": "AVENGER"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Wave1"
+        },
+        {
+          "alwaysInvisible": true,
+          "id": "Chargeable"
+        }
+      ],
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Thor_b41367e3.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Asgard",
+          "name": "ASGARDIAN"
+        },
+        {
+          "id": "Wave1Avenger",
+          "name": "WAVE I - AVENGER"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_USAgent_SentryBoss",
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_USAgent_d5b556fe.png",
+      "status": "unplayable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "Rebirth",
+          "name": "REBIRTH"
+        },
+        {
+          "id": "ApostleofWar"
+        }
+      ],
+      "unlockStars": 7
+    },
+    {
       "id": "PVE_VIP_Zombie",
       "mission": false,
       "name": "Terrified Civilian",
@@ -26495,15 +27289,15 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "a86b2dc7c36c058c1d8d",
-      "chars": "bc14a499feff4785ba00",
-      "drops": "a9135e4106463ec80719",
-      "events": "56c03cd9e587ad521690",
-      "locs": "e69bea6eea1467258ed2",
-      "nodes": "fb68e5f65c1ba1aa5e7f",
-      "other": "67d911c00d1aea2f6d03"
+      "all": "b588a8530de22f0c9159",
+      "chars": "4139909711ff08ff5ed7",
+      "drops": "43f11452d402503e9dbc",
+      "events": "3fbb191f12ff404e11d5",
+      "locs": "1211fa742c0937547ae7",
+      "nodes": "821bf4301e58aa06d78f",
+      "other": "600d169dc21f1a569e35"
     },
-    "perTotal": 30,
+    "perTotal": 43,
     "version": 1
   }
 }
