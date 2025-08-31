@@ -187,7 +187,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 				alliance_info['members'][member]['asOf'] = response.json()['meta']['asOf']
 
 			# If response was UNSUCCESSFUL note the error
-			elif not (response or response.ok):
+			elif not response or not response.ok:
 				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received")
 
 		# If member's info is in the roster_csv_data, use that.
@@ -237,22 +237,22 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			# If roster is NEW say so
 			if not tcp_start:
 				result = f'NEW:{tcp_end}'
-				format = ansi.ltgrn
+				FORMAT = ansi.ltgrn
 			else:
 				result = f'UPD:{tcp_diff}'
-				format = ansi.ltyel
+				FORMAT = ansi.ltyel
 		# Roster not available on website.
 		elif member not in roster_csv_data and not members[member].get('avail'):
 			result = 'NOT AVAIL'
-			format = ansi.ltred
+			FORMAT = ansi.ltred
 		# Never received Roster page to parse.
 		elif (AUTH and not (response and response.ok)) or (member not in roster_csv_data and driver and len(driver.page_source) < 700000): 
 			result = 'TIMEOUT'
-			format = ansi.ltred
+			FORMAT = ansi.ltred
 		# Not sure what happened here. Side stepping an odd error condition.
 		elif not last_update:
 			result = 'UNKNOWN'
-			format = ansi.ltred
+			FORMAT = ansi.ltred
 		# No update. Just report how long it's been.
 		else:
 			time_since = time_now - last_update 
@@ -268,7 +268,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 				time_since = f'{hours} {mins}'
 
 			result =  f'OLD:{time_since:>7}'
-			format = ansi.yellow
+			FORMAT = ansi.yellow
 
 		# Format line depending on whether entry available.
 		if ':' in result:
@@ -277,9 +277,10 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			rosters_output.append(f'{member:16} {result:>9}')
 
 		# Grab the last line. Add formatting
-		formatted_output = f'{rosters_output[-1][:15]}{ansi.reset}{format}{rosters_output[-1][15:]}'
+		LAST_LINE =  rosters_output[-1]
+		index = 15 + ':' not in LAST_LINE
 
-		print(f'Found: {ansi.bold}{formatted_output}{ansi.reset}')
+		print(f'Found: {ansi.bold}{LAST_LINE[:index]}{ansi.reset}{FORMAT}{LAST_LINE[index:]}{ansi.reset}')
 
 	return rosters_output
 
