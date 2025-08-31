@@ -104,17 +104,17 @@ def refresh_auth(AUTH, CLIENT_TOKEN):
 				'refresh_token' : AUTH['refresh_token'] }
 
 	# Send request for new access_token
-	auth_token = requests.post(
+	response = requests.post(
 		headers = post_headers(CLIENT_TOKEN),
 		url     = TOKEN_ENDPOINT,
 		data    = params
 	)
 
-	# If bad response, return the stale AUTH
-	if not auth_token.ok:
-		return AUTH
+	# If valid response, parse the AUTH returned
+	if response.ok:
+		parse_auth(response, AUTH)
 
-	parse_auth(auth_token, AUTH)
+	return response
 
 
 
