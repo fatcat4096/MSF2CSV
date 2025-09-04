@@ -307,12 +307,16 @@ def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
 
+	# Short circuit if alliance_info provided for name
+	if type(file_or_alliance) is dict and file_or_alliance.get('name'):
+		return file_or_alliance
+
 	# Short circuit for bad data
-	if type(file_or_alliance) is not str:
+	elif type(file_or_alliance) is not str:
 		return alliance_info
 
 	# Something was passed in:
-	if file_or_alliance:
+	elif file_or_alliance:
 
 		# Check the local directory for something named exactly this
 		path, file = os.path.split(file_or_alliance)
