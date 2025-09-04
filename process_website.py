@@ -278,7 +278,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 
 		# Grab the last line. Add formatting
 		LAST_LINE =  rosters_output[-1]
-		index = 15 + ':' not in LAST_LINE
+		index = 15 + (':' not in LAST_LINE)
 
 		print(f'Found: {ansi.bold}{LAST_LINE[:index]}{ansi.reset}{FORMAT}{LAST_LINE[index:]}{ansi.reset}')
 
@@ -575,13 +575,13 @@ def migrate_strike_teams(alliance_info):
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
 @timed(level=3)
 def valid_strike_team(strike_team, alliance_info):
-	return same_members(sum(strike_team,[]), alliance_info['members'])
+	return similar_members(sum(strike_team,[]), alliance_info['members'])
 
 
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
 @timed(level=3)
-def same_members(member_list_1, member_list_2):
+def similar_members(member_list_1, member_list_2):
 	return len(set(member_list_1).intersection(member_list_2)) > len(member_list_2)*.5	
 
 
