@@ -1286,6 +1286,13 @@ playable   = {
     },
     {
       "description": "A ruthless teleporter and master of surprise, Azazel strikes from the shadows to deliver multiple blows against his enemies.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "Azazel",
       "mission": false,
       "name": "Azazel",
@@ -5689,6 +5696,13 @@ playable   = {
     },
     {
       "description": "The Hellfire Club's White Queen, Emma Frost dominates foes by bolstering her Mutant Villain allies.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "EmmaFrost",
       "invisibleTraits": [
         {
@@ -6220,6 +6234,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
         }
       ],
       "id": "FranklinRichards",
@@ -8336,6 +8355,13 @@ playable   = {
     },
     {
       "description": "After discovering and stealing Green Goblin's gear, Roderick Kingsley takes the mantle of Hobgoblin! Control the battlefield with his explosive pumpkin bombs.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "Hobgoblin",
       "mission": false,
       "name": "Hobgoblin",
@@ -8637,6 +8663,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
         }
       ],
       "id": "HumanTorch",
@@ -9390,6 +9421,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
         }
       ],
       "id": "InvisibleWomanMCU",
@@ -12197,6 +12233,11 @@ playable   = {
           "id": "MarvelMoms",
           "isEvent": true,
           "name": "MARVEL MOMS"
+        },
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
         }
       ],
       "id": "MadelynePryor",
@@ -13867,6 +13908,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
         }
       ],
       "id": "MrFantasticMCU",
@@ -17292,6 +17338,13 @@ playable   = {
     },
     {
       "description": "A powerful telepath and time-displaced mutant, Rachel Summers overwhelms her enemies by spreading negative status effects and a passive attack that targets any enemy who is stunned or moving too fast to think clearly.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "RachelSummers",
       "invisibleTraits": [
         {
@@ -18934,6 +18987,13 @@ playable   = {
     },
     {
       "description": "Mac Gargan was a PI who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "Scorpion",
       "mission": false,
       "name": "Scorpion",
@@ -19085,6 +19145,13 @@ playable   = {
     },
     {
       "description": "A power-absorbing tyrant with a taste for control, Sebastian Shaw converts his charges into stunning strength, hitting his foes with a force that leaves them helpless.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "SebastianShaw",
       "mission": false,
       "name": "Sebastian Shaw",
@@ -20019,6 +20086,13 @@ playable   = {
     },
     {
       "description": "Shocker uses his Tech sonic bursts to damage entire teams and strengthen his Sinister Six allies.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "Shocker",
       "mission": false,
       "name": "Shocker",
@@ -22020,6 +22094,13 @@ playable   = {
     },
     {
       "description": "Otto Octavius takes over Spider-Man's body and becomes a more brutal and efficient hero, believing himself to be \"superior.\" Use his new tech to heal and apply positive status effects on allies.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "SuperiorSpiderMan",
       "mission": false,
       "name": "Superior Spider-Man",
@@ -23018,6 +23099,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
         }
       ],
       "id": "Thing",
@@ -24430,6 +24516,13 @@ playable   = {
     },
     {
       "description": "Vulture preys on enemies with negative status effects while dealing extra damage to City Heroes.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "Vulture",
       "mission": false,
       "name": "Vulture",
@@ -25733,13 +25826,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "5482a80d627151c58eaa",
-      "chars": "964026a73333496880a1",
-      "drops": "3a9e738ccbd7e1604bbf",
-      "events": "3ffb43b75482aa33ae75",
-      "locs": "d2cee9ee54483ca21844",
-      "nodes": "8fb7e3a52525ea0f9187",
-      "other": "754eba649b52b8c0ee1d"
+      "all": "56d88119080744b8aa09",
+      "chars": "201d1d14b44d6127b790",
+      "drops": "12479bfd08c8b97a1f0e",
+      "events": "a798bea14ad4725f85a1",
+      "locs": "78d69a976639378b1015",
+      "nodes": "3c2d6535cc1f065d358c",
+      "other": "6bd8166209adf9fbb34e"
     },
     "perTotal": 338,
     "version": 1
@@ -27289,13 +27382,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "5482a80d627151c58eaa",
-      "chars": "964026a73333496880a1",
-      "drops": "3a9e738ccbd7e1604bbf",
-      "events": "3ffb43b75482aa33ae75",
-      "locs": "d2cee9ee54483ca21844",
-      "nodes": "8fb7e3a52525ea0f9187",
-      "other": "754eba649b52b8c0ee1d"
+      "all": "56d88119080744b8aa09",
+      "chars": "201d1d14b44d6127b790",
+      "drops": "12479bfd08c8b97a1f0e",
+      "events": "a798bea14ad4725f85a1",
+      "locs": "78d69a976639378b1015",
+      "nodes": "3c2d6535cc1f065d358c",
+      "other": "6bd8166209adf9fbb34e"
     },
     "perTotal": 43,
     "version": 1
