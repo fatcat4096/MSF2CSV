@@ -80,39 +80,52 @@ def get_headers(ACCESS_TOKEN):
 # Request for original AUTH token
 def request_auth(AUTH_CODE, CLIENT_TOKEN):
 
-	# Send the request to the Token Endpoint
-	params = {	'grant_type'   : 'authorization_code',
-				'code'         : AUTH_CODE,
-				'redirect_uri' : REDIRECT_URI }
+	# Attempt up to three times
+	for x in range(3):
 
-	# Send request for token
-	auth_token = requests.post(
-		headers = post_headers(CLIENT_TOKEN),
-		url     = TOKEN_ENDPOINT,
-		data    = params
-	)
+		# Send the request to the Token Endpoint
+		params = {	'grant_type'   : 'authorization_code',
+					'code'         : AUTH_CODE,
+					'redirect_uri' : REDIRECT_URI }
 
-	return auth_token
+		# Send request for token
+		response = requests.post(
+			headers = post_headers(CLIENT_TOKEN),
+			url     = TOKEN_ENDPOINT,
+			data    = params
+		)
+
+		print (f'{response.ok=}')
+		
+		# Exit loop if we got a successful response
+		if response.ok:
+			break
+
+	return response
 
 
 
 # Request for a refresh AUTH using the Refresh token
 def refresh_auth(AUTH, CLIENT_TOKEN):
 
-	# Request a refresh from the Token Endpoint
-	params = {	'grant_type'    : 'refresh_token',
-				'refresh_token' : AUTH['refresh_token'] }
+	# Attempt up to three times
+	for x in range(3):
 
-	# Send request for new access_token
-	response = requests.post(
-		headers = post_headers(CLIENT_TOKEN),
-		url     = TOKEN_ENDPOINT,
-		data    = params
-	)
+		# Request a refresh from the Token Endpoint
+		params = {	'grant_type'    : 'refresh_token',
+					'refresh_token' : AUTH['refresh_token'] }
 
-	# If valid response, parse the AUTH returned
-	if response.ok:
-		parse_auth(response, AUTH)
+		# Send request for new access_token
+		response = requests.post(
+			headers = post_headers(CLIENT_TOKEN),
+			url     = TOKEN_ENDPOINT,
+			data    = params
+		)
+
+		# If valid response, parse the AUTH returned then return
+		if response.ok:
+			parse_auth(response, AUTH)
+			break
 
 	return response
 
@@ -150,7 +163,9 @@ def request_player_info(ACCESS_TOKEN):
 
 		# Exit loop if we got a successful response
 		if response.ok:
-			return response
+			break
+
+	return response
 
 
 
@@ -168,8 +183,9 @@ def request_alliance_info(ACCESS_TOKEN):
 
 		# Exit loop if we got a successful response
 		if response.ok:
-			return response
+			break
 
+	return response
 
 
 # Need this for the Alliance members 	
@@ -186,7 +202,9 @@ def request_alliance_members(ACCESS_TOKEN):
 
 		# Exit loop if we got a successful response
 		if response.ok:
-			return response
+			break
+
+	return response
 
 
 
@@ -205,7 +223,9 @@ def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
 
 		# Exit loop if we got a successful response
 		if response.ok:
-			return response
+			break
+
+	return response
 
 
 
@@ -224,6 +244,8 @@ def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
 
 		# Exit loop if we got a successful response
 		if response.ok:
-			return response
+			break
+
+	return response
 
 

@@ -249,14 +249,14 @@ def write_cached_file(data, file):
 @timed(level=3)
 def fresh_enough(alliance_or_file):
 
-	last_refresh = age_of(alliance_or_file)
+	last_refresh = age_of_cached_data(alliance_or_file)
 
 	return last_refresh and last_refresh < 86400
 		
 
 
 # Returns second since last refresh.
-def age_of(alliance_or_file):
+def age_of_cached_data(alliance_or_file):
 
 	# If a name of an alliance is passed in, find the relevant alliance_info instead.
 	# If alliance_info was passed in, just use it directly.
