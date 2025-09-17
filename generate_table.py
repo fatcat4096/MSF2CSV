@@ -610,7 +610,7 @@ def spec_ops_background(table, char, player_list, html_cache):
 def get_field_value(value, hist_date):
 	if value:
 		if value > 10**6:
-			field_value = f'{value/10**6:+.2f}M' if hist_date else f'{value/10**6:.2f}M'
+			field_value = f'{value/10**6:+.1f}M' if hist_date else f'{value/10**6:.2f}M'
 		elif value > 1000:
 			field_value = f'{value/1000:+.0f}K'  if hist_date else f'{value/1000:.0f}K'
 		else:

@@ -58,7 +58,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 }
 /* Blue Button, Power -- slightly wider */
 .blubp {
-  min-width   : 35px;
+  min-width   : 40px;
 }
 .blubp:hover {
   background  : DodgerBlue;
