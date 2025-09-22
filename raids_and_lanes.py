@@ -51,7 +51,7 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 							] ]
 					}
 
-# Meta Heroes for use in Annihilation Raid (D8-9)
+# Meta Heroes for use in Annihilation Raid (D9)
 tables['anni'] = { 'name': 'Annihilation Raid',
 					'min_iso': 13,
 					'max_others': 0,
@@ -59,13 +59,33 @@ tables['anni'] = { 'name': 'Annihilation Raid',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['Tech'], 'meta': ['Lady Deathstrike', 'Nimrod', 'Omega Sentinel', 'Scientist Supreme', 'Sentinel'], 'label':'Tech<br>(Orchis)'}, 
-							#{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superiod Spider-Man', 'Vulture'], 'label':'Tech<br>(Insidious Six)'}, 
-							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Nightstalkers)'},
-							{'traits': ['Global'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm'], 'label':'Global<br>(Uncanny<br>Avengers)'},
+							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Night)'},
+							{'traits': ['Global'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm'], 'label':'Global<br>(Uncanny)'},
 							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
-							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunderbolts)'}, 
-							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'label':'Mutant<br>(Hellfire Club)'},
+							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunder)'}, 
+							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'label':'Tech<br>(Insidious)'}, 
+							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'label':'Mutant<br>(Hellfire)'},
+							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'min_tier':20, 'label':'Tech<br>(Insidious)<br>Bonus'}, 
+							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'min_tier':20, 'label':'Mutant<br>(Hellfire)<br>Bonus'},
+							] ],
+					}
+
+# Meta Heroes for use in Annihilation Raid (D8)
+tables['annid8'] = { 'name': 'Annihilation Raid (d8)',
+					'min_iso': 13,
+					'max_others': 0,
+					'strike_teams': 'annihilation',
+					'sort_char_by': 'avail',
+					'inc_keys': ['power','lvl','tier','iso'],
+					'lanes':[ [
+							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Night)'},
+							{'traits': ['Global'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm'], 'label':'Global<br>(Uncanny)'},
+							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
+							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunder)'}, 
+							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'label':'Tech<br>(Insidious)'}, 
+							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'label':'Mutant<br>(Hellfire)'},
+							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'min_tier':19, 'label':'Tech<br>(Insidious)<br>Bonus'}, 
+							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'min_tier':19, 'label':'Mutant<br>(Hellfire)<br>Bonus'},
 							] ],
 					}
 
