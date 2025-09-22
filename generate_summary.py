@@ -62,7 +62,7 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 		# Just create an empty section entry.
 		section = {}
 		
-		table_lbl = table['name'].upper().replace(' ','<br>')
+		table_lbl = table['name'].upper().replace(' ','<br>',table['name'].partition('Raid')[0].count(' '))
 
 		# Find any defined keys specified for given format. Default to including STP and rank
 		table_format['inc_keys'] = get_table_value(table_format, table, section, key='summary_keys', default=['stp','rank'])
