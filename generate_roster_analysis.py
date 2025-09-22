@@ -136,10 +136,10 @@ def generate_analysis_header(stat_type, html_cache):
 	html_file += f' <td {sort_func % 24}>3&#x1F48E;</td>\n'
 
 	# ISO Levels
-	html_file += f' <td {sort_func % 26}>%s</td>\n' % (['10+','6-10'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['11+','11'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['12+','12'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 29}>%s</td>\n' % (['13', '13'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 26}>%s</td>\n' % (['12+','6-12'][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['13+','13'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['14+','14'  ][stat_type == 'actual'])
+	html_file += f' <td {sort_func % 29}>%s</td>\n' % (['15', '15'  ][stat_type == 'actual'])
 
 	# Gear Tiers
 	MAX_TIER = 20
@@ -222,7 +222,7 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 			html_file += ' <td></td>\n' 									# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
-			for key in [10,11,12,13]:
+			for key in [12,13,14,15]:
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'iso', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
@@ -310,7 +310,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 				get_stat_diff(stats, hist_stats, member, 'dmd', key)
 
 			# ISO Levels
-			for key in range(10,14):
+			for key in range(12,16):
 				get_stat_diff(stats, hist_stats, member, 'iso', key)
 
 			# Gear Tiers
@@ -354,7 +354,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 		get_stat_range(stats, 'dmd', key, member_list)
 
 	# ISO Levels
-	for key in range(10,14):
+	for key in range(12,16):
 		get_stat_range(stats, 'iso', key, member_list)
 
 	# Gear Tiers
@@ -434,9 +434,9 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 			# For either stat_type, combine certain columns for ISO and Level data.
 			char_stats['lvl'] -= char_stats['lvl']%5			# Round down to nearest multiple of 5.
 
-			# Gather ISO 6-10 into ISO 10.
-			if char_stats['iso'] in range(6,11) and stat_type == 'actual':
-				char_stats['iso'] = 10
+			# Gather ISO 6-11 into ISO 12.
+			if char_stats['iso'] in range(6,12) and stat_type == 'actual':
+				char_stats['iso'] = 12
 
 			# Just tally the values in each key. Increment the count of each value found.
 			for key in ['yel', 'lvl', 'red', 'dmd', 'tier', 'iso', 'op']:
