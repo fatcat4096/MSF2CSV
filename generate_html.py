@@ -53,6 +53,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 		only_section = table_format.get('only_section',0)
 		only_image   = table_format.get('only_image',False)
 		sections_per = table_format.get('sections_per',0)
+		lane_overlay = table_format.get('lane_overlay',None)
 
 		# Integrate Custom Teams in Table output if all entries requested
 		if table_name == 'Teams' and not only_section:
@@ -79,6 +80,12 @@ def generate_html(alliance_info, table, table_format, output=''):
 		for lane_idx in range(start_lane,len(lanes)):
 
 			lane = lanes[lane_idx]
+
+			# If table_format['lane_overlay'] defined, merge the dicts
+			if lane_overlay:
+				# Merge the contents of each section with the contents of the overlay
+				for idx,section in enumerate(lane):
+					section |= lane_overlay[idx] 
 
 			if only_section in range(1,len(lane)+1):
 				lane = [lane[only_section-1]]
