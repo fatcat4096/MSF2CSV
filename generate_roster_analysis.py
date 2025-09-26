@@ -43,11 +43,11 @@ def generate_roster_analysis(alliance_info, inc_prog=True, using_tabs=False, his
 
 def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, html_cache={}, use_range='set'):
 
-	# Generate the header for the Roster Analysis table
-	html_file = generate_analysis_header(stat_type, html_cache)
-
 	# Start by doing stat analysis.	
 	stats = get_roster_stats(alliance_info, stat_type, hist_date)
+
+	# Generate the header for the Roster Analysis table
+	html_file = generate_analysis_header(stats, stat_type, html_cache)
 
 	# Format the analyzed data into a table.
 	html_file += generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_range)
@@ -56,7 +56,17 @@ def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, h
 
 
 
-def generate_analysis_header(stat_type, html_cache):
+def generate_analysis_header(stats, stat_type, html_cache):
+
+	ACTUALS = stat_type == 'actual'
+
+	MAX_YEL  = stats['range']['max_yel'] 
+	MAX_RED  = stats['range']['max_red'] 
+	MAX_DMD  = stats['range']['max_dmd'] 
+	MAX_ISO  = stats['range']['max_iso'] 
+	MAX_TIER = stats['range']['max_tier']
+	MAX_LVL  = stats['range']['max_lvl']
+	MAX_OP   = stats['range']['max_op']  
 
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
@@ -77,22 +87,23 @@ def generate_analysis_header(stat_type, html_cache):
 	html_file += f' <td rowspan="2" {sort_func % 3} style="min-width:50px">Total<br>Chars</td>\n'
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 	
-	html_file += ' <td width="200" colspan="6">Average</td>\n'	# All Avg Stats
+	html_file += ' <td width="200" colspan="6">Average</td>\n'		# All Avg Stats
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="160" colspan="4">Stars</td>\n'		# Yel 4-7
+	html_file += ' <td width="160" colspan="4">Stars</td>\n'		# Yel - 4 cols
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red 4-7
+	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red - 4 cols
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="160" colspan="3">Diamonds</td>\n'	# Red 4-7
+	if MAX_DMD:
+		html_file += ' <td width="160" colspan="3">Diamonds</td>\n'		# Diamonds - 3 cols
+		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+
+	html_file += ' <td width="200" colspan="4">ISO</td>\n'			# ISO - 4 cols
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="200" colspan="4">ISO</td>\n'			# ISO 1-4,5,6-8,9,10
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
-
-	html_file += ' <td width="240" colspan="5">Gear Tier</td>\n'	# Tier 13-19
+	html_file += ' <td width="240" colspan="5">Gear Tier</td>\n'	# Tier - 5 cols
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
 	html_file += ' <td width="160" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
@@ -101,7 +112,7 @@ def generate_analysis_header(stat_type, html_cache):
 	html_file += ' <td width="350" colspan="5">Levels</td>\n'
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="350" colspan="4">OP</td>\n'		    # 8, 9, 10, 11
+	html_file += ' <td width="350" colspan="4">OP</td>\n'		    # OP - 4 cols
 	html_file += '</tr>\n'
 
 	# Second Row with subheadings.
@@ -119,57 +130,52 @@ def generate_analysis_header(stat_type, html_cache):
 	html_file += f' <td {sort_func % 10}>OP</td>\n'
 	
 	# Yellow Stars
-	html_file += f' <td {sort_func % 12}>%s</td>\n' % (['4+','4*'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 13}>%s</td>\n' % (['5+','5*'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 14}>%s</td>\n' % (['6+','6*'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 15}>%s</td>\n' % (['7*','7*'][stat_type == 'actual'])
+	for idx in range(3,-1,-1):
+		html_file += f' <td {sort_func % (15-idx)}>%s</td>\n' % (f'{MAX_YEL-idx}'+['','+'][idx and not ACTUALS])
 	
 	# Red Stars
-	html_file += f' <td {sort_func % 17}>%s</td>\n' % (['4+','4*'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 18}>%s</td>\n' % (['5+','5*'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 19}>%s</td>\n' % (['6+','6*'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 20}>%s</td>\n' % (['7+','7*'][stat_type == 'actual'])
+	for idx in range(3,-1,-1):
+		html_file += f' <td {sort_func % (20-idx)}>%s</td>\n' % (f'{MAX_RED-idx}'+['','+'][idx and not ACTUALS])
 
 	# Diamonds
-	html_file += f' <td {sort_func % 22}>1&#x1F48E;</td>\n'
-	html_file += f' <td {sort_func % 23}>2&#x1F48E;</td>\n'
-	html_file += f' <td {sort_func % 24}>3&#x1F48E;</td>\n'
+	if MAX_DMD:
+		html_file += f' <td {sort_func % 22}>1&#x1F48E;</td>\n'
+		html_file += f' <td {sort_func % 23}>2&#x1F48E;</td>\n'
+		html_file += f' <td {sort_func % 24}>3&#x1F48E;</td>\n'
+
+	# Consider missing Diamond columns in Sort routines
+	NO_DMD = 0 if MAX_DMD else 4
 
 	# ISO Levels
-	html_file += f' <td {sort_func % 26}>%s</td>\n' % (['12+','6-12'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 27}>%s</td>\n' % (['13+','13'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 28}>%s</td>\n' % (['14+','14'  ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 29}>%s</td>\n' % (['15', '15'  ][stat_type == 'actual'])
+	MIN_ISO = 6 if MAX_ISO > 10 else 1
+	html_file += f' <td {sort_func % (26-NO_DMD)}>%s</td>\n' % ([f'{MAX_ISO-3}+',f'{MIN_ISO}-{MAX_ISO-3}'][ACTUALS])
+	for idx in range(2,-1,-1):
+		html_file += f' <td {sort_func % (29-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_ISO-idx}' + ['','+'][idx and not ACTUALS])
 
 	# Gear Tiers
-	MAX_TIER = 20
-	for tier_idx in range(4,-1,-1):
-		html_file += f' <td {sort_func % (35-tier_idx)}>%s</td>\n' % (f'{MAX_TIER-tier_idx}'+['','+'][tier_idx and stat_type != 'actual'])
+	for idx in range(4,-1,-1):
+		html_file += f' <td {sort_func % (35-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_TIER-idx}'+['','+'][idx and not ACTUALS])
 
 	# T4 Abilities
-	html_file += f' <td {sort_func % 37}>Bas</td>\n'
-	html_file += f' <td {sort_func % 38}>Spc</td>\n'
-	html_file += f' <td {sort_func % 39}>Ult</td>\n'
-	html_file += f' <td {sort_func % 40}>Pas</td>\n'
+	html_file += f' <td {sort_func % (37-NO_DMD)}>Bas</td>\n'
+	html_file += f' <td {sort_func % (38-NO_DMD)}>Spc</td>\n'
+	html_file += f' <td {sort_func % (39-NO_DMD)}>Ult</td>\n'
+	html_file += f' <td {sort_func % (40-NO_DMD)}>Pas</td>\n'
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb lvl", '%s', table_id)
 
 	# Level Ranges
-	html_file += f' <td {sort_func % 42}>%s</td>\n' % (['85+','85-89'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 43}>%s</td>\n' % (['90+','90-94'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 44}>%s</td>\n' % (['95+','95-99'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 45}>%s</td>\n' % (['100+','100-4'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 46}>%s</td>\n' % (['105', '105' ][stat_type == 'actual'])
+	for idx in range(4,-1,-1):
+		LVL_END = ['+',f'-{(MAX_LVL-idx*5+4)%[100,10][MAX_LVL-idx*5>100]}'][ACTUALS] if idx else ''
+		html_file += f' <td {sort_func % (46-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_LVL-idx*5}{LVL_END}')
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb col", '%s', table_id)
 
 	# Overpower Levels
-	html_file += f' <td {sort_func % 48}>%s</td>\n' % (['8+', '8' ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 49}>%s</td>\n' % (['9+', '9' ][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 50}>%s</td>\n' % (['10+','10'][stat_type == 'actual'])
-	html_file += f' <td {sort_func % 51}>%s</td>\n' % (['11', '11'][stat_type == 'actual'])
+	for idx in range(3,-1,-1):
+		html_file += f' <td {sort_func % (51-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_OP-idx}'+['','+'][idx and not ACTUALS])
 
 	html_file += '</tr>\n'
 	
@@ -179,6 +185,15 @@ def generate_analysis_header(stat_type, html_cache):
 
 def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_range):
 	
+	# Calculate max values for each type
+	MAX_YEL  = stats['range']['max_yel'] 
+	MAX_RED  = stats['range']['max_red'] 
+	MAX_DMD  = stats['range']['max_dmd'] 
+	MAX_ISO  = stats['range']['max_iso'] 
+	MAX_TIER = stats['range']['max_tier']
+	MAX_LVL  = stats['range']['max_lvl']
+	MAX_OP   = stats['range']['max_op']  
+
 	html_file = ''
 
 	# Get a sorted list of members to use for this table output.
@@ -210,24 +225,28 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, f'avg_{stat}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
-			# Yellow and Red Stars
-			for stat in ['yel','red']:
-				for key in range(4,8):
-					html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat, key)
-				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+			# Yellow Stars
+			for key in range(MAX_YEL-3,MAX_YEL+1):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'yel', key)
+			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+																																							  
+			# Red Stars
+			for key in range(MAX_RED-3,MAX_RED+1):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'red', key)
+			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Diamonds
-			for key in range(1,4):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'dmd', key)
-			html_file += ' <td></td>\n' 									# Vertical Divider                             
+			if MAX_DMD:
+				for key in range(1,4):
+					html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'dmd', key)
+				html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
-			for key in [12,13,14,15]:
+			for key in range(MAX_ISO-3,MAX_ISO+1):
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'iso', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
-			MAX_TIER = 20
 			for key in range(MAX_TIER-4, MAX_TIER+1):
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'tier', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
@@ -238,12 +257,12 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
-			for key in range(85,110,5):
+			for key in range(MAX_LVL-20,MAX_LVL+5,5):
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'lvl', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# OP Ranges
-			for key in range(8,12):
+			for key in range(MAX_OP-3, MAX_OP+1):
 				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'op', key)
 
 			html_file += '</tr>\n'
@@ -261,7 +280,7 @@ def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data
 		stat_range = stats_range[stat]
 	else:
 		member_stat = member_stats.get(stat,{}).get(key,0)
-		stat_range = stats_range[stat][key]
+		stat_range = stats_range[stat].get(key,[])
 	
 	if not member_stat:
 		field_value = '-'
@@ -277,12 +296,19 @@ def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data
 @timed(level=3)
 def get_roster_stats(alliance_info, stat_type, hist_date=None):
 	
-	MAX_TIER = 20
-
 	hist = alliance_info.get('hist',{})
 	
 	# Calculate stats for most recent roster refresh
 	stats = analyze_rosters(alliance_info, stat_type, hist[max(hist)])
+
+	# Determine max values for each
+	MAX_YEL  = stats['range']['max_yel'] 
+	MAX_RED  = stats['range']['max_red'] 
+	MAX_DMD  = stats['range']['max_dmd'] 
+	MAX_ISO  = stats['range']['max_iso'] 
+	MAX_TIER = stats['range']['max_tier']
+	MAX_LVL  = stats['range']['max_lvl']
+	MAX_OP   = stats['range']['max_op']  
 
 	# If Historical analysis, a little more work to do.
 	if hist_date:
@@ -300,17 +326,21 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 			for key in ['yel','red','dmd','tier','lvl','iso','op']:
 				stats[member]['avg_'+key] -= hist_stats[member].get('avg_'+key,0)
 			
-			# Yellow and Red Stars
-			for key in range(4,8):
+			# Yellow Stars
+			for key in range(MAX_YEL-3,MAX_YEL+1):
 				get_stat_diff(stats, hist_stats, member, 'yel', key)
+
+			# Red Stars
+			for key in range(MAX_RED-3,MAX_RED+1):
 				get_stat_diff(stats, hist_stats, member, 'red', key)
 
 			# Diamonds
-			for key in range(1,4):
-				get_stat_diff(stats, hist_stats, member, 'dmd', key)
+			if MAX_DMD:
+				for key in range(1,4):
+					get_stat_diff(stats, hist_stats, member, 'dmd', key)
 
 			# ISO Levels
-			for key in range(12,16):
+			for key in range(MAX_ISO-3,MAX_ISO+1):
 				get_stat_diff(stats, hist_stats, member, 'iso', key)
 
 			# Gear Tiers
@@ -318,61 +348,17 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 				get_stat_diff(stats, hist_stats, member, 'tier', key)
 
 			# Level Ranges
-			for key in range(85,110,5):
+			for key in range(MAX_LVL-20,MAX_LVL+5,5):
 				get_stat_diff(stats, hist_stats, member, 'lvl', key)
 
 			# OP Ranges
-			for key in range(8,12):
+			for key in range(MAX_OP-3,MAX_OP+1):
 				get_stat_diff(stats, hist_stats, member, 'op', key)
 
 			# T4 Abilities
 			for stat in ['bas','spc','ult','pas']:
 				get_stat_diff(stats, hist_stats, member, stat, 7)
-
-	# Get the list of Alliance Members 
-	member_list = list(alliance_info.get('members',{}))
-
-	# Calculate alliance-wide ranges for each statistic. Use min() and max() to determine colors
-	stats_range = stats.setdefault('range',{})
-
-	stats_range['tcp'] = [stats[member]['tcp'] for member in member_list]
-	stats_range['stp'] = [stats[member]['stp'] for member in member_list]
-	stats_range['tcc'] = [stats[member]['tcc'] for member in member_list]
-
-	# Totals (and create dicts for the rest of the ranges)
-	for stat in ['yel','red','dmd','tier','lvl','iso','op']:
-		#stats_range[stat]  = {}
-		stats_range['avg_'+stat]  = [stats[member].get('avg_'+stat,0) for member in member_list]
 	
-	# Yellow and Red Stars
-	for key in range(4,8):
-		get_stat_range(stats, 'yel', key, member_list)
-		get_stat_range(stats, 'red', key, member_list)
-
-	# Diamonds
-	for key in range(1,4):
-		get_stat_range(stats, 'dmd', key, member_list)
-
-	# ISO Levels
-	for key in range(12,16):
-		get_stat_range(stats, 'iso', key, member_list)
-
-	# Gear Tiers
-	for key in range(MAX_TIER-4, MAX_TIER+1):
-		get_stat_range(stats, 'tier', key, member_list)
-
-	# Level Ranges
-	for key in range(85,110,5):
-		get_stat_range(stats, 'lvl', key, member_list)
-
-	# Level Ranges
-	for key in range(8,12):
-		get_stat_range(stats, 'op', key, member_list)
-
-	# T4 Abilities
-	for stat in ['bas','spc','ult','pas']:
-		get_stat_range(stats, stat, 7, member_list)
-
 	return stats
 
 
@@ -382,15 +368,12 @@ def get_stat_diff(stats, hist_stats, member, stat, key):
 
 
 
-def get_stat_range(stats, stat, key, member_list):
-	stats['range'].setdefault(stat,{})[key] = [stats[member].get(stat,{}).get(key,0) for member in member_list]
-
-
-
 def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 
+	# Create stats and stats_range to start
 	stats = {}
-	
+	stats_range = stats.setdefault('range',{})
+
 	# We'll be making changes, work with a copy.
 	rosters_to_analyze = copy.deepcopy(rosters_to_analyze)
 
@@ -399,7 +382,19 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 
 	# Get the list of usable characters for analysis.
 	char_list = get_cached('char_list')
-	
+
+	# Initialize MAX_LVL (min value 20)
+	MAX_LVL = 20
+
+	# Determine MAX_ISO (min value 8)
+	MAX_ISO = 8
+	for member in member_list:
+		for char in char_list:
+			MAX_ISO = max(rosters_to_analyze.get(member,{}).get(char,{}).get('iso',0), MAX_ISO)
+
+	# Use MAX_ISO to determine MIN_ISO
+	MIN_ISO = MAX_ISO-(MAX_ISO-1)%5-5 if MAX_ISO > 10 else 1
+
 	# Start by doing stat analysis.	
 	for member in member_list:
 	
@@ -432,11 +427,16 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 			# If 'progressive', make each entry count in those below it.
 
 			# For either stat_type, combine certain columns for ISO and Level data.
-			char_stats['lvl'] -= char_stats['lvl']%5			# Round down to nearest multiple of 5.
 
-			# Gather ISO 6-11 into ISO 12.
-			if char_stats['iso'] in range(6,12) and stat_type == 'actual':
-				char_stats['iso'] = 12
+			# Use info before normalization to get MAX_LVL
+			MAX_LVL = max(MAX_LVL, (char_stats['lvl']+4)-(char_stats['lvl']+4)%5)
+
+			# Round level down to nearest multiple of 5.
+			char_stats['lvl'] -= char_stats['lvl']%5			
+
+			# Gather ISO 6-11 into ISO 12
+			if stat_type == 'actual' and char_stats['iso'] in range(MIN_ISO, MAX_ISO-3):
+				char_stats['iso'] = MAX_ISO-3
 
 			# Just tally the values in each key. Increment the count of each value found.
 			for key in ['yel', 'lvl', 'red', 'dmd', 'tier', 'iso', 'op']:
@@ -476,9 +476,35 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 			member_stats['stp'] = alliance_info['members'].get(member,{}).get('stp')
 			member_stats['tcc'] = alliance_info['members'].get(member,{}).get('tcc')
 
-		# Change tot_ values to avg_ values.
+		# Calculate alliance-wide ranges for each statistic
+		stats_range.setdefault('tcp',[]).append(member_stats['tcp'])
+		stats_range.setdefault('stp',[]).append(member_stats['stp'])
+		stats_range.setdefault('tcc',[]).append(member_stats['tcc'])
+
+		# Calc avg_ values from tot_ values.
 		for key in ['yel','red','dmd','tier','lvl','iso','op']:
 			member_stats['avg_'+key] = tot_vals.get(key,0) / max(alliance_info['members'].get(member,{}).get('tcc'),1)
-			
+
+			# Add these average to our ranges
+			stats_range.setdefault('avg_'+key,[]).append(member_stats['avg_'+key])
+
+			# Build range for each stat as we go
+			for entry in member_stats.get(key,{}):
+				stats_range.setdefault(key,{}).setdefault(entry,[]).append(member_stats[key][entry])
+
+		# Build ranges for the abilities as well
+		for key in ['bas','spc','ult','pas']:
+			for entry in member_stats.get(key,{}):
+				stats_range.setdefault(key,{}).setdefault(entry,[]).append(member_stats[key][entry])
+
+	# Finally, pre-calculate maxes for each range with set mins
+	stats_range['max_yel']  = max(max(stats_range['yel']),  4)
+	stats_range['max_red']  = max(max(stats_range['red']),  4)
+	stats_range['max_dmd']  = max(stats_range['dmd'])
+	stats_range['max_iso']  = MAX_ISO
+	stats_range['max_tier'] = max(max(stats_range['tier']), 5)
+	stats_range['max_lvl']  = MAX_LVL
+	stats_range['max_op']   = max(max(stats_range['op']),   4)
+
 	return stats
 
