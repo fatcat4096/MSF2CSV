@@ -64,6 +64,7 @@ def generate_analysis_header(stats, stat_type, html_cache):
 	MAX_RED  = stats['range']['max_red'] 
 	MAX_DMD  = stats['range']['max_dmd'] 
 	MAX_ISO  = stats['range']['max_iso'] 
+	MIN_ISO  = stats['range']['min_iso'] 
 	MAX_TIER = stats['range']['max_tier']
 	MAX_LVL  = stats['range']['max_lvl']
 	MAX_OP   = stats['range']['max_op']  
@@ -147,7 +148,6 @@ def generate_analysis_header(stats, stat_type, html_cache):
 	NO_DMD = 0 if MAX_DMD else 4
 
 	# ISO Levels
-	MIN_ISO = 6 if MAX_ISO > 10 else 1
 	html_file += f' <td {sort_func % (26-NO_DMD)}>%s</td>\n' % ([f'{MAX_ISO-3}+',f'{MIN_ISO}-{MAX_ISO-3}'][ACTUALS])
 	for idx in range(2,-1,-1):
 		html_file += f' <td {sort_func % (29-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_ISO-idx}' + ['','+'][idx and not ACTUALS])
@@ -502,6 +502,7 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 	stats_range['max_red']  = max(max(stats_range['red']),  4)
 	stats_range['max_dmd']  = max(stats_range['dmd'])
 	stats_range['max_iso']  = MAX_ISO
+	stats_range['min_iso']  = MIN_ISO
 	stats_range['max_tier'] = max(max(stats_range['tier']), 5)
 	stats_range['max_lvl']  = MAX_LVL
 	stats_range['max_op']   = max(max(stats_range['op']),   4)
