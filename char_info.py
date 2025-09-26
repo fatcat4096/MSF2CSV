@@ -2473,6 +2473,50 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "A brilliant scientist turned living antimatter reactor, Adam Brashear channles cosmic energy to deliver devastating blows. As one of Earth's most powerful champions, he brings unmatched resilience and can remove powerful effects from enemies in any battle.",
+      "id": "BlueMarvel",
+      "mission": false,
+      "name": "Blue Marvel",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_BlueMarvel_9330e29f.png",
+      "starItems": [
+        {
+          "id": "SHARD_BLUEMARVEL"
+        },
+        {
+          "id": "RS_BLUEMARVEL_1"
+        },
+        {
+          "id": "RS_BLUEMARVEL_2"
+        },
+        {
+          "id": "RS_BLUEMARVEL_3"
+        },
+        {
+          "id": "RS_BLUEMARVEL_4"
+        },
+        {
+          "id": "RS_BLUEMARVEL_5"
+        },
+        {
+          "id": "RS_BLUEMARVEL_6"
+        },
+        {
+          "id": "RS_BLUEMARVEL_7"
+        },
+        {
+          "id": "PD_BLUEMARVEL_1"
+        },
+        {
+          "id": "PD_BLUEMARVEL_2"
+        },
+        {
+          "id": "PD_BLUEMARVEL_3"
+        }
+      ],
+      "status": "playable",
+      "unlockStars": 4
+    },
+    {
       "description": "The teenage best friend of Steve Rogers, Bucky Barnes, charges the front lines along with the other Invaders, unleashing multiple attacks on their foes.",
       "id": "BuckyBarnes",
       "invisibleTraits": [
@@ -25826,15 +25870,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "bb36fbfedd40ddcd1544",
-      "chars": "aa243426ba9732b28b87",
-      "drops": "be4bb75b6a7ba530b641",
-      "events": "d29ed738c323382a31b9",
-      "locs": "b8945f79e94535b6f473",
-      "nodes": "0be4e0c75482f6a1bee3",
-      "other": "5c851386d3e2586e4ab7"
+      "all": "684674f10c77af91fbe0",
+      "chars": "d2c8ffe32e9cde6dc8ec",
+      "drops": "fe973c8ff1f6976bed5e",
+      "events": "b1e909be9691f6dd3a1a",
+      "locs": "44186498a004e924763c",
+      "nodes": "d6c377c57d04385619c1",
+      "other": "4ab0da43658c4799469a"
     },
-    "perTotal": 338,
+    "perTotal": 339,
     "version": 1
   }
 }
@@ -27382,13 +27426,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "bb36fbfedd40ddcd1544",
-      "chars": "aa243426ba9732b28b87",
-      "drops": "be4bb75b6a7ba530b641",
-      "events": "d29ed738c323382a31b9",
-      "locs": "b8945f79e94535b6f473",
-      "nodes": "0be4e0c75482f6a1bee3",
-      "other": "5c851386d3e2586e4ab7"
+      "all": "2912c148d1a9a3945810",
+      "chars": "d2c8ffe32e9cde6dc8ec",
+      "drops": "fe973c8ff1f6976bed5e",
+      "events": "b1e909be9691f6dd3a1a",
+      "locs": "c74584b91b6a92bd0416",
+      "nodes": "0cab038d8db31cba0705",
+      "other": "1e7ec5860a21bc88a029"
     },
     "perTotal": 43,
     "version": 1
