@@ -39,11 +39,12 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 	output_format  = table_format.get('output_format','tabbed')
 	valid_output   = list(tables)+['roster_analysis','alliance_info','by_char']
 
+	# Don't print the path if external request
+	print_path = alliance_info != alliance_name
+
 	# Generate CSV?
 	if output == 'csv':
-		 html_files = write_file(pathname+f'{datetime.datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info))
-		 
-		 return html_files
+		 return write_file(pathname+f'{datetime.datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info), print_path=print_path)
 
 	# Output only a specific report.
 	elif external_table or output:
@@ -59,11 +60,11 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 
 			# If 'image' was requested, we need to convert the HTML files to PNG images.
 			if output_format == 'image':
-				html_files = write_file(pathname, html_files, print_path=False)
-				html_files = html_to_images(html_files)
+				html_files = write_file(pathname, html_files, print_path)
+				html_files = html_to_images(html_files, print_path)
 			# If not, just need write the html files out.
 			else:
-				html_files = write_file(pathname, html_files)
+				html_files = write_file(pathname, html_files, print_path)
 
 			# Do a bit of housekeeping. Purge anything over a day old.
 			cleanup_old_files(pathname, 1)
