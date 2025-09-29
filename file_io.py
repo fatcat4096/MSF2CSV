@@ -99,7 +99,7 @@ def write_file(pathname, file_content, print_path=True):
 
 
 @timed(level=3)
-def html_to_images(html_files=[], print_path=True, render_wait=0.1):
+def html_to_images(html_files=[], print_path=False, render_wait=0.1):
 	
 	files_generated = []
 	
@@ -288,6 +288,10 @@ def retire_cached_data(file_or_alliance=''):
 
 	# Find the original file based on the alliance_name provided
 	alliance_info = find_cached_data(file_or_alliance)
+	
+	# Short circuit if nothing found
+	if not alliance_info:
+		return
 	
 	# Pull out the resolved file path
 	OLD_PATH = alliance_info.get('file_path')
