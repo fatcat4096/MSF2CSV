@@ -60,14 +60,14 @@ def generate_analysis_header(stats, stat_type, html_cache):
 
 	ACTUALS = stat_type == 'actual'
 
-	MAX_YEL  = stats['range']['max_yel'] 
-	MAX_RED  = stats['range']['max_red'] 
-	MAX_DMD  = stats['range']['max_dmd'] 
-	MAX_ISO  = stats['range']['max_iso'] 
-	MIN_ISO  = stats['range']['min_iso'] 
-	MAX_TIER = stats['range']['max_tier']
-	MAX_LVL  = stats['range']['max_lvl']
-	MAX_OP   = stats['range']['max_op']  
+	MAX_YEL  = stats['max_yel'] 
+	MAX_RED  = stats['max_red'] 
+	MAX_DMD  = stats['max_dmd'] 
+	MAX_ISO  = stats['max_iso'] 
+	MIN_ISO  = stats['min_iso'] 
+	MAX_TIER = stats['max_tier']
+	MAX_LVL  = stats['max_lvl']
+	MAX_OP   = stats['max_op']  
 
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
@@ -186,13 +186,13 @@ def generate_analysis_header(stats, stat_type, html_cache):
 def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_range):
 	
 	# Calculate max values for each type
-	MAX_YEL  = stats['range']['max_yel'] 
-	MAX_RED  = stats['range']['max_red'] 
-	MAX_DMD  = stats['range']['max_dmd'] 
-	MAX_ISO  = stats['range']['max_iso'] 
-	MAX_TIER = stats['range']['max_tier']
-	MAX_LVL  = stats['range']['max_lvl']
-	MAX_OP   = stats['range']['max_op']  
+	MAX_YEL  = stats['max_yel'] 
+	MAX_RED  = stats['max_red'] 
+	MAX_DMD  = stats['max_dmd'] 
+	MAX_ISO  = stats['max_iso'] 
+	MAX_TIER = stats['max_tier']
+	MAX_LVL  = stats['max_lvl']
+	MAX_OP   = stats['max_op']  
 
 	html_file = ''
 
@@ -226,13 +226,13 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
-			for key in range(MAX_YEL-3,MAX_YEL+1):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'yel', key)
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'yel', key + MAX_YEL-3)
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Red Stars
-			for key in range(MAX_RED-3,MAX_RED+1):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'red', key)
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
 			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 																																							  
 			# Diamonds
@@ -242,13 +242,13 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 				html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
-			for key in range(MAX_ISO-3,MAX_ISO+1):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'iso', key)
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'iso', key + MAX_ISO-3)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
-			for key in range(MAX_TIER-4, MAX_TIER+1):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'tier', key)
+			for key in range(5):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'tier', key + MAX_TIER-4)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
@@ -257,13 +257,13 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
-			for key in range(MAX_LVL-20,MAX_LVL+5,5):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'lvl', key)
+			for key in range(5):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'lvl', key*5 + MAX_LVL-20)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# OP Ranges
-			for key in range(MAX_OP-3, MAX_OP+1):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'op', key)
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
 
 			html_file += '</tr>\n'
 
@@ -289,7 +289,7 @@ def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data
 	else:
 		field_value = f"{member_stat:+.2f}" if hist_date else f"{member_stat:.2f}"
 
-	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=hist_date, use_range=use_range), field_value)
+	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=None, use_range=use_range), field_value)	# Force hist_date to none -- makes more sense than historical coloration
 
 
 
@@ -302,37 +302,49 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 	stats = analyze_rosters(alliance_info, stat_type, hist[max(hist)])
 
 	# Determine max values for each
-	MAX_YEL  = stats['range']['max_yel'] 
-	MAX_RED  = stats['range']['max_red'] 
-	MAX_DMD  = stats['range']['max_dmd'] 
-	MAX_ISO  = stats['range']['max_iso'] 
-	MAX_TIER = stats['range']['max_tier']
-	MAX_LVL  = stats['range']['max_lvl']
-	MAX_OP   = stats['range']['max_op']  
+	MAX_YEL  = stats['max_yel'] 
+	MAX_RED  = stats['max_red'] 
+	MAX_DMD  = stats['max_dmd'] 
+	MAX_ISO  = stats['max_iso'] 
+	MAX_TIER = stats['max_tier']
+	MAX_LVL  = stats['max_lvl']
+	MAX_OP   = stats['max_op']  
 
 	# If Historical analysis, a little more work to do.
 	if hist_date:
 
+		# Start by deleting ranges. We will need to recalculate these
+		stats_range = stats['range'] = {}
+
 		# Calculate stats for requested date
 		hist_stats = analyze_rosters(alliance_info, stat_type, hist[hist_date])
 
+		# Get the list of Alliance Members 
+		member_list = list(alliance_info.get('members',{}))
+		
 		# Find differences between current stats and hist_stats.
-		for member in stats:
+		for member in member_list:
+
 			stats[member]['tcp'] -= hist_stats[member]['tcp']
 			stats[member]['stp'] -= hist_stats[member]['stp']
 			stats[member]['tcc'] -= hist_stats[member]['tcc']
 
+			stats_range.setdefault('tcp',[]).append(stats[member]['tcp'])
+			stats_range.setdefault('stp',[]).append(stats[member]['stp'])
+			stats_range.setdefault('tcc',[]).append(stats[member]['tcc'])
+
 			# Totals (and create dicts for the rest of the ranges)
 			for key in ['yel','red','dmd','tier','lvl','iso','op']:
-				stats[member]['avg_'+key] -= hist_stats[member].get('avg_'+key,0)
-			
+				stats[member]['avg_'+key] -= hist_stats[member].get('avg_'+key, 0)
+				stats_range.setdefault('avg_'+key,[]).append(stats[member]['avg_'+key])		
+				
 			# Yellow Stars
-			for key in range(MAX_YEL-3,MAX_YEL+1):
-				get_stat_diff(stats, hist_stats, member, 'yel', key)
+			for key in range(4):
+				get_stat_diff(stats, hist_stats, member, 'yel', key + MAX_YEL-3)
 
 			# Red Stars
-			for key in range(MAX_RED-3,MAX_RED+1):
-				get_stat_diff(stats, hist_stats, member, 'red', key)
+			for key in range(4):
+				get_stat_diff(stats, hist_stats, member, 'red', key + MAX_RED-3)
 
 			# Diamonds
 			if MAX_DMD:
@@ -340,20 +352,20 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 					get_stat_diff(stats, hist_stats, member, 'dmd', key)
 
 			# ISO Levels
-			for key in range(MAX_ISO-3,MAX_ISO+1):
-				get_stat_diff(stats, hist_stats, member, 'iso', key)
+			for key in range(4):
+				get_stat_diff(stats, hist_stats, member, 'iso', key + MAX_ISO-3)
 
 			# Gear Tiers
-			for key in range(MAX_TIER-4, MAX_TIER+1):
-				get_stat_diff(stats, hist_stats, member, 'tier', key)
+			for key in range(5):
+				get_stat_diff(stats, hist_stats, member, 'tier', key + MAX_TIER-4)
 
 			# Level Ranges
-			for key in range(MAX_LVL-20,MAX_LVL+5,5):
-				get_stat_diff(stats, hist_stats, member, 'lvl', key)
+			for key in range(5):
+				get_stat_diff(stats, hist_stats, member, 'lvl', key*5 + MAX_LVL-20)
 
 			# OP Ranges
-			for key in range(MAX_OP-3,MAX_OP+1):
-				get_stat_diff(stats, hist_stats, member, 'op', key)
+			for key in range(4):
+				get_stat_diff(stats, hist_stats, member, 'op', key + MAX_OP-3)
 
 			# T4 Abilities
 			for stat in ['bas','spc','ult','pas']:
@@ -363,8 +375,10 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 
 
 
+# Calculate differences and add the result to the range lists
 def get_stat_diff(stats, hist_stats, member, stat, key):
 	stats[member].setdefault(stat,{})[key] = stats[member].get(stat,{}).get(key,0) - hist_stats[member].get(stat,{}).get(key,0)
+	stats['range'].setdefault(stat,{}).setdefault(key,[]).append(stats[member][stat][key])
 
 
 
@@ -498,14 +512,14 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 				stats_range.setdefault(key,{}).setdefault(entry,[]).append(member_stats[key][entry])
 
 	# Finally, pre-calculate maxes for each range with set mins
-	stats_range['max_yel']  = max(max(stats_range['yel']),  4)
-	stats_range['max_red']  = max(max(stats_range['red']),  4)
-	stats_range['max_dmd']  = max(stats_range['dmd'])
-	stats_range['max_iso']  = MAX_ISO
-	stats_range['min_iso']  = MIN_ISO
-	stats_range['max_tier'] = max(max(stats_range['tier']), 5)
-	stats_range['max_lvl']  = MAX_LVL
-	stats_range['max_op']   = max(max(stats_range['op']),   4)
+	stats['max_yel']  = max(max(stats_range['yel']),  4)
+	stats['max_red']  = max(max(stats_range['red']),  4)
+	stats['max_dmd']  = max(stats_range['dmd'])
+	stats['max_iso']  = MAX_ISO
+	stats['min_iso']  = MIN_ISO
+	stats['max_tier'] = max(max(stats_range['tier']), 5)
+	stats['max_lvl']  = MAX_LVL
+	stats['max_op']   = max(max(stats_range['op']),   4)
 
 	return stats
 

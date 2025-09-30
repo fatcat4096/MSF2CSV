@@ -4105,6 +4105,72 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Daimon Hellstrom, a half-human, half-demon, wielding his Netheranium Trident to channel Soulfire to burn away his enemies buffs and strip away their defenses.",
+      "id": "DaimonHellstrom",
+      "mission": false,
+      "name": "Daimon Hellstrom",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_DaimonHellstrom_d20f82b9.png",
+      "starItems": [
+        {
+          "id": "SHARD_DAIMONHELLSTROM"
+        },
+        {
+          "id": "RS_DAIMONHELLSTROM_1"
+        },
+        {
+          "id": "RS_DAIMONHELLSTROM_2"
+        },
+        {
+          "id": "RS_DAIMONHELLSTROM_3"
+        },
+        {
+          "id": "RS_DAIMONHELLSTROM_4"
+        },
+        {
+          "id": "RS_DAIMONHELLSTROM_5"
+        },
+        {
+          "id": "RS_DAIMONHELLSTROM_6"
+        },
+        {
+          "id": "RS_DAIMONHELLSTROM_7"
+        },
+        {
+          "id": "PD_DAIMONHELLSTROM_1"
+        },
+        {
+          "id": "PD_DAIMONHELLSTROM_2"
+        },
+        {
+          "id": "PD_DAIMONHELLSTROM_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "Brimstone",
+          "name": "BRIMSTONE"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "After years of abuse, mistrust, and manipulation by his kidnappers, the son of Wolverine uses mutant senses, healing factor, and claws to viciously hunt down his enemies.",
       "eventTraits": [
         {
@@ -5734,6 +5800,10 @@ playable   = {
         {
           "id": "DarkHunter",
           "name": "DARK HUNTER"
+        },
+        {
+          "id": "Brimstone",
+          "name": "BRIMSTONE"
         }
       ],
       "unlockStars": 2
@@ -8174,6 +8244,72 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "Patricia Walker realizes her dream of becoming a super hero, using her Hellcat suit and claws to slice her enemies to ribbons.",
+      "id": "Hellcat",
+      "mission": false,
+      "name": "Hellcat",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hellcat_78fa897b.png",
+      "starItems": [
+        {
+          "id": "SHARD_HELLCAT"
+        },
+        {
+          "id": "RS_HELLCAT_1"
+        },
+        {
+          "id": "RS_HELLCAT_2"
+        },
+        {
+          "id": "RS_HELLCAT_3"
+        },
+        {
+          "id": "RS_HELLCAT_4"
+        },
+        {
+          "id": "RS_HELLCAT_5"
+        },
+        {
+          "id": "RS_HELLCAT_6"
+        },
+        {
+          "id": "RS_HELLCAT_7"
+        },
+        {
+          "id": "PD_HELLCAT_1"
+        },
+        {
+          "id": "PD_HELLCAT_2"
+        },
+        {
+          "id": "PD_HELLCAT_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Skill",
+          "name": "SKILL"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "Brimstone",
+          "name": "BRIMSTONE"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "After being killed by Sabretooth and revived by the demon Bagra-ghul, Daken harnesses the power of the Spirit of Vengeance, exposing his enemies with his piercing attacks.",
@@ -11893,6 +12029,72 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "The immortal N'Kantu rises from his long incarceration to act as a bulwark against the evil that cursed him.",
+      "id": "LivingMummy",
+      "mission": false,
+      "name": "Living Mummy",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_LivingMummy_bc04839b.png",
+      "starItems": [
+        {
+          "id": "SHARD_LIVINGMUMMY"
+        },
+        {
+          "id": "RS_LIVINGMUMMY_1"
+        },
+        {
+          "id": "RS_LIVINGMUMMY_2"
+        },
+        {
+          "id": "RS_LIVINGMUMMY_3"
+        },
+        {
+          "id": "RS_LIVINGMUMMY_4"
+        },
+        {
+          "id": "RS_LIVINGMUMMY_5"
+        },
+        {
+          "id": "RS_LIVINGMUMMY_6"
+        },
+        {
+          "id": "RS_LIVINGMUMMY_7"
+        },
+        {
+          "id": "PD_LIVINGMUMMY_1"
+        },
+        {
+          "id": "PD_LIVINGMUMMY_2"
+        },
+        {
+          "id": "PD_LIVINGMUMMY_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Protector",
+          "name": "PROTECTOR"
+        },
+        {
+          "id": "Brimstone",
+          "name": "BRIMSTONE"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "Hoping to create a regenerative serum using reptile DNA, Doctor Curtis Connors accidentally turns himself into the villain, Lizard, and uses his newfound abilities to shed negative Status Effects.",
       "id": "Lizard",
       "mission": false,
@@ -15522,7 +15724,7 @@ playable   = {
       "unlockStars": 3
     },
     {
-      "description": "Karen Page was an investigative reporter before a vampire turned her into one of the undead. Now, with the help of the other Nightstalkers, she uses her vampiric abilities protect the innocent!",
+      "description": "Karen Page was an investigative reporter before a vampire turned her into one of the undead. Now, with the help of the other Nightstalkers, she uses her vampiric abilities to protect the innocent!",
       "eventTraits": [
         {
           "id": "AnniversaryElite",
@@ -19030,7 +19232,7 @@ playable   = {
       "unlockStars": 3
     },
     {
-      "description": "Mac Gargan was a PI who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
+      "description": "Mac Gargan was a Pl who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
       "eventTraits": [
         {
           "id": "Conqueror",
@@ -21908,6 +22110,10 @@ playable   = {
         {
           "id": "Darkhold",
           "name": "DARKHOLD"
+        },
+        {
+          "id": "Brimstone",
+          "name": "BRIMSTONE"
         }
       ],
       "unlockStars": 2
@@ -25870,15 +26076,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "684674f10c77af91fbe0",
-      "chars": "d2c8ffe32e9cde6dc8ec",
-      "drops": "fe973c8ff1f6976bed5e",
-      "events": "b1e909be9691f6dd3a1a",
-      "locs": "44186498a004e924763c",
-      "nodes": "d6c377c57d04385619c1",
-      "other": "4ab0da43658c4799469a"
+      "all": "4a9bc50433e2550c700c",
+      "chars": "b74f93204fa8c5920bd7",
+      "drops": "aacb912696eacae62c2c",
+      "events": "3bf498c65b91ab3adf71",
+      "locs": "c73f62c688d428d8f06c",
+      "nodes": "881658b489c6eecf97a7",
+      "other": "21f3c00785058136d4ef"
     },
-    "perTotal": 339,
+    "perTotal": 342,
     "version": 1
   }
 }
@@ -27426,13 +27632,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "2912c148d1a9a3945810",
-      "chars": "d2c8ffe32e9cde6dc8ec",
-      "drops": "fe973c8ff1f6976bed5e",
-      "events": "b1e909be9691f6dd3a1a",
-      "locs": "c74584b91b6a92bd0416",
-      "nodes": "0cab038d8db31cba0705",
-      "other": "1e7ec5860a21bc88a029"
+      "all": "4a9bc50433e2550c700c",
+      "chars": "b74f93204fa8c5920bd7",
+      "drops": "aacb912696eacae62c2c",
+      "events": "3bf498c65b91ab3adf71",
+      "locs": "c73f62c688d428d8f06c",
+      "nodes": "881658b489c6eecf97a7",
+      "other": "21f3c00785058136d4ef"
     },
     "perTotal": 43,
     "version": 1
