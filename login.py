@@ -92,7 +92,7 @@ class ChromeWithPrefs(webdriver.Chrome):
 
 
 @timed(level=3)
-def alt_get_driver(scopely_login='baker_michael@hotmail.com', session='0', headless=False):
+def alt_get_driver(scopely_login='login-email@address.com', session='0', headless=False):
 
 	global csv_file_path
 	global chromium_path
