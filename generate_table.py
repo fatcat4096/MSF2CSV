@@ -55,8 +55,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# Find out whether inline history has been requested for this report.
 	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
 
+	min_others = get_table_value(table_format, table, section, key='min_others')
+
 	# Pare any missing heroes if these aren't Meta entries.
-	if 'META' not in table_lbl and len(using_chars) > 5 and not team_power_summary:
+	if 'META' not in table_lbl and len(using_chars) > 5 and not team_power_summary and not min_others:
+
 		using_chars = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)			
 
 		# if inline_hist, only want heroes that have actually been changed.
@@ -93,6 +96,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	if not using_chars:
 		return ''
 		
+	# Dim Image if under_min but still included
+	dim_image = [char for char in using_chars if char not in remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)]
+
 	# Generate a table ID to allow sorting. 
 	
 	# If linked_hist is False, this is a standard table on the reports tab.
@@ -115,7 +121,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# If the Section Name starts with a Character, use that toon's image for the background.
 		if table_lbl.startswith(char_name.upper()+':<BR>'):
 			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
-			table_lbl = table_lbl.removeprefix(char_name.upper()+':<BR>').upper().replace(" (","<BR>(").replace('-','&#8209')
+			table_lbl = table_lbl.removeprefix(char_name.upper()+':<BR>').upper().replace(" (","<BR>(").replace('-','&#8209;')
 
 			table_lbl = f'<div class="img cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{table_lbl}</div>'
 			break
@@ -182,14 +188,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					if char.startswith(char_name+':'):
 					
 						url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
-						section_name = char.removeprefix(char_name+':').upper().replace(" (","<br>(").replace('-','&#8209')
+						section_name = char.removeprefix(char_name+':').upper().replace(" (","<br>(").replace('-','&#8209;')
 
 						html_file += f'     <td class="img" colspan="{num_cols}"><div class="cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{section_name}</div></td>\n'
 						break
 
 				# If we never found a match, just include the formatted Section name as a header.
 				if not char.startswith(char_name+':'):
-					section_name = translate_name(char).upper().replace(" (","<br>(").replace('-','&#8209')
+					section_name = translate_name(char).upper().replace(" (","<br>(").replace('-','&#8209;')
 					html_file += f'     <td colspan="{num_cols}"><div class="summ">{section_name}</div></td>\n'
 				
 			else:
@@ -212,6 +218,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# Control background color of Character image if Spec Ops report
 				background_color = spec_ops_background(table, char, player_list, html_cache) if spec_ops else ''
+
+				# Dim image if under_min
+				background_color += ' dim_img' if char in dim_image else ''
 
 				html_file += '     <td class="img" colspan="%s"%s><div class="cont %s"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, background_color, ['',' zoom'][not hist_date], url, translate_name(char))
 

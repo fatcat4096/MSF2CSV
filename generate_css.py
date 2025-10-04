@@ -189,6 +189,9 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #202020;
   width       : 100px;
 }
+.dim_img {
+  opacity     : .6;
+}
 .hist {
   background  : #282828;
   color       : #919191;

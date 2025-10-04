@@ -106,11 +106,16 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	# Apply filters to other_char list.
 	other_chars = filter_on_traits(section, traits_req, other_chars)
 
+	# Filter out any characters which no one has summoned
+	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
+
+	# Set aside a list of the other_chars prior to filtering for minimums
+	before_filter = other_chars[:]
+
 	# Filter out anyone less than the min_iso / min_tier
 	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
 
-	# Filter out any characters which no one has summoned.
-	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
+	# 
 
 	# Calculate info for an under_min section, hide it in table for later use. 
 	table['under_min'] = {}
@@ -140,8 +145,16 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'red' )[0] < min_red
 			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
 
+		# Anything completely filtered was under_min
+		for char_name in [char for char in before_filter if char not in other_chars]:
+			table['under_min'].setdefault(player_name,{})[char_name] = True 
+
 	# Start by pulling value from table_format or table.
 	max_others  = get_table_value(table_format, table, section, key='max_others', default=len(other_chars))
+	min_others  = get_table_value(table_format, table, section, key='min_others', default=0)
+	
+	# Set min_others to max_others if both are defined
+	min_others  = max_others if min_others and max_others else min_others
 
 	# If span format requested, override max_others if necessary.
 	if table_format.get('span') or table.get('span'):
@@ -160,7 +173,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# This section sorts other_chars by power or availability, not by name.
 	# If max_others, this order is also used to select which we keep. 
-	if sort_char_by in ['power','avail'] or max_others:
+	if sort_char_by in ['power','avail'] or max_others or min_others:
 
 		hist_date = get_hist_date(alliance_info, table_format)
 
@@ -187,7 +200,28 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		# If max_others is defined, reduce the number of heroes included in Others.
 		if max_others:
 			other_chars = other_chars[:max_others]
-		
+
+		# If we're forcing a min number of entries to be displayed, ensure we have at least that many
+		if min_others and min_others > len(other_chars):
+
+			# Omit any we're already including, need to sort the rest by power
+			before_filter = [char for char in before_filter if char not in other_chars]
+			
+			# Number of people who have summoned a character
+			dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] != 0 for player in player_list]) for char in before_filter}
+
+			# Calc average power for these toons
+			dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] for player in player_list])/max(dict_count[char],1)) for char in before_filter}
+
+			# Calculate a score for these toons
+			dict_score = {f'{dict_power[char]:010}':char for char in before_filter}
+
+			# Sort these by the same criteria and add them to the other_chars list
+			other_chars += [dict_score[score] for score in sorted(dict_score, reverse=True)]
+
+			# Truncate the composite list to min_others length
+			other_chars = other_chars[:min_others]
+
 	elif sort_char_by == 'alpha':
 		other_chars.sort()
 
