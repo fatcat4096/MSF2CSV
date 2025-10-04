@@ -19232,7 +19232,7 @@ playable   = {
       "unlockStars": 3
     },
     {
-      "description": "Mac Gargan was a Pl who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
+      "description": "Mac Gargan was a PI who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
       "eventTraits": [
         {
           "id": "Conqueror",
@@ -26076,13 +26076,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "4a9bc50433e2550c700c",
-      "chars": "b74f93204fa8c5920bd7",
-      "drops": "aacb912696eacae62c2c",
-      "events": "3bf498c65b91ab3adf71",
-      "locs": "c73f62c688d428d8f06c",
-      "nodes": "881658b489c6eecf97a7",
-      "other": "21f3c00785058136d4ef"
+      "all": "97404979565f6195914c",
+      "chars": "ea32783190a4210cb28e",
+      "drops": "426f2f57216b9318986e",
+      "events": "cc5e8638f3e87e49b1b1",
+      "locs": "a4af2c4cfcfda53756e1",
+      "nodes": "0d775919ce480e21c012",
+      "other": "5b33f8374afc75c5ef24"
     },
     "perTotal": 342,
     "version": 1
@@ -26124,6 +26124,7 @@ unplayable = {
     {
       "id": "PVE_Ares_SentryBoss",
       "mission": false,
+      "name": "Ares",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Ares_d23d50ad.png",
       "status": "unplayable",
       "traits": [
@@ -26159,6 +26160,7 @@ unplayable = {
         }
       ],
       "mission": false,
+      "name": "Black Widow",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_BlackWidow_ad4f751d.png",
       "status": "unplayable",
       "traits": [
@@ -26250,8 +26252,10 @@ unplayable = {
       "unlockStars": 7
     },
     {
+      "description": "Empowered by the serum of a million exploding suns, Robert Reynolds fights as the Sentry, a near-unstoppable force torn between heroic light and the destructive Void within.",
       "id": "PVE_Boss_Sentry",
       "mission": false,
+      "name": "Sentry",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_PVE_Boss_Sentry_032ed805.png",
       "status": "unplayable",
       "unlockStars": 7
@@ -26259,6 +26263,7 @@ unplayable = {
     {
       "id": "PVE_Bullseye_SentryBoss",
       "mission": false,
+      "name": "Bullseye",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Bullseye_b56d5281.png",
       "status": "unplayable",
       "traits": [
@@ -26298,6 +26303,7 @@ unplayable = {
         }
       ],
       "mission": false,
+      "name": "Captain America",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png",
       "status": "unplayable",
       "traits": [
@@ -26631,6 +26637,7 @@ unplayable = {
     {
       "id": "PVE_Daken_SentryBoss",
       "mission": false,
+      "name": "Daken",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Daken_fad050d8.png",
       "status": "unplayable",
       "traits": [
@@ -26919,6 +26926,7 @@ unplayable = {
         }
       ],
       "mission": false,
+      "name": "Hawkeye",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hawkeye_4f015df2.png",
       "status": "unplayable",
       "traits": [
@@ -26966,6 +26974,7 @@ unplayable = {
         }
       ],
       "mission": false,
+      "name": "Hulk",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hulk_71f97638.png",
       "status": "unplayable",
       "traits": [
@@ -27049,6 +27058,7 @@ unplayable = {
         }
       ],
       "mission": false,
+      "name": "Iron Man",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_IronMan_55dadf73.png",
       "status": "unplayable",
       "traits": [
@@ -27094,6 +27104,7 @@ unplayable = {
     {
       "id": "PVE_IronPatriot_SentryBoss",
       "mission": false,
+      "name": "Iron Patriot",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_IronPatriot_0b6c142a.png",
       "status": "unplayable",
       "traits": [
@@ -27207,6 +27218,7 @@ unplayable = {
     {
       "id": "PVE_Moonstone_SentryBoss",
       "mission": false,
+      "name": "Moonstone",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Moonstone_84b2b72c.png",
       "status": "unplayable",
       "traits": [
@@ -27541,6 +27553,7 @@ unplayable = {
         }
       ],
       "mission": false,
+      "name": "Thor",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Thor_b41367e3.png",
       "status": "unplayable",
       "traits": [
@@ -27574,6 +27587,7 @@ unplayable = {
     {
       "id": "PVE_USAgent_SentryBoss",
       "mission": false,
+      "name": "U.S. Agent",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_USAgent_d5b556fe.png",
       "status": "unplayable",
       "traits": [
@@ -27632,13 +27646,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "4a9bc50433e2550c700c",
-      "chars": "b74f93204fa8c5920bd7",
-      "drops": "aacb912696eacae62c2c",
-      "events": "3bf498c65b91ab3adf71",
-      "locs": "c73f62c688d428d8f06c",
-      "nodes": "881658b489c6eecf97a7",
-      "other": "21f3c00785058136d4ef"
+      "all": "97404979565f6195914c",
+      "chars": "ea32783190a4210cb28e",
+      "drops": "426f2f57216b9318986e",
+      "events": "cc5e8638f3e87e49b1b1",
+      "locs": "a4af2c4cfcfda53756e1",
+      "nodes": "0d775919ce480e21c012",
+      "other": "5b33f8374afc75c5ef24"
     },
     "perTotal": 43,
     "version": 1

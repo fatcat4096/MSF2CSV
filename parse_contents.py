@@ -580,13 +580,13 @@ def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 			for trait in char.get('traits',[]):
 				traits.setdefault(trait['id'],{})[char_name] = 1
 			
+			for trait in char.get('eventTraits',[]):
+				traits.setdefault(trait['id'],{})[char_name] = 1
+			
 			for trait in char.get('invisibleTraits',[]):
 				if not trait.get('alwaysInvisible'):
 					traits.setdefault(trait['id'],{})[char_name] = 1
 			
-	# Add missing trait
-	traits['MsfOriginal'] = {'Deathpool': 1, 'Kestrel': 1, 'Spider-Weaver': 1, 'Vahl': 1}
-
 	# Remove excess trait
 	if 'Ultron' in traits:
 		del traits['Ultron']
