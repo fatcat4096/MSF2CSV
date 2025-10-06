@@ -248,7 +248,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Find max available heroes for stats/color. Anything under 5 is forced to red.
 		avail_range = {}
 		if team_power_summary:
-			avail_range = {player:sum([find_value_or_diff(alliance_info, player, char_name, 'avail', False)[0] for char_name in char_list]) for player in player_list}
+			for player in player_list:
+
+				# char_list == teams/sections
+				avail_set = set()
+				for sect in char_list:
+					avail_set.update(find_value_or_diff(alliance_info, player, sect, 'avail', False)[0])
+
+				avail_range[player] = len(avail_set)
 			
 			# Once total avaialble found, we can sort players properly.
 			if sort_by == 'avail':
@@ -314,11 +321,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# Get pre-calculated value for available for this section (or all sections for summary)
 				num_avail = avail_range.get(player_name,5)
 
+				# Handle sets returned by summaries
+				if type(num_avail) is set:
+					num_avail = len(num_avail)
+
 				# Dim the name if don't have 5 heroes that meet min requirements for this section (or all sections, for summary)
 				if team_power_summary:
-					not_completed = not get_summary_comp(alliance_info, player_name, inc_comp)
-					not_ready = min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
-					#not_ready = not_completed and min_count and any([find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0] < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+					not_ready = min_count and any([len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', False)[0]) < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
 					not_ready = sum([not table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in char_list]) < 5
@@ -375,7 +385,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 						# TEAM POWER SUMMARY: Calculate under_min for a team/section so that the Power/Avail/Rank is dimmed if not 5 toons are available yet.
 						if team_power_summary:
-							under_min = min_count and find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date)[0] < min_count - (DD7 and char_name=='Mythic')
+							under_min = min_count and len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date)[0]) < min_count - (DD7 and char_name=='Mythic')
 						else:
 							under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
 
@@ -395,6 +405,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 								key_val,other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, use_hist_date)
 
 							need_tt = key=='power' and key_val != 0 and not linked_hist
+
+							# Handle sets in summary info
+							if type(key_val) is set:
+								key_val = len(key_val)
 
 							if key_val == 0 and use_hist_date:
 								style = ''

@@ -413,7 +413,8 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 		char_info = char_info.copy()
 		char_info.update({'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas})
 
-	current_val = int(char_info.get(key,0))
+	current_val = char_info.get(key,0)
+
 	if key == 'red':
 		current_val += int(char_info.get('dmd',0))
 

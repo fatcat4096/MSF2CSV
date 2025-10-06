@@ -29,7 +29,8 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 		# Pre-process the information for the lane, calculating STPs, num_avail, and rank.
 		for section in lane:
 			section_label = get_section_label(section)
-			if section_label in team_list or 1:
+
+			if section_label in team_list:
 
 				# Force get_meta_other_chars to return ALL valid characters
 				section['max_others'] = 0
@@ -47,8 +48,8 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 						# Pull STP from the calculated STP list.
 						stp = stp_list[hist_date][member]
 
-						# Get the num_avail for this team. 
-						avail = len([char for char in table.get('under_min',{}).get(member,{}) if char in meta_chars+other_chars and not table.get('under_min',{}).get(member,{}).get(char)])
+						# Get the num_avail for this section
+						avail = set([char for char in table.get('under_min',{}).get(member,{}) if char in meta_chars+other_chars and not table.get('under_min',{}).get(member,{}).get(char)])
 
 						# Find Rank for this member's team
 						rank  = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(member)+1
