@@ -90,4 +90,4 @@ color_scale = polylinear_gradient(['#f05d41','#edf74d','#52e332'],1000)['hex']
 
 iso_color_scale   = polylinear_gradient(['#EFFF17','#52e332'],5)['hex'] 
 iso_color_scale  += polylinear_gradient(['#B1DDFF','#0090FF'],5)['hex']
-iso_color_scale  += polylinear_gradient(['#C67DFF','#A200FF'],5)['hex']
+iso_color_scale  += polylinear_gradient(['#C7A7FF','#A52EEA'],5)['hex']

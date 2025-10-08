@@ -101,6 +101,7 @@ tables['blue'] = { 'name': 'Blue Marvel',
 					'summary_keys': ['stp','avail'],
 					'summary_comp': 'Blue Marvel',
 					'lanes':[ [
+							{'min_iso': 14, 'traits': ['Hero','Villain'],         'label':'Any Char<br>(ISO 3-4)', 'traits_req':'any'},
 							{'min_iso': 14, 'traits': ['Conqueror'],              'label':'Conquerors<br>(ISO 3-4)'},
 							{'min_iso': 15, 'traits': ['Conqueror'],              'label':'Conquerors<br>(ISO 3-5)'},
 							{'min_iso': 14, 'traits': ['Non-Mythic','Cosmic'],    'label':'Non-Mythic<br>Cosmic<br>(ISO 3-4)'},

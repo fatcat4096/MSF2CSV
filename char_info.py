@@ -2342,6 +2342,13 @@ playable   = {
     },
     {
       "description": "Known as the Living Bomb-Burst, Blastaar is a brutal warlord from the Negative Zone with a body built to withstand extreme punishment and a savage thirst for conquest and domination.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "Blastaar",
       "mission": false,
       "name": "Blastaar",
@@ -4106,6 +4113,13 @@ playable   = {
     },
     {
       "description": "Daimon Hellstrom, a half-human, half-demon, wielding his Netheranium Trident to channel Soulfire to burn away his enemies buffs and strip away their defenses.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "DaimonHellstrom",
       "mission": false,
       "name": "Daimon Hellstrom",
@@ -5736,6 +5750,13 @@ playable   = {
     },
     {
       "description": "Elsa Bloodstone is a monster-hunting aristocrat who powers up a Supernatural team.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "ElsaBloodstone",
       "mission": false,
       "name": "Elsa Bloodstone",
@@ -8247,6 +8268,13 @@ playable   = {
     },
     {
       "description": "Patricia Walker realizes her dream of becoming a super hero, using her Hellcat suit and claws to slice her enemies to ribbons.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "Hellcat",
       "mission": false,
       "name": "Hellcat",
@@ -12030,6 +12058,13 @@ playable   = {
     },
     {
       "description": "The immortal N'Kantu rises from his long incarceration to act as a bulwark against the evil that cursed him.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "LivingMummy",
       "mission": false,
       "name": "Living Mummy",
@@ -17426,6 +17461,11 @@ playable   = {
           "id": "StrikeAsset",
           "isEvent": true,
           "name": "S.T.R.I.K.E. ASSET"
+        },
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
         }
       ],
       "id": "Quasar",
@@ -22044,6 +22084,13 @@ playable   = {
     },
     {
       "description": "A heartbroken Doctor Strange absorbed countless otherworldly beings in a search for enough power to return his lost love, but found only the destructive might to demolish his foes.",
+      "eventTraits": [
+        {
+          "id": "Conqueror",
+          "isEvent": true,
+          "name": "CHAPTER 2 - CONQUEROR"
+        }
+      ],
       "id": "StrangeSupreme",
       "invisibleTraits": [
         {
@@ -26076,13 +26123,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "97404979565f6195914c",
-      "chars": "ea32783190a4210cb28e",
-      "drops": "426f2f57216b9318986e",
-      "events": "cc5e8638f3e87e49b1b1",
-      "locs": "a4af2c4cfcfda53756e1",
-      "nodes": "0d775919ce480e21c012",
-      "other": "5b33f8374afc75c5ef24"
+      "all": "f7c545be618ad5c56c38",
+      "chars": "5647f083cd0b563ff8cb",
+      "drops": "25b174d867965cd33b7e",
+      "events": "987cb7bd44986bffbf1a",
+      "locs": "47bf404a990f1ccfbb11",
+      "nodes": "a34e9acbceb2f3241a33",
+      "other": "0df5e1854316f5558550"
     },
     "perTotal": 342,
     "version": 1
@@ -27646,13 +27693,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "97404979565f6195914c",
-      "chars": "ea32783190a4210cb28e",
-      "drops": "426f2f57216b9318986e",
-      "events": "cc5e8638f3e87e49b1b1",
-      "locs": "a4af2c4cfcfda53756e1",
-      "nodes": "0d775919ce480e21c012",
-      "other": "5b33f8374afc75c5ef24"
+      "all": "f7c545be618ad5c56c38",
+      "chars": "5647f083cd0b563ff8cb",
+      "drops": "25b174d867965cd33b7e",
+      "events": "987cb7bd44986bffbf1a",
+      "locs": "47bf404a990f1ccfbb11",
+      "nodes": "a34e9acbceb2f3241a33",
+      "other": "0df5e1854316f5558550"
     },
     "perTotal": 43,
     "version": 1

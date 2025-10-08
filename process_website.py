@@ -132,7 +132,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_data={}, AUTH=None, log_file=None):
+def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_data={}, AUTH=None, log_file=None, logger=print):
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
@@ -280,14 +280,14 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 		LAST_LINE =  rosters_output[-1]
 		index = 15 + (':' not in LAST_LINE)
 
-		print(f'Found: {ansi.bold}{LAST_LINE[:index]}{ansi.reset}{FORMAT}{LAST_LINE[index:]}{ansi.reset}')
+		logger(f'Found: {ansi.bold}{LAST_LINE[:index]}{ansi.reset}{FORMAT}{LAST_LINE[index:]}{ansi.reset}')
 
 	return rosters_output
 
 
 	
 @timed(level=3)
-def roster_results(alliance_info, start_time, rosters_output=[]):
+def roster_results(alliance_info, start_time, rosters_output=[], logger=print):
 	
 	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
 	UPD = len([x for x in rosters_output if 'UPD' in x[15:]])
@@ -308,7 +308,7 @@ def roster_results(alliance_info, start_time, rosters_output=[]):
 	summary = [f'Found {SUMMARY} in {REQ}s']
 
 	# Make the log output pretty
-	print (f'{ansi.ltcyan}Refresh complete!{ansi.reset} Found {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.reset} in {ansi.ltyel}{REQ}s{ansi.reset}')
+	logger (f'{ansi.ltcyan}Refresh complete!{ansi.reset} Found {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.reset} in {ansi.ltyel}{REQ}s{ansi.reset}')
 
 	# If roster_output included, generate Key for footer as well.
 	status_key = [] 

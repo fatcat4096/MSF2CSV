@@ -149,7 +149,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		html_file += '     <td class="tlbl">%s</td>\n' % (table_lbl)
 
 		# Include Available, Include Position, and Include ISO Class flags
-		# Get value from table_format/table, with defaults if necessary.
+		# Get value from table_format/table, with defaults if necessary
 
 		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl
 		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False) and 'OTHERS' not in table_lbl and not team_power_summary
