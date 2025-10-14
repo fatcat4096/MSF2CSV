@@ -14,7 +14,7 @@ from html_shared import *
 
 
 # Generate just the Alliance Tab contents.
-@timed(level=3)
+#@timed(level=3)
 def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_cache={}):
 
 	html_file = ''

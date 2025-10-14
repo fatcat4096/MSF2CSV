@@ -15,7 +15,7 @@ from file_io     import find_cached_data
 from parse_cache import update_parse_cache
 from cached_info import get_cached
 
-@timed(level=3)
+#@timed(level=3)
 def get_hist_date(alliance_info, table_format):
 	hist_date = None
 
@@ -82,7 +82,7 @@ def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
 
 
 # Split meta chars from other chars. Filter others based on provided traits.
-@timed(level=3)
+#@timed(level=3)
 def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Get the list of usable characters
@@ -316,7 +316,7 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 
 
 # Return the correct strike_team definitions, depending on formatting flags.
-@timed(level=3)
+#@timed(level=3)
 def get_strike_teams(alliance_info, table, table_format):
 	# If only_members specified, use this list instead of previously defined Strike Teams.
 	only_members = get_table_value(table_format, table, key='only_members')
@@ -359,7 +359,7 @@ def get_strike_teams(alliance_info, table, table_format):
 
 
 # Insert dividers based on the type of team. 
-@timed
+#@timed
 def insert_dividers(strike_teams, raid_type):
 
 	# Start with a copy, just to be safe.
@@ -503,7 +503,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 
 
 # Archive the current run into the 'hist' tag for future analysis.
-@timed(level=3)
+#@timed(level=3)
 def update_history(alliance_info):	
 
 	# Get a little closer to our work.
@@ -611,7 +611,7 @@ def update_history(alliance_info):
 
 
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
-@timed(level=3)
+#@timed(level=3)
 def is_stale(alliance_info, member_name):
 
 	# Load thresholds, if they're explicitly defined.
@@ -652,7 +652,7 @@ def get_table_value(table_format, table, section={}, key='', default=None):
 
 
 # parse a string containing roster URLs, return only the first old format User ID.
-@timed(level=3)
+#@timed(level=3)
 def find_old_format_roster_url(field_value):
 	
 	found_url = ''
@@ -667,7 +667,7 @@ def find_old_format_roster_url(field_value):
 
 
 # parse a string containing roster URLs, looking for old format user IDs.
-@timed(level=3)
+#@timed(level=3)
 def find_old_format_roster_urls(field_value):
 
 	found_urls = []
@@ -689,7 +689,7 @@ def find_old_format_roster_urls(field_value):
 
 
 # Validate user_id formatting.
-@timed(level=3)
+#@timed(level=3)
 def is_old_format_user_id(s):
 	if not s:
 		return False
@@ -702,7 +702,7 @@ def is_old_format_user_id(s):
 
 
 ## parse a string containing roster_urls, return only the first valid alliance ID.
-@timed(level=3)
+#@timed(level=3)
 def find_valid_alliance_url(field_value):
 	
 	found_url = ''
@@ -717,7 +717,7 @@ def find_valid_alliance_url(field_value):
 
 
 # parse a string containing alliance_urls, looking for valid alliance IDs.
-@timed(level=3)
+#@timed(level=3)
 def find_valid_alliance_urls(field_value):
 
 	found_urls = []
@@ -742,7 +742,7 @@ def find_valid_alliance_urls(field_value):
 
 
 # Validate user_id formatting.
-@timed(level=3)
+#@timed(level=3)
 def is_valid_alliance_id(s):
 	return re.fullmatch(r"^[-:0-9a-fA-F]+$", s or "") and len(s)==48
 
@@ -750,7 +750,7 @@ def is_valid_alliance_id(s):
 
 # Verify the fresh and old cached data are the same alliance 
 # Merge data if old info available
-@timed(level=3)
+#@timed(level=3)
 def find_cached_and_merge(alliance_info, old_alliance_name=None):
 
 	# Look for an existing cached_data file with the old name (if provided) or the current one 

@@ -13,7 +13,7 @@ from html_cache    import make_next_table_id
 from html_shared   import *
 
 # Generate just the Alliance Tab contents.
-@timed(level=3)
+#@timed(level=3)
 def generate_roster_analysis(alliance_info, inc_prog=True, using_tabs=False, hist_date=None, html_cache={}, use_range='set'):
 
 	# Only include Dividers if using as part of a multi-tab document
@@ -293,7 +293,7 @@ def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data
 
 
 
-@timed(level=3)
+#@timed(level=3)
 def get_roster_stats(alliance_info, stat_type, hist_date=None):
 	
 	hist = alliance_info.get('hist',{})

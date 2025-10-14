@@ -18,7 +18,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 # Parse the alliance information directly from the website.
-@timed(level=3)
+#@timed(level=3)
 def parse_alliance(driver):
 
 	alliance = {}
@@ -254,7 +254,7 @@ def parse_info_html(driver, alliance, captains, members):
 
 
 # Parse the character file out of HTML directly from the website.
-@timed(level=3)
+#@timed(level=3)
 def parse_roster_html(contents, alliance_info, member=''):
 	soup = BeautifulSoup(contents, 'html.parser')
 
@@ -425,7 +425,7 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 
 	
 # Parse the Roster data directly from the roster.csv file.
-@timed(level=3)
+#@timed(level=3)
 def parse_roster_csv(roster_csv, roster_csv_data={}, member_order=[]):
 
 	# Can't parse if roster.csv is unavailable.
@@ -553,7 +553,7 @@ def parse_roster_api(response, processed_chars, other_data):
 
 
 # Parse character names, traits, portraits all out of API character call
-@timed(level=3)
+#@timed(level=3)
 def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 
 	for char in CHAR_DATA:
