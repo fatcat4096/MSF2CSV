@@ -87,19 +87,26 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 	for member in member_list:
 	
 		# Get a little closer to what we're working with
-		member_stats = alliance_info['members'][member]
-		hist_stats   = alliance_info['hist'][hist_date][member] if hist_date else {}
+		member_stats = alliance_info['members'].get(member,{})
+		hist_stats   = alliance_info['hist'][hist_date].get(member,{}) if hist_date else {}
 
 		# Calculate stats if we're working with Historical Data
 		hist_calcs = {}
 		if hist_stats:
-			hist_calcs['tcp']   = sum([hist_stats[char]['power'] for char in hist_stats])
-			hist_calcs['level'] = max([hist_stats[char_name].get('lvl',0) for char_name in hist_stats])
-			hist_calcs['stp']   = sum(sorted([hist_stats[member]['power'] for member in hist_stats], reverse=True)[:5])
-			hist_calcs['tcc']   = len([char for char in hist_stats if hist_stats[char]['power']])
-			hist_calcs['max']   = len([char for char in hist_stats if hist_stats[char]['yel']==7])
-			hist_calcs['stars'] = sum([hist_stats[char]['yel'] for char in hist_stats])
-			hist_calcs['red']   = sum([hist_stats[char]['red'] for char in hist_stats])			
+			# Pre-calc stat lists
+			powers = [hist_stats.get(char,{}).get('power',0) for char in hist_stats]
+			stars  = [hist_stats.get(char,{}).get('yel',0) for char in hist_stats]
+			levels = [hist_stats.get(char,{}).get('lvl',0) for char in hist_stats]
+			reds   = [hist_stats.get(char,{}).get('red',0) for char in hist_stats]
+
+			# Calculate historical values for these stats using hist snapshots
+			hist_calcs['tcp']   = sum(powers)
+			hist_calcs['level'] = max(levels)
+			hist_calcs['stp']   = sum(sorted(powers, reverse=True)[:5])
+			hist_calcs['tcc']   = len([char for char in powers if char])
+			hist_calcs['max']   = len([star for star in stars if star==7])
+			hist_calcs['stars'] = sum(stars)
+			hist_calcs['red']   = sum(reds)			
 
 		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output
 		stale_data = member_stats['is_stale']
@@ -149,9 +156,13 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 		html_file += f' <tr style="background:{member_color}; font-size:22px; line-height:100%; vertical-align:middle;">\n'
 
 		# Frame and Image
-		html_file += '  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url(https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_%s.png);">\n' % (member_stats.get('frame','0_ab6f69b8'))
-		html_file += '   <div class="sml_rel"><img height="45" class="sml_rel" src="https://assets.marvelstrikeforce.com/imgs/Portrait_%s.png" alt=""/></div>\n' % (member_stats.get('image','ShieldDmg_Defense_3dea00f7'))
-		html_file += '  </div></td>\n'
+		
+		IMG_URL = member_stats.get('image','ShieldDmg_Defense_3dea00f7')+'.png'
+		IMG_URL = IMG_URL if 'https' in IMG_URL else f'https://assets.marvelstrikeforce.com/imgs/Portrait_{IMG_URL}'
+		
+		html_file += f'  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url(https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_%s.png);">\n' % (member_stats.get('frame','0_ab6f69b8'))
+		html_file += f'   <div class="sml_rel"><img height="45" class="sml_rel" src="{IMG_URL}" alt=""/></div>\n'
+		html_file += f'  </div></td>\n'
 
 		# Name Field
 		html_file += f'  <td class="urlb"><a class="urlb"{member_url}><span class="bd">{member_name}</span>{name_second}</a></td>\n'

@@ -19573,6 +19573,71 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Empowered by the serum of a million exploding suns, Robert Reynolds fights as the Sentry, a near-unstoppable force torn between heroic light and the destructive Void within.",
+      "id": "Sentry",
+      "mission": false,
+      "name": "Sentry",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Sentry_f9c81c79.png",
+      "starItems": [
+        {
+          "id": "SHARD_SENTRY"
+        },
+        {
+          "id": "RS_SENTRY_1"
+        },
+        {
+          "id": "RS_SENTRY_2"
+        },
+        {
+          "id": "RS_SENTRY_3"
+        },
+        {
+          "id": "RS_SENTRY_4"
+        },
+        {
+          "id": "RS_SENTRY_5"
+        },
+        {
+          "id": "RS_SENTRY_6"
+        },
+        {
+          "id": "RS_SENTRY_7"
+        },
+        {
+          "id": "PD_SENTRY_1"
+        },
+        {
+          "id": "PD_SENTRY_2"
+        },
+        {
+          "id": "PD_SENTRY_3"
+        }
+      ],
+      "status": "playable",
+      "summonIds": [
+        "Void"
+      ],
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        }
+      ],
+      "unlockStars": 5
+    },
+    {
       "description": "Sersi copies her enemies' positive effects, and when her Eternal ally Ikaris is with her, also turns those effects against them!",
       "eventTraits": [
         {
@@ -26123,15 +26188,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "f7c545be618ad5c56c38",
-      "chars": "5647f083cd0b563ff8cb",
-      "drops": "25b174d867965cd33b7e",
-      "events": "987cb7bd44986bffbf1a",
-      "locs": "47bf404a990f1ccfbb11",
-      "nodes": "a34e9acbceb2f3241a33",
-      "other": "0df5e1854316f5558550"
+      "all": "4f0c0b831ae7ae711ee1",
+      "chars": "05f66a47f488f8f9de18",
+      "drops": "e381c903586a0f3f469b",
+      "events": "c3309482efd846064e41",
+      "locs": "07ba436393dd9126210c",
+      "nodes": "111ee41f40914c869892",
+      "other": "255d0baddb22b43843d7"
     },
-    "perTotal": 342,
+    "perTotal": 343,
     "version": 1
   }
 }
@@ -26174,6 +26239,9 @@ unplayable = {
       "name": "Ares",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Ares_d23d50ad.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Villain",
@@ -26210,6 +26278,9 @@ unplayable = {
       "name": "Black Widow",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_BlackWidow_ad4f751d.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Hero",
@@ -26301,10 +26372,52 @@ unplayable = {
     {
       "description": "Empowered by the serum of a million exploding suns, Robert Reynolds fights as the Sentry, a near-unstoppable force torn between heroic light and the destructive Void within.",
       "id": "PVE_Boss_Sentry",
+      "invisibleTraits": [
+        {
+          "alwaysInvisible": true,
+          "id": "Boss"
+        }
+      ],
       "mission": false,
       "name": "Sentry",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_PVE_Boss_Sentry_032ed805.png",
       "status": "unplayable",
+      "summonIds": [
+        "PVE_USAgent_SentryBoss",
+        "PVE_Ares_SentryBoss",
+        "PVE_IronPatriot_SentryBoss",
+        "PVE_Bullseye_SentryBoss",
+        "PVE_Moonstone_SentryBoss",
+        "PVE_Daken_SentryBoss",
+        "PVE_CaptainAmerica_SentryBoss",
+        "PVE_Thor_SentryBoss",
+        "PVE_IronMan_SentryBoss",
+        "PVE_Hawkeye_SentryBoss",
+        "PVE_Hulk_SentryBoss",
+        "PVE_BlackWidow_SentryBoss"
+      ],
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Blaster",
+          "name": "BLASTER"
+        },
+        {
+          "id": "Mythic",
+          "name": "MYTHIC"
+        }
+      ],
       "unlockStars": 7
     },
     {
@@ -26313,6 +26426,9 @@ unplayable = {
       "name": "Bullseye",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Bullseye_b56d5281.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Villain",
@@ -26353,6 +26469,9 @@ unplayable = {
       "name": "Captain America",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_CaptainAmerica_5d76161e.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Hero",
@@ -26687,6 +26806,9 @@ unplayable = {
       "name": "Daken",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Daken_fad050d8.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Villain",
@@ -26976,6 +27098,9 @@ unplayable = {
       "name": "Hawkeye",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hawkeye_4f015df2.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Hero",
@@ -27024,6 +27149,9 @@ unplayable = {
       "name": "Hulk",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hulk_71f97638.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Hero",
@@ -27108,6 +27236,9 @@ unplayable = {
       "name": "Iron Man",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_IronMan_55dadf73.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Hero",
@@ -27154,6 +27285,9 @@ unplayable = {
       "name": "Iron Patriot",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_IronPatriot_0b6c142a.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Villain",
@@ -27268,6 +27402,9 @@ unplayable = {
       "name": "Moonstone",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Moonstone_84b2b72c.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Villain",
@@ -27603,6 +27740,9 @@ unplayable = {
       "name": "Thor",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Thor_b41367e3.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Hero",
@@ -27637,6 +27777,9 @@ unplayable = {
       "name": "U.S. Agent",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_USAgent_d5b556fe.png",
       "status": "unplayable",
+      "summonByIds": [
+        "PVE_Boss_Sentry"
+      ],
       "traits": [
         {
           "id": "Villain",
@@ -27693,13 +27836,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "f7c545be618ad5c56c38",
-      "chars": "5647f083cd0b563ff8cb",
-      "drops": "25b174d867965cd33b7e",
-      "events": "987cb7bd44986bffbf1a",
-      "locs": "47bf404a990f1ccfbb11",
-      "nodes": "a34e9acbceb2f3241a33",
-      "other": "0df5e1854316f5558550"
+      "all": "4f0c0b831ae7ae711ee1",
+      "chars": "05f66a47f488f8f9de18",
+      "drops": "e381c903586a0f3f469b",
+      "events": "c3309482efd846064e41",
+      "locs": "07ba436393dd9126210c",
+      "nodes": "111ee41f40914c869892",
+      "other": "255d0baddb22b43843d7"
     },
     "perTotal": 43,
     "version": 1
