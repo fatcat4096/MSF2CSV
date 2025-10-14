@@ -9,7 +9,7 @@ These are used to de-duplicate entries in the historical data structures of alli
 from log_utils import *
 
 # Create a cache of entries to optimize our cached_data.
-@timed(level=3)
+#@timed(level=3)
 def build_parse_cache(alliance_info, parse_cache):
 
 	# Let's process these Historical entries in chronological order. 
