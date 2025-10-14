@@ -192,10 +192,10 @@ def login(prompt=False, headless=False, session=None, driver=None, scopely_login
 	if not driver:
 		# If a session is specified, use the new login mechanism.
 		if session:
-			print (f'{ansi.ltgrn}SESSION {session}{ansi.reset} -- Using NEW login mechanism.')
+			print (f'SESSION {session} -- Using NEW login mechanism.')
 			driver = alt_get_driver(scopely_login, session, headless)
 		else:
-			#print (f'{ansi.ltred}NO SESSION{ansi.reset} -- Using old login mechanism.')
+			#print (f'NO SESSION -- Using old login mechanism.')
 			driver = get_driver(headless)
 
 	driver.scopely_login = scopely_login
