@@ -286,5 +286,15 @@ tables['all_chars'] = { 'name': 'All Characters',
 					'sort_by': 'tcp',
 					'inc_keys': ['power','tier','iso'],
 					'inc_class': True,
+					'lanes':[ [
+							{'traits': ['Bio'], },
+							{'traits': ['Mutant'], },
+							{'traits': ['Mystic'], },
+							{'traits': ['Skill'], },
+							{'traits': ['Tech'], },
+							{'traits': ['Cosmic'], },
+							{'traits': ['City'], },
+							{'traits': ['Global'], },
+							] ]
 					}
 
