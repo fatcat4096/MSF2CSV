@@ -398,7 +398,7 @@ def insert_dividers(strike_teams, raid_type):
 	
 
 # Find this member's oldest entry in our historical entries.
-def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=None):
+def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=None, null=0):
 
 	other_data = ''
 
@@ -413,7 +413,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 		char_info = char_info.copy()
 		char_info.update({'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas})
 
-	current_val = char_info.get(key,0)
+	current_val = char_info.get(key,null)
 
 	if key == 'red':
 		current_val += int(char_info.get('dmd',0))
@@ -498,7 +498,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 		return delta_val, other_data
 
 	# Should not happen. Missing alliance members should be copied into all historical entries.
-	return 0,other_data
+	return null,other_data
 
 
 
