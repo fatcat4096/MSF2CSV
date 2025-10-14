@@ -13,6 +13,7 @@ from process_website import *             # Routines to get Roster data from web
 from file_io         import *             # Routines to read and write files to disk.
 from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
+from rich.console    import Console
 
 import datetime
 
@@ -51,12 +52,16 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 
 		if external_table or output in valid_output:
 		
-			# If requesting tabbed output, this is our destination.
-			if output_format == 'tabbed' and output in tables:
-				html_files = {output+'.html': generate_tabbed_html(alliance_info, tables.get(output), table_format)}
-			# Otherwise, we need to generate the one page.
-			else:
-				html_files = generate_html(alliance_info, external_table or tables.get(output), table_format)
+			try:
+				# If requesting tabbed output, this is our destination.
+				if output_format == 'tabbed' and output in tables:
+					html_files = {output+'.html': generate_tabbed_html(alliance_info, tables.get(output), table_format)}
+				# Otherwise, we need to generate the one page.
+				else:
+					html_files = generate_html(alliance_info, external_table or tables.get(output), table_format)
+			except:
+				Console().print_exception(show_locals=True)
+				return {}
 
 			# If 'image' was requested, we need to convert the HTML files to PNG images.
 			if output_format == 'image':
