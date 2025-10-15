@@ -218,7 +218,7 @@ INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vultur
 HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
 SECWARRIOR = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Scarlet Witch (Zombie)']
-VIGILANTES = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
+VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
 
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
@@ -280,7 +280,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
 							{'traits': ['Undying'], 'meta': UNDYING},
 							{'traits': ['Unlimited']},
-							{'traits': ['Vigilantes'], 'meta': VIGILANTES}, 
+							{'traits': ['Vigilante'], 'meta': VIGILANTE}, 
 							{'traits': ['WarDog']},
 							{'traits': ['WeaponX'], 'meta': ['Omega Red', 'Sabretooth', 'Silver Samurai', 'Wolverine', 'X-23']},
 							{'traits': ['XTreme']},
@@ -295,27 +295,27 @@ tables['battleworld'] = { 'name': 'Battleworld',
 					'max_others': 10,
 					'sort_char_by': 'avail',
 					'lane_name': 'zone',
-					'lanes':[ [
-							{'traits': ['Mystic', 'Non-Mythic'],  'meta': ACCURSED, 'max_others':5, 'label':'<big><u>Mission 1:</u></big><br>Mystic<br>Non-Mythic'},
-							{'traits': ['Mutant', 'Non-Mythic'],  'meta': HELLFIRE, 'max_others':5, 'label':'<big><u>Mission 2:</u></big><br>Mutant<br>Non-Mythic'}, 
-							{'traits': ['Villain', 'Non-Mythic'], 'label':'<big><u>Mission 3:</u></big><br>Villain<br>Non-Mythic'}, 
-							{'meta': ['Quasar', 'Blastaar'], 'label':'<big><u>Mission 4:</u></big><br>Quasar and<br>Blastaar'},
-							{'meta': FANFOURMCU + BRIMSTONE, 'label':'<big><u>Mission 5</u></big><br>F4 (MCU) or<br>Brimstone'},
-							{'traits': ['ChaosTeam'], 'label':'<big><u>Mission 6:</u></big><br>Chaos Team'},
+					'lanes':[ [ ### Zone 1 ###
+							{'header':'Mission 1', 'traits': ['Mystic',  'Non-Mythic'], 'meta': ACCURSED, 'max_others':5},
+							{'header':'Mission 2', 'traits': ['Mutant',  'Non-Mythic'], 'meta': HELLFIRE, 'max_others':5}, 
+							{'header':'Mission 3', 'traits': ['Villain', 'Non-Mythic']}, 
+							{'header':'Mission 4', 'meta': ['Quasar', 'Blastaar'], 'label':'Quasar and<br>Blastaar'},
+							{'header':'Mission 5', 'meta': FANFOURMCU + BRIMSTONE, 'label':'F4 (MCU) or<br>Brimstone'},
+							{'header':'Mission 6', 'traits': ['ChaosTeam']},
 							],[ ### Zone 2 ###
-							{'traits': ['Tech', 'Non-Mythic'], 'label':'<big><u><u>Mission 1:</u></u></big><br>Tech<br>Non-Mythic'},
-							{'traits': ['Bio',  'Non-Mythic'], 'label':'<big><u>Mission 2:</u></big><br>Bio<br>Non-Mythic'},
-							{'traits': ['Hero', 'Non-Mythic'], 'label':'<big><u>Mission 3:</u></big><br>Hero<br>Non-Mythic'},
-							{'meta': ACCURSED + HELLFIRE, 'label':'<big><u>Mission 4:</u></big><br>Accursed or<br>Hellfire Club'},
-							{'meta': SECWARRIOR + BRIMSTONE, 'label':'<big><u>Mission 5:</u></big><br>Secret Warrior<br>or Brimstone'},
-							{'traits': ['ChaosTeam'], 'label':'<big><u>Mission 6:</u></big><br>Chaos Team'},
+							{'header':'Mission 1', 'traits': ['Tech', 'Non-Mythic']},
+							{'header':'Mission 2', 'traits': ['Bio',  'Non-Mythic'], 'meta': FANFOURMCU, 'max_others':5},
+							{'header':'Mission 3', 'traits': ['Hero', 'Non-Mythic']},
+							{'header':'Mission 4', 'meta': ACCURSED   + HELLFIRE,  'label':'Accursed or<br>Hellfire Club'},
+							{'header':'Mission 5', 'meta': SECWARRIOR + BRIMSTONE, 'label':'Secret Warrior<br>or Brimstone'},
+							{'header':'Mission 6', 'traits': ['ChaosTeam']},
 							],[ ### Zone 3 ###
-							{'traits': ['Skill',  'Non-Mythic'], 'meta': VIGILANTES, 'max_others':5, 'label':'<big><u>Mission 1:</u></big><br>Skill<br>Non-Mythic'},
-							{'traits': ['Global', 'Non-Mythic'], 'meta': HELLFIRE, 'max_others':5, 'label':'<big><u>Mission 2:</u></big><br>Global<br>Non-Mythic'},
-							{'traits': ['Cosmic', 'Non-Mythic'], 'label':'<big><u>Mission 3:</u></big><br>Cosmic<br>Non-Mythic'},
-							{'traits': ['City'], 'meta': INSIDIOUS, 'max_others':5, 'label':'<big><u>Mission 4:</u></big><br>City'},
-							{'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any', 'label':'<big><u>Mission 5:</u></big><br>Blue Marvel<br>Phantom Rider<br>Phoenix Force'},
-							{'meta': UNDYING + BRIMSTONE, 'label':'<big><u>Mission 6:</u></big><br>Undying or<br>Brimstone'},
+							{'header':'Mission 1', 'traits': ['Skill',  'Non-Mythic'], 'meta': VIGILANTE, 'max_others':5},
+							{'header':'Mission 2', 'traits': ['Global', 'Non-Mythic'], 'meta': HELLFIRE,  'max_others':5},
+							{'header':'Mission 3', 'traits': ['Cosmic', 'Non-Mythic']},
+							{'header':'Mission 4', 'traits': ['City'], 'meta': INSIDIOUS, 'max_others':5},
+							{'header':'Mission 5', 'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any'},
+							{'header':'Mission 6', 'meta': UNDYING + BRIMSTONE, 'label':'Undying or<br>Brimstone'},
 							] ]
 					}
 

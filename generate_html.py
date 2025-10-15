@@ -365,6 +365,10 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 					traits = traits[:3] + ['AND MORE']
 				table_lbl = '<br>'.join(traits)
 
+			# Add Header to table_lbl if defined
+			header = section.get('header','').upper() 
+			table_lbl = f'<big><u>{header}:</u></big><br>{table_lbl}' if header else table_lbl
+
 			# Let's make it easy on ourselves. Start every section the same way.
 			html_file += '<table>\n <tr style="vertical-align:top">\n  <td>\n'
 
