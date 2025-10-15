@@ -216,7 +216,8 @@ BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 
 FANFOURMCU = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
 INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture']
 HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
-SECWARRIOR = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
+SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
+TBOLTS     = ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Scarlet Witch (Zombie)']
 VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
 
@@ -269,12 +270,12 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['PymTech']},
 							{'traits': ['Rebirth']},
 #							{'traits': ['SecretDefender']},
-							{'traits': ['SecretWarrior'], 'meta': SECWARRIOR},
+							{'traits': ['SecretWarrior'], 'meta': SECRETWAR},
 #							{'traits': ['Shadowland']},
 							{'traits': ['SpiderSociety']},
 							{'traits': ['SuperiorSix'], 'meta': ['Green Goblin (Classic)', 'Doctor Octopus', 'Lizard', 'Kraven the Hunter', 'Spider-Slayer']},
 							{'traits': ['Starjammer'], 'meta': ['Groot','Rocket Raccoon','Havok','Lilandra','Howard The Duck']},
-							{'traits': ['Thunderbolts'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird']},
+							{'traits': ['Thunderbolts'], 'meta': TBOLTS},
 #							{'traits': ['Uncanny']},
 							{'traits': ['UncannyAvenger'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm']},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
@@ -303,11 +304,11 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 5', 'meta': FANFOURMCU + BRIMSTONE, 'label':'F4 (MCU) or<br>Brimstone'},
 							{'header':'Mission 6', 'traits': ['ChaosTeam']},
 							],[ ### Zone 2 ###
-							{'header':'Mission 1', 'traits': ['Tech', 'Non-Mythic']},
-							{'header':'Mission 2', 'traits': ['Bio',  'Non-Mythic'], 'meta': FANFOURMCU, 'max_others':5},
+							{'header':'Mission 1', 'traits': ['Tech', 'Non-Mythic'], 'meta': INSIDIOUS, 'max_others':5},
+							{'header':'Mission 2', 'traits': ['Bio',  'Non-Mythic'], 'meta': TBOLTS,    'max_others':5},
 							{'header':'Mission 3', 'traits': ['Hero', 'Non-Mythic']},
-							{'header':'Mission 4', 'meta': ACCURSED   + HELLFIRE,  'label':'Accursed or<br>Hellfire Club'},
-							{'header':'Mission 5', 'meta': SECWARRIOR + BRIMSTONE, 'label':'Secret Warrior<br>or Brimstone'},
+							{'header':'Mission 4', 'meta': ACCURSED  + HELLFIRE,  'label':'Accursed or<br>Hellfire Club'},
+							{'header':'Mission 5', 'meta': SECRETWAR + BRIMSTONE, 'label':'Secret Warrior<br>or Brimstone'},
 							{'header':'Mission 6', 'traits': ['ChaosTeam']},
 							],[ ### Zone 3 ###
 							{'header':'Mission 1', 'traits': ['Skill',  'Non-Mythic'], 'meta': VIGILANTE, 'max_others':5},
