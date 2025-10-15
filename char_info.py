@@ -2344,6 +2344,11 @@ playable   = {
       "description": "Known as the Living Bomb-Burst, Blastaar is a brutal warlord from the Negative Zone with a body built to withstand extreme punishment and a savage thirst for conquest and domination.",
       "eventTraits": [
         {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        },
+        {
           "id": "Conqueror",
           "isEvent": true,
           "name": "CHAPTER 2 - CONQUEROR"
@@ -4882,6 +4887,11 @@ playable   = {
           "id": "KnowhereHeist",
           "isEvent": true,
           "name": "KNOWHERE HEIST"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
         }
       ],
       "id": "DoctorOctopus",
@@ -5587,6 +5597,11 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
         }
       ],
       "id": "Electro",
@@ -7169,6 +7184,11 @@ playable   = {
           "id": "Archenemy",
           "isEvent": true,
           "name": "ARCHENEMY"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
         }
       ],
       "id": "GreenGoblinGlider",
@@ -8564,6 +8584,11 @@ playable   = {
     {
       "description": "After discovering and stealing Green Goblin's gear, Roderick Kingsley takes the mantle of Hobgoblin! Control the battlefield with his explosive pumpkin bombs.",
       "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        },
         {
           "id": "Conqueror",
           "isEvent": true,
@@ -11489,6 +11514,13 @@ playable   = {
     },
     {
       "description": "A relentlessly dedicated hunter, Kraven hunts only the most dangerous game, tearing through his enemies and breaking their will to fight.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        }
+      ],
       "id": "KravenTheHunter",
       "invisibleTraits": [
         {
@@ -12131,6 +12163,13 @@ playable   = {
     },
     {
       "description": "Hoping to create a regenerative serum using reptile DNA, Doctor Curtis Connors accidentally turns himself into the villain, Lizard, and uses his newfound abilities to shed negative Status Effects.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        }
+      ],
       "id": "Lizard",
       "mission": false,
       "name": "Lizard",
@@ -14638,6 +14677,13 @@ playable   = {
     },
     {
       "description": "Mysterio is an enigmatic Controller who manipulates his enemies' status effects.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        }
+      ],
       "id": "Mysterio",
       "invisibleTraits": [
         {
@@ -17463,6 +17509,11 @@ playable   = {
           "name": "S.T.R.I.K.E. ASSET"
         },
         {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        },
+        {
           "id": "Conqueror",
           "isEvent": true,
           "name": "CHAPTER 2 - CONQUEROR"
@@ -18335,6 +18386,13 @@ playable   = {
     },
     {
       "description": "Big, strong, and tough, the Rhino is a heavy hitter. Blinding him will only make him mad.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        }
+      ],
       "id": "Rhino",
       "mission": false,
       "name": "Rhino",
@@ -19274,6 +19332,11 @@ playable   = {
     {
       "description": "Mac Gargan was a PI who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
       "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        },
         {
           "id": "Conqueror",
           "isEvent": true,
@@ -20439,6 +20502,11 @@ playable   = {
       "description": "Shocker uses his Tech sonic bursts to damage entire teams and strengthen his Sinister Six allies.",
       "eventTraits": [
         {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        },
+        {
           "id": "Conqueror",
           "isEvent": true,
           "name": "CHAPTER 2 - CONQUEROR"
@@ -21438,6 +21506,13 @@ playable   = {
     },
     {
       "description": "J. Jonah Jameson leaves his desk behind to operate the Spider-Slayer robot and trades hard-hitting investigative journalism for decimating blows against his more evasive enemies.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        }
+      ],
       "id": "SpiderSlayer",
       "mission": false,
       "name": "Spider-Slayer",
@@ -22458,6 +22533,11 @@ playable   = {
       "description": "Otto Octavius takes over Spider-Man's body and becomes a more brutal and efficient hero, believing himself to be \"superior.\" Use his new tech to heal and apply positive status effects on allies.",
       "eventTraits": [
         {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        },
+        {
           "id": "Conqueror",
           "isEvent": true,
           "name": "CHAPTER 2 - CONQUEROR"
@@ -22621,6 +22701,13 @@ playable   = {
     },
     {
       "description": "A deadly member of the Sinister Six, Swarm exists as a sentient hive of killer bees controlled by one evil mind.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        }
+      ],
       "id": "Swarm",
       "invisibleTraits": [
         {
@@ -24880,6 +24967,11 @@ playable   = {
       "description": "Vulture preys on enemies with negative status effects while dealing extra damage to City Heroes.",
       "eventTraits": [
         {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOSTEAM"
+        },
+        {
           "id": "Conqueror",
           "isEvent": true,
           "name": "CHAPTER 2 - CONQUEROR"
@@ -26109,6 +26201,87 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Once a founding member of S.T.R.I.K.E., Kestrel came into contact with an interdimensional plague. Now infected, she is an undead weapon who unleashes her hunger and portal tech to corrupt the battlefield and terrorize enemies.",
+      "id": "ZombieKestrel",
+      "invisibleTraits": [
+        {
+          "alwaysInvisible": true,
+          "id": "Exposed",
+          "name": "EXPOSED"
+        }
+      ],
+      "mission": false,
+      "name": "Kestrel (Zombie)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_ZombieKestrel_d82c0f76.png",
+      "starItems": [
+        {
+          "id": "SHARD_ZOMBIEKESTREL"
+        },
+        {
+          "id": "RS_ZOMBIEKESTREL_1"
+        },
+        {
+          "id": "RS_ZOMBIEKESTREL_2"
+        },
+        {
+          "id": "RS_ZOMBIEKESTREL_3"
+        },
+        {
+          "id": "RS_ZOMBIEKESTREL_4"
+        },
+        {
+          "id": "RS_ZOMBIEKESTREL_5"
+        },
+        {
+          "id": "RS_ZOMBIEKESTREL_6"
+        },
+        {
+          "id": "RS_ZOMBIEKESTREL_7"
+        },
+        {
+          "id": "PD_ZOMBIEKESTREL_1"
+        },
+        {
+          "id": "PD_ZOMBIEKESTREL_2"
+        },
+        {
+          "id": "PD_ZOMBIEKESTREL_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Tech",
+          "name": "TECH"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "Undying",
+          "name": "UNDYING"
+        },
+        {
+          "id": "Epic",
+          "name": "EPIC"
+        }
+      ],
+      "unlockStars": 2
+    },
+    {
       "description": "A conduit for chaos magic even beyond death, the infected Scarlet Witch manipulates Status Effects on her enemies, making her a terrifying sight for anyone not already a part of her zombie horde.",
       "id": "ZombieScarletWitch",
       "mission": false,
@@ -26188,15 +26361,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "4f0c0b831ae7ae711ee1",
-      "chars": "05f66a47f488f8f9de18",
+      "all": "00cde7535d04bcde97c3",
+      "chars": "d94840ea23d96830fffd",
       "drops": "e381c903586a0f3f469b",
-      "events": "c3309482efd846064e41",
-      "locs": "07ba436393dd9126210c",
-      "nodes": "111ee41f40914c869892",
-      "other": "255d0baddb22b43843d7"
+      "events": "3e0557366bb43f9bd249",
+      "locs": "af98b9d92cba92b99b3b",
+      "nodes": "981b4a4cc5d3363a2f8c",
+      "other": "a1f50bddfc1de09a0516"
     },
-    "perTotal": 343,
+    "perTotal": 344,
     "version": 1
   }
 }
@@ -27836,13 +28009,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "4f0c0b831ae7ae711ee1",
-      "chars": "05f66a47f488f8f9de18",
+      "all": "00cde7535d04bcde97c3",
+      "chars": "d94840ea23d96830fffd",
       "drops": "e381c903586a0f3f469b",
-      "events": "c3309482efd846064e41",
-      "locs": "07ba436393dd9126210c",
-      "nodes": "111ee41f40914c869892",
-      "other": "255d0baddb22b43843d7"
+      "events": "3e0557366bb43f9bd249",
+      "locs": "af98b9d92cba92b99b3b",
+      "nodes": "981b4a4cc5d3363a2f8c",
+      "other": "a1f50bddfc1de09a0516"
     },
     "perTotal": 43,
     "version": 1

@@ -217,6 +217,7 @@ def translate_name(value):
 						"Bionic Avengers": "Bionic<br>Avengers",
 						"BlackOrder": "Black<br>Order",
 						"Brotherhood": "B'Hood",
+						"ChaosTeam": "Chaos Team",
 						"DarkHunter": "Dark<br>Hunters",
 						"Defender": "Defenders",
 						"Eternal": "Eternals",

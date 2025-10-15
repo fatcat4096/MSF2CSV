@@ -104,12 +104,12 @@ tables['blue'] = { 'name': 'Blue Marvel',
 							{'min_iso': 14, 'traits': ['Hero','Villain'],         'label':'Any Char<br>(ISO 3-4)', 'traits_req':'any'},
 							{'min_iso': 14, 'traits': ['Conqueror'],              'label':'Conquerors<br>(ISO 3-4)'},
 							{'min_iso': 15, 'traits': ['Conqueror'],              'label':'Conquerors<br>(ISO 3-5)'},
-							{'min_iso': 14, 'traits': ['Non-Mythic','Cosmic'],    'label':'Non-Mythic<br>Cosmic<br>(ISO 3-4)'},
-							{'min_iso': 15, 'traits': ['Non-Mythic','Cosmic'],    'label':'Non-Mythic<br>Cosmic<br>(ISO 3-5)'},
-							{'min_iso': 14, 'traits': ['Non-Mythic','City'],      'label':'Non-Mythic<br>City<br>(ISO 3-4)'},
-							{'min_iso': 15, 'traits': ['Non-Mythic','City'],      'label':'Non-Mythic<br>City<br>(ISO 3-5)'},
-							{'min_iso': 14, 'traits': ['Non-Mythic','Global'],    'label':'Non-Mythic<br>Global<br>(ISO 3-4)'},
-							{'min_iso': 15, 'traits': ['Non-Mythic','Global'],    'label':'Non-Mythic<br>Global<br>(ISO 3-5)'},
+							{'min_iso': 14, 'traits': ['Cosmic','Non-Mythic'],    'label':'Cosmic<br>Non-Mythic<br>(ISO 3-4)'},
+							{'min_iso': 15, 'traits': ['Cosmic','Non-Mythic'],    'label':'Cosmic<br>Non-Mythic<br>(ISO 3-5)'},
+							{'min_iso': 14, 'traits': ['City',  'Non-Mythic'],    'label':'City<br>Non-Mythic<br>(ISO 3-4)'},
+							{'min_iso': 15, 'traits': ['City',  'Non-Mythic'],    'label':'City<br>Non-Mythic<br>(ISO 3-5)'},
+							{'min_iso': 14, 'traits': ['Global','Non-Mythic'],    'label':'Global<br>Non-Mythic<br>(ISO 3-4)'},
+							{'min_iso': 15, 'traits': ['Global','Non-Mythic'],    'label':'Global<br>Non-Mythic<br>(ISO 3-5)'},
 							] ]
 					}
 
@@ -184,11 +184,11 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 					'summary_keys': ['stp','avail'],
 					'summary_comp': 'Super Skrull',
 					'lanes':[ [
-							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
-							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
-							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
-							{'traits': ['Non-Horseman', 'Legendary'], 'label':'Legendary<br>Non-Horseman'},
-							{'traits_req':'any', 'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc'},
+							{'traits': ['Global','Non-Legendary'],    'label':'Global'},
+							{'traits': ['Cosmic','Non-Legendary'],    'label':'Cosmic'},
+							{'traits': ['City',  'Non-Legendary'],    'label':'City'},
+							{'traits': ['Legendary', 'Non-Horseman'], 'label':'Legendary<br>Non-Horseman'},
+							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc', 'traits_req':'any'},
 							] ]
 					}
 
@@ -204,12 +204,20 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 					'summary_keys': ['stp','avail'],
 					'summary_comp': 'Dormammu',
 					'lanes':[ [
-							{'traits': ['Non-Legendary', 'Global'],   'label':'Global'},
-							{'traits': ['Non-Legendary', 'Cosmic'],   'label':'Cosmic'},
-							{'traits': ['Non-Legendary', 'City'],     'label':'City'},
+							{'traits': ['Global','Non-Legendary'],   'label':'Global'},
+							{'traits': ['Cosmic','Non-Legendary'],   'label':'Cosmic'},
+							{'traits': ['City',  'Non-Legendary'],   'label':'City'},
 							{'traits': ['Legendary']},
 							] ]
 					}
+
+ACCURSED   = ['Hellverine', 'Juggernaut', 'Mordo', 'Satana', 'The Hood']
+BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']
+FANFOURMCU = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
+HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
+SECWARRIOR = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
+UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Scarlet Witch (Zombie)']
+VIGILANTES = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
 
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
@@ -219,7 +227,7 @@ tables['teams'] = { 'name': 'Teams',
 					'min_others': True,
 					'lanes':[ [  
 							{'traits': ['AbsoluteAForce'], 'meta': ['Wasp', 'Ironheart', 'Kahhori', 'Medusa', 'Ms. Marvel (Classic)']},
-							{'traits': ['Accursed'], 'meta': ['Satana', 'Hellverine', 'The Hood', 'Juggernaut', 'Mordo']},
+							{'traits': ['Accursed'], 'meta': ACCURSED},
 							{'traits': ['AForce'], 'meta': ['Captain Marvel', 'Jessica Jones', 'Nico Minoru', 'Photon', 'Spider-Woman'], 'min_others':False},
 							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
@@ -228,15 +236,15 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Bifrost']},
 #							{'traits': ['BionicAvenger']},
 							{'traits': ['BlackOrder'], 'meta': ['Corvus Glaive', 'Cull Obsidian', 'Ebony Maw', 'Proxima Midnight', 'Thanos']},
-							{'traits': ['Brimstone'], 'meta': ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']},
+							{'traits': ['Brimstone'], 'meta': BRIMSTONE},
 							{'traits': ['Cabal']},
 							{'traits': ['Darkhold']},
 #							{'traits': ['DarkHunter']},
 							{'traits': ['Deathseed']},
 #							{'traits': ['Eternal']},
-							{'traits': ['FantasticFourMCU'], 'meta': ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing', 'Human Torch']},
+							{'traits': ['FantasticFourMCU'], 'meta': FANFOURMCU},
 							{'traits': ['Gamma'], 'meta': ['Red Hulk', 'Hulk', 'She-Hulk', 'Abomination', 'Brawn']},
-							{'traits': ['HellfireClub'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost']},
+							{'traits': ['HellfireClub'], 'meta': HELLFIRE},
 							{'traits': ['HeroesForHire']},
 							{'traits': ['HiveMind']},
 							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
@@ -260,7 +268,7 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['PymTech']},
 							{'traits': ['Rebirth']},
 #							{'traits': ['SecretDefender']},
-							{'traits': ['SecretWarrior'], 'meta': ['Yo-Yo','Quake','Domino','Negasonic','Phantom Rider']},
+							{'traits': ['SecretWarrior'], 'meta': SECWARRIOR},
 #							{'traits': ['Shadowland']},
 							{'traits': ['SpiderSociety']},
 							{'traits': ['SuperiorSix'], 'meta': ['Green Goblin (Classic)', 'Doctor Octopus', 'Lizard', 'Kraven the Hunter', 'Spider-Slayer']},
@@ -269,9 +277,9 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['Uncanny']},
 							{'traits': ['UncannyAvenger'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm']},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
-							{'traits': ['Undying']},
+							{'traits': ['Undying'], 'meta': UNDYING},
 							{'traits': ['Unlimited']},
-							{'traits': ['Vigilantes'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra']}, 
+							{'traits': ['Vigilantes'], 'meta': VIGILANTES}, 
 							{'traits': ['WarDog']},
 							{'traits': ['WeaponX'], 'meta': ['Omega Red', 'Sabretooth', 'Silver Samurai', 'Wolverine', 'X-23']},
 							{'traits': ['XTreme']},
@@ -279,6 +287,38 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars', 'inc_keys':['power', 'red'], 'max_others':0},
 							] ]
 					}
+
+
+
+tables['battleworld'] = { 'name': 'Battleworld',
+					'max_others': 10,
+					'sort_char_by': 'avail',
+					'lane_name': 'zone',
+					'lanes':[ [
+							{'traits': ['Mystic', 'Non-Mythic'],  'label':'<b>Mission 1:</b><br>Mystic<br>Non-Mythic'},
+							{'traits': ['Mutant', 'Non-Mythic'],  'label':'<b>Mission 2:</b><br>Mutant<br>Non-Mythic'},
+							{'traits': ['Villain', 'Non-Mythic'], 'label':'<b>Mission 3:</b><br>Villain<br>Non-Mythic'},
+							{'meta': ['Quasar', 'Blastaar'], 'label':'<b>Mission 4:</b><br>Quasar or<br>Blastaar'},
+							{'meta': FANFOURMCU + BRIMSTONE, 'label':'Mission 5<br>F4 (MCU) or<br>Brimstone'},
+							{'traits': ['ChaosTeam'], 'label':'<b>Mission 6:</b><br>Chaos Team'},
+							],[ ### Zone 2 ###
+							{'traits': ['Tech', 'Non-Mythic'], 'label':'<b>Mission 1:</b><br>Tech<br>Non-Mythic'},
+							{'traits': ['Bio',  'Non-Mythic'], 'label':'<b>Mission 2:</b><br>Bio<br>Non-Mythic'},
+							{'traits': ['Hero', 'Non-Mythic'], 'label':'<b>Mission 3:</b><br>Hero<br>Non-Mythic'},
+							{'meta': ACCURSED + HELLFIRE, 'label':'<b>Mission 4:</b><br>Accursed or<br>Hellfire Club'},
+							{'meta': SECWARRIOR + BRIMSTONE, 'label':'<b>Mission 5:</b><br>Secret Warrior<br>or Brimstone'},
+							{'traits': ['ChaosTeam'], 'label':'<b>Mission 6:</b><br>Chaos Team'},
+							],[ ### Zone 3 ###
+							{'traits': ['Skill',  'Non-Mythic'], 'meta': VIGILANTES, 'max_others':5, 'label':'<b>Mission 1:</b><br>Skill<br>Non-Mythic'},
+							{'traits': ['Global', 'Non-Mythic'], 'label':'<b>Mission 2:</b><br>Global<br>Non-Mythic'},
+							{'traits': ['Cosmic', 'Non-Mythic'], 'label':'<b>Mission 3:</b><br>Cosmic<br>Non-Mythic'},
+							{'traits': ['City'], 'label':'<b>Mission 4:</b><br>City'},
+							{'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any', 'label':'<b>Mission 5:</b><br>Blue Marvel<br>Phantom Rider<br>Phoenix Force'},
+							{'meta': UNDYING + BRIMSTONE, 'label':'<b>Mission 6:</b><br>Undying or<br>Brimstone'},
+							] ]
+					}
+
+
 
 # Meta Heroes for use in All Characters
 tables['all_chars'] = { 'name': 'All Characters',
