@@ -393,7 +393,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 							# Get the range of values for this character for all rosters.
 							# If historical, we want the diff between the current values and the values in the oldest record
-							key_range = [find_value_or_diff(alliance_info, player, char_name, key, use_hist_date)[0] for player in player_list]
+							key_range = [find_value_or_diff(alliance_info, player, char_name, key, use_hist_date, set() if key=='avail' else 0)[0] for player in player_list]
 
 							# Only look up the key_val if we have a roster.
 							key_val = 0
