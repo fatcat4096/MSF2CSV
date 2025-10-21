@@ -14,7 +14,7 @@ from cached_info import get_cached
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
-#@timed(level=3)
+@timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache={}, hist_date=None, linked_hist=None, team_power_summary=False):
 
 	portraits = get_cached('portraits')
@@ -300,7 +300,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Calculate the minimum required to avoid getting dimmed.
 			if team_power_summary:
-				min_count = 'Teams' not in table['name'] and 5
+				min_count = 'Battleworld' not in table['name'] and 'Teams' not in table['name'] and 5
 			else:
 				min_count = 5 - (DD7 and section.get('label')=='Mythic')
 
