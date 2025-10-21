@@ -315,8 +315,15 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 2', 'traits': ['Global', 'Non-Mythic'], 'meta': HELLFIRE,  'max_others':5},
 							{'header':'Mission 3', 'traits': ['Cosmic', 'Non-Mythic']},
 							{'header':'Mission 4', 'traits': ['City'], 'meta': INSIDIOUS, 'max_others':5},
-							{'header':'Mission 5', 'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any'},
+							{'header':'Mission 5', 'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any', 'label':'Blue Marvel<br>P. Rider or<br>P. Force'},
 							{'header':'Mission 6', 'meta': UNDYING + BRIMSTONE, 'label':'Undying or<br>Brimstone'},
+							],[ ### Zone 4 ###
+							{'header':'Sentry', 'label':'Option 1', 'meta': ['Captain America (Sam)','Falcon (Joaquin)','Odin','Patriot','Peggy Carter']},
+							{'header':'Sentry', 'label':'Option 2', 'meta': ['Apocalypse','Archangel', 'Morgan Le Fay', 'Red Hulk', 'Rogue']},
+							{'header':'Sentry', 'label':'Option 3', 'meta': ['Emma Frost', 'Professor Xavier', 'Old Man Logan', 'Omega Red (Phoenix Force)', 'Phoenix']},
+							{'header':'Sentry', 'label':'Option 4', 'meta': ['Knull', 'Odin', 'Old Man Logan', 'Omega Red (Phoenix Force)', 'Quasar']},
+							{'header':'Sentry', 'label':'Option 5', 'meta': ['Blastaar', 'Knull', 'Lady Deathstrike', 'Mephisto', 'Quasar']},
+							{'header':'Sentry', 'label':'Option 6', 'meta': ['Carnage', 'Gwenom', 'Knull', 'Red Goblin', 'Void Knight']},
 							] ]
 					}
 
