@@ -18,7 +18,7 @@ from rich.console    import Console
 import datetime
 
 # If no name specified, default to the alliance for the Login player
-#@timed(level=3, init=True)
+@timed(level=3, init=True)
 def main(alliance_name='', prompt=False, headless=False, force='', table_format={}, scopely_login='', log_file=None):
 
 	# Were we passed an alliance_info via alliance_name?

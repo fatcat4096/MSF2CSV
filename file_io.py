@@ -52,7 +52,7 @@ def remove_tags(text):
 	
 
 
-#@timed(level=3)
+@timed(level=3)
 def get_local_path():
 	# If not frozen, work in the same directory as this script.
 	path = os.path.dirname(__file__)
@@ -65,7 +65,7 @@ def get_local_path():
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def write_file(pathname, file_content, print_path=True):
 
 	files_generated = []
@@ -98,7 +98,7 @@ def write_file(pathname, file_content, print_path=True):
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def html_to_images(html_files=[], print_path=False, render_wait=0.1):
 	
 	files_generated = []
@@ -164,7 +164,7 @@ def format_filename(filename):
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def write_cached_data(alliance_info, file_path='', timestamp='update', filename='', encode=True):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
@@ -217,7 +217,7 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 
 
 # Load a pickled cache file from cached_data directory
-#@timed(level=3)
+@timed(level=3)
 def load_cached_file(file):
 	data={}
 
@@ -232,7 +232,7 @@ def load_cached_file(file):
 
 
 # Load a pickled cache file from cached_data directory
-#@timed(level=3)
+@timed(level=3)
 def write_cached_file(data, file):
 
 	# Ensure the enclosing directory exists.
@@ -246,7 +246,7 @@ def write_cached_file(data, file):
 
 
 # Has it been less than 24 hours since last update of cached_data?
-#@timed(level=3)
+@timed(level=3)
 def fresh_enough(alliance_or_file):
 
 	last_refresh = age_of_cached_data(alliance_or_file)
@@ -283,7 +283,7 @@ def age_of_cached_data(alliance_or_file):
 
 
 # Handle the file list cleanly.
-#@timed(level=3)
+@timed(level=3)
 def retire_cached_data(file_or_alliance=''):
 
 	# Find the original file based on the alliance_name provided
@@ -306,7 +306,7 @@ def retire_cached_data(file_or_alliance=''):
 
 
 # Handle the file list cleanly.
-#@timed(level=3)
+@timed(level=3)
 def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
@@ -386,7 +386,7 @@ def add_formats_for_lanes(tables):
 
 # Check to see if a subdirectory exists with this alliance_name and if it contains valid python files.
 # If so, change the import path to include this directory and source the files to use their definitions.
-#@timed(level=3)
+@timed(level=3)
 def check_import_path(alliance_name):
 	
 	global strike_teams

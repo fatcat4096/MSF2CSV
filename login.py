@@ -91,7 +91,7 @@ class ChromeWithPrefs(webdriver.Chrome):
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def alt_get_driver(scopely_login='login-email@address.com', session='0', headless=False):
 
 	global csv_file_path
@@ -134,7 +134,7 @@ def alt_get_driver(scopely_login='login-email@address.com', session='0', headles
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def get_driver(headless=False):
 
 	global csv_file_path
@@ -175,7 +175,7 @@ def get_driver(headless=False):
 #
 # If no login specified, use the default login
 
-#@timed(level=3)
+@timed(level=3)
 def login(prompt=False, headless=False, session=None, driver=None, scopely_login='', alliance_name=None):
 
 	# If we were passed in a cached driver, we're ready to go.
@@ -265,7 +265,7 @@ def login(prompt=False, headless=False, session=None, driver=None, scopely_login
 
 
 # Check for saved credentials. If none saved, ask if would like to cache them.
-#@timed(level=4)
+@timed(level=4)
 def get_scopely_creds(prompt=False, scopely_login=''):
 
 	# If this is the first launch of a frozen executable, go ahead and prompt for login.
@@ -296,7 +296,7 @@ def get_scopely_creds(prompt=False, scopely_login=''):
 
 
 # Auto Login via Scopely authentication using cached credentials.
-#@timed(level=3)
+@timed(level=3)
 def scopely_website_login(driver):
 
 	# If we didn't end up at the Alliance Info screen, we are going through authentication.
@@ -360,7 +360,7 @@ def scopely_website_login(driver):
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def download_csv_file(driver, filetype):
 
 	try:

@@ -22,7 +22,7 @@ from generate_table           import *
 from generate_summary         import *
 
 # Build specific tab output for use in generating PNG graphics.
-#@timed(level=3)
+@timed(level=3)
 def generate_html(alliance_info, table, table_format, output=''):
 
 	default_lanes = [[{'traits': ['Mutant']},
@@ -218,7 +218,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 
 
 # Build the entire file -- headers, footers, and tab content for each lane and the Alliance Information.
-#@timed(level=3)
+@timed(level=3)
 def generate_tabbed_html(alliance_info, table, table_format):
 
 	html_cache = {}
@@ -286,7 +286,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 
 
 # If we're doing a single lane format and we have history, let's generate a historical data tab. 
-#@timed(level=3)
+@timed(level=3)
 def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
 
 	# Default it to empty.
@@ -302,7 +302,7 @@ def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
 
 
 # Generate the contents for each lane.
-#@timed(level=3)
+@timed(level=3)
 def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, side_hist=None, using_tabs=False, html_cache={}):
 
 	html_file = ''

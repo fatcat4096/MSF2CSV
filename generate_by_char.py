@@ -15,7 +15,7 @@ from generate_table import *
 # By_Char data should use same hist_date as provided in inc_hist or inline_hist
 
 # Generate just the Alliance Tab contents.
-#@timed(level=3)
+@timed(level=3)
 def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_date=True, html_cache={}):
 
 	html_file = ''

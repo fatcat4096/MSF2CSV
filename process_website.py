@@ -33,7 +33,7 @@ from cached_info          import get_cached, set_cached
 from msf_api              import *
 
 # Returns a cached_data version of alliance_info, or one freshly updated from online.
-#@timed(level=3)
+@timed(level=3)
 def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, scopely_login=''):
 
 	cached_alliance_info = find_cached_data(alliance_name)
@@ -131,7 +131,7 @@ def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, 
 
 
 # Process rosters for every member in alliance_info.
-#@timed(level=3)
+@timed(level=3)
 def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_data={}, AUTH=None, log_file=None, logger=print):
 
 	# Let's get a little closer to our work.
@@ -286,7 +286,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 
 
 	
-#@timed(level=3)
+@timed(level=3)
 def roster_results(alliance_info, start_time, rosters_output=[], logger=print):
 	
 	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
@@ -331,7 +331,7 @@ def roster_results(alliance_info, start_time, rosters_output=[], logger=print):
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def get_roster_html(driver, member_url, member='', alliance_info={}):
 
 	# Start by defining the number of retries and time limit for each attempt. 
@@ -389,7 +389,7 @@ def get_roster_html(driver, member_url, member='', alliance_info={}):
 
 
 # Find out who we are
-#@timed(level=3)
+@timed(level=3)
 def get_username_api(AUTH):
 
 	response = request_player_info(AUTH)
@@ -403,7 +403,7 @@ def get_username_api(AUTH):
 
 # Make multiple API requests to build up a base alliance_info (no roster info).
 # Also, if char meta hashtag has changed, save responses and rebuild cached char files
-#@timed(level=3)
+@timed(level=3)
 def get_alliance_api(AUTH):
 
 	# Get the general ALLIANCE information
@@ -456,7 +456,7 @@ def get_alliance_api(AUTH):
 
 
 # Rebuild fresh cached character info
-#@timed(level=3)
+@timed(level=3)
 def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 
 	# If we got API response passed in, start by writing
@@ -505,7 +505,7 @@ def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
-#@timed(level=3)
+@timed(level=3)
 def update_strike_teams(alliance_info):
 
 	updated = False
@@ -531,7 +531,7 @@ def update_strike_teams(alliance_info):
 
 
 # Update strike teams if necessary
-#@timed(level=3)
+@timed(level=3)
 def migrate_strike_teams(alliance_info):
 
 	updated = False
@@ -573,21 +573,21 @@ def migrate_strike_teams(alliance_info):
 
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
-#@timed(level=3)
+@timed(level=3)
 def valid_strike_team(strike_team, alliance_info):
 	return similar_members(sum(strike_team,[]), alliance_info['members'])
 
 
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
-#@timed(level=3)
+@timed(level=3)
 def similar_members(member_list_1, member_list_2):
 	return len(set(member_list_1).intersection(member_list_2)) > len(member_list_2)*.5	
 
 
 
 # Before we take the strike_team.py definition as is, let's fix some common problems.
-#@timed(level=3)
+@timed(level=3)
 def fix_strike_teams(strike_teams, alliance_info):
 
 	# Track whether anything has been changed.
@@ -611,7 +611,7 @@ def fix_strike_teams(strike_teams, alliance_info):
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def clean_strike_team(strike_team, MEMBER_LIST, members_used):
 
 	# Track whether anything has been changed.
@@ -640,7 +640,7 @@ def clean_strike_team(strike_team, MEMBER_LIST, members_used):
 
 
 
-#@timed(level=3)
+@timed(level=3)
 def fill_strike_team(strike_team, MEMBER_LIST, members_used):
 	
 	# Track whether anything has been changed.
