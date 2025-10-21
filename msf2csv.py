@@ -59,8 +59,9 @@ def main(alliance_name='', prompt=False, headless=False, force='', table_format=
 				# Otherwise, we need to generate the one page.
 				else:
 					html_files = generate_html(alliance_info, external_table or tables.get(output), table_format)
-			except:
-				Console().print_exception(show_locals=True)
+			except Exception as exc:
+				dirname = os.path.dirname(__file__) + os.sep
+				Console().print_exception(theme='github-dark', extra_lines=4, suppress=[f'{dirname}log_utils.py', f'{dirname}msf2csv.py'])
 				return {}
 
 			# If 'image' was requested, we need to convert the HTML files to PNG images.
