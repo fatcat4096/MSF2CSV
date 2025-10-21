@@ -42,6 +42,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #336FA0;
   color       : white;
   white-space : nowrap;
+  height      : 30px;
 }
 .blub {
   min-width   : 28px;
@@ -117,6 +118,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : Black;
   color       : white;
   white-space : nowrap;
+  height      : 30px;
 }
 .blue {
   font-weight : 700;
