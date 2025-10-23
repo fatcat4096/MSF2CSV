@@ -302,7 +302,7 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 3', 'traits': ['Villain', 'Non-Mythic']}, 
 							{'header':'Mission 4', 'meta': ['Quasar', 'Blastaar'], 'label':'Quasar and<br>Blastaar'},
 							{'header':'Mission 5', 'meta': FANFOURMCU + BRIMSTONE, 'label':'F4 (MCU) or<br>Brimstone'},
-							{'header':'Mission 6', 'traits': ['ChaosTeam']},
+							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': INSIDIOUS, 'max_others':5},
 							],[ ### Zone 2 ###
 							{'header':'Mission 1', 'traits': ['Tech', 'Non-Mythic'], 'meta': INSIDIOUS, 'max_others':5},
 							{'header':'Mission 2', 'traits': ['Bio',  'Non-Mythic'], 'meta': TBOLTS,    'max_others':5},

@@ -49,11 +49,43 @@ def generate_html(alliance_info, table, table_format, output=''):
 		len_lanes = len(lanes)
 		lane_name = table.get('lane_name', 'Lane')
 
-		only_lane    = table_format.get('only_lane',0)
-		only_section = table_format.get('only_section',0)
-		only_image   = table_format.get('only_image',False)
-		sections_per = table_format.get('sections_per',0)
-		lane_overlay = table_format.get('lane_overlay',None)
+		only_lane      = table_format.get('only_lane',0)
+		only_section   = table_format.get('only_section',0)
+		only_image     = table_format.get('only_image',False)
+		sections_per   = table_format.get('sections_per',0)
+		lane_overlay   = table_format.get('lane_overlay',None)
+		one_per_member = table_format.get('one_per_member')
+
+		# If we need to generate one output per user, dupe the table_format and use a copy
+		if one_per_member:
+			
+			# Create a base case if no members specified, reverse the sort so pops in alphabetical order
+			only_members = table_format['only_members'] = sorted(table_format.get('only_members', alliance_info.get('members')), reverse=True, key=str.lower)
+			
+			# More than one requested? Iterate members 4 at a time.
+			if len(only_members) > 1:
+				NUM_IMAGES = min(4,len(only_members))
+
+				# Make a note of the players we're rendering in case we need to re-render
+				table_format['redo_if_stale'] = only_members[-NUM_IMAGES:]
+
+				# Use a copy of the table_format for recursive calls
+				table_format_copy = copy.deepcopy(table_format)
+
+				for x in range(NUM_IMAGES):
+					table_format_copy['only_members'] = [only_members.pop()]
+					html_files.update(generate_html(alliance_info, table, table_format_copy))
+					
+				# Tell it to keep rendering using the 'render_sections' flag
+				if only_members:
+					table_format['render_sections'] = True
+				else:
+					table_format.pop('render_sections', None)
+					
+				return html_files
+
+			# Add the member's name to ensure file is unique
+			output = f'{output}-{only_members[0]}'
 
 		# Integrate Custom Teams in Table output if all entries requested
 		if table_name == 'Teams' and not only_section:

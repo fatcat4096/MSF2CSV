@@ -95,8 +95,6 @@ def request_auth(AUTH_CODE, CLIENT_TOKEN):
 			data    = params
 		)
 
-		print (f'{response.ok=}')
-		
 		# Exit loop if we got a successful response
 		if response.ok:
 			break
