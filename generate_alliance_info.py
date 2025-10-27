@@ -208,13 +208,18 @@ def generate_alliance_tab(alliance_info, using_tabs=False, hist_date=None, html_
 
 def alliance_info_cell(value_range, key, member_stats, hist_calcs, html_cache, stale_data):
 	
-	# Calculate the Difference if we need a second line
 	curr_value = member_stats.get(key,0)
 	hist_value = hist_calcs.get(key,0)
-	diff_value = f'<br><span class="sub"><i>({curr_value-hist_value:+,})</i></span>' if hist_value else '' 
+
+	# Calculate the Difference and see if we need a second line
+	diff_value = curr_value-hist_value if hist_value else 0
+	diff_value = f'<br><span class="sub"><i>({get_field_value(diff_value, True)})</i></span>' if diff_value else '' 
 	
 	# Determine field color
 	field_color = get_value_color(value_range, curr_value, html_cache, stale_data, use_range='set')
 
 	# Return the completed cell
 	return f'  <td class="{field_color}">{curr_value:,}{diff_value}</td>\n'
+
+
+
