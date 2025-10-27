@@ -212,8 +212,10 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 					}
 
 ACCURSED   = ['Hellverine', 'Juggernaut', 'Mordo', 'Satana', 'The Hood']
+ASTRAL     = ['Ancient One', 'Doctor Strange', 'Emma Frost (X-Men)', 'Moondragon', 'Shadow King']
 BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']
-FANFOURMCU = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
+F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
+F4MCUTEAM  = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
 INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture']
 HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
 SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
@@ -234,7 +236,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
 #							{'traits': ['Astonishing']},
-							{'traits': ['Astral'], 'meta': ['Doctor Strange', 'Moondragon', 'Ancient One', 'Shadow King', 'Emma Frost (X-Men)']},
+							{'traits': ['Astral'], 'meta': ASTRAL},
 							{'traits': ['Bifrost']},
 #							{'traits': ['BionicAvenger']},
 							{'traits': ['BlackOrder'], 'meta': ['Corvus Glaive', 'Cull Obsidian', 'Ebony Maw', 'Proxima Midnight', 'Thanos']},
@@ -244,7 +246,7 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['DarkHunter']},
 							{'traits': ['Deathseed']},
 #							{'traits': ['Eternal']},
-							{'traits': ['FantasticFourMCU'], 'meta': FANFOURMCU},
+							{'traits': ['FantasticFourMCU'], 'meta': F4MCUTEAM},
 							{'traits': ['Gamma'], 'meta': ['Red Hulk', 'Hulk', 'She-Hulk', 'Abomination', 'Brawn']},
 							{'traits': ['HellfireClub'], 'meta': HELLFIRE},
 							{'traits': ['HeroesForHire']},
@@ -301,7 +303,7 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 2', 'traits': ['Mutant',  'Non-Mythic'], 'meta': HELLFIRE, 'max_others':5}, 
 							{'header':'Mission 3', 'traits': ['Villain', 'Non-Mythic']}, 
 							{'header':'Mission 4', 'meta': ['Quasar', 'Blastaar'], 'label':'Quasar and<br>Blastaar'},
-							{'header':'Mission 5', 'meta': FANFOURMCU + BRIMSTONE, 'label':'F4 (MCU) or<br>Brimstone'},
+							{'header':'Mission 5', 'meta': F4MCUTEAM + BRIMSTONE, 'label':'F4 MCU or<br>Brimstone'},
 							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': INSIDIOUS, 'max_others':5},
 							],[ ### Zone 2 ###
 							{'header':'Mission 1', 'traits': ['Tech', 'Non-Mythic'], 'meta': INSIDIOUS, 'max_others':5},
@@ -312,18 +314,18 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': INSIDIOUS, 'max_others':5},
 							],[ ### Zone 3 ###
 							{'header':'Mission 1', 'traits': ['Skill',  'Non-Mythic'], 'meta': VIGILANTE, 'max_others':5},
-							{'header':'Mission 2', 'traits': ['Global', 'Non-Mythic'], 'meta': HELLFIRE,  'max_others':5},
-							{'header':'Mission 3', 'traits': ['Cosmic', 'Non-Mythic']},
+							{'header':'Mission 2', 'traits': ['Global', 'Non-Mythic'], 'meta': ['Old Man Logan', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw'],  'max_others':5},
+							{'header':'Mission 3', 'traits': ['Cosmic', 'Non-Mythic'], 'meta': F4MCU3PACK + ['Quasar', 'Knull'], 'max_others':5},
 							{'header':'Mission 4', 'traits': ['City'], 'meta': INSIDIOUS, 'max_others':5},
-							{'header':'Mission 5', 'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any', 'label':'Blue Marvel<br>P. Rider or<br>P. Force'},
+							{'header':'Mission 5', 'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any', 'label':'Blue Marvel<br>Phant. Rider<br>or P. Force'},
 							{'header':'Mission 6', 'meta': UNDYING + BRIMSTONE, 'label':'Undying or<br>Brimstone'},
 							],[ ### Zone 4 ###
-							{'header':'Sentry', 'label':'Option 1', 'meta': ['Captain America (Sam)','Falcon (Joaquin)','Odin','Patriot','Peggy Carter']},
-							{'header':'Sentry', 'label':'Option 2', 'meta': ['Apocalypse','Archangel', 'Morgan Le Fay', 'Red Hulk', 'Rogue']},
-							{'header':'Sentry', 'label':'Option 3', 'meta': ['Emma Frost', 'Professor Xavier', 'Old Man Logan', 'Omega Red (Phoenix Force)', 'Phoenix']},
-							{'header':'Sentry', 'label':'Option 4', 'meta': ['Knull', 'Odin', 'Old Man Logan', 'Omega Red (Phoenix Force)', 'Quasar']},
-							{'header':'Sentry', 'label':'Option 5', 'meta': ['Blastaar', 'Knull', 'Lady Deathstrike', 'Mephisto', 'Quasar']},
-							{'header':'Sentry', 'label':'Option 6', 'meta': ['Carnage', 'Gwenom', 'Knull', 'Red Goblin', 'Void Knight']},
+							{'header':'Sentry', 'label':'Option 1', 'meta': F4MCU3PACK + ['Odin','Mephisto']},
+							{'header':'Sentry', 'label':'Option 2', 'meta': BRIMSTONE},
+							{'header':'Sentry', 'label':'Option 3', 'meta': ASTRAL},
+							{'header':'Sentry', 'label':'Option 4', 'meta': VIGILANTE},
+							{'header':'Sentry', 'label':'Option 5', 'meta': ['Professor Xavier', 'Apocalypse','Knull', 'Old Man Logan', 'Havok', ]},
+							{'header':'Sentry', 'label':'Option 6', 'meta': ['Professor Xavier', 'Quasar', 'Phoenix', 'Emma Frost', 'Omega Red (Phoenix Force)']},
 							] ]
 					}
 
