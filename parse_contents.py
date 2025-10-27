@@ -82,6 +82,7 @@ def parse_alliance(driver):
 
 
 # Parse the Member data directly from the info.csv file.
+@timed(level=3)
 def parse_info_csv(driver, alliance, captains, members):
 	
 	# Can't parse if info.csv is unavailable.
@@ -127,6 +128,7 @@ def parse_info_csv(driver, alliance, captains, members):
 
 
 
+@timed(level=3)
 def parse_alliance_api(alliance_data, alliance_members):
 
 	alliance = {}
@@ -168,6 +170,7 @@ def parse_alliance_api(alliance_data, alliance_members):
 
 
 # Parse the Member data directly from the API call
+@timed(level=3)
 def parse_info_api(alliance_members, alliance, captains, members):
 
 	# Iterate through each entry, building up a member dict with stats for each.
@@ -209,6 +212,7 @@ def parse_info_api(alliance_members, alliance, captains, members):
 
 
 # Parse the member list out of HTML directly from the website.
+@timed(level=3)
 def parse_info_html(driver, alliance, captains, members):
 
 	soup = BeautifulSoup(driver.page_source, 'html.parser')
@@ -390,6 +394,7 @@ def parse_roster_html(contents, alliance_info, member=''):
 
 
 # Break this out as a separate routine so can be used to merge roster.csv data.
+@timed(level=3)
 def merge_roster(alliance_info, member, processed_chars, other_data):
 
 	# Get a little closer to our work. 
@@ -503,6 +508,7 @@ def parse_roster_csv(roster_csv, roster_csv_data={}, member_order=[]):
 
 
 
+@timed(level=3)
 def parse_roster_api(response, processed_chars, other_data):
 
 	# Load cached char_lookup

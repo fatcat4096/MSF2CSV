@@ -663,6 +663,7 @@ def fill_strike_team(strike_team, MEMBER_LIST, members_used):
 	
 
 # Calculate is_stale for each member and cache in alliance_info.
+@timed(level=3)
 def update_is_stale(alliance_info):
 	for member in alliance_info['members']:
 		alliance_info['members'][member]['is_stale'] = is_stale(alliance_info, member)
