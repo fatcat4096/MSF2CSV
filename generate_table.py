@@ -629,22 +629,6 @@ def spec_ops_background(table, char, player_list, html_cache):
 	
 
 
-# Format large Power values using K and M
-def get_field_value(value, hist_date):
-	if value:
-		if value > 10**6:
-			field_value = f'{value/10**6:+.1f}M' if hist_date else f'{value/10**6:.2f}M'
-		elif value > 1000:
-			field_value = f'{value/1000:+.0f}K'  if hist_date else f'{value/1000:.0f}K'
-		else:
-			field_value = f'{value:+}' if hist_date else f'{value}'
-	else:
-		field_value = '-'
-
-	return field_value
-
-
-
 # Return the # of Yellow Stars on the completion reward if specified.
 def get_summary_comp(alliance_info, player_name, inc_comp):
 	return find_value_or_diff(alliance_info, player_name, inc_comp, 'yel')[0] if inc_comp else None

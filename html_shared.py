@@ -184,6 +184,22 @@ def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
 
 
 
+# Format large Power values using K and M
+def get_field_value(value, hist_date):
+	if value:
+		if abs(value) > 10**6:
+			field_value = f'{value/10**6:+.1f}M' if hist_date else f'{value/10**6:.2f}M'
+		elif abs(value) > 1000:
+			field_value = f'{value/1000:+.0f}K'  if hist_date else f'{value/1000:.0f}K'
+		else:
+			field_value = f'{value:+}' if hist_date else f'{value}'
+	else:
+		field_value = '-'
+
+	return field_value
+
+
+
 # Generate Labels for each section from either label info or trait names.
 def get_section_label(section):
 	
