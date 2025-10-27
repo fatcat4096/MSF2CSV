@@ -5,6 +5,8 @@ Basic implementation of MSF API
 """
 
 
+from log_utils import timed
+
 from urllib.parse import quote_plus
 import base64
 import requests
@@ -22,6 +24,7 @@ REVOKE_ENDPOINT = 'https://hydra-public.prod.m3.scopelypv.com/oauth2/revoke'
 
 
 # Generate a Session ID and URL to link account
+@timed(level=3)
 def get_session_and_link(CLIENT_ID, SESSION_ID=None):
 
 	# Name of the slash command in MSF RosterBot
@@ -42,6 +45,7 @@ def get_session_and_link(CLIENT_ID, SESSION_ID=None):
 
 
 # Construct and encode our Client Token from MSF.gg app registration
+@timed(level=3)
 def construct_token(CLIENT_ID, CLIENT_SECRET):
 
 	# Base64 encode the combined Client ID and Secret
@@ -52,12 +56,14 @@ def construct_token(CLIENT_ID, CLIENT_SECRET):
 
 
 # Verify access_token is valid -- give ourselves a minute to complete workflow
+@timed(level=3)
 def auth_valid(AUTH):
 	return AUTH and AUTH.get('expires_at') and time.time() + 60 < AUTH['expires_at']
 
 
 
 # Headers used for POST requests
+@timed(level=3)
 def post_headers(CLIENT_TOKEN):
 
 	return {	'Content-Type' : 'application/x-www-form-urlencoded',
@@ -66,6 +72,7 @@ def post_headers(CLIENT_TOKEN):
 
 
 # Headers used for GET requests
+@timed(level=3)
 def get_headers(ACCESS_TOKEN):
 
 	# Extract the ACCESS_TOKEN if provided full AUTH
@@ -78,6 +85,7 @@ def get_headers(ACCESS_TOKEN):
 
 
 # Request for original AUTH token
+@timed(level=3)
 def request_auth(AUTH_CODE, CLIENT_TOKEN):
 
 	# Attempt up to three times
@@ -104,6 +112,7 @@ def request_auth(AUTH_CODE, CLIENT_TOKEN):
 
 
 # Request for a refresh AUTH using the Refresh token
+@timed(level=3)
 def refresh_auth(AUTH, CLIENT_TOKEN):
 
 	# Attempt up to three times
@@ -130,6 +139,7 @@ def refresh_auth(AUTH, CLIENT_TOKEN):
 
 
 # Update provided AUTH with info from Response
+@timed(level=3)
 def parse_auth(auth_token, AUTH):
 
 	token_data = auth_token.json()
@@ -148,6 +158,7 @@ def parse_auth(auth_token, AUTH):
 
 
 # Need this for the name of the Player 	
+@timed(level=3)
 def request_player_info(ACCESS_TOKEN):
 
 	# Attempt up to three times
@@ -163,11 +174,14 @@ def request_player_info(ACCESS_TOKEN):
 		if response.ok:
 			break
 
+		#print ('API request -- request_player_info() failed, retrying...')
+
 	return response
 
 
 
 # Need this for the Alliance name and stats
+@timed(level=3)
 def request_alliance_info(ACCESS_TOKEN):
 
 	# Attempt up to three times
@@ -183,10 +197,13 @@ def request_alliance_info(ACCESS_TOKEN):
 		if response.ok:
 			break
 
+		#print ('API request -- request_alliance_info() failed, retrying...')
+
 	return response
 
 
 # Need this for the Alliance members 	
+@timed(level=3)
 def request_alliance_members(ACCESS_TOKEN):
 
 	# Attempt up to three times
@@ -202,11 +219,14 @@ def request_alliance_members(ACCESS_TOKEN):
 		if response.ok:
 			break
 
+		#print ('API request -- request_alliance_members() failed, retrying...')
+
 	return response
 
 
 
 # Need this for the Roster information 	
+@timed(level=3)
 def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
 
 	# Attempt up to three times
@@ -223,11 +243,14 @@ def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
 		if response.ok:
 			break
 
+		#print ('API request -- request_member_roster() failed, retrying...')
+
 	return response
 
 
 
 # Request all character information -- used for Char names, Portrait info
+@timed(level=3)
 def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
 
 	# Attempt up to three times
@@ -243,6 +266,8 @@ def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
 		# Exit loop if we got a successful response
 		if response.ok:
 			break
+
+		#print ('API request -- request_char_info() failed, retrying...')
 
 	return response
 
