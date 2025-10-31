@@ -99,7 +99,11 @@ def write_file(pathname, file_content, print_path=True):
 
 
 @timed(level=3)
-def html_to_images(html_files=[], print_path=False, render_wait=0.1):
+def html_to_images(html_files=[], print_path=False, render_wait=0.1, output_path=None):
+
+	# Handle base case of single file or URL
+	if type(html_files) == str:
+			html_files = [html_files]
 	
 	files_generated = []
 	
@@ -111,9 +115,9 @@ def html_to_images(html_files=[], print_path=False, render_wait=0.1):
 
 	# The html_files list contains paths to the html files.
 	for file in html_files:
-		
+ 
 		# Start by opening each file with our Selenium driver.
-		driver.get(r'file:///'+file)
+		driver.get(file if '://' in file else r'file:///'+file)
 
 		# Give it just a moment to render the page.
 		time.sleep(render_wait)
@@ -134,7 +138,10 @@ def html_to_images(html_files=[], print_path=False, render_wait=0.1):
 
 		driver.set_window_size(min_width+40, height+450)
 
-		png_filename = file[:-4]+'png'
+		if output_path:
+			png_filename = output_path + os.path.basename(file) +'.png'
+		else:
+			png_filename = file[:-5]+'.png'
 
 		# Report the file being written.
 		if print_path:
