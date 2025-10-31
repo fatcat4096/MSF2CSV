@@ -38,6 +38,21 @@
 # Active tables are the files which will be generated.
 tables = {}
 
+ACCURSED   = ['Hellverine', 'Juggernaut', 'Mordo', 'Satana', 'The Hood']
+ASTRAL     = ['Ancient One', 'Doctor Strange', 'Emma Frost (X-Men)', 'Moondragon', 'Shadow King']
+BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']
+F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
+F4MCUTEAM  = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
+IMMORTAL   = ['Iron Fist','Iron Fist (WWII)','Lady Bullseye','Steel Serpent','Sword Master']
+INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture']
+HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
+NIGHTSTALK = ['Agatha Harkness', 'Blade', 'Man-Thing', 'Moon Knight', 'Oath']
+SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
+TBOLTS     = ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand']
+UNCANNY    = ['Hercules','Falcon','Jean Grey','Beast','Storm']
+UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
+VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
+
 # Meta Heroes for use in Spotlight Raid
 tables['spotlight'] = { 'name': 'Spotlight Raid',
 					'min_iso': 13,
@@ -47,7 +62,7 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
 							{'traits': ['AlphaFlight'],    'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
-							{'traits': ['UncannyAvenger'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm']},
+							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
 							] ]
 					}
 
@@ -59,33 +74,29 @@ tables['anni'] = { 'name': 'Annihilation Raid',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Night)'},
-							{'traits': ['Global'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm'], 'label':'Global<br>(Uncanny)'},
-							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
-							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunder)'}, 
-							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'label':'Tech<br>(Insidious)'}, 
-							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'label':'Mutant<br>(Hellfire)'},
-							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'min_tier':20, 'label':'Tech<br>(Insidious)<br>Bonus'}, 
-							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'min_tier':20, 'label':'Mutant<br>(Hellfire)<br>Bonus'},
+							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
+							{'traits': ['Global'], 'meta': UNCANNY,   'label':'Global<br>(Uncanny)'},
+							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
+							{'traits': ['Bio'],    'meta': TBOLTS,    'label':'Bio<br>(Thunder)'}, 
+							{'traits': ['Tech'],   'meta': INSIDIOUS, 'label':'Tech<br>(Insidious)'}, 
+							{'traits': ['Mystic'], 'meta': IMMORTAL,  'label':'Mystic<br>(Immortal)'},
 							] ],
 					}
 
 # Meta Heroes for use in Annihilation Raid (D8)
-tables['annid8'] = { 'name': 'Annihilation Raid (d8)',
+tables['annid89'] = { 'name': 'Annihilation Raid (8/9)',
 					'min_iso': 13,
 					'max_others': 0,
 					'strike_teams': 'annihilation',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['Mystic'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight'], 'label':'Mystic<br>(Night)'},
-							{'traits': ['Global'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm'], 'label':'Global<br>(Uncanny)'},
-							{'traits': ['Skill'], 'meta': ['Daredevil (Modern)', 'Silver Sable', 'Hit-Monkey', 'Punisher', 'Elektra'], 'label':'Skill<br>(Vigilantes)'}, 
-							{'traits': ['Bio'], 'meta': ['Taskmaster','Ghost','Hyperion','Victoria Hand','Songbird'], 'label':'Bio<br>(Thunder)'}, 
-							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'label':'Tech<br>(Insidious)'}, 
-							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'label':'Mutant<br>(Hellfire)'},
-							{'traits': ['Tech'], 'meta': ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture'], 'min_tier':19, 'label':'Tech<br>(Insidious)<br>Bonus'}, 
-							{'traits': ['Mutant'], 'meta': ['Sebastian Shaw', 'Rachel Summers', 'Azazel', 'Madelyne Pryor', 'Emma Frost'], 'min_tier':19, 'label':'Mutant<br>(Hellfire)<br>Bonus'},
+							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
+							{'traits': ['Global'], 'meta': UNCANNY,   'label':'Global<br>(Uncanny)'},
+							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
+							{'traits': ['Bio'],    'meta': TBOLTS,    'label':'Bio<br>(Thunder)'}, 
+							{'traits': ['Tech'],   'meta': INSIDIOUS, 'label':'Tech<br>(Insidious)'}, 
+							{'traits': ['Mystic'], 'meta': NIGHTSTALK + IMMORTAL, 'label':'Mystic<br>(N. Stalkers<br>Imm. Weaps)'},
 							] ],
 					}
 
@@ -211,18 +222,6 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 							] ]
 					}
 
-ACCURSED   = ['Hellverine', 'Juggernaut', 'Mordo', 'Satana', 'The Hood']
-ASTRAL     = ['Ancient One', 'Doctor Strange', 'Emma Frost (X-Men)', 'Moondragon', 'Shadow King']
-BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']
-F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
-F4MCUTEAM  = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
-INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture']
-HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
-SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
-TBOLTS     = ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand']
-UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
-VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
-
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
 					'sort_by': 'stp',
@@ -252,6 +251,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['HeroesForHire']},
 							{'traits': ['HiveMind']},
 							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
+							{'traits': ['ImmortalWeapons'], 'meta': IMMORTAL},
 							{'traits': ['ImmortalXMen'], 'meta': ['Jean Grey','Beast','Storm','Polaris','Cable']},
 							{'traits': ['Infestation'], 'meta': ['Ant-Man', 'Black Widow', 'Spider-Man (Big Time)', 'Swarm', 'Yellowjacket']},
 							{'traits': ['InfinityWatch']},
@@ -264,7 +264,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['MightyAvenger'], 'meta': ['Hercules','Scarlet Witch','Invisible Woman','Vision','Falcon']},
 							{'traits': ['NewAvenger']},
 							{'traits': ['NewWarrior']},
-							{'traits': ['Nightstalkers'], 'meta': ['Oath', 'Man-Thing', 'Blade', 'Agatha Harkness', 'Moon Knight']},
+							{'traits': ['Nightstalkers'], 'meta': NIGHTSTALK},
 							{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
 							{'traits': ['OutOfTime']},
 							{'traits': ['Pegasus']},
@@ -279,7 +279,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Starjammer'], 'meta': ['Groot','Rocket Raccoon','Havok','Lilandra','Howard The Duck']},
 							{'traits': ['Thunderbolts'], 'meta': TBOLTS},
 #							{'traits': ['Uncanny']},
-							{'traits': ['UncannyAvenger'], 'meta': ['Hercules','Falcon','Jean Grey','Beast','Storm']},
+							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
 							{'traits': ['Undying'], 'meta': UNDYING},
 							{'traits': ['Unlimited']},
@@ -288,7 +288,6 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['WeaponX'], 'meta': ['Omega Red', 'Sabretooth', 'Silver Samurai', 'Wolverine', 'X-23']},
 							{'traits': ['XTreme']},
 #							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
-#							{'traits': ['Horseman', 'Mythic', 'Black Cat', 'Quicksilver', 'Green Goblin (Classic)', 'Spider-Man (Big Time)', 'Juggernaut (Zombie)', 'Iron Man (Zombie)'], 'label':'DPC Chars', 'inc_keys':['power', 'red'], 'max_others':0},
 							] ]
 					}
 
