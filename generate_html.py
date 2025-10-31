@@ -117,7 +117,9 @@ def generate_html(alliance_info, table, table_format, output=''):
 			if lane_overlay:
 				# Merge the contents of each section with the contents of the overlay
 				for idx,section in enumerate(lane):
-					section |= lane_overlay[idx] 
+					for key in lane_overlay[idx]:
+						if lane_overlay[idx][key] is not None:
+							section[key] = lane_overlay[idx][key]
 
 			if only_section in range(1,len(lane)+1):
 				lane = [lane[only_section-1]]
