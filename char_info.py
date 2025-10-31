@@ -2346,7 +2346,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         },
         {
           "id": "Conqueror",
@@ -2526,6 +2526,28 @@ playable   = {
         }
       ],
       "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Cosmic",
+          "name": "COSMIC"
+        },
+        {
+          "id": "Bio",
+          "name": "BIO"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "Epic",
+          "name": "EPIC"
+        }
+      ],
       "unlockStars": 4
     },
     {
@@ -4891,7 +4913,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "DoctorOctopus",
@@ -5601,7 +5623,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Electro",
@@ -7188,7 +7210,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "GreenGoblinGlider",
@@ -8587,7 +8609,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         },
         {
           "id": "Conqueror",
@@ -9803,6 +9825,10 @@ playable   = {
         {
           "id": "HeroesForHire",
           "name": "HEROES FOR HIRE"
+        },
+        {
+          "id": "ImmortalWeapon",
+          "name": "IMMORTAL WEAPON"
         }
       ],
       "unlockStars": 2
@@ -9863,12 +9889,20 @@ playable   = {
           "name": "SKILL"
         },
         {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
           "id": "Support",
           "name": "SUPPORT"
         },
         {
           "id": "Invader",
           "name": "INVADER"
+        },
+        {
+          "id": "ImmortalWeapon",
+          "name": "IMMORTAL WEAPON"
         }
       ],
       "unlockStars": 3
@@ -11518,7 +11552,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "KravenTheHunter",
@@ -11950,6 +11984,76 @@ playable   = {
       "unlockStars": 1
     },
     {
+      "description": "After unintentionally being saved by Bullseye from the Yakuza, Maki Matsumoto saw her destiny. Taking the name, Lady Bullseye, she is the deadliest assassin the Hand has to offer.",
+      "id": "LadyBullseye",
+      "mission": false,
+      "name": "Lady Bullseye",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_LadyBullseye_7609d6e7.png",
+      "starItems": [
+        {
+          "id": "SHARD_LADYBULLSEYE"
+        },
+        {
+          "id": "RS_LADYBULLSEYE_1"
+        },
+        {
+          "id": "RS_LADYBULLSEYE_2"
+        },
+        {
+          "id": "RS_LADYBULLSEYE_3"
+        },
+        {
+          "id": "RS_LADYBULLSEYE_4"
+        },
+        {
+          "id": "RS_LADYBULLSEYE_5"
+        },
+        {
+          "id": "RS_LADYBULLSEYE_6"
+        },
+        {
+          "id": "RS_LADYBULLSEYE_7"
+        },
+        {
+          "id": "PD_LADYBULLSEYE_1"
+        },
+        {
+          "id": "PD_LADYBULLSEYE_2"
+        },
+        {
+          "id": "PD_LADYBULLSEYE_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "ImmortalWeapon",
+          "name": "IMMORTAL WEAPON"
+        },
+        {
+          "id": "Thunderbolt",
+          "name": "THUNDERBOLT"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "Lady Deathstrike uses her cybernetics to slice at enemies, applying Bleed and making them susceptible to negative effects that the rest of Weapon X can take advantage of.",
       "id": "LadyDeathstrike",
       "mission": false,
@@ -12167,7 +12271,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Lizard",
@@ -14681,7 +14785,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Mysterio",
@@ -17511,7 +17615,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         },
         {
           "id": "Conqueror",
@@ -18390,7 +18494,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Rhino",
@@ -19335,7 +19439,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         },
         {
           "id": "Conqueror",
@@ -20504,7 +20608,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         },
         {
           "id": "Conqueror",
@@ -21510,7 +21614,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "SpiderSlayer",
@@ -22113,6 +22217,72 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Steel Serpent, also known as Davos, is a formidable martial artist from K'un-Lun, driven by an unrelenting quest to claim Shou-Lao's power. Regardless of the challenges or the time it demands, he is determined to seize the title of Iron Fist.",
+      "id": "SteelSerpent",
+      "mission": false,
+      "name": "Steel Serpent",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SteelSerpent_e13ab926.png",
+      "starItems": [
+        {
+          "id": "SHARD_STEELSERPENT"
+        },
+        {
+          "id": "RS_STEELSERPENT_1"
+        },
+        {
+          "id": "RS_STEELSERPENT_2"
+        },
+        {
+          "id": "RS_STEELSERPENT_3"
+        },
+        {
+          "id": "RS_STEELSERPENT_4"
+        },
+        {
+          "id": "RS_STEELSERPENT_5"
+        },
+        {
+          "id": "RS_STEELSERPENT_6"
+        },
+        {
+          "id": "RS_STEELSERPENT_7"
+        },
+        {
+          "id": "PD_STEELSERPENT_1"
+        },
+        {
+          "id": "PD_STEELSERPENT_2"
+        },
+        {
+          "id": "PD_STEELSERPENT_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Villain",
+          "name": "VILLAIN"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Controller",
+          "name": "CONTROLLER"
+        },
+        {
+          "id": "ImmortalWeapon",
+          "name": "IMMORTAL WEAPON"
+        }
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "A powerful weather controller that charges up devastating attacks to lead her mutant allies to victory.",
       "eventTraits": [
         {
@@ -22535,7 +22705,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         },
         {
           "id": "Conqueror",
@@ -22705,7 +22875,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Swarm",
@@ -22785,6 +22955,76 @@ playable   = {
         }
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "Armed with the legendary Sword of Fu Xi, Lin Lie's mystical blade cleaves through all foes, leaving few swordsmen able to withstand his formidable skill.",
+      "id": "SwordMaster",
+      "mission": false,
+      "name": "Sword Master",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SwordMaster_01d1d455.png",
+      "starItems": [
+        {
+          "id": "SHARD_SWORDMASTER"
+        },
+        {
+          "id": "RS_SWORDMASTER_1"
+        },
+        {
+          "id": "RS_SWORDMASTER_2"
+        },
+        {
+          "id": "RS_SWORDMASTER_3"
+        },
+        {
+          "id": "RS_SWORDMASTER_4"
+        },
+        {
+          "id": "RS_SWORDMASTER_5"
+        },
+        {
+          "id": "RS_SWORDMASTER_6"
+        },
+        {
+          "id": "RS_SWORDMASTER_7"
+        },
+        {
+          "id": "PD_SWORDMASTER_1"
+        },
+        {
+          "id": "PD_SWORDMASTER_2"
+        },
+        {
+          "id": "PD_SWORDMASTER_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Brawler",
+          "name": "BRAWLER"
+        },
+        {
+          "id": "ImmortalWeapon",
+          "name": "IMMORTAL WEAPON"
+        },
+        {
+          "id": "MightyAvenger",
+          "name": "MIGHTY AVENGER"
+        }
+      ],
+      "unlockStars": 3
     },
     {
       "description": "A founding member of S.T.R.I.K.E., Kestrel uses her portal gun to prevent enemies from summoning and blast the weakest target among them.",
@@ -24969,7 +25209,7 @@ playable   = {
         {
           "id": "ChaosTeam",
           "isEvent": true,
-          "name": "CHAOSTEAM"
+          "name": "CHAOS TEAM"
         },
         {
           "id": "Conqueror",
@@ -26361,15 +26601,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "f5c74a55dd02bac98c1c",
-      "chars": "a88dc9237e239264aa78",
-      "drops": "69b4a1d5101bc91843c1",
-      "events": "70eadc02311c1ea5ae1e",
-      "locs": "d719e093825fc88417c8",
-      "nodes": "3f0d8105b04bcffa44d8",
-      "other": "719c63edc1c40fb328f1"
+      "all": "dd06a4d88b8645e1016c",
+      "chars": "843fb31c657cf9c02c68",
+      "drops": "867fc26aa51d0a3bd73f",
+      "events": "b5702a4056495c70a73b",
+      "locs": "12425fc5c527972284a7",
+      "nodes": "4629b56a0d964b714c5b",
+      "other": "0fa11737919566093392"
     },
-    "perTotal": 344,
+    "perTotal": 347,
     "version": 1
   }
 }
@@ -28009,13 +28249,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "f5c74a55dd02bac98c1c",
-      "chars": "a88dc9237e239264aa78",
-      "drops": "69b4a1d5101bc91843c1",
-      "events": "70eadc02311c1ea5ae1e",
-      "locs": "d719e093825fc88417c8",
-      "nodes": "3f0d8105b04bcffa44d8",
-      "other": "719c63edc1c40fb328f1"
+      "all": "dd06a4d88b8645e1016c",
+      "chars": "843fb31c657cf9c02c68",
+      "drops": "867fc26aa51d0a3bd73f",
+      "events": "b5702a4056495c70a73b",
+      "locs": "12425fc5c527972284a7",
+      "nodes": "4629b56a0d964b714c5b",
+      "other": "0fa11737919566093392"
     },
     "perTotal": 43,
     "version": 1

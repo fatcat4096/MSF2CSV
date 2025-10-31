@@ -243,6 +243,7 @@ def translate_name(value):
 						"HellfireClub": "Hellfire<br>Club",
 						"HiveMind": "Hive-Mind",
 						"ImmortalXMen": "Immortal<br>X-Men",
+						"ImmortalWeapon": "Immortal<br>Weapons",
 						"InsidiousSix": "Insidious<br>Six",
 						"InfinityWatch": "Infinity<br>Watch",
 						"Infinity Watch": "Infinity<br>Watch",
