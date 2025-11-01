@@ -592,9 +592,8 @@ def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 			for trait in char.get('invisibleTraits',[]):
 				if not trait.get('alwaysInvisible'):
 					traits.setdefault(trait['id'],{})[char_name] = 1
-			
-	# Remove excess trait
-	if 'Ultron' in traits:
-		del traits['Ultron']
-	else:
-		print ('no longer need to del trait Ultron.')
+
+	# Delete all Useless traits
+	for useless in ['AnniversaryElite', 'Archenemy', 'Couples', 'Energized', 'KnowhereHeist', 'MarvelMoms', 'PoolPals', 'SpiritofVengeance', 'StrikeAsset', 'Ultron', 'United']:
+		if not traits.pop(useless, None):
+			print (f'{ansi.bold}No longer need to delete: {ansi.ltyel}{useless}{ansi.reset}')

@@ -46,11 +46,11 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_
 	table_format['sort_by'] = 'stp'
 
 	meta_chars, other_chars = get_meta_other_chars(alliance_info, table, {'meta':[char_list]}, table_format)
+
+	# Get the list of traits to allow us to include Trait information
+	extracted_traits = get_cached('traits')
 	
 	# Iterate through the list of character, generating the same detailed information for each character.
-	# Maybe we can pass in an explicit Char List or Trait List to generate the Chars instead of ALL. 
-	# This way we could pass in just the characters actually mentioned on the report. 
-
 	for char in char_list:
 		
 		# Just specify the Character name for the table title
@@ -58,7 +58,7 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_
 
 		# Build stp_list to simplify sort_by='stp'.
 		stp_list = get_stp_list(alliance_info, [char])
-
+	
 		# Get the list of Alliance Members 
 		member_list = get_player_list(alliance_info)
 
@@ -68,17 +68,26 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_
 		# By default, no section-specific formatting
 		section={}
 
+		# Create a sub-heading for the Table Label
+		traits = [translate_name(key).replace('<br>',' ') for key in extracted_traits if extracted_traits[key].get(char)]
+		traits = f'<br><span class="sub">{", ".join(traits)}</span>'
+		
 		# Generate the left table with current stats.
-		html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], table_lbl, stp_list, html_cache, None, linked_hist=True)
+		html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], f'{table_lbl}{traits}', stp_list, html_cache, None, linked_hist=True)
 
 		# Small space between the two tables.
 		html_file += '  </td>\n  <td><br></td>\n  <td>\n'
 
 		# Generate the right table with historical information if available.
 		if hist_date:
+			# Create a new stp_list for the requested hist_date
 			stp_list = get_stp_list(alliance_info, [char], hist_date)	
-			table_lbl += f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
-			html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], table_lbl, stp_list, html_cache, hist_date, linked_hist=True)
+
+			# Create a sub-heading for the Table Label
+			changes_since = f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
+
+			# Generate the Right table with historical stats.
+			html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], f'{table_lbl}{changes_since}', stp_list, html_cache, hist_date, linked_hist=True)
 			
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'

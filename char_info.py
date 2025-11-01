@@ -24046,6 +24046,82 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Eric Masterson, a brave warrior chosen by Odin, wields the enchanted mace Thunderstrike to harness the power of thunder and protect the realms from darkness.",
+      "id": "Thunderstrike",
+      "invisibleTraits": [
+        {
+          "alwaysInvisible": true,
+          "id": "Chargeable"
+        }
+      ],
+      "mission": false,
+      "name": "Thunderstrike",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Thunderstrike_12fb87b1.png",
+      "starItems": [
+        {
+          "id": "SHARD_THUNDERSTRIKE"
+        },
+        {
+          "id": "RS_THUNDERSTRIKE_1"
+        },
+        {
+          "id": "RS_THUNDERSTRIKE_2"
+        },
+        {
+          "id": "RS_THUNDERSTRIKE_3"
+        },
+        {
+          "id": "RS_THUNDERSTRIKE_4"
+        },
+        {
+          "id": "RS_THUNDERSTRIKE_5"
+        },
+        {
+          "id": "RS_THUNDERSTRIKE_6"
+        },
+        {
+          "id": "RS_THUNDERSTRIKE_7"
+        },
+        {
+          "id": "PD_THUNDERSTRIKE_1"
+        },
+        {
+          "id": "PD_THUNDERSTRIKE_2"
+        },
+        {
+          "id": "PD_THUNDERSTRIKE_3"
+        }
+      ],
+      "status": "playable",
+      "traits": [
+        {
+          "id": "Hero",
+          "name": "HERO"
+        },
+        {
+          "id": "Global",
+          "name": "GLOBAL"
+        },
+        {
+          "id": "Mystic",
+          "name": "MYSTIC"
+        },
+        {
+          "id": "Support",
+          "name": "SUPPORT"
+        },
+        {
+          "id": "Asgard",
+          "name": "ASGARDIAN"
+        },
+        {
+          "id": "Legendary",
+          "name": "LEGENDARY"
+        }
+      ],
+      "unlockStars": 4
+    },
+    {
       "description": "Protector of the Cat People, Tigra ferociously defends her allies and uses her razor-sharp claws to rend her opponents.",
       "eventTraits": [
         {
@@ -26601,15 +26677,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "dd06a4d88b8645e1016c",
-      "chars": "843fb31c657cf9c02c68",
-      "drops": "867fc26aa51d0a3bd73f",
-      "events": "b5702a4056495c70a73b",
-      "locs": "12425fc5c527972284a7",
-      "nodes": "4629b56a0d964b714c5b",
-      "other": "0fa11737919566093392"
+      "all": "1e4af78e41754651fc6f",
+      "chars": "b8f1a9035f6861b03301",
+      "drops": "3508ca582f7df7482627",
+      "events": "2c2bed02127f17d34737",
+      "locs": "59e14226f4a620c75a60",
+      "nodes": "b643d105f8e975f52801",
+      "other": "87b06a6ae1fb0c25f85d"
     },
-    "perTotal": 347,
+    "perTotal": 348,
     "version": 1
   }
 }
@@ -28249,13 +28325,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "dd06a4d88b8645e1016c",
-      "chars": "843fb31c657cf9c02c68",
-      "drops": "867fc26aa51d0a3bd73f",
-      "events": "b5702a4056495c70a73b",
-      "locs": "12425fc5c527972284a7",
-      "nodes": "4629b56a0d964b714c5b",
-      "other": "0fa11737919566093392"
+      "all": "1e4af78e41754651fc6f",
+      "chars": "b8f1a9035f6861b03301",
+      "drops": "3508ca582f7df7482627",
+      "events": "2c2bed02127f17d34737",
+      "locs": "59e14226f4a620c75a60",
+      "nodes": "b643d105f8e975f52801",
+      "other": "87b06a6ae1fb0c25f85d"
     },
     "perTotal": 43,
     "version": 1
