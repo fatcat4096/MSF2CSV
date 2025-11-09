@@ -2486,6 +2486,13 @@ playable   = {
     },
     {
       "description": "A brilliant scientist turned living antimatter reactor, Adam Brashear channles cosmic energy to deliver devastating blows. As one of Earth's most powerful champions, he brings unmatched resilience and can remove powerful effects from enemies in any battle.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "BlueMarvel",
       "mission": false,
       "name": "Blue Marvel",
@@ -4909,11 +4916,6 @@ playable   = {
           "id": "KnowhereHeist",
           "isEvent": true,
           "name": "KNOWHERE HEIST"
-        },
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
         }
       ],
       "id": "DoctorOctopus",
@@ -5619,11 +5621,6 @@ playable   = {
           "id": "Energized",
           "isEvent": true,
           "name": "ENERGIZED"
-        },
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
         }
       ],
       "id": "Electro",
@@ -6022,6 +6019,11 @@ playable   = {
           "id": "Juneteenth",
           "isEvent": true,
           "name": "JUNETEENTH"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Falcon",
@@ -7206,11 +7208,6 @@ playable   = {
           "id": "Archenemy",
           "isEvent": true,
           "name": "ARCHENEMY"
-        },
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
         }
       ],
       "id": "GreenGoblinGlider",
@@ -8456,6 +8453,13 @@ playable   = {
     },
     {
       "description": "With the strength of a demigod and the heart of a hero, Hercules charges into the fight using his immense power to control the battlefield.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "Hercules",
       "invisibleTraits": [
         {
@@ -8606,11 +8610,6 @@ playable   = {
     {
       "description": "After discovering and stealing Green Goblin's gear, Roderick Kingsley takes the mantle of Hobgoblin! Control the battlefield with his explosive pumpkin bombs.",
       "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        },
         {
           "id": "Conqueror",
           "isEvent": true,
@@ -9352,6 +9351,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Hyperion",
@@ -9589,6 +9593,11 @@ playable   = {
           "id": "Couples",
           "isEvent": true,
           "name": "COUPLES"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "InvisibleWoman",
@@ -9755,6 +9764,13 @@ playable   = {
     },
     {
       "description": "A versatile martial artist with healing abilities and a powerful single target attack.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "IronFist",
       "invisibleTraits": [
         {
@@ -9835,6 +9851,13 @@ playable   = {
     },
     {
       "description": "Orson Randall uses his Chi to heal allies and empower his guns to fight the AXIS in WWII.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "IronFistOrson",
       "mission": false,
       "name": "Iron Fist (WWII)",
@@ -11548,13 +11571,6 @@ playable   = {
     },
     {
       "description": "A relentlessly dedicated hunter, Kraven hunts only the most dangerous game, tearing through his enemies and breaking their will to fight.",
-      "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        }
-      ],
       "id": "KravenTheHunter",
       "invisibleTraits": [
         {
@@ -11985,6 +12001,13 @@ playable   = {
     },
     {
       "description": "After unintentionally being saved by Bullseye from the Yakuza, Maki Matsumoto saw her destiny. Taking the name, Lady Bullseye, she is the deadliest assassin the Hand has to offer.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "LadyBullseye",
       "mission": false,
       "name": "Lady Bullseye",
@@ -12267,13 +12290,6 @@ playable   = {
     },
     {
       "description": "Hoping to create a regenerative serum using reptile DNA, Doctor Curtis Connors accidentally turns himself into the villain, Lizard, and uses his newfound abilities to shed negative Status Effects.",
-      "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        }
-      ],
       "id": "Lizard",
       "mission": false,
       "name": "Lizard",
@@ -14781,13 +14797,6 @@ playable   = {
     },
     {
       "description": "Mysterio is an enigmatic Controller who manipulates his enemies' status effects.",
-      "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        }
-      ],
       "id": "Mysterio",
       "invisibleTraits": [
         {
@@ -18490,13 +18499,6 @@ playable   = {
     },
     {
       "description": "Big, strong, and tough, the Rhino is a heavy hitter. Blinding him will only make him mad.",
-      "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        }
-      ],
       "id": "Rhino",
       "mission": false,
       "name": "Rhino",
@@ -19280,6 +19282,11 @@ playable   = {
           "id": "Couples",
           "isEvent": true,
           "name": "COUPLES"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "ScarletWitch",
@@ -19436,11 +19443,6 @@ playable   = {
     {
       "description": "Mac Gargan was a PI who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
       "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        },
         {
           "id": "Conqueror",
           "isEvent": true,
@@ -20606,11 +20608,6 @@ playable   = {
       "description": "Shocker uses his Tech sonic bursts to damage entire teams and strengthen his Sinister Six allies.",
       "eventTraits": [
         {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        },
-        {
           "id": "Conqueror",
           "isEvent": true,
           "name": "CHAPTER 2 - CONQUEROR"
@@ -21059,6 +21056,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Songbird",
@@ -21610,13 +21612,6 @@ playable   = {
     },
     {
       "description": "J. Jonah Jameson leaves his desk behind to operate the Spider-Slayer robot and trades hard-hitting investigative journalism for decimating blows against his more evasive enemies.",
-      "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        }
-      ],
       "id": "SpiderSlayer",
       "mission": false,
       "name": "Spider-Slayer",
@@ -22218,6 +22213,13 @@ playable   = {
     },
     {
       "description": "Steel Serpent, also known as Davos, is a formidable martial artist from K'un-Lun, driven by an unrelenting quest to claim Shou-Lao's power. Regardless of the challenges or the time it demands, he is determined to seize the title of Iron Fist.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "SteelSerpent",
       "mission": false,
       "name": "Steel Serpent",
@@ -22703,11 +22705,6 @@ playable   = {
       "description": "Otto Octavius takes over Spider-Man's body and becomes a more brutal and efficient hero, believing himself to be \"superior.\" Use his new tech to heal and apply positive status effects on allies.",
       "eventTraits": [
         {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        },
-        {
           "id": "Conqueror",
           "isEvent": true,
           "name": "CHAPTER 2 - CONQUEROR"
@@ -22871,13 +22868,6 @@ playable   = {
     },
     {
       "description": "A deadly member of the Sinister Six, Swarm exists as a sentient hive of killer bees controlled by one evil mind.",
-      "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        }
-      ],
       "id": "Swarm",
       "invisibleTraits": [
         {
@@ -22958,6 +22948,13 @@ playable   = {
     },
     {
       "description": "Armed with the legendary Sword of Fu Xi, Lin Lie's mystical blade cleaves through all foes, leaving few swordsmen able to withstand his formidable skill.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "SwordMaster",
       "mission": false,
       "name": "Sword Master",
@@ -24047,6 +24044,13 @@ playable   = {
     },
     {
       "description": "Eric Masterson, a brave warrior chosen by Odin, wields the enchanted mace Thunderstrike to harness the power of thunder and protect the realms from darkness.",
+      "eventTraits": [
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
+        }
+      ],
       "id": "Thunderstrike",
       "invisibleTraits": [
         {
@@ -25038,6 +25042,11 @@ playable   = {
           "id": "Harbingers",
           "isEvent": true,
           "name": "CHAPTER 1 - HARBINGER"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "VictoriaHand",
@@ -25124,6 +25133,11 @@ playable   = {
           "id": "Couples",
           "isEvent": true,
           "name": "COUPLES"
+        },
+        {
+          "id": "ChaosTeam",
+          "isEvent": true,
+          "name": "CHAOS TEAM"
         }
       ],
       "id": "Vision",
@@ -25282,11 +25296,6 @@ playable   = {
     {
       "description": "Vulture preys on enemies with negative status effects while dealing extra damage to City Heroes.",
       "eventTraits": [
-        {
-          "id": "ChaosTeam",
-          "isEvent": true,
-          "name": "CHAOS TEAM"
-        },
         {
           "id": "Conqueror",
           "isEvent": true,
@@ -26677,13 +26686,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "1e4af78e41754651fc6f",
-      "chars": "b8f1a9035f6861b03301",
-      "drops": "3508ca582f7df7482627",
-      "events": "2c2bed02127f17d34737",
-      "locs": "59e14226f4a620c75a60",
-      "nodes": "b643d105f8e975f52801",
-      "other": "87b06a6ae1fb0c25f85d"
+      "all": "2dd05c85b11b609a65a2",
+      "chars": "41c18e211087b0ec6101",
+      "drops": "e2010b7c069fed0b97ae",
+      "events": "dfdc4a10b965b3a09b17",
+      "locs": "0864fc0e109779535de9",
+      "nodes": "7d09e84c810daa3044f8",
+      "other": "bbe48db9ea4580943220"
     },
     "perTotal": 348,
     "version": 1
@@ -28325,13 +28334,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "1e4af78e41754651fc6f",
-      "chars": "b8f1a9035f6861b03301",
-      "drops": "3508ca582f7df7482627",
-      "events": "2c2bed02127f17d34737",
-      "locs": "59e14226f4a620c75a60",
-      "nodes": "b643d105f8e975f52801",
-      "other": "87b06a6ae1fb0c25f85d"
+      "all": "7bb8fab3ce5fbb140722",
+      "chars": "41c18e211087b0ec6101",
+      "drops": "e2010b7c069fed0b97ae",
+      "events": "1cd2bb8db47ae5014708",
+      "locs": "0864fc0e109779535de9",
+      "nodes": "7d09e84c810daa3044f8",
+      "other": "bbe48db9ea4580943220"
     },
     "perTotal": 43,
     "version": 1
