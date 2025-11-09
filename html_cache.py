@@ -1,4 +1,6 @@
 
+import string
+
 # Return the anchor if one exists, plus the correct ID/linked ID for the tables
 def lookup_table_ids(html_cache, char_list, hist_date):
 	
@@ -30,26 +32,42 @@ def lookup_table_ids(html_cache, char_list, hist_date):
 	
 # Creates and returns a new table_id
 def make_next_table_id(html_cache):
-	return html_cache.setdefault('tables',{}).setdefault(len(html_cache.get('tables',{})),f"t{len(html_cache.get('tables',{}))}")
+	return html_cache.setdefault('tables',{}).setdefault(len(html_cache.get('tables',{})),f"t{encode_base62(len(html_cache.get('tables',{})))}")
 
 
 # Calculates and returns the next table_id, doesn't change html_cache
 def read_next_table_id(html_cache):
-	return f"t{len(html_cache.get('tables',{}))}"
+	return f"t{encode_base62(len(html_cache.get('tables',{})))}"
 
 
 # Calculates what the previous table_id was, doesn't change html_cache		
 def read_prev_table_id(html_cache):
-	return f"t{len(html_cache.get('tables',{}))-1}"
+	return f"t{encode_base62(len(html_cache.get('tables',{}))-1)}"
 		
 	
 # Creates and returns a anchor for this character
 def make_next_anchor_id(html_cache, char, table_id):
-	return html_cache.setdefault('chars',{}).setdefault(char,{'from':table_id, 'to':f"a{len(html_cache.get('chars',{}))}"})
+	return html_cache.setdefault('chars',{}).setdefault(char,{'from':table_id, 'to':f"a{encode_base62(len(html_cache.get('chars',{})))}"})
 
 
 # Creates and returns a anchor for this character
 def make_next_color_id(html_cache, color):
-	return html_cache.setdefault('colors',{}).setdefault(color, f"c{len(html_cache.get('colors',{}))}")
+	return html_cache.setdefault('colors',{}).setdefault(color, f"c{encode_base62(len(html_cache.get('colors',{})))}")
 
+
+BASE62_CHARS = string.digits + string.ascii_letters
+
+# Generates a shorter name for our tables, anchors, and colors
+def encode_base62(num):
+
+	# Base case
+	if num == 0:
+		return BASE62_CHARS[0]
+
+	encoded_string = []
+
+	while num:
+		num, remainder = divmod(num, 62)
+		encoded_string.append(BASE62_CHARS[remainder])
 	
+	return ''.join(reversed(encoded_string))

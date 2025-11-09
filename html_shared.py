@@ -42,9 +42,9 @@ def extract_color(alliance_name):
 # Translate value to a color from the Heat Map gradient.
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, use_range=False, darken_amt=0):
 
-	# Base case. Return 'hist' if 0.
+	# Base case. Return 'xx' if 0.
 	if not val_range or not value:
-		return 'hist'
+		return 'xx'
 	
 	# Even distribution of color
 	elif use_range=='set' or hist_date:
@@ -103,7 +103,7 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 
 	# Special treatment for the '0' fields. 
 	if not value:
-		return 'hist'
+		return 'xx'
 
 	# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
 
@@ -274,7 +274,7 @@ def translate_name(value):
 						"SecretWarrior": "Secret<br>Warriors",
 						"SinisterSix": "Sinister<br>Six",
 						"Sinister Six": "Sinister<br>Six",
-						"SpiderVerse": "Spiders",
+						"SpiderVerse": "Spider-Verse",
 						"SpiritoFVengeance": "Spirit oF<br>Vengeance",
 						"SpiderSociety": "Spider<br>Society",
 						"Spider Society": "Spider<br>Society",

@@ -120,7 +120,7 @@ def generate_analysis_header(stats, stat_type, html_cache):
 	html_file += '<tr>\n'
 
 	# Simplify inclusion of the sort function code
-	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb col", '%s', table_id)
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb", '%s', table_id)
 
 	# Averages
 	html_file += f' <td {sort_func % 5}>Yel</td>\n'
@@ -171,7 +171,7 @@ def generate_analysis_header(stats, stat_type, html_cache):
 		html_file += f' <td {sort_func % (46-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_LVL-idx*5}{LVL_END}')
 
 	# Simplify inclusion of the sort function code
-	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb col", '%s', table_id)
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb", '%s', table_id)
 
 	# Overpower Levels
 	for idx in range(3,-1,-1):

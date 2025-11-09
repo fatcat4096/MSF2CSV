@@ -432,14 +432,14 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 			dmd  = char_info.get('dmd',0)
 			abil = char_info.get('abil','n/a')
 
-			data = [f'<b>Lvl:</b> {lvl}t{tier}']
+			data = [f'Lvl: {lvl}t{tier}']
 			if iso:
-				data.append('<b>ISO:</b> %s-%s' % (int((iso-1)/5)+1,(iso-1)%5+1))
-			data.append(f'<b>Stars:</b> {yel}Y' + [f'{red}R',''][not red] + [f'{dmd}D',''][not dmd])
-			data.append(f'<b>Abil:</b> {abil}')
+				data.append('ISO: %s-%s' % (int((iso-1)/5)+1,(iso-1)%5+1))
+			data.append(f'Rank: {yel}Y' + [f'{red}R',''][(not red) + (dmd !=0)] + [f'{dmd}D',''][not dmd])
+			data.append(f'Abil: {abil}')
 
 			# Create a tooltip with the noted differences.
-			other_data = '<span class="ttt">%s</span>' % ('<br>'.join(data))
+			other_data = '<span class="TT">%s</span>' % ('<br>'.join(data))
 	
 		return current_val,other_data
 
@@ -478,7 +478,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 					# Straightforward diff for most entries.
 					if entry != 'abil':
 						diff_lbl = {'power':'Pwr'}.get(entry,entry.title())
-						diffs.append(f'<b>{diff_lbl}:</b> {diff:+}')
+						diffs.append(f'{diff_lbl}: {diff:+}')
 
 					# More work to decode the Ability entry.
 					else:
@@ -490,10 +490,10 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 						# And then add only the specific abilities which changed.
 						for abil in abil_diffs:
 							if abil_diffs[abil]:
-								diffs.append(f'<b>{abil.title()}:</b> {abil_diffs[abil]:+}')
+								diffs.append(f'{abil.title()}: {abil_diffs[abil]:+}')
 
 			# Create a tooltip with the noted differences.
-			other_data = ['<span class="ttt">%s</span>' % ('<br>'.join(diffs)),''][not diffs]
+			other_data = ['<span class="TT">%s</span>' % ('<br>'.join(diffs)),''][not diffs]
 		
 		return delta_val, other_data
 

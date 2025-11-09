@@ -305,6 +305,10 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	html_file += generate_roster_analysis(alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
 	html_file += generate_alliance_tab   (alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
 	html_file += generate_by_char_tab    (alliance_info, using_tabs=True, hist_date=hist_date or True, html_cache=html_cache)
+
+	# Optimize if large? Remove white space and carriage returns from center section.
+	if table_format.get('opt_if_large') and len(html_file) > 5000000:
+		html_file = ''.join([x.strip() for x in html_file.split('\n')])
 	
 	# Include scripts to support sorting.
 	html_file += add_sort_scripts()

@@ -217,12 +217,12 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
 
 				# Control background color of Character image if Spec Ops report
-				background_color = spec_ops_background(table, char, player_list, html_cache) if spec_ops else ''
+				background_color = ' '+spec_ops_background(table, char, player_list, html_cache) if spec_ops else ''
 
 				# Dim image if under_min
 				background_color += ' dim_img' if char in dim_image else ''
 
-				html_file += '     <td class="img" colspan="%s"%s><div class="cont %s"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, background_color, ['',' zoom'][not hist_date], url, translate_name(char))
+				html_file += '     <td class="img" colspan="%s"%s><div class="cont%s"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, background_color, ['','zoom'][not hist_date], url, translate_name(char))
 
 		# Include an image of the completion reward if provided.
 		if team_power_summary and inc_comp:
@@ -358,7 +358,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						rowspan = '" rowspan="2'
 
 					# Player Name, then relevant stats for each character.
-					st_html += '    <tr%s>\n' % [' class="hist"',''][not use_hist_date]
+					st_html += '    <tr%s>\n' % [' class="xx"',''][not use_hist_date]
 
 					inline_hist_row = inline_hist and use_hist_date
 
@@ -413,9 +413,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							if key_val == 0 and use_hist_date:
 								style = ''
 							else:
-								# Note: We are using the tt class to get black text on fields in the Hist tab.
+								# Note: We are using the T class to get black text on fields in the Hist tab.
 								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, use_hist_date)
-								style = ' class="%s%s"' % (field_color, ['', ' tt'][need_tt or use_hist_date is not None])    
+								style = ' class="%s%s"' % (field_color, ['', ' T'][need_tt or use_hist_date is not None])    
 
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 							if key=='red' and key_val>7:
@@ -434,7 +434,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							iso_code  = alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)%6
 							
 							# Translate it to a code to specify the correct CSS URI.
-							iso_class = ['','fortifier','healer','skirmisher','raider','striker'][iso_code]
+							iso_class = ['','fort','healer','skirm','raider','striker'][iso_code]
 							
 							# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
 							all_iso_codes = [alliance_info['members'][player].get('other_data',{}).get(char_name,0)%6 for player in player_list]
@@ -448,10 +448,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							# Include the graphic via CSS and use the confidence for background color.
 							if iso_class:
 								field_color = get_value_color_ext(0, 100, iso_conf, html_cache, stale_data, under_min=under_min)
-								tool_tip = f'<span class="ttt"><b>{iso_class.title()}:</b><br>{iso_conf}%</span>'
-								st_html += f'     <td class="{iso_class[:4]} tt {field_color+rowspan}">{tool_tip}</td>\n'
+								tool_tip = f'<span class="TT">{iso_class.title()}:<br>{iso_conf}%</span>'
+								st_html += f'     <td class="{iso_class[:4]} T {field_color+rowspan}">{tool_tip}</td>\n'
 							else:
-								st_html += f'     <td class="hist{rowspan}">-</td>\n'
+								st_html += f'     <td class="xx{rowspan}">-</td>\n'
 
 					# Dark Dimension Completed Column
 					
@@ -469,7 +469,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						else:
 							field_val = '&#x274C;'		# Red X
 							#field_val = '&#x1f534;'	# Red Dot
-						st_html += f'     <td class="hist">{field_val}</td>\n'
+						st_html += f'     <td class="xx">{field_val}</td>\n'
 
 					# STP/TCP Column
 

@@ -71,6 +71,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   background  : #B0E0E6;
   white-space : nowrap;
   color       : black;
+  min-width   : 32px;
 }
 .ltbb:hover {
   background  : LightCyan;
@@ -194,7 +195,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 .dim_img {
   opacity     : .4;
 }
-.hist {
+.xx {
   background  : #282828;
   color       : #919191;
 }
@@ -221,12 +222,12 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   padding     : 70px 20px;
   height      : 100%;
 }
-.tt {
+.T {
   position    : relative;
   color       : black;
   min-width   : 28px;
 }
-.tt .ttt {
+.T .TT {
   visibility  : hidden;
   width       : 100px;
   background  : black;
@@ -242,7 +243,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   opacity     : 0;
   transition  : opacity 1s;
 }
-.tt .ttt::after {
+.T .TT::after {
   content     : "";
   position    : absolute;
   bottom      : 100%;
@@ -252,7 +253,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
   border-style: solid;
   border-color: transparent transparent black transparent;
 }
-.tt:hover .ttt {
+.T:hover .TT {
   visibility  : visible;
   opacity     : 1;
 }
@@ -332,9 +333,6 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 }
 .nam {
   min-width   : 130px;
-}
-.col {
-  min-width   : 32px;
 }
 .lvl {
   min-width   : 42px;
@@ -437,7 +435,7 @@ def add_sort_scripts():
 <script>
 function strip(html){
 	 let doc = new DOMParser().parseFromString(html, 'text/html');
-	 var tooltips = doc.getElementsByClassName("ttt");
+	 var tooltips = doc.getElementsByClassName("TT");
 	 while(tooltips.length > 0){
 		 tooltips[0].remove();
 	 }
