@@ -70,6 +70,17 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_
 
 		# Create a sub-heading for the Table Label
 		traits = [translate_name(key).replace('<br>',' ') for key in extracted_traits if extracted_traits[key].get(char)]
+		
+		# Just hide certain traits -- no one cares
+		for to_filter in ['Chaos Team', 'Harbinger', 'Mercenary', 'Military', 'MSF Original', 'Spider-Verse']:
+			if to_filter in traits:
+				traits.remove(to_filter)
+
+		# Filter rendundant traits
+		for to_filter in ['Avengers', 'A-Force', 'Defenders', 'Fantastic Four', 'X-Men']:
+			if to_filter in traits and len([x for x in traits if to_filter in x]) > 1:
+				traits.remove(to_filter)
+		
 		traits = f'<br><span class="sub">{", ".join(traits)}</span>'
 		
 		# Generate the left table with current stats.
