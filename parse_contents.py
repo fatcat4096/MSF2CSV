@@ -594,6 +594,6 @@ def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 					traits.setdefault(trait['id'],{})[char_name] = 1
 
 	# Delete all Useless traits
-	for useless in ['AnniversaryElite', 'Archenemy', 'Couples', 'Energized', 'KnowhereHeist', 'MarvelMoms', 'PoolPals', 'SpiritofVengeance', 'StrikeAsset', 'Ultron', 'United']:
+	for useless in ['AnniversaryElite', 'Archenemy', 'Couples', 'Energized', 'Juneteenth', 'KnowhereHeist', 'MarvelMoms', 'PoolPals', 'SpiritofVengeance', 'StrikeAsset', 'Ultron', 'United', 'Wave1Avenger', 'WebSlinger']:
 		if not traits.pop(useless, None):
 			print (f'{ansi.bold}No longer need to delete: {ansi.ltyel}{useless}{ansi.reset}')
