@@ -1144,6 +1144,9 @@ playable   = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 5
@@ -1218,6 +1221,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -1855,6 +1861,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -1927,6 +1936,9 @@ playable   = {
         {
           "id": "OutOfTime",
           "name": "OUT OF TIME"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -3023,6 +3035,9 @@ playable   = {
         {
           "id": "Epic",
           "name": "EPIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -5324,6 +5339,9 @@ playable   = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 5
@@ -5396,6 +5414,9 @@ playable   = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 5
@@ -7288,6 +7309,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -12072,6 +12096,10 @@ playable   = {
         {
           "id": "Thunderbolt",
           "name": "THUNDERBOLT"
+        },
+        {
+          "id": "Hand",
+          "name": "HAND"
         }
       ],
       "unlockStars": 3
@@ -13360,6 +13388,9 @@ playable   = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 5
@@ -14255,6 +14286,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -15913,6 +15947,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -16239,6 +16276,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 4
@@ -17782,6 +17822,9 @@ playable   = {
         {
           "id": "Brawler",
           "name": "BRAWLER"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 2
@@ -18328,6 +18371,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -18739,6 +18785,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -19945,6 +19994,9 @@ playable   = {
         {
           "id": "Legendary",
           "name": "LEGENDARY"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 4
@@ -21370,6 +21422,9 @@ playable   = {
         {
           "id": "Infestation",
           "name": "INFESTATION"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 3
@@ -22862,6 +22917,9 @@ playable   = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 5
@@ -24483,6 +24541,9 @@ playable   = {
         {
           "id": "Annihilator",
           "name": "ANNIHILATOR"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 4
@@ -24568,6 +24629,9 @@ playable   = {
         {
           "id": "Mythic",
           "name": "MYTHIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 5
@@ -26442,6 +26506,9 @@ playable   = {
         {
           "id": "Epic",
           "name": "EPIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 2
@@ -26521,6 +26588,9 @@ playable   = {
         {
           "id": "Epic",
           "name": "EPIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 2
@@ -26679,6 +26749,9 @@ playable   = {
         {
           "id": "Epic",
           "name": "EPIC"
+        },
+        {
+          "id": "DARK_PROMOTION"
         }
       ],
       "unlockStars": 2
@@ -26686,13 +26759,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "2dd05c85b11b609a65a2",
-      "chars": "41c18e211087b0ec6101",
-      "drops": "e2010b7c069fed0b97ae",
-      "events": "dfdc4a10b965b3a09b17",
-      "locs": "0864fc0e109779535de9",
-      "nodes": "7d09e84c810daa3044f8",
-      "other": "bbe48db9ea4580943220"
+      "all": "7b580ee2a7525d658d1a",
+      "chars": "5bbcf438a5bb006aac48",
+      "drops": "14943092cb829b7ffea8",
+      "events": "89acc7b096c76e22d6a0",
+      "locs": "502e25b6d1d5f296be9a",
+      "nodes": "20e322ce130413d3c111",
+      "other": "5d7f8188e8a7a2c434f9"
     },
     "perTotal": 348,
     "version": 1
@@ -28334,13 +28407,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "7bb8fab3ce5fbb140722",
-      "chars": "41c18e211087b0ec6101",
-      "drops": "e2010b7c069fed0b97ae",
-      "events": "1cd2bb8db47ae5014708",
-      "locs": "0864fc0e109779535de9",
-      "nodes": "7d09e84c810daa3044f8",
-      "other": "bbe48db9ea4580943220"
+      "all": "7b580ee2a7525d658d1a",
+      "chars": "5bbcf438a5bb006aac48",
+      "drops": "14943092cb829b7ffea8",
+      "events": "89acc7b096c76e22d6a0",
+      "locs": "502e25b6d1d5f296be9a",
+      "nodes": "20e322ce130413d3c111",
+      "other": "5d7f8188e8a7a2c434f9"
     },
     "perTotal": 43,
     "version": 1
