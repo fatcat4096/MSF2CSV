@@ -336,6 +336,7 @@ tables['all_chars'] = { 'name': 'All Characters',
 					'inc_keys': ['power','tier','iso'],
 					'inc_class': True,
 					'lanes':[ [
+							{'traits': ['All'], 'label':'All Chars'},
 							{'traits': ['Bio'], },
 							{'traits': ['Mutant'], },
 							{'traits': ['Mystic'], },

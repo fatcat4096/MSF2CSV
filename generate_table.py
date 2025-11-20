@@ -326,8 +326,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					num_avail = len(num_avail)
 
 				# Dim the name if don't have 5 heroes that meet min requirements for this section (or all sections, for summary)
+				# Include not_completed because if they've completed it, they're OBVIOUSLY ready
 				if team_power_summary:
-					not_ready = min_count and any([len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', False, set())[0]) < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+					not_completed = not get_summary_comp(alliance_info, player_name, inc_comp)
+					not_ready = not_completed and min_count and any([len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', False, set())[0]) < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
 
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
@@ -385,7 +387,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 						# TEAM POWER SUMMARY: Calculate under_min for a team/section so that the Power/Avail/Rank is dimmed if not 5 toons are available yet.
 						if team_power_summary:
-							under_min = min_count and len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date, set())[0]) < min_count - (DD7 and char_name=='Mythic')
+							under_min = not_completed and min_count and len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date, set())[0]) < min_count - (DD7 and char_name=='Mythic')
 						else:
 							under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
 
