@@ -48,7 +48,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	using_players = [player for player in sum(strike_teams, []) if player in player_list]
 	if not using_players:
 		return ''
-		
+
 	# See if we need to pare the included characters even further.
 	using_chars = char_list[:]
 
@@ -95,7 +95,13 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# If there are no characters in this table, don't generate a table.
 	if not using_chars:
 		return ''
-		
+
+	# IF char_limit is defined exit without output, communicate results via table_format.
+	char_limit = get_table_value(table_format, table, section, 'char_limit')
+	if char_limit:
+		table_format['over_limit'] = len(using_chars) > char_limit
+		return ''
+
 	# Dim Image if under_min but still included
 	dim_image = [char for char in using_chars if char not in remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)]
 
