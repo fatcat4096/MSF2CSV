@@ -96,10 +96,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	if not using_chars:
 		return ''
 
-	# IF char_limit is defined exit without output, communicate results via table_format.
-	char_limit = get_table_value(table_format, table, section, 'char_limit')
-	if char_limit:
-		table_format['over_limit'] = len(using_chars) > char_limit
+	# IF char_limit, exit without output; communicate results via table_format.
+	if get_table_value(table_format, table, section, 'char_limit'):
+		table_format['using_chars'] = len(using_chars)
 		return ''
 
 	# Dim Image if under_min but still included
