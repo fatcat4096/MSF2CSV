@@ -40,14 +40,14 @@ def extract_color(alliance_name):
 
 
 # Translate value to a color from the Heat Map gradient.
-def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, use_range=False, darken_amt=0):
+def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, color_set=False, darken_amt=0):
 
 	# Base case. Return 'xx' if 0.
 	if not val_range or not value:
 		return 'xx'
 	
 	# Even distribution of color
-	elif use_range=='set' or hist_date:
+	elif color_set=='set' or hist_date:
 		min_val = 1
 		max_val = 1000
 
@@ -67,7 +67,7 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 			value = 1+1000/(len(new_range)-1)*(new_range.index(value))
 
 	# Weighted distribution, skews higher
-	elif use_range == 'list':
+	elif color_set == 'list':
 		min_val = 0
 		max_val = 1000
 		new_range = sorted(val_range, reverse=True)
@@ -259,6 +259,7 @@ def translate_name(value):
 						"MSFOriginal": "MSF Original",
 						"NewAvenger": "New<br>Avengers",
 						"New Avengers": "New<br>Avengers",
+						"NewMutant": "New<br>Mutants",
 						"NewWarrior": "New<br>Warriors",
 						"New Warriors": "New<br>Warriors",
 						"OutOfTime": "Out of Time",

@@ -491,7 +491,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
 						field_value = get_field_value(player_tcp, use_hist_date)
 	
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(tcp_range, player_tcp, html_cache, stale_data, use_range='set'), field_value)
+						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(tcp_range, player_tcp, html_cache, stale_data, color_set='set'), field_value)
 					
 					elif len(char_list)>1:
 						player_stp = stp_list.get(use_hist_date,{}).get(player_name,0)

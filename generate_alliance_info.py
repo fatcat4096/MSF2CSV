@@ -216,7 +216,7 @@ def alliance_info_cell(value_range, key, member_stats, hist_calcs, html_cache, s
 	diff_value = f'<br><span class="sub"><i>({get_field_value(diff_value, True)})</i></span>' if diff_value else '' 
 	
 	# Determine field color
-	field_color = get_value_color(value_range, curr_value, html_cache, stale_data, use_range='set')
+	field_color = get_value_color(value_range, curr_value, html_cache, stale_data, color_set='set')
 
 	# Return the completed cell
 	return f'  <td class="{field_color}">{curr_value:,}{diff_value}</td>\n'
