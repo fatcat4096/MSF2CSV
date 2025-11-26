@@ -53,6 +53,19 @@ UNCANNY    = ['Hercules','Falcon','Jean Grey','Beast','Storm']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
 VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
 
+# Meta Heroes for use in Thunderstrike Raid
+tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
+					'max_others': 10,
+					'strike_teams': 'spotlight',
+					'sort_char_by': 'avail',
+					'inc_keys': ['power','lvl','tier','iso'],
+					'lanes':[ [
+							{'traits': ['Harbingers']},
+							{'traits': ['Conqueror']},
+							{'traits': ['Stormbound']},
+							] ]
+					}
+
 # Meta Heroes for use in Spotlight Raid
 tables['spotlight'] = { 'name': 'Spotlight Raid',
 					'min_iso': 13,
@@ -262,6 +275,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['MercsForMoney']},
 							{'traits': ['MightyAvenger'], 'meta': ['Hercules','Scarlet Witch','Invisible Woman','Vision','Falcon']},
 							{'traits': ['NewAvenger']},
+							{'traits': ['NewMutant'], 'meta': ['Magik', 'Sunspot', 'Cannonball', 'Warlock', 'Wolfsbane']},
 							{'traits': ['NewWarrior']},
 							{'traits': ['Nightstalkers'], 'meta': NIGHTSTALK},
 							{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
