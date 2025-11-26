@@ -14,24 +14,27 @@ from html_shared   import *
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_roster_analysis(alliance_info, inc_prog=True, using_tabs=False, hist_date=None, html_cache={}, use_range='set'):
+def generate_roster_analysis(alliance_info, table_format={}, using_tabs=False, hist_date=None, html_cache={}):
+
+	# Pull formatting info from table_format
+	INC_PROG  = table_format.get('progress', True)
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
 		html_file = '<div id="RosterAnalysis" class="tcon">\n'
 	else:
 		html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
-	html_file += generate_analysis_table(alliance_info, stat_type='actual', html_cache=html_cache, use_range=use_range)
+	html_file += generate_analysis_table(alliance_info, table_format, stat_type='actual', html_cache=html_cache)
 
 	# Add the progressive form in as well. :)
-	if inc_prog:
+	if INC_PROG:
 		html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
-		html_file += generate_analysis_table(alliance_info, stat_type='progressive', html_cache=html_cache, use_range=use_range)
+		html_file += generate_analysis_table(alliance_info, table_format, stat_type='progressive', html_cache=html_cache)
 		
 	# Add the historical form in if hist_date is available.
 	if hist_date:
 		html_file += get_tab_header(f'ROSTER ANALYSIS (CHANGES SINCE {hist_date.strftime("%m/%d/%y")})')
-		html_file += generate_analysis_table(alliance_info, stat_type='progressive', hist_date=hist_date, html_cache=html_cache, use_range=use_range)
+		html_file += generate_analysis_table(alliance_info, table_format, stat_type='progressive', hist_date=hist_date, html_cache=html_cache)
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -41,25 +44,29 @@ def generate_roster_analysis(alliance_info, inc_prog=True, using_tabs=False, his
 		
 
 
-def generate_analysis_table(alliance_info, stat_type='actual', hist_date=None, html_cache={}, use_range='set'):
+def generate_analysis_table(alliance_info, table_format, stat_type='actual', hist_date=None, html_cache={}):
 
 	# Start by doing stat analysis.	
 	stats = get_roster_stats(alliance_info, stat_type, hist_date)
 
 	# Generate the header for the Roster Analysis table
-	html_file = generate_analysis_header(stats, stat_type, html_cache)
+	html_file = generate_analysis_header(table_format, stats, stat_type, html_cache)
 
 	# Format the analyzed data into a table.
-	html_file += generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_range)
+	html_file += generate_analysis_body(alliance_info, table_format, stats, hist_date, html_cache)
 
 	return html_file
 
 
 
-def generate_analysis_header(stats, stat_type, html_cache):
+def generate_analysis_header(table_format, stats, stat_type, html_cache):
 
 	ACTUALS = stat_type == 'actual'
 
+	# Pull formatting info from table_format
+	INC_KEYS = table_format.get('inc_keys', {})
+
+	# Pull max values for each type
 	MAX_YEL  = stats['max_yel'] 
 	MAX_RED  = stats['max_red'] 
 	MAX_DMD  = stats['max_dmd'] 
@@ -88,33 +95,40 @@ def generate_analysis_header(stats, stat_type, html_cache):
 	html_file += f' <td rowspan="2" {sort_func % 3} style="min-width:50px">Total<br>Chars</td>\n'
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 	
-	html_file += ' <td width="200" colspan="6">Average</td>\n'		# All Avg Stats
+	html_file += ' <td width="300" colspan="7">Average</td>\n'		# All Avg Stats
 	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="160" colspan="4">Stars</td>\n'		# Yel - 4 cols
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
-
-	html_file += ' <td width="120" colspan="4">Red Stars</td>\n'	# Red - 4 cols
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
-
-	if MAX_DMD:
-		html_file += ' <td width="160" colspan="3">Diamonds</td>\n'		# Diamonds - 3 cols
+	if 'yel' in INC_KEYS:
+		html_file += ' <td width="180" colspan="4">Stars</td>\n'		# Yel - 4 cols
 		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="200" colspan="4">ISO</td>\n'			# ISO - 4 cols
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if 'red' in INC_KEYS:
+		html_file += ' <td width="180" colspan="4">Red Stars</td>\n'	# Red - 4 cols
+		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="240" colspan="5">Gear Tier</td>\n'	# Tier - 5 cols
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+		if MAX_DMD:
+			html_file += f' <td width="{40*MAX_DMD}" colspan="{MAX_DMD}">Diamonds</td>\n'		# Diamonds - 3 cols
+			html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="160" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if 'iso' in INC_KEYS:
+		html_file += ' <td width="180" colspan="4">ISO</td>\n'			# ISO - 4 cols
+		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="350" colspan="5">Levels</td>\n'
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if 'tier' in INC_KEYS:
+		html_file += ' <td width="240" colspan="5">Gear Tier</td>\n'	# Tier - 5 cols
+		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	html_file += ' <td width="350" colspan="4">OP</td>\n'		    # OP - 4 cols
-	html_file += '</tr>\n'
+	if 'abil' in INC_KEYS:
+		html_file += ' <td width="180" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
+		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+
+	if 'lvl' in INC_KEYS:
+		html_file += ' <td width="280" colspan="5">Levels</td>\n'
+		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+
+	if 'op' in INC_KEYS:
+		html_file += ' <td width="180" colspan="4">OP</td>\n'		    # OP - 4 cols
+		html_file += '</tr>\n'
 
 	# Second Row with subheadings.
 	html_file += '<tr>\n'
@@ -125,57 +139,71 @@ def generate_analysis_header(stats, stat_type, html_cache):
 	# Averages
 	html_file += f' <td {sort_func % 5}>Yel</td>\n'
 	html_file += f' <td {sort_func % 6}>Red</td>\n'
-	html_file += f' <td {sort_func % 7}>Tier</td>\n'
-	html_file += f' <td {sort_func % 8}>Lvl</td>\n'
-	html_file += f' <td {sort_func % 9}>ISO</td>\n'
-	html_file += f' <td {sort_func % 10}>OP</td>\n'
+	html_file += f' <td {sort_func % 7}>Dmd</td>\n'
+	html_file += f' <td {sort_func % 8}>Tier</td>\n'
+	html_file += f' <td {sort_func % 9}>Lvl</td>\n'
+	html_file += f' <td {sort_func % 10}>ISO</td>\n'
+	html_file += f' <td {sort_func % 11}>OP</td>\n'
+
+	BASE_COLS = 13
 	
 	# Yellow Stars
-	for idx in range(3,-1,-1):
-		html_file += f' <td {sort_func % (15-idx)}>%s</td>\n' % (f'{MAX_YEL-idx}'+['','+'][idx and not ACTUALS])
+	if 'yel' in INC_KEYS:
+		for idx in range(4):
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_YEL-3}'+['','+'][idx!=3 and not ACTUALS])
+		BASE_COLS += 5
 	
 	# Red Stars
-	for idx in range(3,-1,-1):
-		html_file += f' <td {sort_func % (20-idx)}>%s</td>\n' % (f'{MAX_RED-idx}'+['','+'][idx and not ACTUALS])
+	if 'red' in INC_KEYS:
+		for idx in range(4):
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_RED-3}'+['','+'][idx!=3 and not ACTUALS])
+		BASE_COLS += 5
 
-	# Diamonds
-	if MAX_DMD:
-		html_file += f' <td {sort_func % 22}>1&#x1F48E;</td>\n'
-		html_file += f' <td {sort_func % 23}>2&#x1F48E;</td>\n'
-		html_file += f' <td {sort_func % 24}>3&#x1F48E;</td>\n'
-
-	# Consider missing Diamond columns in Sort routines
-	NO_DMD = 0 if MAX_DMD else 4
+		# Diamonds are included in Red Stars
+		if MAX_DMD:
+			for idx in range(MAX_DMD):
+				html_file += f' <td {sort_func % (BASE_COLS+idx)}>{idx+1}&#x1F48E;</td>\n'
+			BASE_COLS += MAX_DMD+1
 
 	# ISO Levels
-	html_file += f' <td {sort_func % (26-NO_DMD)}>%s</td>\n' % ([f'{MAX_ISO-3}+',f'{MIN_ISO}-{MAX_ISO-3}'][ACTUALS])
-	for idx in range(2,-1,-1):
-		html_file += f' <td {sort_func % (29-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_ISO-idx}' + ['','+'][idx and not ACTUALS])
+	if 'lvl' in INC_KEYS:
+		html_file += f' <td {sort_func % (BASE_COLS)}>%s</td>\n' % ([f'{MAX_ISO-3}+',f'{MIN_ISO}-{MAX_ISO-3}'][ACTUALS])
+		for idx in range(3):
+			html_file += f' <td {sort_func % (BASE_COLS+idx+1)}>%s</td>\n' % (f'{idx + MAX_ISO-2}' + ['','+'][idx!=2 and not ACTUALS])
+		BASE_COLS += 5
 
 	# Gear Tiers
-	for idx in range(4,-1,-1):
-		html_file += f' <td {sort_func % (35-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_TIER-idx}'+['','+'][idx and not ACTUALS])
+	if 'tier' in INC_KEYS:
+		for idx in range(5):
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_TIER-4}'+['','+'][idx!=4 and not ACTUALS])
+		BASE_COLS += 6
 
 	# T4 Abilities
-	html_file += f' <td {sort_func % (37-NO_DMD)}>Bas</td>\n'
-	html_file += f' <td {sort_func % (38-NO_DMD)}>Spc</td>\n'
-	html_file += f' <td {sort_func % (39-NO_DMD)}>Ult</td>\n'
-	html_file += f' <td {sort_func % (40-NO_DMD)}>Pas</td>\n'
+	if 'abil' in INC_KEYS:
+		html_file += f' <td {sort_func % (BASE_COLS)}>Bas</td>\n'
+		html_file += f' <td {sort_func % (BASE_COLS+1)}>Spc</td>\n'
+		html_file += f' <td {sort_func % (BASE_COLS+2)}>Ult</td>\n'
+		html_file += f' <td {sort_func % (BASE_COLS+3)}>Pas</td>\n'
+		BASE_COLS += 5
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb lvl", '%s', table_id)
 
 	# Level Ranges
-	for idx in range(4,-1,-1):
-		LVL_END = ['+',f'-{(MAX_LVL-idx*5+4)%[100,10][MAX_LVL-idx*5>100]}'][ACTUALS] if idx else ''
-		html_file += f' <td {sort_func % (46-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_LVL-idx*5}{LVL_END}')
+	if 'lvl' in INC_KEYS:
+		for idx in range(5):
+			LVL_END = ['+',f'-{(idx*5+MAX_LVL-16)%[100,10][idx*5+MAX_LVL>120]}'][ACTUALS] if idx!=4 else ''
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx*5+MAX_LVL-20}{LVL_END}')
+		BASE_COLS += 6
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb", '%s', table_id)
 
 	# Overpower Levels
-	for idx in range(3,-1,-1):
-		html_file += f' <td {sort_func % (51-idx-NO_DMD)}>%s</td>\n' % (f'{MAX_OP-idx}'+['','+'][idx and not ACTUALS])
+	if 'op' in INC_KEYS:
+		for idx in range(4):
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_OP-3}'+['','+'][idx!=3 and not ACTUALS])
+		BASE_COLS +=5
 
 	html_file += '</tr>\n'
 	
@@ -183,9 +211,13 @@ def generate_analysis_header(stats, stat_type, html_cache):
 	
 
 
-def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_range):
-	
-	# Calculate max values for each type
+def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_cache):
+
+	# Pull formatting info from table_format
+	INC_KEYS  = table_format.get('inc_keys', {})
+	COLOR_SET = table_format.get('color_set', 'set')
+
+	# Pull max values for each type
 	MAX_YEL  = stats['max_yel'] 
 	MAX_RED  = stats['max_red'] 
 	MAX_DMD  = stats['max_dmd'] 
@@ -217,53 +249,60 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % ('ngra' if stale_data else 'nblu', member_url, member_info.get('display_name',member))
 			
 			for stat in ['tcp','stp','tcc']:
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat)
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
-			for stat in ['yel', 'red', 'tier', 'lvl', 'iso', 'op']:
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, f'avg_{stat}')
+			for stat in ['yel', 'red', 'dmd', 'tier', 'lvl', 'iso', 'op']:
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, f'avg_{stat}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
-			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'yel', key + MAX_YEL-3)
-			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
-																																							  
+			if 'yel' in INC_KEYS:
+				for key in range(4):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'yel', key + MAX_YEL-3)
+				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+
 			# Red Stars
-			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
-			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
-																																							  
-			# Diamonds
-			if MAX_DMD:
-				for key in range(1,4):
-					html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'dmd', key)
-				html_file += ' <td></td>\n' 										# Vertical Divider                             
+			if 'red' in INC_KEYS:
+				for key in range(4):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
+				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+
+				# Diamonds
+				if MAX_DMD:
+					for key in range(MAX_DMD):
+						html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
+					html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# ISO Levels                                                                                                       
-			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'iso', key + MAX_ISO-3)
-			html_file += ' <td></td>\n' 										# Vertical Divider
+			if 'iso' in INC_KEYS:
+				for key in range(4):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'iso', key + MAX_ISO-3)
+				html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Gear Tiers
-			for key in range(5):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'tier', key + MAX_TIER-4)
-			html_file += ' <td></td>\n' 										# Vertical Divider
+			if 'tier' in INC_KEYS:
+				for key in range(5):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'tier', key + MAX_TIER-4)
+				html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# T4 Abilities
-			for stat in ['bas','spc','ult','pas']:
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat, 7)
-			html_file += ' <td></td>\n' 										# Vertical Divider
+			if 'abil' in INC_KEYS:
+				for stat in ['bas','spc','ult','pas']:
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat, 7)
+				html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Level Ranges
-			for key in range(5):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'lvl', key*5 + MAX_LVL-20)
-			html_file += ' <td></td>\n' 										# Vertical Divider
+			if 'lvl' in INC_KEYS:
+				for key in range(5):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'lvl', key*5 + MAX_LVL-20)
+				html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# OP Ranges
-			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
+			if 'op' in INC_KEYS:
+				for key in range(4):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
 
 			html_file += '</tr>\n'
 
@@ -273,7 +312,7 @@ def generate_analysis_body(alliance_info, stats, hist_date, html_cache, use_rang
 
 
 
-def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data, hist_date, stat, key=None):
+def get_member_stat(member_stats, stats_range, color_set, html_cache, stale_data, hist_date, stat, key=None):
 
 	if key is None:
 		member_stat = member_stats.get(stat,0)
@@ -289,7 +328,7 @@ def get_member_stat(member_stats, stats_range, use_range, html_cache, stale_data
 	else:
 		field_value = f"{member_stat:+.2f}" if hist_date else f"{member_stat:.2f}"
 
-	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=None, use_range=use_range), field_value)	# Force hist_date to none -- makes more sense than historical coloration
+	return ' <td class="%s">%s</td>\n' % (get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=None, color_set=color_set), field_value)	# Force hist_date to none -- makes more sense than historical coloration
 
 
 
@@ -348,7 +387,7 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 
 			# Diamonds
 			if MAX_DMD:
-				for key in range(1,4):
+				for key in range(1,6):
 					get_stat_diff(stats, hist_stats, member, 'dmd', key)
 
 			# ISO Levels
@@ -497,7 +536,7 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 
 		# Calc avg_ values from tot_ values.
 		for key in ['yel','red','dmd','tier','lvl','iso','op']:
-			member_stats['avg_'+key] = tot_vals.get(key,0) / max(alliance_info['members'].get(member,{}).get('tcc'),1)
+			member_stats['avg_'+key] = tot_vals.get(key,0) / max(member_stats['tcc'],1)
 
 			# Add these average to our ranges
 			stats_range.setdefault('avg_'+key,[]).append(member_stats['avg_'+key])
@@ -515,6 +554,7 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 	stats['max_yel']  = max(max(stats_range['yel']),  4)
 	stats['max_red']  = max(max(stats_range['red']),  4)
 	stats['max_dmd']  = max(stats_range['dmd'])
+	stats['max_dmd']  = 3 if stats['max_dmd'] in (1,2) else stats['max_dmd']
 	stats['max_iso']  = MAX_ISO
 	stats['min_iso']  = MIN_ISO
 	stats['max_tier'] = max(max(stats_range['tier']), 5)
