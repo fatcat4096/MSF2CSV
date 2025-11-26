@@ -229,6 +229,8 @@ def request_alliance_members(ACCESS_TOKEN):
 @timed(level=3)
 def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
 
+	PARAM_SINCE = {'since':asOf} if asOf else {}
+
 	# Attempt up to three times
 	for x in range(3):
 
@@ -236,7 +238,7 @@ def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
 		response = requests.get(
 			headers = get_headers(ACCESS_TOKEN),
 			url     = f'{API_ENDPOINT}/player/v1/roster/member/{memberid}',	# Individual roster request  
-			params  = {'since':asOf} if asOf else {}, 						# Hash for previous API request
+			params  = {'statsFormat':'csv'} | PARAM_SINCE, 							# Hash for previous API request
 		)
 
 		# Exit loop if we got a successful response
@@ -260,7 +262,11 @@ def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
 		response = requests.get(
 			headers =  get_headers(ACCESS_TOKEN),
 			url     = f'{API_ENDPOINT}/game/v1/characters',
-			params  = {'status':'playable' if PLAYABLE else 'unplayable'},
+			params  = {
+						'itemFormat':'id',
+						'traitFormat':'id',
+						'status':'playable' if PLAYABLE else 'unplayable',
+					  },
 		)
 
 		# Exit loop if we got a successful response

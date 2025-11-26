@@ -523,7 +523,7 @@ def parse_roster_api(response, processed_chars, other_data):
 		if not char_name:
 			print ("missing translation for",entry)
 			continue
-		
+
 		char_info = processed_chars.setdefault(char_name,{})
 		
 		char_info['lvl']   = entry.get('level',0)
@@ -543,10 +543,11 @@ def parse_roster_api(response, processed_chars, other_data):
 		pas = str(entry.get('passive',0))
 
 		char_info['abil'] = int(bas+spc+ult+pas)
-		
-		iso_class = entry.get('iso8',{}).get('active')
 
-		iso_classes =  {'fortifier':1,
+		iso_entry = entry.get('iso8').split(',')
+		iso_class = iso_entry[6] if len(iso_entry) > 6 else None
+
+		iso_classes = {	'fortifier':1,
 						'healer':2,
 						'skirmisher':3,
 						'raider':4,
@@ -554,7 +555,13 @@ def parse_roster_api(response, processed_chars, other_data):
 
 		other_data[char_name] = iso_classes.get(iso_class,0)
 
-		char_info['iso'] = entry.get('iso8',{}).get(iso_class,0)
+		iso_index = {	'striker':7,
+						'fortifier':8,
+						'healer':9,
+						'skirmisher':10,
+						'raider':11}.get(iso_class)
+
+		char_info['iso'] = int(iso_entry[iso_index]) if iso_class and iso_index+1 <= len(iso_entry) else 0
 
 
 
@@ -584,16 +591,15 @@ def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 			char_list.append(char_name)
 		
 			for trait in char.get('traits',[]):
-				traits.setdefault(trait['id'],{})[char_name] = 1
+				traits.setdefault(trait,{})[char_name] = 1
 			
 			for trait in char.get('eventTraits',[]):
-				traits.setdefault(trait['id'],{})[char_name] = 1
+				traits.setdefault(trait,{})[char_name] = 1
 			
 			for trait in char.get('invisibleTraits',[]):
-				if not trait.get('alwaysInvisible'):
-					traits.setdefault(trait['id'],{})[char_name] = 1
+				traits.setdefault(trait,{})[char_name] = 1
 
 	# Delete all Useless traits
-	for useless in ['AnniversaryElite', 'Archenemy', 'Couples', 'Energized', 'Juneteenth', 'KnowhereHeist', 'MarvelMoms', 'PoolPals', 'SpiritofVengeance', 'StrikeAsset', 'Ultron', 'United', 'Wave1Avenger', 'WebSlinger']:
+	for useless in ['AnniversaryElite', 'Archenemy', 'Couples', 'Chargeable', 'Energized', 'Exposed', 'Juneteenth', 'KnowhereHeist', 'MarvelMoms', 'PoolPals', 'SpiritofVengeance', 'StrikeAsset', 'Ultron', 'United', 'Wave1', 'Wave1Avenger', 'WebSlinger']:
 		if not traits.pop(useless, None):
 			print (f'{ansi.bold}No longer need to delete: {ansi.ltyel}{useless}{ansi.reset}')
