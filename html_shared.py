@@ -248,6 +248,7 @@ def translate_name(value):
 						"InfinityWatch": "Infinity<br>Watch",
 						"Infinity Watch": "Infinity<br>Watch",
 						"Invader": "Invaders",
+						"KnullChallengers": "Knull<br>Challengers",
 						"KnowhereHeist": "Knowhere<br>Heist",
 						"MarvelMoms": "Marvel Moms",
 						"MastersOfEvil": "Masters<br>Of Evil",
