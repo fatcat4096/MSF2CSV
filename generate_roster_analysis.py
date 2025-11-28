@@ -63,9 +63,6 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 
 	ACTUALS = stat_type == 'actual'
 
-	# Pull formatting info from table_format
-	INC_KEYS = table_format.get('inc_keys', {})
-
 	# Pull max values for each type
 	MAX_YEL  = stats['max_yel'] 
 	MAX_RED  = stats['max_red'] 
@@ -75,6 +72,20 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	MAX_TIER = stats['max_tier']
 	MAX_LVL  = stats['max_lvl']
 	MAX_OP   = stats['max_op']  
+
+	# Explicitly include 'dmd' if 'red' included
+	INC_KEYS = table_format.get('inc_keys', {})
+	if 'red' in INC_KEYS and MAX_DMD and 'dmd' not in INC_KEYS:
+		INC_KEYS.insert(INC_KEYS.index('red')+1, 'dmd')
+
+	# Pull formatting info from table_format
+	INC_YEL  = 'yel'  in INC_KEYS
+	INC_RED  = 'red'  in INC_KEYS
+	INC_ISO  = 'iso'  in INC_KEYS
+	INC_TIER = 'tier' in INC_KEYS
+	INC_ABIL = 'abil' in INC_KEYS
+	INC_LVL  = 'lvl'  in INC_KEYS
+	INC_OP   = 'op'   in INC_KEYS
 
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
@@ -93,42 +104,48 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	html_file += f' <td rowspan="2" {sort_func % 1} style="min-width:80px">Total<br>Power</td>\n'
 	html_file += f' <td rowspan="2" {sort_func % 2} style="min-width:80px">Strongest<br>Team</td>\n'
 	html_file += f' <td rowspan="2" {sort_func % 3} style="min-width:50px">Total<br>Chars</td>\n'
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 	
-	html_file += ' <td width="300" colspan="7">Average</td>\n'		# All Avg Stats
-	html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	# Alter the size of the header based on the information being included.
+	AVG_KEYS = len(INC_KEYS) - ('abil' in INC_KEYS)
+	WIDTH    = AVG_KEYS*50
+	COLSPAN  = AVG_KEYS
+	AVERAGE  = 'Avg' if AVG_KEYS == 1 else 'Average'
 
-	if 'yel' in INC_KEYS:
-		html_file += ' <td width="180" colspan="4">Stars</td>\n'		# Yel - 4 cols
+	html_file += f' <td width="{WIDTH}" colspan="{COLSPAN}">{AVERAGE}</td>\n'		# All Avg Stats
+	html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+
+	if INC_YEL:
+		html_file += f' <td width="180" colspan="4">Stars</td>\n'		# Yel - 4 cols
+		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+
+	if INC_RED:
+		html_file += f' <td width="180" colspan="4">Red Stars</td>\n'	# Red - 4 cols
+		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+
+	if MAX_DMD:
+		html_file += f' <td width="{40*MAX_DMD}" colspan="{MAX_DMD}">Diamonds</td>\n'				# Diamonds - 3 cols
 		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if 'red' in INC_KEYS:
-		html_file += ' <td width="180" colspan="4">Red Stars</td>\n'	# Red - 4 cols
-		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if INC_LVL:
+		html_file += f' <td width="280" colspan="5">Levels</td>\n'
+		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-		if MAX_DMD:
-			html_file += f' <td width="{40*MAX_DMD}" colspan="{MAX_DMD}">Diamonds</td>\n'		# Diamonds - 3 cols
-			html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if INC_ISO:
+		html_file += f' <td width="180" colspan="4">ISO</td>\n'			# ISO - 4 cols
+		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if 'iso' in INC_KEYS:
-		html_file += ' <td width="180" colspan="4">ISO</td>\n'			# ISO - 4 cols
-		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if INC_TIER:
+		html_file += f' <td width="240" colspan="5">Gear Tier</td>\n'	# Tier - 5 cols
+		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if 'tier' in INC_KEYS:
-		html_file += ' <td width="240" colspan="5">Gear Tier</td>\n'	# Tier - 5 cols
-		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if INC_ABIL:
+		html_file += f' <td width="180" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
+		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if 'abil' in INC_KEYS:
-		html_file += ' <td width="180" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
-		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
-
-	if 'lvl' in INC_KEYS:
-		html_file += ' <td width="280" colspan="5">Levels</td>\n'
-		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
-
-	if 'op' in INC_KEYS:
-		html_file += ' <td width="180" colspan="4">OP</td>\n'		    # OP - 4 cols
-		html_file += '</tr>\n'
+	if INC_OP:
+		html_file += f' <td width="180" colspan="4">OP</td>\n'		    # OP - 4 cols
+		html_file += f'</tr>\n'
 
 	# Second Row with subheadings.
 	html_file += '<tr>\n'
@@ -136,61 +153,38 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb", '%s', table_id)
 
-	# Averages
-	html_file += f' <td {sort_func % 5}>Yel</td>\n'
-	html_file += f' <td {sort_func % 6}>Red</td>\n'
-	html_file += f' <td {sort_func % 7}>Dmd</td>\n'
-	html_file += f' <td {sort_func % 8}>Tier</td>\n'
-	html_file += f' <td {sort_func % 9}>Lvl</td>\n'
-	html_file += f' <td {sort_func % 10}>ISO</td>\n'
-	html_file += f' <td {sort_func % 11}>OP</td>\n'
+	BASE_COLS = 5
 
-	BASE_COLS = 13
-	
+	# Averages
+	for key in INC_KEYS:
+		if key != 'abil':
+			KEY = {'iso':'ISO','op':'OP'}.get(key, key.title())
+			html_file += f' <td {sort_func % BASE_COLS}>{KEY}</td>\n'
+			BASE_COLS += 1
+
 	# Yellow Stars
-	if 'yel' in INC_KEYS:
+	if INC_YEL:
 		for idx in range(4):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_YEL-3}'+['','+'][idx!=3 and not ACTUALS])
 		BASE_COLS += 5
 	
 	# Red Stars
-	if 'red' in INC_KEYS:
+	if INC_RED:
 		for idx in range(4):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_RED-3}'+['','+'][idx!=3 and not ACTUALS])
 		BASE_COLS += 5
 
-		# Diamonds are included in Red Stars
-		if MAX_DMD:
-			for idx in range(MAX_DMD):
-				html_file += f' <td {sort_func % (BASE_COLS+idx)}>{idx+1}&#x1F48E;</td>\n'
-			BASE_COLS += MAX_DMD+1
-
-	# ISO Levels
-	if 'lvl' in INC_KEYS:
-		html_file += f' <td {sort_func % (BASE_COLS)}>%s</td>\n' % ([f'{MAX_ISO-3}+',f'{MIN_ISO}-{MAX_ISO-3}'][ACTUALS])
-		for idx in range(3):
-			html_file += f' <td {sort_func % (BASE_COLS+idx+1)}>%s</td>\n' % (f'{idx + MAX_ISO-2}' + ['','+'][idx!=2 and not ACTUALS])
-		BASE_COLS += 5
-
-	# Gear Tiers
-	if 'tier' in INC_KEYS:
-		for idx in range(5):
-			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_TIER-4}'+['','+'][idx!=4 and not ACTUALS])
-		BASE_COLS += 6
-
-	# T4 Abilities
-	if 'abil' in INC_KEYS:
-		html_file += f' <td {sort_func % (BASE_COLS)}>Bas</td>\n'
-		html_file += f' <td {sort_func % (BASE_COLS+1)}>Spc</td>\n'
-		html_file += f' <td {sort_func % (BASE_COLS+2)}>Ult</td>\n'
-		html_file += f' <td {sort_func % (BASE_COLS+3)}>Pas</td>\n'
-		BASE_COLS += 5
+	# Diamonds are included in Red Stars
+	if MAX_DMD:
+		for idx in range(MAX_DMD):
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>{idx+1}&#x1F48E;</td>\n'
+		BASE_COLS += MAX_DMD+1
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb lvl", '%s', table_id)
 
 	# Level Ranges
-	if 'lvl' in INC_KEYS:
+	if INC_LVL:
 		for idx in range(5):
 			LVL_END = ['+',f'-{(idx*5+MAX_LVL-16)%[100,10][idx*5+MAX_LVL>120]}'][ACTUALS] if idx!=4 else ''
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx*5+MAX_LVL-20}{LVL_END}')
@@ -199,8 +193,29 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb", '%s', table_id)
 
+	# ISO Levels
+	if INC_ISO:
+		html_file += f' <td {sort_func % (BASE_COLS)}>%s</td>\n' % ([f'{MAX_ISO-3}+',f'{MIN_ISO}-{MAX_ISO-3}'][ACTUALS])
+		for idx in range(3):
+			html_file += f' <td {sort_func % (BASE_COLS+idx+1)}>%s</td>\n' % (f'{idx + MAX_ISO-2}' + ['','+'][idx!=2 and not ACTUALS])
+		BASE_COLS += 5
+
+	# Gear Tiers
+	if INC_TIER:
+		for idx in range(5):
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_TIER-4}'+['','+'][idx!=4 and not ACTUALS])
+		BASE_COLS += 6
+
+	# T4 Abilities
+	if INC_ABIL:
+		html_file += f' <td {sort_func % (BASE_COLS)}>Bas</td>\n'
+		html_file += f' <td {sort_func % (BASE_COLS+1)}>Spc</td>\n'
+		html_file += f' <td {sort_func % (BASE_COLS+2)}>Ult</td>\n'
+		html_file += f' <td {sort_func % (BASE_COLS+3)}>Pas</td>\n'
+		BASE_COLS += 5
+
 	# Overpower Levels
-	if 'op' in INC_KEYS:
+	if INC_OP:
 		for idx in range(4):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_OP-3}'+['','+'][idx!=3 and not ACTUALS])
 		BASE_COLS +=5
@@ -253,8 +268,9 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# Averages
-			for stat in ['yel', 'red', 'dmd', 'tier', 'lvl', 'iso', 'op']:
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, f'avg_{stat}')
+			for stat in INC_KEYS:
+				if stat != 'abil':
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, f'avg_{stat}')
 			html_file += ' <td></td>\n' 										# Vertical Divider
 			
 			# Yellow Stars
@@ -269,11 +285,17 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
 				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 
-				# Diamonds
-				if MAX_DMD:
-					for key in range(MAX_DMD):
-						html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
-					html_file += ' <td></td>\n' 										# Vertical Divider                             
+			# Diamonds
+			if MAX_DMD:
+				for key in range(MAX_DMD):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
+				html_file += ' <td></td>\n' 										# Vertical Divider                             
+
+			# Level Ranges
+			if 'lvl' in INC_KEYS:
+				for key in range(5):
+					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'lvl', key*5 + MAX_LVL-20)
+				html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# ISO Levels                                                                                                       
 			if 'iso' in INC_KEYS:
@@ -291,12 +313,6 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 			if 'abil' in INC_KEYS:
 				for stat in ['bas','spc','ult','pas']:
 					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat, 7)
-				html_file += ' <td></td>\n' 										# Vertical Divider
-
-			# Level Ranges
-			if 'lvl' in INC_KEYS:
-				for key in range(5):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'lvl', key*5 + MAX_LVL-20)
 				html_file += ' <td></td>\n' 										# Vertical Divider
 
 			# OP Ranges
@@ -325,6 +341,8 @@ def get_member_stat(member_stats, stats_range, color_set, html_cache, stale_data
 		field_value = '-'
 	elif member_stat == int(member_stat):
 		field_value = f"{member_stat:+,}" if hist_date else f"{member_stat:,}"
+	elif member_stat > 10:
+		field_value = f"{member_stat:+.1f}" if hist_date else f"{member_stat:.1f}"
 	else:
 		field_value = f"{member_stat:+.2f}" if hist_date else f"{member_stat:.2f}"
 
