@@ -30,12 +30,12 @@ def generate_strike_teams(alliance_info):
 
 	new_teams = alliance_info.setdefault('strike_teams',{})
 
-	for raid_type in ('annihilation','spotlight'):
+	for raid_type in ('annihilation','spotlight','thunderstrike'):
 
 		if not new_teams.get(raid_type):
 
 			# If not there, just put the member list in generic groups of 8.
-			print (f"Valid {raid_type} strike_team definition not found. Creating default strike_team from member list.")
+			print (f"Valid {raid_type.title()} strike_team definition not found. Creating default strike_team from member list.")
 			
 			# Get member_list and sort them.
 			members = sorted(alliance_info['members'],key=str.lower)
@@ -59,6 +59,7 @@ strike_teams = {}
 	# Create each strike_team definition
 	new_file += generate_strike_team('annihilation', new_teams['annihilation'], 'Used for Annihilation Raid output.')
 	new_file += generate_strike_team('spotlight',    new_teams['spotlight'],    'Used for Spotlight Raids and other output.')
+	new_file += generate_strike_team('thunderstrike',new_teams['thunderstrike'],'Used for Thunderstrike Raid output.')
 
 	# Write it to disk.
 

@@ -56,7 +56,7 @@ VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver
 # Meta Heroes for use in Thunderstrike Raid
 tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
 					'max_others': 10,
-					'strike_teams': 'spotlight',
+					'strike_teams': 'thunderstrike',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [

@@ -177,7 +177,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			
 			# If response was successful, parse the member_roster dict
 			if response and response.ok and response.status_code != 344:
-				
+
 				parse_roster_api(response, processed_chars, other_data)
 				
 				# Merge the processed roster information into our Alliance Info
@@ -511,7 +511,7 @@ def update_strike_teams(alliance_info):
 	updated = False
 
 	# Fix missing people in each defined strike team.
-	for raid_type in ('spotlight','annihilation'):
+	for raid_type in ('spotlight','annihilation','thunderstrike'):
 
 		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
 		if 'strike_teams' in alliance_info and raid_type in alliance_info['strike_teams'] and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
@@ -539,9 +539,14 @@ def migrate_strike_teams(alliance_info):
 	# Update old format strike team definitions.
 	if 'strike_teams' in globals():
 		
-		# Orchis defined, but no Chaos yet?
+		# Chaos defined, but no Annihilation yet?
 		if 'chaos' in strike_teams and 'annihilation' not in strike_teams:
 			strike_teams['annihilation'] = strike_teams['chaos']
+			updated = True
+
+		# Annihilation defined, but no Thunderstrike yet?
+		if 'annihilation' in strike_teams and 'thunderstrike' not in strike_teams:
+			strike_teams['thunderstrike'] = strike_teams['annihilation']
 			updated = True
 
 		# Look for outdated strike_team definitions
@@ -556,6 +561,11 @@ def migrate_strike_teams(alliance_info):
 		# Chaos defined, but no Annihilation yet?
 		if 'chaos' in alliance_info['strike_teams'] and 'annihilation' not in alliance_info['strike_teams']:
 			alliance_info['strike_teams']['annihilation'] = alliance_info['strike_teams']['chaos']
+			updated = True
+
+		# Annihilation defined, but no Thunderstrike yet?
+		if 'annihilation' in alliance_info['strike_teams'] and 'thunderstrike' not in alliance_info['strike_teams']:
+			alliance_info['strike_teams']['thunderstrike'] = alliance_info['strike_teams']['annihilation']
 			updated = True
 	
 		# Look for outdated strike_team definitions
