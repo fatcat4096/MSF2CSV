@@ -235,6 +235,7 @@ def translate_name(value):
 						"Brotherhood": "B'Hood",
 						"ChaosTeam": "Chaos Team",
 						"DarkHunter": "Dark<br>Hunters",
+						"DARK_PROMOTION": "Dark<br>Promotions",
 						"Defender": "Defenders",
 						"Eternal": "Eternals",
 						"FantasticFour": "Fantastic<br>Four",
