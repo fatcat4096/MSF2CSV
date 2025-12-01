@@ -123,7 +123,7 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 		html_file += f' <td width="180" colspan="4">Red Stars</td>\n'	# Red - 4 cols
 		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if MAX_DMD:
+	if INC_RED and MAX_DMD:
 		html_file += f' <td width="{40*MAX_DMD}" colspan="{MAX_DMD}">Diamonds</td>\n'				# Diamonds - 3 cols
 		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
@@ -175,7 +175,7 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 		BASE_COLS += 5
 
 	# Diamonds are included in Red Stars
-	if MAX_DMD:
+	if INC_RED and MAX_DMD:
 		for idx in range(MAX_DMD):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>{idx+1}&#x1F48E;</td>\n'
 		BASE_COLS += MAX_DMD+1
@@ -285,11 +285,11 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
 				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 
-			# Diamonds
-			if MAX_DMD:
-				for key in range(MAX_DMD):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
-				html_file += ' <td></td>\n' 										# Vertical Divider                             
+				# Diamonds are dependent on Red Stars
+				if MAX_DMD:
+					for key in range(MAX_DMD):
+						html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
+					html_file += ' <td></td>\n' 										# Vertical Divider                             
 
 			# Level Ranges
 			if 'lvl' in INC_KEYS:
