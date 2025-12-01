@@ -12,7 +12,6 @@ from roster_refresh  import get_roster_refresh
 
 
 
-
   #8888b.  8888888888 88888888888      8888888b.   .d88888b.   .d8888b. 88888888888 8888888888 8888888b.       8888888b.  8888888888 8888888b.   .d88888b.  8888888b. 88888888888 
 #88P  Y88b 888            888          888   Y88b d88P" "Y88b d88P  Y88b    888     888        888   Y88b      888   Y88b 888        888   Y88b d88P" "Y88b 888   Y88b    888     
 #88    888 888            888          888    888 888     888 Y88b.         888     888        888    888      888    888 888        888    888 888     888 888    888    888     
@@ -30,25 +29,35 @@ async def get_roster_report(
 	self, context: Context, table_format
 ) -> None:
 
+	# See if we've already determined an alliance_name
+	alliance_name = table_format.get('alliance_name')
+	
+	# Determine what alliances are available to choose from
+	avail_alliances = [alliance_name] if alliance_name else await get_avail_alliances(self, context)
+	
 	# Figure out whether we are immediately prompting for information
-	NEED_ALLI = len(await get_avail_alliances(self, context)) != 1			
+	NEED_ALLI = len(avail_alliances) != 1			
 	NEED_HIST = table_format.get('inc_hist') or table_format.get('inline_hist')
 	HAVE_HIST = table_format.get('use_oldest')
 	NEED_MEMB = table_format.get('select_members')
 	NEED_KEYS = table_format.get('custom_keys')
 
 	PROMPTING = NEED_ALLI or (NEED_HIST and not HAVE_HIST) or NEED_MEMB or NEED_KEYS
-	DEFERRED  = not PROMPTING and context.interaction
 	REFRESH_ENABLED = not await refresh_disabled(self, context)
 
-	# If not asking clarifying questions immediately,
-	# show "MSFRosterBot is Thinking" to buy me some time.
-	if DEFERRED:
-		try:	await context.interaction.response.defer(ephemeral=False)
-		except:	pass
+	# Make note of whether we are sending this in_private
+	in_private = table_format.get('in_private')
+
+	# Defer ASAP, just make sure we select Ephemeral correctly.
+	try:	await context.interaction.response.defer(ephemeral=PROMPTING or in_private)
+	except:	pass
+
+	# If PROMPTING and we deferred early, need to consume the deferral before prompting
+	if PROMPTING and table_format.pop('deferred', None):
+		await context.send(content='_ _', delete_after=0)
 
 	# Determine which, if any, alliance is valid for this combination of user, roles, and channel.
-	alliance_name = table_format.get('alliance_name') or await lookup_alliance(self, context)
+	alliance_name = alliance_name or await lookup_alliance(self, context, alliances_found=avail_alliances)
 
 	# If no valid alliance, have to bail.
 	if not alliance_name:
@@ -93,6 +102,11 @@ async def get_roster_report(
 
 	# Before we start, make sure we are not already running the same report for the same alliance. 
 	if await report_in_progress(alliance_name, output_name, start_time) != start_time:
+
+		# If we deferred early, need to consume the deferral before output
+		if table_format.pop('deferred', None):
+			await context.send(content='_ _', delete_after=0)
+
 		return await send_rosterbot_error(self, context, f"**/roster {output_name}** for **{msf2csv.remove_tags(alliance_name)}** already in progress.\nCommand cancelled.")
 
 	# Just log the table_format contents. 
@@ -100,19 +114,18 @@ async def get_roster_report(
 
 	message = None
 	embed   = None
+	refresh = None
 
-	# If we didn't defer interaction, add a message so there's not a long pause
+	# If we Prompted for information and didn't defer interaction, add a message so there's not a long pause
 	# while we grab reports or refresh the rosters.
-	if not DEFERRED:
-		message = await context.send("One moment...", ephemeral=False)
+	if PROMPTING:
+		message = await context.send("One moment...", ephemeral=in_private)
 
 	# How long has it been since Alliance Info has been updated?
 	STALE_DATA = not msf2csv.fresh_enough(alliance_name)
 	
 	# Are we within the 24 hours after Sunday Reset / End of Season?
 	SEASON_END = not (datetime.now(timezone.utc) + timedelta(hours=3)).weekday()
-	if SEASON_END:
-		self.bot.logger.info (f"{ansi.yellow}  SEASON END:{ansi.reset} Checking for 'different members' condition.")
 
 	# If STALE_DATA or within 24 hours after Sunday Reset, look for AUTH
 	if STALE_DATA or SEASON_END:
@@ -123,37 +136,52 @@ async def get_roster_report(
 		# Has member list changed at all?
 		DIFF_MEMBERS = AUTH and not AUTH['same_members']
 
-		# If stale data, starting a refresh
-		if STALE_DATA: 
-			self.bot.logger.info (f"{ansi.yellow}  STALE DATA:{ansi.reset} Past 24 hours; will force Refresh.")
-		# Otherwise, it's SEASON_END and the members have changed.
-		elif DIFF_MEMBERS:
-			self.bot.logger.info (f"{ansi.yellow}  SEASON END:{ansi.reset} Found 'different members' in AUTH; will force Refresh.")
-
 		# If a valid AUTH is available and alliance info is out of date
 		# (STALE DATA or diff members), generate a report and then refresh
 		if AUTH and (STALE_DATA or DIFF_MEMBERS):
+
+			# If stale data, starting a refresh
+			if STALE_DATA: 
+				self.bot.logger.info (f"{ansi.yellow}  STALE DATA:{ansi.reset} Past 24 hours; will force Refresh.")
+			# Otherwise, it's SEASON_END and the members have changed.
+			elif DIFF_MEMBERS:
+				self.bot.logger.info (f"{ansi.yellow}  SEASON END:{ansi.reset} Found 'different members' in AUTH; will force Refresh.")
 
 			# If we're generating multiple images, only get the first image.
 			if table_format.get('output_format') == 'image' and not table_format.get('only_section'):
 				table_format['render_sections'] = True	
 
-			report = await get_report(self, alliance_name, table_format)
+			REFRESH_FIRST = (await get_prefs(context)).get('refresh_first', False)
 
-			# Were we unable to generate a report? 
-			if not report:
-				error_msg = 'Problem with cached data. Refreshing roster info.'
-				if message:	await send_message(context, message, content=error_msg)
-				message   = await send_rosterbot_error(self, context, error_msg)
+			report = [] if REFRESH_FIRST else await get_report(self, alliance_name, table_format)
+
+			# If we deferred early, need to consume the deferral immediately before output
+			if table_format.pop('deferred', None):
+				await context.send(content='_ _', delete_after=0)
 
 			# For automatic roster refresh, always just provide summary only
 			AUTH['show_old'] = 2
+			
+			# If we don't have a report, but we should have generated one, report the issue? 
+			if not (report or REFRESH_FIRST):
+				error_msg = 'Problem with cached data. Refreshing roster info.'
+				message   = await send_rosterbot_error(self, context, error_msg, message=message, ephemeral=in_private, delete_after=None)
+			else:
+				# Prepare our arguments
+				content     = None if report else message.content if message else 'One moment...'
+				attachments = report if report else []
+
+				# Keep a reference to the original message
+				message = await send_message(context, message, content=content, attachments=attachments, ephemeral=in_private)
 
 			# Next, request a refresh of the roster.
-			message, embed = await get_roster_refresh(self, context, AUTH, message, report if report else [])
+			refresh, embed = await get_roster_refresh(self, context, AUTH, in_private, False, table_format.get('render_sections'))
 
 			# Update alliance_name with new name if changed during refresh
 			alliance_name = AUTH['alliance_name']
+			
+			# Verify the refresh was succesful
+			STALE_DATA = not msf2csv.fresh_enough(alliance_name)
 
 	# If we're generating multiple images, render them in sections.
 	if table_format.get('output_format') == 'image' and not table_format.get('only_section'):
@@ -170,6 +198,10 @@ async def get_roster_report(
 	# If not STALE_DATA, this is the first time we've generated a report
 	# If STALE_DATA, this is updating the original report after refresh
 	report = await get_report(self, alliance_name, table_format)
+
+	# If we deferred early, need to consume the deferral immediately before output
+	if table_format.pop('deferred', None):
+		await context.send(content='_ _', delete_after=0)
 
 	# If we weren't able to generate an image, report the issue then bail
 	if not report:
@@ -203,8 +235,12 @@ async def get_roster_report(
 		# Finally, build the embed
 		embed = await get_rosterbot_embed(self, context, description=description, color=0x3cde07, inc_icon=False, inc_footer=False)	# Green, indicates we are done.
 
-	# Send the message with the generated (or updated) reports
-	message = await send_message(context, message=message, embed=embed, attachments=report if report else [])
+	# IF we refreshed, delete the refresh message, we will refresh the original message
+	if refresh:
+		await refresh.delete()
+
+	# Send the message with newly generated (or refreshed) reports
+	await send_message(context, message=message, embed=embed, attachments=report if report else [], ephemeral=in_private)
 
 	# If more than one file was returned, request and send the rest, four at a time
 	while table_format.get('render_sections'):
@@ -213,13 +249,18 @@ async def get_roster_report(
 		# Something went wrong during segmented rendering. Abort
 		if not report:	break
 
-		await send_message(context, attachments=report)
+		await send_message(context, attachments=report, ephemeral=in_private)
 
 	# Signal that we're done with this
 	await report_is_complete(alliance_name, output_name, start_time)
 
 	# Log the completion time
 	self.bot.logger.info (f'Report Complete. Total time is {ansi.bold}>> {(datetime.now()-start_time).seconds}s <<{ansi.reset}')
+
+	# If stale data and couldn't refresh, prompt to link allinace.
+	if STALE_DATA and REFRESH_ENABLED:
+		AUTH_URL = await get_auth_url(self, context)
+		await context.send(f"Data is stale. No linked account.\n[**CLICK HERE**]({AUTH_URL}) to link and allow auto-refresh.", ephemeral=True, delete_after=30)
 
 
 
@@ -254,6 +295,37 @@ async def get_report(
 		self.bot.logger.info (f" {ansi.cyan}result file: {ansi.ltcyan}{os.path.basename(file)}{ansi.reset}")
 
 	return report
+
+
+
+  #8888b.  8888888888 88888888888       .d8888b.  888    888        d8888 8888888b.        .d8888b.   .d88888b.  888     888 888b    888 88888888888 
+#88P  Y88b 888            888          d88P  Y88b 888    888       d88888 888   Y88b      d88P  Y88b d88P" "Y88b 888     888 8888b   888     888     
+#88    888 888            888          888    888 888    888      d88P888 888    888      888    888 888     888 888     888 88888b  888     888     
+#88        8888888        888          888        8888888888     d88P 888 888   d88P      888        888     888 888     888 888Y88b 888     888     
+#88  88888 888            888          888        888    888    d88P  888 8888888P"       888        888     888 888     888 888 Y88b888     888     
+#88    888 888            888          888    888 888    888   d88P   888 888 T88b        888    888 888     888 888     888 888  Y88888     888     
+#88b  d88P 888            888          Y88b  d88P 888    888  d8888888888 888  T88b       Y88b  d88P Y88b. .d88P Y88b. .d88P 888   Y8888     888     
+  #8888P88 8888888888     888           "Y8888P"  888    888 d88P     888 888   T88b       "Y8888P"   "Y88888P"   "Y88888P"  888    Y888     888     
+
+
+
+# Actually request the report from msf2csv.py.
+async def get_char_count(
+	self, alliance_name, table_format
+):
+	loop = asyncio.get_event_loop()
+
+	# Pre-fetch alliance_info and log which file was used for output.
+	alliance_info = msf2csv.find_cached_data(alliance_name)
+
+	# If no alliance_info found, bail
+	if not alliance_info:
+		return
+
+	output = table_format.get('output')
+	table  = msf2csv.tables.get(output)
+	await loop.run_in_executor(None, partial(msf2csv.generate_html, alliance_info, table, table_format))
+
 
 
   #8888b.  8888888888 88888888888      888    888 8888888 .d8888b. 88888888888      8888888b.        d8888 88888888888 8888888888 
@@ -292,9 +364,8 @@ class SelectHistoryPicklist(discord.ui.Select):
 	async def callback(self, interaction: discord.Interaction) -> None:
 		hist_date = self.values[0]
 
-		result_embed = discord.Embed(color=0xBEBEFE)
+		result_embed = discord.Embed(color=0x57F287)
 		result_embed.description = f"Working with **{hist_date}**"
-		result_embed.colour = 0x57F287
 
 		try:
 			await interaction.response.edit_message(embed=result_embed, content=None, view=None, delete_after=10)
@@ -377,19 +448,20 @@ class SelectKeysPicklist(discord.ui.Select):
 			min_values=1,
 		)
 		self.max_values = len(poss_keys)
-		self.options	= [discord.SelectOption(label = key, description = poss_keys[key], value = key.lower(), default = key.lower() in def_keys) for key in poss_keys]
+		self.options	= [discord.SelectOption(label={'op':'OP','iso':'ISO'}.get(key,key.title()), description=poss_keys[key], value=key, default=key in def_keys) for key in poss_keys]
 
 	async def callback(self, interaction: discord.Interaction) -> None:
 		selected_keys = self.values
 
-		result_embed = discord.Embed(color=0xBEBEFE)
-		result_embed.description = f"You selected keys: **{selected_keys}**"
-		result_embed.colour = 0x57F287
+		formatted_keys = [{'op':'OP','iso':'ISO'}.get(x,x.title()) for x in selected_keys]
+
+		result_embed = discord.Embed(color=0x57F287)
+		result_embed.description = f"You selected keys: **{formatted_keys}**"
 
 		try:
 			await interaction.response.edit_message(embed=result_embed, content=None, view=None, delete_after=10)
 		except Exception as e:
-			print (f'{ansi.ltred}ERROR!{ansi.reset} Caught {type(e).__name__}: {e}  during edit_message(). Keys selected were {selected_keys}.')
+			print (f'{ansi.ltred}ERROR!{ansi.reset} Caught {type(e).__name__}: {e}  during edit_message(). Keys selected were {formatted_keys}.')
 
 		self.view.value = selected_keys
 		self.view.stop()
@@ -400,22 +472,36 @@ async def get_custom_keys(
 	self, context: Context, table_format
 ) -> None:
 
-	poss_keys = {	'Power' : 'Character Power',
-					'ISO'   : 'ISO Level',
-					'Lvl'   : 'Character Level',
-					'Tier'  : 'Gear Tier',
-					'OP'    : 'Overpower Level',
-					'Yel'   : 'Yellow Stars',
-					'Red'   : 'Red Stars',
-					'Abil'  : 'Ability Levels',
-					'Cls'   : 'ISO Class'	}
-
 	# Get the default keys for this output.
-	table    = msf2csv.tables.get(table_format.get('output'),{})
-	def_keys = msf2csv.get_table_value(table_format, table, {}, key='inc_keys', default=['power','tier','iso'])
+	output   = table_format.get('output')
+	table    = msf2csv.tables.get(output,{})
+	
+	# Special handling for Roster Analysis
+	if output == 'roster_analysis':
+		poss_keys = {	'yel'   : 'Yellow Stars',
+						'red'   : 'Red Stars / Diamonds',
+						'lvl'   : 'Character Level',
+						'iso'   : 'ISO Level',
+						'tier'  : 'Gear Tier',
+						'abil'  : 'Ability Levels',
+						'op'    : 'Overpower Level'}
+		default = ['yel', 'red', 'lvl', 'iso', 'tier', 'abil', 'op'] 
+	else:
+		poss_keys = {	'power' : 'Character Power',
+						'iso'   : 'ISO Level',
+						'lvl'   : 'Character Level',
+						'tier'  : 'Gear Tier',
+						'op'    : 'Overpower Level',
+						'yel'   : 'Yellow Stars',
+						'red'   : 'Red Stars / Diamonds',
+						'abil'  : 'Ability Levels',
+						'cls'   : 'ISO Class'	}
+		default = ['power','tier','iso']
+
+	def_keys = msf2csv.get_table_value(table_format, table, {}, key='inc_keys', default=default)[:]
 	
 	# Special handling for ISO Class.
-	if msf2csv.get_table_value(table_format, table, {}, key='inc_class', default=False):
+	if 'cls' in poss_keys and msf2csv.get_table_value(table_format, table, {}, key='inc_class', default=False):
 		def_keys.append('cls')
 
 	view = SelectKeysView(poss_keys, def_keys)
