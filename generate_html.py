@@ -218,7 +218,7 @@ def generate_html(alliance_info, table, table_format, output=''):
 
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += generate_roster_analysis(alliance_info, table_format, html_cache=html_cache)
+			html_file += generate_roster_analysis(alliance_info, table_format, hist_date=hist_date, html_cache=html_cache)
 
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
