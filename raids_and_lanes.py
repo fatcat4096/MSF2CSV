@@ -55,14 +55,27 @@ VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver
 
 # Meta Heroes for use in Thunderstrike Raid
 tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
-					'max_others': 10,
+					'min_tier': 20,
+					'max_others': 0,
 					'strike_teams': 'thunderstrike',
+					'inc_dividers': '323',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['Harbingers']},
-							{'traits': ['Conqueror']},
-							{'traits': ['Stormbound']},
+							{'traits': ['Harbingers'], 'subsections':[	{'meta': VIGILANTE,  'label':'Vigilantes<br>(Harbingers)'},
+																		{'meta': ACCURSED,   'label':'Accursed<br>(Harbingers)'},
+																		{'meta': ['Quasar'], 'label':'Quasar<br>(Harbingers)'},{},
+																		{'meta': F4MCUTEAM,  'label':'Fantastic Four<br>(Harbingers)'},
+																		{'meta': TBOLTS,     'label':'Thunderbolts<br>(Harbingers)'}]},
+							{'traits': ['Conqueror'], 'subsections':[	{'meta': INSIDIOUS,  'label':'Insidious Six<br>(Conquerors)'},
+																		{'meta': BRIMSTONE,  'label':'Brimstone<br>(Conquerors)'},
+																		{'meta': ['Quasar'], 'label':'Quasar<br>(Conquerors)'},{},
+																		{'meta': F4MCUTEAM,  'label':'Fantastic Four<br>(Conquerors)'},
+																		{'meta': HELLFIRE,   'label':'Hellfire Club<br>(Conquerors)'},
+																		{'meta': ['Blastaar'], 'label':'Blastaar<br>(Conquerors)'}]},
+							{'traits': ['Stormbound'], 'subsections':[	{'meta': BRIMSTONE,  'label':'Brimstone<br>(Stormbound)'},
+																		{'meta': IMMORTAL,  'label':'Immortal<br>Weapons<br>(Stormbound)'},
+																		{'meta': ['Thunderstrike'], 'label':'Thunderstrike<br>(Stormbound)'}]},
 							] ]
 					}
 
