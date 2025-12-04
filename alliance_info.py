@@ -149,7 +149,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		for char_name in [char for char in before_filter if char not in other_chars]:
 			table['under_min'].setdefault(player_name,{})[char_name] = True 
 
-	# Start by pulling value from table_format or table.
+	# Start by pulling value from table_format or table
 	max_others  = get_table_value(table_format, table, section, key='max_others', default=len(other_chars))
 	min_others  = get_table_value(table_format, table, section, key='min_others', default=0)
 	
@@ -374,7 +374,14 @@ def insert_dividers(strike_teams, raid_type):
 			if len(team) > 6:
 				team.insert(6,'----')
 
-		# Use 3-2-3 lanes if Spotlight -- OBSOLETE, UNUSED
+		# Use 3-2-3 lanes if Thunder
+		elif raid_type in ('323'):
+			if len(team) > 3:
+				team.insert(3,'----')
+			if len(team) > 6:
+				team.insert(6,'----')
+
+		# Use 2-2-2-2 lanes if Spotlight -- OBSOLETE, UNUSED
 		elif raid_type in ('spotlight'):
 			if len(team) > 2:
 				team.insert(2,'----')
