@@ -13,12 +13,12 @@ strike_teams = {}
 strike_teams["annihilation"] = [
 [### Strike team 1 ###]
 	"Jutch",
-	"Medicus",
+	"Jay",
 	"Daner",
 	"ThatDudeFerbs",
 	"Bestiafa",
 	"Ratty",
-	"Jay",
+	"Medicus",
 	"Infinity",
 ],
 [### Strike team 2 ###]
@@ -26,7 +26,7 @@ strike_teams["annihilation"] = [
 	"FatCat",
 	"Shammy",
 	"Shika",
-	"Flashie",
+	"Lardonsale",
 	"RadicalEvil",
 	"Grednas",
 	"BigDiesel",
@@ -46,12 +46,12 @@ strike_teams["annihilation"] = [
 strike_teams["spotlight"] = [
 [### Strike team 1 ###]
 	"Jutch",
-	"Medicus",
+	"Jay",
 	"Daner",
 	"ThatDudeFerbs",
 	"Bestiafa",
 	"Ratty",
-	"Jay",
+	"Medicus",
 	"Infinity",
 ],
 [### Strike team 2 ###]
@@ -59,7 +59,7 @@ strike_teams["spotlight"] = [
 	"FatCat",
 	"Shammy",
 	"Shika",
-	"Flashie",
+	"Lardonsale",
 	"RadicalEvil",
 	"Grednas",
 	"BigDiesel",
@@ -79,12 +79,12 @@ strike_teams["spotlight"] = [
 strike_teams["thunderstrike"] = [
 [### Strike team 1 ###]
 	"Jutch",
-	"Medicus",
+	"Jay",
 	"Daner",
 	"ThatDudeFerbs",
 	"Bestiafa",
 	"Ratty",
-	"Jay",
+	"Medicus",
 	"Infinity",
 ],
 [### Strike team 2 ###]
@@ -92,7 +92,7 @@ strike_teams["thunderstrike"] = [
 	"FatCat",
 	"Shammy",
 	"Shika",
-	"Flashie",
+	"Lardonsale",
 	"RadicalEvil",
 	"Grednas",
 	"BigDiesel",

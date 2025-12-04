@@ -360,9 +360,6 @@ playable   = {
     },
     {
       "description": "America Chavez hits hard enough to punch through reality itself and is even stronger with Hero Brawler allies.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "AmericaChavez",
       "invisibleTraits": [
         "Avenger"
@@ -463,9 +460,6 @@ playable   = {
     },
     {
       "description": "A master thief skilled at disabling powerful opponents with the help of his Pym Particle powered suit.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "AntMan",
       "mission": false,
       "name": "Ant-Man",
@@ -499,9 +493,6 @@ playable   = {
     },
     {
       "description": "The first mutant, En Sabah Nur, Apocalypse has arrived! With his incalculable power he destroys enemy defenses and grants Safeguard and Immunity to his allies.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "Apocalypse",
       "invisibleTraits": [
         "Chargeable"
@@ -638,7 +629,6 @@ playable   = {
     {
       "description": "A powerful sorcerer who weakens his enemies with forbidden magic.",
       "eventTraits": [
-        "Archenemy",
         "Harbingers",
         "KnullChallengers"
       ],
@@ -675,9 +665,6 @@ playable   = {
     },
     {
       "description": "Beast is a master of Mutant science who improves any X-Men team by healing and granting positive effects.",
-      "eventTraits": [
-        "AnniversaryElite"
-      ],
       "id": "Beast",
       "invisibleTraits": [
         "Xmen",
@@ -786,9 +773,6 @@ playable   = {
     },
     {
       "description": "The King of the Inhumans, Black Bolt is a Blaster whose voice deals massive damage and prevents enemies from reviving.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "BlackBolt",
       "mission": false,
       "name": "Black Bolt",
@@ -895,10 +879,6 @@ playable   = {
     },
     {
       "description": "An agile, relentless hunter who shreds his enemies with rapid attacks.",
-      "eventTraits": [
-        "United",
-        "Couples"
-      ],
       "id": "BlackPanther",
       "invisibleTraits": [
         "Chargeable"
@@ -1043,9 +1023,6 @@ playable   = {
     },
     {
       "description": "Named \"The Daywalker\" by the vampires he hunts and exterminates, Blade uses his martial arts mastery and half-vampire powers to make sure no one suffers at the hands of the undead ever again.",
-      "eventTraits": [
-        "Juneteenth"
-      ],
       "id": "Blade",
       "mission": false,
       "name": "Blade",
@@ -1244,10 +1221,6 @@ playable   = {
     },
     {
       "description": "A time-traveler from the future who can manipulate turn order and charge up attacks to blast his enemies. ",
-      "eventTraits": [
-        "PoolPals",
-        "AnniversaryElite"
-      ],
       "id": "Cable",
       "invisibleTraits": [
         "Chargeable",
@@ -1316,10 +1289,6 @@ playable   = {
     },
     {
       "description": "A resilient leader who provides energy to his team while blocking enemy attacks.",
-      "eventTraits": [
-        "United",
-        "Couples"
-      ],
       "id": "CaptainAmerica",
       "invisibleTraits": [
         "Avenger",
@@ -1455,9 +1424,6 @@ playable   = {
     },
     {
       "description": "A powerful cosmic soldier who breaks down the defenses of multiple foes and gains overwhelming power in Binary form.",
-      "eventTraits": [
-        "United"
-      ],
       "id": "CaptainMarvel",
       "invisibleTraits": [
         "Chargeable"
@@ -1530,9 +1496,6 @@ playable   = {
     },
     {
       "description": "A living conduit to the Darkforce Dimension, Cloak drains the health and offensive power of vulnerable enemies.",
-      "eventTraits": [
-        "Juneteenth"
-      ],
       "id": "Cloak",
       "mission": false,
       "name": "Cloak",
@@ -1598,9 +1561,6 @@ playable   = {
     },
     {
       "description": "Colossus uses his organic steel skin to protect the X-Men and harm enemies who attack him.",
-      "eventTraits": [
-        "PoolPals"
-      ],
       "id": "Colossus",
       "invisibleTraits": [
         "Xmen",
@@ -1667,10 +1627,6 @@ playable   = {
     },
     {
       "description": "Spirit of Vengeance, Herald of Galactus, and intergalactic biker, Frank Castle rides across the universe seeking a Thanos who turned his Earth into a wasteland.",
-      "eventTraits": [
-        "SpiritofVengeance",
-        "AnniversaryElite"
-      ],
       "id": "CosmicGhostRider",
       "mission": false,
       "name": "Cosmic Ghost Rider",
@@ -1798,10 +1754,6 @@ playable   = {
     },
     {
       "description": "A member of the Inhuman royal family, Crystal's mastery of the elements makes her a versatile Blaster.",
-      "eventTraits": [
-        "MarvelMoms",
-        "Couples"
-      ],
       "id": "Crystal",
       "mission": false,
       "name": "Crystal",
@@ -1864,10 +1816,6 @@ playable   = {
     },
     {
       "description": "Cyclops grants his teammates extra attacks and assails his enemies with optic blasts.",
-      "eventTraits": [
-        "Energized",
-        "Couples"
-      ],
       "id": "Cyclops",
       "invisibleTraits": [
         "Xmen",
@@ -1971,9 +1919,6 @@ playable   = {
     },
     {
       "description": "After years of abuse, mistrust, and manipulation by his kidnappers, the son of Wolverine uses mutant senses, healing factor, and claws to viciously hunt down his enemies.",
-      "eventTraits": [
-        "AnniversaryElite"
-      ],
       "id": "Daken",
       "mission": false,
       "name": "Daken",
@@ -2134,9 +2079,6 @@ playable   = {
     },
     {
       "description": "International pop diva and super hero, Dazzler's mutant power to convert sound into energy creates light shows that can captivate audiences or protect her fellow X-Men in battle.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "Dazzler",
       "invisibleTraits": [
         "Xmen",
@@ -2172,9 +2114,6 @@ playable   = {
     },
     {
       "description": "A magical unicorn who specializes in stab-shooting vulnerable targets.",
-      "eventTraits": [
-        "PoolPals"
-      ],
       "id": "Deadpool",
       "mission": false,
       "name": "Deadpool",
@@ -2208,9 +2147,6 @@ playable   = {
     },
     {
       "description": "A soldier reanimated with cybernetic technology, Deathlok eviscerates the enemy team with debilitating blasts and boosts Bionic Avenger allies.",
-      "eventTraits": [
-        "Juneteenth"
-      ],
       "id": "Deathlok",
       "invisibleTraits": [
         "Avenger",
@@ -2247,8 +2183,7 @@ playable   = {
     {
       "description": "The daughter of the cosmic entity known as Death and, uh... Deadpool? Okay, wow. Deathpool combines her father's love of brawling with her mother's incredible supernatural powers.",
       "eventTraits": [
-        "MSFOriginal",
-        "PoolPals"
+        "MSFOriginal"
       ],
       "id": "Deathpool",
       "invisibleTraits": [
@@ -2333,10 +2268,6 @@ playable   = {
     },
     {
       "description": "Sorcerer Supreme and versatile healer with the ability to remove effects from friends and foes.",
-      "eventTraits": [
-        "Energized",
-        "United"
-      ],
       "id": "DoctorStrange",
       "invisibleTraits": [
         "Defender",
@@ -2408,9 +2339,6 @@ playable   = {
     },
     {
       "description": "Domino is X-Force's Controller whose Mutant luck lets her allies Dodge and deal deadlier Critical hits.",
-      "eventTraits": [
-        "PoolPals"
-      ],
       "id": "Domino",
       "mission": false,
       "name": "Domino",
@@ -2617,9 +2545,6 @@ playable   = {
     },
     {
       "description": "Electro uses her rage and voltage to unleash massive damage on the Sinister Six's most vulnerable enemies.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "Electro",
       "invisibleTraits": [
         "Chargeable"
@@ -2800,7 +2725,6 @@ playable   = {
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
       "eventTraits": [
-        "Juneteenth",
         "ChaosTeam"
       ],
       "id": "Falcon",
@@ -2839,9 +2763,6 @@ playable   = {
     },
     {
       "description": "Lieutenant Joaquin Torres impressed Sam Wilson by helping him on a key mission, showing his ingenuity, bravery and technical skill. After Wilson adopted the mantle of Captain America, Joaquin donned the Falcon EXO-7 suit, becoming Cap's closest ally.",
-      "eventTraits": [
-        "AnniversaryElite"
-      ],
       "id": "FalconJoaquin",
       "mission": false,
       "name": "Falcon (Joaquin)",
@@ -3015,9 +2936,6 @@ playable   = {
     },
     {
       "description": "With a dash of Cajun charm, Gambit fights alongside the X-Men using his mutant ability to charge objects with kinetic energy, transforming them into deadly explosives.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Gambit",
       "invisibleTraits": [
         "Xmen",
@@ -3126,9 +3044,6 @@ playable   = {
     },
     {
       "description": "As the Spirit of Vengeance, Ghost Rider brutally inflicts damage on those who harm his allies.",
-      "eventTraits": [
-        "SpiritofVengeance"
-      ],
       "id": "GhostRider",
       "invisibleTraits": [
         "Chargeable"
@@ -3164,10 +3079,6 @@ playable   = {
     },
     {
       "description": "Victim of gang violence and bonded to the Spirit of Vengeance, Robbie Reyes saps his enemies' health with bleed and unleashes devastating charged attacks.",
-      "eventTraits": [
-        "Energized",
-        "SpiritofVengeance"
-      ],
       "id": "GhostRiderRobbie",
       "invisibleTraits": [
         "Defender",
@@ -3204,8 +3115,7 @@ playable   = {
     {
       "description": "Ghost-Spider hails from a universe where Gwen Stacy was bitten by a radioactive spider. She's an agile Web-Warrior that can prevent enemies from using their abilities.",
       "eventTraits": [
-        "WebSlinger",
-        "Couples"
+        "WebSlinger"
       ],
       "id": "GhostSpider",
       "mission": false,
@@ -3341,9 +3251,6 @@ playable   = {
     },
     {
       "description": "After taking the Goblin Formula, Norman Osborn's mind broke, creating the Glider riding, Pumpkin bomb throwing menace, Green Goblin.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "GreenGoblinGlider",
       "invisibleTraits": [
         "Chargeable"
@@ -3382,9 +3289,6 @@ playable   = {
     },
     {
       "description": "A resilient healer who defends allies and has a chance to revive. Protective of Rocket Raccoon.",
-      "eventTraits": [
-        "AnniversaryElite"
-      ],
       "id": "Groot",
       "mission": false,
       "name": "Groot",
@@ -3484,9 +3388,6 @@ playable   = {
     },
     {
       "description": "Hey, Commander, Gwendolyn Poole here! First of all? Huge fan! Second, you can count on me to charge up my New Warrior buddies and unleash mayhem on the battlefield!",
-      "eventTraits": [
-        "PoolPals"
-      ],
       "id": "Gwenpool",
       "mission": false,
       "name": "Gwenpool",
@@ -3743,9 +3644,6 @@ playable   = {
     },
     {
       "description": "An expert archer who delivers unavoidable attacks to disable his foes.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Hawkeye",
       "invisibleTraits": [
         "Avenger",
@@ -4398,9 +4296,6 @@ playable   = {
     },
     {
       "description": "The Eternal Ikaris strafes foes with laser vision and uses super strength to slam down on them, fighting even more intensely when allied with Sersi.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Ikaris",
       "mission": false,
       "name": "Ikaris",
@@ -4434,9 +4329,6 @@ playable   = {
       "description": "Invisible Woman is a Protector who grants Barrier to her teammates and reveals hidden enemies.",
       "eventTraits": [
         "KnowhereHeist",
-        "Energized",
-        "MarvelMoms",
-        "Couples",
         "ChaosTeam"
       ],
       "id": "InvisibleWoman",
@@ -4592,10 +4484,6 @@ playable   = {
     },
     {
       "description": "Ironheart is a teen super-genius who hinders enemies while enhancing Power Armor and Tech allies.",
-      "eventTraits": [
-        "Energized",
-        "Juneteenth"
-      ],
       "id": "Ironheart",
       "invisibleTraits": [
         "AForce"
@@ -4701,10 +4589,6 @@ playable   = {
     },
     {
       "description": "Determined to save the Earth and those he loves, Tony Stark pulls out all the stops, granting positive Status Effects to his allies and dealing blows to those that would harm them.",
-      "eventTraits": [
-        "United",
-        "Couples"
-      ],
       "id": "IronManInfinityWar",
       "mission": false,
       "name": "Iron Man (Infinity War)",
@@ -4768,9 +4652,6 @@ playable   = {
     },
     {
       "description": "Deemed worthy by Mjolnir, Jane Foster, also known as the Mighty Thor, attacks her foes with blinding lightning and charges up her ally Hero Asgardians.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "JaneThor",
       "invisibleTraits": [
         "Chargeable"
@@ -4805,10 +4686,6 @@ playable   = {
     },
     {
       "description": "An original member of the X-Men with unparalleled telepathic and telekinetic abilities, Jean Grey is a formidable ally with the power to protect her allies and Disrupt her enemies.",
-      "eventTraits": [
-        "Couples",
-        "AnniversaryElite"
-      ],
       "id": "JeanGrey",
       "invisibleTraits": [
         "Avenger",
@@ -4846,10 +4723,6 @@ playable   = {
     },
     {
       "description": "A resilient fighter who removes positive effects from enemies and clears negative effects from allies.",
-      "eventTraits": [
-        "MarvelMoms",
-        "Couples"
-      ],
       "id": "JessicaJones",
       "mission": false,
       "name": "Jessica Jones",
@@ -4882,9 +4755,6 @@ playable   = {
     },
     {
       "description": "Half mallrat, half fireworks factory, Jubilee uses her explosive plasmoid powers to blind dweebs while her allies totally strike.",
-      "eventTraits": [
-        "MarvelMoms"
-      ],
       "id": "Jubilee",
       "invisibleTraits": [
         "Xmen"
@@ -4921,7 +4791,6 @@ playable   = {
     {
       "description": "An unstoppable tank who taunts his foes and charges for devastating damage.",
       "eventTraits": [
-        "PoolPals",
         "Harbingers",
         "KnullChallengers"
       ],
@@ -4994,9 +4863,6 @@ playable   = {
     },
     {
       "description": "The teen hero Kamala Khan uses her Hard Light to barrier her allies and divert enemies' attention by taunting them.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "KamalaKhan",
       "invisibleTraits": [
         "Defender",
@@ -5129,10 +4995,6 @@ playable   = {
     },
     {
       "description": "A lethal assassin who drains health from enemies and eliminates weakened targets.",
-      "eventTraits": [
-        "Archenemy",
-        "Juneteenth"
-      ],
       "id": "Killmonger",
       "invisibleTraits": [
         "Chargeable"
@@ -5205,8 +5067,7 @@ playable   = {
     {
       "description": "The heart of the X-Men, Kitty Pryde uses her power to phase through solid matter and her dragon pet, Lockheed, to disrupt enemies and protect allies.",
       "eventTraits": [
-        "KnowhereHeist",
-        "Energized"
+        "KnowhereHeist"
       ],
       "id": "KittyPryde",
       "invisibleTraits": [
@@ -5708,9 +5569,6 @@ playable   = {
     },
     {
       "description": "The Asgardian god of Mischief who misleads and confuses his foes.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "Loki",
       "mission": false,
       "name": "Loki",
@@ -5809,10 +5667,6 @@ playable   = {
     },
     {
       "description": "An extremely tough taunting protector with high damage and health.",
-      "eventTraits": [
-        "Couples",
-        "Juneteenth"
-      ],
       "id": "LukeCage",
       "invisibleTraits": [
         "Chargeable"
@@ -5849,7 +5703,6 @@ playable   = {
     {
       "description": "A lovelorn clone of Jean Grey, Madelyne Pryor uses her superior psychic powers and sorcery to rain fury down on her opponents.",
       "eventTraits": [
-        "MarvelMoms",
         "Conqueror"
       ],
       "id": "MadelynePryor",
@@ -5920,9 +5773,6 @@ playable   = {
     },
     {
       "description": "A master of magnetic fields who can shift enemy positions and empower his Brotherhood allies.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "Magneto",
       "mission": false,
       "name": "Magneto",
@@ -6093,9 +5943,6 @@ playable   = {
     },
     {
       "description": "Queen of the Inhumans, Medusa uses her impossibly strong prehensile hair to protect any granted gifts by the Terrigen Mists.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Medusa",
       "invisibleTraits": [
         "AForce"
@@ -6131,9 +5978,6 @@ playable   = {
     },
     {
       "description": "The wheelin', dealin' ruler of Hell, Mephisto exploits human weakness to bring out the evil in them, tempting them into infernal contracts that make their wildest dreams come true. But the devil always takes his due, and any who come across him are left scarred, unable to Heal from his influence.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "Mephisto",
       "invisibleTraits": [
         "Chargeable",
@@ -6330,9 +6174,6 @@ playable   = {
     },
     {
       "description": "Misty Knight is the tough-as-nails leader of the Heroes for Hire who uses her cybernetic arm to break through her enemies' defenses.",
-      "eventTraits": [
-        "Juneteenth"
-      ],
       "id": "MistyKnight",
       "invisibleTraits": [
         "Chargeable"
@@ -6367,9 +6208,6 @@ playable   = {
     },
     {
       "description": "Bobbi Morse is an agent of S.H.I.E.L.D operative known as Mockingbird. She is a master undercover operative that can use her battle stave to lethal effectiveness.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Mockingbird",
       "invisibleTraits": [
         "Avenger"
@@ -6409,10 +6247,6 @@ playable   = {
     },
     {
       "description": "Moondragon and her partner Phyla-Vell are key members of the Infinity Watch, with Moondragon providing psychic healing support.",
-      "eventTraits": [
-        "Energized",
-        "Couples"
-      ],
       "id": "Moondragon",
       "invisibleTraits": [
         "Chargeable"
@@ -6480,9 +6314,6 @@ playable   = {
     },
     {
       "description": "Moonstone is a manipulative hypnotist that uses energy blasts to apply Stun and Trauma to her opponents.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "Moonstone",
       "mission": false,
       "name": "Moonstone",
@@ -6581,10 +6412,6 @@ playable   = {
     },
     {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
-      "eventTraits": [
-        "United",
-        "Couples"
-      ],
       "id": "MrFantastic",
       "mission": false,
       "name": "Mister Fantastic",
@@ -6870,9 +6697,6 @@ playable   = {
     },
     {
       "description": "A covert shapeshifter skilled at disabling stealthed targets and manipulating enemies into attacking each other.",
-      "eventTraits": [
-        "MarvelMoms"
-      ],
       "id": "Mystique",
       "mission": false,
       "name": "Mystique",
@@ -7003,10 +6827,6 @@ playable   = {
     },
     {
       "description": "Negasonic Teenage Warhead is a Mutant Blaster whose explosive hits are so hard, they knock positive effects off her target.",
-      "eventTraits": [
-        "Energized",
-        "PoolPals"
-      ],
       "id": "Negasonic",
       "mission": false,
       "name": "Negasonic",
@@ -7039,9 +6859,6 @@ playable   = {
     },
     {
       "description": "The heir to Apocalypse from a world where mutants dominate humans, Nemesis drains the life force of his enemies, transferring their health to his Death Seed allies.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "Nemesis",
       "mission": false,
       "name": "Nemesis",
@@ -7073,10 +6890,6 @@ playable   = {
     },
     {
       "description": "The legendary leader who spreads advantages to allies and summons S.H.I.E.L.D. agents.",
-      "eventTraits": [
-        "AnniversaryElite",
-        "Juneteenth"
-      ],
       "id": "NickFury",
       "mission": false,
       "name": "Nick Fury",
@@ -7146,9 +6959,6 @@ playable   = {
     },
     {
       "description": "The swashbuckling blue Nightcrawler can teleport, sword-fight, and perform acrobatic feats to dazzle his enemies, all with a smile on his face.",
-      "eventTraits": [
-        "United"
-      ],
       "id": "Nightcrawler",
       "invisibleTraits": [
         "Xmen",
@@ -7350,9 +7160,6 @@ playable   = {
     },
     {
       "description": "Karen Page was an investigative reporter before a vampire turned her into one of the undead. Now, with the help of the other Nightstalkers, she uses her vampiric abilities to protect the innocent!",
-      "eventTraits": [
-        "AnniversaryElite"
-      ],
       "id": "Oath",
       "invisibleTraits": [
         "Exposed"
@@ -7458,10 +7265,6 @@ playable   = {
     },
     {
       "description": "After a tragic attack on the X-Mansion, Logan vows to put his claws away forever. But fifty years later, a cross country road trip involving gangs, dinosaurs and cannibals teaches him some vows are meant to be broken.",
-      "eventTraits": [
-        "PoolPals",
-        "AnniversaryElite"
-      ],
       "id": "OldManLogan",
       "mission": false,
       "name": "Old Man Logan",
@@ -7595,10 +7398,6 @@ playable   = {
     },
     {
       "description": "Cute and cuddly doesn't begin to describe the power of Pandapool. No, really. He's a deadly giant panda with katanas and a grenade launcher. What more do you people want?",
-      "eventTraits": [
-        "PoolPals",
-        "AnniversaryElite"
-      ],
       "id": "PandaPool",
       "mission": false,
       "name": "Pandapool",
@@ -7631,10 +7430,6 @@ playable   = {
     },
     {
       "description": "The grandson of super-soldier Isaiah Bradley, Eli Bradley picked family's legacy of defending the helpless by joining the Young Avengers as the star-spangled Patriot.",
-      "eventTraits": [
-        "AnniversaryElite",
-        "Juneteenth"
-      ],
       "id": "Patriot",
       "mission": false,
       "name": "Patriot",
@@ -7666,10 +7461,6 @@ playable   = {
     },
     {
       "description": "A brilliant codebreaker and key member of the Strategic Scientific Reserve, Peggy Carter helped the Allies defeat the Axis powers and would go on to found S.H.I.E.L.D., protecting humanity for decades to come.",
-      "eventTraits": [
-        "Couples",
-        "AnniversaryElite"
-      ],
       "id": "PeggyCarter",
       "mission": false,
       "name": "Peggy Carter",
@@ -7798,9 +7589,6 @@ playable   = {
     },
     {
       "description": "Jean Grey absorbs her enemies negative status effects, being reborn as Dark Phoenix if she falls in battle.",
-      "eventTraits": [
-        "MarvelMoms"
-      ],
       "id": "Phoenix",
       "invisibleTraits": [
         "Xmen"
@@ -7840,10 +7628,6 @@ playable   = {
     },
     {
       "description": "A Secret Defender and A-Force member, Monica Rambeau uses her electromagnetic abilities to blind her enemies and buff her allies.",
-      "eventTraits": [
-        "Energized",
-        "Juneteenth"
-      ],
       "id": "Photon",
       "invisibleTraits": [
         "Defender",
@@ -7880,10 +7664,6 @@ playable   = {
     },
     {
       "description": "Phyla-Vell and her partner Moondragon help form the Infinity Watch, with Phyla-Vell's Quantum Sword crushing enemies and bolstering the team's defenses.",
-      "eventTraits": [
-        "Energized",
-        "Couples"
-      ],
       "id": "PhylaVell",
       "mission": false,
       "name": "Phyla-Vell",
@@ -7916,9 +7696,6 @@ playable   = {
     },
     {
       "description": "The daughter of Magneto, Polaris uses her magnetic Mutant powers to bolster ally barriers and prevents the enemy from recovering from their wounds.",
-      "eventTraits": [
-        "AnniversaryElite"
-      ],
       "id": "Polaris",
       "invisibleTraits": [
         "Xmen"
@@ -8121,7 +7898,6 @@ playable   = {
       "description": "With the help of his Quantum Bands, Wendell Vaughn saps his enemy's Health and removes their Charges, but is he an ally S.T.R.I.K.E. can trust?",
       "eventTraits": [
         "Harbingers",
-        "StrikeAsset",
         "ChaosTeam",
         "KnullChallengers",
         "Conqueror"
@@ -8160,10 +7936,6 @@ playable   = {
     },
     {
       "description": "Quicksilver, the twin brother of Wanda Maximoff, is a supersonic speedster with undodgeable piercing attacks that wear down his enemies.",
-      "eventTraits": [
-        "United",
-        "Couples"
-      ],
       "id": "Quicksilver",
       "invisibleTraits": [
         "Chargeable"
@@ -8457,9 +8229,6 @@ playable   = {
     },
     {
       "description": "Hatred incarnate, Red Skull uses his cunning and ruthless efficiency to lead Hydra to victory in War.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "RedSkull",
       "invisibleTraits": [
         "Chargeable"
@@ -8498,10 +8267,6 @@ playable   = {
     },
     {
       "description": "An armored hero who protects allies with her barrier and enhances Power Armor allies' attacks.",
-      "eventTraits": [
-        "Energized",
-        "Couples"
-      ],
       "id": "Rescue",
       "mission": false,
       "name": "Rescue",
@@ -8570,8 +8335,7 @@ playable   = {
     {
       "description": "An aggressive scrapper who inflicts terrible damage to foes at range. Prefers to team up with Groot.",
       "eventTraits": [
-        "KnowhereHeist",
-        "AnniversaryElite"
+        "KnowhereHeist"
       ],
       "id": "RocketRaccoon",
       "mission": false,
@@ -8605,9 +8369,6 @@ playable   = {
     },
     {
       "description": "A Southern belle with the mutant power to drain her enemies through physical touch, Rogue tears down her foes' defenses and protects her allies.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Rogue",
       "invisibleTraits": [
         "Xmen",
@@ -8715,9 +8476,6 @@ playable   = {
     },
     {
       "description": "A savage, regenerating brute that shreds single targets and chains to additional enemies.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "Sabretooth",
       "mission": false,
       "name": "Sabretooth",
@@ -8751,10 +8509,6 @@ playable   = {
     },
     {
       "description": "Taking up the mantle of Captain America, Sam Wilson uses his legendary shield to protect and inspire others, granting bonuses to Avenger and Skill allies.",
-      "eventTraits": [
-        "AnniversaryElite",
-        "Juneteenth"
-      ],
       "id": "SamWilson",
       "invisibleTraits": [
         "Avenger"
@@ -8892,8 +8646,6 @@ playable   = {
     {
       "description": "A mystical controller that prolongs negative effects and redistributes health across her teammates.",
       "eventTraits": [
-        "MarvelMoms",
-        "Couples",
         "ChaosTeam"
       ],
       "id": "ScarletWitch",
@@ -9141,9 +8893,6 @@ playable   = {
     },
     {
       "description": "Sersi copies her enemies' positive effects, and when her Eternal ally Ikaris is with her, also turns those effects against them!",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Sersi",
       "mission": false,
       "name": "Sersi",
@@ -9208,9 +8957,6 @@ playable   = {
     },
     {
       "description": "Shang-Chi is a master of martial arts who turns his enemies' strengths against them while improving his Heroes for Hire allies.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "ShangChi",
       "invisibleTraits": [
         "Chargeable"
@@ -9414,9 +9160,6 @@ playable   = {
     },
     {
       "description": "A S.H.I.E.L.D. agent trained to provide emergency medical attention in the field.",
-      "eventTraits": [
-        "AnniversaryElite"
-      ],
       "id": "ShieldSupport_Heal",
       "mission": false,
       "name": "S.H.I.E.L.D. Medic",
@@ -9759,9 +9502,7 @@ playable   = {
     {
       "description": "A quick attacker that weakens opponents and evades incoming attacks.",
       "eventTraits": [
-        "United",
-        "WebSlinger",
-        "PoolPals"
+        "WebSlinger"
       ],
       "id": "SpiderMan",
       "mission": false,
@@ -10009,8 +9750,7 @@ playable   = {
       "description": "A Navajo weaver, Ajei Benally was chosen to safeguard the Web of Life and Destiny, pulling the threads of fate to protect herself and her allies.",
       "eventTraits": [
         "MSFOriginal",
-        "WebSlinger",
-        "AnniversaryElite"
+        "WebSlinger"
       ],
       "id": "SpiderWeaver",
       "invisibleTraits": [
@@ -10047,9 +9787,6 @@ playable   = {
     },
     {
       "description": "Spider-Woman is a formidable Blaster that uses pheromone powers to sap her enemy's strength, leaving them open to devastating attacks.",
-      "eventTraits": [
-        "MarvelMoms"
-      ],
       "id": "SpiderWoman",
       "mission": false,
       "name": "Spider-Woman",
@@ -10284,12 +10021,6 @@ playable   = {
     },
     {
       "description": "A powerful weather controller that charges up devastating attacks to lead her mutant allies to victory.",
-      "eventTraits": [
-        "United",
-        "Couples",
-        "AnniversaryElite",
-        "Juneteenth"
-      ],
       "id": "Storm",
       "invisibleTraits": [
         "Xmen",
@@ -10510,9 +10241,6 @@ playable   = {
     },
     {
       "description": "With the combined powers of Earth's Fantastic Four, Super Skrull packs a punch and camouflages seamlessly into his team, becoming more heroic - or villainous - depending on who is around.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "SuperSkrull",
       "invisibleTraits": [
         "Exposed"
@@ -10832,9 +10560,6 @@ playable   = {
     },
     {
       "description": "A Titan Eternal who delivers crushing blows that drain his foes and taunt his enemies.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "Thanos",
       "invisibleTraits": [
         "Thanos_BlackOrder"
@@ -11012,9 +10737,6 @@ playable   = {
     },
     {
       "description": "The God of Thunder who deals great damage and weakens multiple foes.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Thor",
       "invisibleTraits": [
         "Avenger",
@@ -11052,9 +10774,6 @@ playable   = {
     },
     {
       "description": "Thor, the God of Thunder, wields Stormbreaker to face cosmic threats, dealing heavy damage and breaking down enemy Protectors.",
-      "eventTraits": [
-        "United"
-      ],
       "id": "Thor_InfinityWar",
       "mission": false,
       "name": "Thor (Infinity War)",
@@ -11128,9 +10847,6 @@ playable   = {
     },
     {
       "description": "Protector of the Cat People, Tigra ferociously defends her allies and uses her razor-sharp claws to rend her opponents.",
-      "eventTraits": [
-        "MarvelMoms"
-      ],
       "id": "Tigra",
       "invisibleTraits": [
         "Avenger"
@@ -11297,9 +11013,6 @@ playable   = {
     },
     {
       "description": "A powerful robotic tyrant that summons drones to eliminate any threat to his mechanical regime.",
-      "eventTraits": [
-        "Archenemy"
-      ],
       "id": "Ultron",
       "mission": false,
       "name": "Ultron",
@@ -11340,8 +11053,7 @@ playable   = {
     {
       "description": "Miles Morales controls the field with web blasts and electrical shocks that prolong negative effects and apply Disrupted.",
       "eventTraits": [
-        "WebSlinger",
-        "Couples"
+        "WebSlinger"
       ],
       "id": "UltSpiderMan",
       "invisibleTraits": [
@@ -11591,8 +11303,6 @@ playable   = {
     {
       "description": "A synthetic being that avoids enemy attacks and disables his foes.",
       "eventTraits": [
-        "Energized",
-        "Couples",
         "ChaosTeam"
       ],
       "id": "Vision",
@@ -11630,9 +11340,6 @@ playable   = {
     },
     {
       "description": "Vision's synthetically created daughter, Viv bolsters her allied Bionic Avengers by generating Ability Energy and healing them so they can press the attack.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "VivVision",
       "invisibleTraits": [
         "Avenger"
@@ -11737,10 +11444,6 @@ playable   = {
     },
     {
       "description": "An armored soldier who uses an arsenal of weapons to bombard his foes. More powerful in Alliance Wars.",
-      "eventTraits": [
-        "AnniversaryElite",
-        "Juneteenth"
-      ],
       "id": "WarMachine",
       "mission": false,
       "name": "War Machine",
@@ -11775,9 +11478,6 @@ playable   = {
     },
     {
       "description": "A highly elusive blaster capable of stunning and chaining to multiple opponents.",
-      "eventTraits": [
-        "Couples"
-      ],
       "id": "Wasp",
       "invisibleTraits": [
         "Chargeable",
@@ -11910,10 +11610,6 @@ playable   = {
     },
     {
       "description": "A mutant armed with adamantium claws that ignore armor and tear through his opponents.",
-      "eventTraits": [
-        "United",
-        "PoolPals"
-      ],
       "id": "Wolverine",
       "invisibleTraits": [
         "Xmen"
@@ -11984,9 +11680,6 @@ playable   = {
     },
     {
       "description": "X-23 is a savage Mutant Brawler who specializes in finishing off X-Force's wounded enemies.",
-      "eventTraits": [
-        "PoolPals"
-      ],
       "id": "X23",
       "mission": false,
       "name": "X-23",
@@ -12086,9 +11779,6 @@ playable   = {
     },
     {
       "description": "Darren Cross was the protege of Hank Pym before stealing his company and technology, creating the Yellowjacket suit to crush his foes.",
-      "eventTraits": [
-        "Energized"
-      ],
       "id": "Yellowjacket",
       "invisibleTraits": [
         "Chargeable"
@@ -12378,13 +12068,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "b4013b295c6e893f3b01",
-      "chars": "8947a92490b94dd53473",
-      "drops": "5b833ca14a1f04efd14c",
-      "events": "41590440bc7ce268d651",
-      "locs": "f4d426f021a843bd6584",
-      "nodes": "4be32fdb0f34ce9a2ae4",
-      "other": "8fe8764a8ce9228b35b4"
+      "all": "9c1d46f63912804197b6",
+      "chars": "16403793c6a65cc21cf8",
+      "drops": "4c4bfa2ed33c84673a6b",
+      "events": "06cfc7ff9733951330b6",
+      "locs": "3a60f4e47e69ad984cae",
+      "nodes": "d87d9871ac8bdf82ce15",
+      "other": "4a6e806036e9c36b171f"
     },
     "perTotal": 351,
     "version": 1
@@ -13224,13 +12914,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "b4013b295c6e893f3b01",
-      "chars": "8947a92490b94dd53473",
-      "drops": "5b833ca14a1f04efd14c",
-      "events": "41590440bc7ce268d651",
-      "locs": "f4d426f021a843bd6584",
-      "nodes": "4be32fdb0f34ce9a2ae4",
-      "other": "8fe8764a8ce9228b35b4"
+      "all": "9c1d46f63912804197b6",
+      "chars": "16403793c6a65cc21cf8",
+      "drops": "4c4bfa2ed33c84673a6b",
+      "events": "06cfc7ff9733951330b6",
+      "locs": "3a60f4e47e69ad984cae",
+      "nodes": "d87d9871ac8bdf82ce15",
+      "other": "4a6e806036e9c36b171f"
     },
     "perTotal": 43,
     "version": 1
