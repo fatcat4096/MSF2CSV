@@ -46,6 +46,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 }
 .blub {
   min-width   : 28px;
+  height      : 30px;
   z-index     : 5;
 }
 .dmd {
@@ -60,6 +61,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 /* Blue Button, Power -- slightly wider */
 .blubp {
   min-width   : 40px;
+  height      : 30px;
 }
 .blubp:hover {
   background  : DodgerBlue;
@@ -92,6 +94,7 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 /* Black Button */
 .blkb {
   min-width   : 28px;
+  height      : 30px;
 }
 .blkb:hover {
   background  : SlateGray;
@@ -487,10 +490,10 @@ function sortl(n,table_name,header_lines,rows_to_sort,linked_name) {
 			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/K$/, "000").replace(/💎$/, "0");
 
 			// Deal with x.xM notation
-			if (x.slice(1,1) == "." && x.endsWith("M")) {
+			if (x.slice(1,2) == "." && x.endsWith("M")) {
 				x = x.slice(0,1) + x.slice(2).replace(/M$/, "00000");
 			}
-			if (y.slice(1,1) == "." && y.endsWith("M")) {
+			if (y.slice(1,2) == "." && y.endsWith("M")) {
 				y = y.slice(0,1) + y.slice(2).replace(/M$/, "00000");
 			}
 
