@@ -16,7 +16,7 @@ from gradients import *
 # Just hide the messiness.
 @timed(level=3)
 def get_tab_header(content):
-	return '<table>\n<tr><td class="tlnk" style="width:100%;">'+content+'</td></tr>\n</table>'
+	return '<table>\n<tr><td class="tlnk" style="width:100%;">'+content+'</td></tr>\n</table>\n'
 
 
 
