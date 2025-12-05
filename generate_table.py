@@ -131,8 +131,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			table_lbl = f'<div class="img cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{table_lbl}</div>'
 			break
 
-	# Auto-calc the best value for line wrap length
-	line_wrap = calculate_line_wrap(using_chars)
+	# Auto-calc the best value for line wrap length if an explicit value not defined
+	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=calculate_line_wrap(using_chars)) 
 
 	# Initialize the row count. Will add to it with each strike_team section.
 	row_idx = 1
@@ -305,7 +305,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Calculate the minimum required to avoid getting dimmed.
 			if team_power_summary:
-				min_count = 'Battleworld' not in table['name'] and 'Teams' not in table['name'] and 5
+				min_count = table_format.get('output') in ('battleworld','teams','thunderstrike') and 5
 			else:
 				min_count = 5 - (DD7 and section.get('label')=='Mythic')
 
@@ -338,7 +338,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
-					not_ready = sum([not table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in char_list]) < 5
+					not_ready = sum([not table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in char_list]) < 5 and table_format.get('output') != 'thunderstrike'
 				# Otherwise, check for Dark Dimension readiness.
 				else:
 					not_ready = num_avail < min_count and len(char_list) >= min_count 
