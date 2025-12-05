@@ -305,7 +305,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Calculate the minimum required to avoid getting dimmed.
 			if team_power_summary:
-				min_count = table_format.get('output') in ('battleworld','teams','thunderstrike') and 5
+				min_count = table_format.get('output') not in ('battleworld','teams') and 5
 			else:
 				min_count = 5 - (DD7 and section.get('label')=='Mythic')
 
@@ -338,7 +338,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
-					not_ready = sum([not table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in char_list]) < 5 and table_format.get('output') != 'thunderstrike'
+					not_ready = sum([not table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in table.get('section_chars', char_list)]) < 5
 				# Otherwise, check for Dark Dimension readiness.
 				else:
 					not_ready = num_avail < min_count and len(char_list) >= min_count 
