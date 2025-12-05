@@ -346,15 +346,6 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 	# Calculate strike teams
 	strike_teams = get_strike_teams(alliance_info, table, table_format)
 
-	# Values do not change from section to section
-	only_team    = get_table_value(table_format, table, key='only_team')
-	only_members = get_table_value(table_format, table, key='only_members')
-	only_side    = get_table_value(table_format, table, key='only_side')
-	lane_name    = get_table_value(table_format, table, key='lane_name', default='Lane')
-
-	# Special handling required if inline_hist.
-	inline_hist = get_table_value(table_format, table, key='inline_hist')
-
 	# Find out whether we're including Team Power Summary at top.
 	inc_summary = get_table_value(table_format, table, key='inc_summary')
 
@@ -362,6 +353,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 	for lane_idx, lane in enumerate(lanes):
 	
 		# Display each lane in a separate tab.
+		lane_name  = get_table_value(table_format, table, key='lane_name', default='Lane')
 		divider_id = ['Hist',lane_name][not hist_date] + str(lanes.index(lane)+1)
 		
 		# Only include Dividers if using as part of a multi-tab document
@@ -382,158 +374,224 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section_idx, section in enumerate(lane):
 
-			last_section = section_idx == len(lane)-1
-		
-			meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
-
-			# If no explicit label defined for the section...
-			table_lbl = section.get('label','').upper()
-			if not table_lbl:
-
-				# Make a table label based on the included traits.
-				traits = section.get('traits',[])
-				if type(traits) == str:
-					traits = [traits]
-			
-				# Truncate Table Label after 4 entries, if more than 4, use first 3 plus "AND MORE"
-				traits = [translate_name(trait).upper() for trait in traits] 
-				if len(traits) > 4:
-					traits = traits[:3] + ['AND MORE']
-				table_lbl = '<br>'.join(traits)
-
-			# Add Header to table_lbl if defined
-			header = section.get('header','').upper() 
-			table_lbl = f'<big><u>{header}:</u></big><br>{table_lbl}' if header else table_lbl
-
 			# Let's make it easy on ourselves. Start every section the same way.
-			html_file += '<table>\n <tr style="vertical-align:top">\n  <td>\n'
+			html_file += '<table>\n'
+			html_file += ' <tr style="vertical-align:top">'
+			html_file += '  <td>\n'
 
-			max_others = get_table_value(table_format, table, section, key='max_others')
-
-			# Only building meta table if we have meta_chars defined.
-			if meta_chars:
-				meta_lbl = table_lbl+'<br><span class="sub">META</span>'
-
-				stp_list = get_stp_list(alliance_info, meta_chars, hist_date)
-
-				# If inline_hist, need to generate STP entries for the historical date as well.
-				if inline_hist:
-					stp_list = get_stp_list(alliance_info, meta_chars, inline_hist)
-
-				html_file += generate_table(alliance_info, table, section, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist)
-
-				html_file += '  </td>\n  <td><br></td>\n  <td>\n'
-
-				# Only differentiate Others Section from Meta Section if Meta Section exists.
-				table_lbl += '<br><span class="sub">OTHERS</span>'
-
-			# Flag the table_lbl to indicate these are META character requests
-			# even if they've been swapped to the Others section.
-			elif section.get('meta'):
-				table_lbl += '<br><span class="sub">META</span>'
-
-			# If Others, and max_others specified, indicate this.
-			elif max_others and len(other_chars) == max_others:
-				table_lbl += f'<br><span class="sub">TOP {len(other_chars)}</span>'
-
-			# Generate stp_list dict for the Other Table calls.
-			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
+			# Do we have subsections defined?
+			subsections = section.pop('subsections', None)
 			
-			# If inline_hist, need to generate STP entries for the historical date as well.
-			if inline_hist:
-				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, inline_hist)
+			# If subsections specified, may need to split out calls for hist? May not support hist?
+			if subsections:
 
-			span_data = get_table_value(table_format, table, section, key='span', default=False)
+				# Add an enclosing row to contain all the subsections
+				html_file += ' <tr style="vertical-align:top">'
+				html_file += '  <td>\n'
 
-			# Special code for Spanning format here. It's a very narrow window of applicability.
-			if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not (only_team or only_members or only_side):
+				for subsection_idx,subsection in enumerate(subsections):
 
-				# If strike_team is just the entire player list, break it up into 3 groups.
-				if len(strike_teams) == 1 or only_team == 0:
-					
-					# Need to do a new sort for strike_teams if sort_by is STP.
-					sort_by = get_table_value(table_format, table, key='sort_by')
-					if sort_by == 'stp':
-						strike_temp = [get_player_list(alliance_info, sort_by, stp_list)]
+					# If subsection has content, overlay info on the enclosing section
+					if subsection:
+
+						# Make a copy and then overlay the subsection information
+						subsection = copy.deepcopy(section) | subsection
+
+						# Generate the subsection
+						html_file += generate_section(alliance_info, table, subsection, table_format, strike_teams, hist_date, side_hist, html_cache)
+
+						# If not the final subsection, add a divider row. 
+						if subsection_idx != len(subsections)-1:
+							html_file += '  </td>\n'
+							html_file += '  <td>\n'
+
+					# If subsection empty, explicit newline. End the row and begin a new one.
 					else:
-						strike_temp = strike_teams[:]
-						
-					# Split the sorted player list into 3 groups of 8 players.
-					strike_temp = [[strike_temp[0][:8]], [strike_temp[0][8:16]], [strike_temp[0][16:]]]
+						html_file += '  </td>\n'
+						html_file += ' </tr>\n'
+						html_file += ' <tr style="vertical-align:top">\n'
+						html_file += '  <td>\n'
 
-				# If we have defined Strike Teams, create a fake set of Strike Teams so that a label is generated.
-				else:
-					strike_temp = [[strike_teams[0],[],[]],
-								   [[],strike_teams[1],[]],
-								   [[],[],strike_teams[2]]]
+				# Finish the enclosing row
+				html_file += '  </td>\n'
+				html_file += ' </tr>\n'
 
-				# Generate 3 tables, spanning the page.
-				for strike_team in strike_temp:
-
-					# Pass in only a single chunk of 8 players three separate times.
-					html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_team, table_lbl, stp_list, html_cache, hist_date)
-					html_file += '  </td>\n  <td><br></td>\n  <td>\n'
-
-			# Split raid format requested. Generate info from two different lane definitions
-			elif other_chars and not meta_chars and only_side and [x for x in strike_teams if '----' in x]:
-
-				# Truncate if only_side is 'left' or 'right' -- 'left' == keep first block, 'right' == keep last block.
-				if only_side in ('left','right'):
-
-					# Flip the order if we're keeping right.
-					if only_side == 'right':
-						for x in strike_teams:
-							x.reverse()
-					
-					strike_teams = [x[:x.index('----')] for x in strike_teams]
-
-					# Flip it back if we were working on right.
-					if only_side == 'right':
-						for x in strike_teams:
-							x.reverse()
-
-				# How many iterations? 
-				block_idx = [[0]+[i for i,e in enumerate(x) if e == '----']+[len(x)] for x in strike_teams]
-				block_cnt = len(block_idx[0])-1
-
-				# Finally, generate blocks for each section
-				for idx in range(block_cnt):
-					strike_temp = [strike_teams[x][block_idx[x][idx] : block_idx[x][idx+1]] for x in range(len(strike_teams))]
-					html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_temp, table_lbl, stp_list, html_cache, hist_date)
-					
-					# Generate divider if more to come
-					if idx != block_cnt-1:
-						html_file += '  </td>\n  <td><br></td>\n  <td>\n'
-
-			# We are NOT spanning. Standard table generation.
 			else:
-				html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist)
-				
-				# History to the side also requested.
-				if side_hist:
-					
-					# Small space between the two tables.
-					html_file += '  </td>\n  <td><br></td>\n  <td>\n'
-
-					# Generate the right table with historical information if available.
-					stp_list = get_stp_list(alliance_info, meta_chars+other_chars, side_hist)
-					if 'META' in table_lbl:
-						table_lbl = table_lbl.replace('META',f'Changes since:<br>{side_hist}')
-					elif 'OTHER' in table_lbl:
-						table_lbl = table_lbl.replace('OTHER',f'Changes since:<br>{side_hist}')
-					else:
-						table_lbl += f'<br><span class="sub">Changes since:<br>{side_hist}</span>'
-					html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, side_hist, linked_hist=True)
+				html_file += generate_section(alliance_info, table, section, table_format, strike_teams, hist_date, side_hist, html_cache)
 
 			# End every section the same way.
-			html_file += '  </td>\n </tr>\n</table>\n'
+			html_file += '  </td>\n'
+			html_file += ' </tr>\n'
+			html_file += '</table>\n'
 
 			# If not the final section, add a divider row. 
-			if not last_section:
+			if not section_idx == len(lane)-1:
 				html_file += '    <p></p>\n'
 
 		# After Lane content is done, close the div for the Tab implementation.
 		if using_tabs:
 			html_file += '</div>\n'
+
+	return html_file
+
+
+
+# Generate the table for each section as requested.
+@timed(level=3)
+def generate_section(alliance_info, table, section, table_format, strike_teams, hist_date=None, side_hist=None, html_cache={}):
+
+	html_file = ''
+
+	# Pull config values from the table_format
+	inline_hist  = get_table_value(table_format, table, key='inline_hist')
+	only_members = get_table_value(table_format, table, key='only_members')
+	only_side    = get_table_value(table_format, table, key='only_side')
+	only_team    = get_table_value(table_format, table, key='only_team')
+
+	meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
+
+	# If no explicit label defined for the section...
+	table_lbl = section.get('label','').upper()
+	if not table_lbl:
+
+		# Make a table label based on the included traits.
+		traits = section.get('traits',[])
+		if type(traits) == str:
+			traits = [traits]
+	
+		# Truncate Table Label after 4 entries, if more than 4, use first 3 plus "AND MORE"
+		traits = [translate_name(trait).upper() for trait in traits] 
+		if len(traits) > 4:
+			traits = traits[:3] + ['AND MORE']
+		table_lbl = '<br>'.join(traits)
+
+	# Add Header to table_lbl if defined
+	header = section.get('header','').upper() 
+	table_lbl = f'<big><u>{header}:</u></big><br>{table_lbl}' if header else table_lbl
+
+	max_others = get_table_value(table_format, table, section, key='max_others')
+
+	# Only building meta table if we have meta_chars defined.
+	if meta_chars:
+		meta_lbl = table_lbl+'<br><span class="sub">META</span>'
+
+		stp_list = get_stp_list(alliance_info, meta_chars, hist_date)
+
+		# If inline_hist, need to generate STP entries for the historical date as well.
+		if inline_hist:
+			stp_list = get_stp_list(alliance_info, meta_chars, inline_hist)
+
+		html_file += generate_table(alliance_info, table, section, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist)
+
+		html_file += '  </td>\n'
+		html_file += '  <td><br></td>\n'
+		html_file += '  <td>\n'
+
+		# Only differentiate Others Section from Meta Section if Meta Section exists.
+		table_lbl += '<br><span class="sub">OTHERS</span>'
+
+	# Flag the table_lbl to indicate these are META character requests
+	# even if they've been swapped to the Others section.
+	elif section.get('meta'):
+		table_lbl += '<br><span class="sub">META</span>'
+
+	# If Others, and max_others specified, indicate this.
+	elif max_others and len(other_chars) == max_others:
+		table_lbl += f'<br><span class="sub">TOP {len(other_chars)}</span>'
+
+	# Generate stp_list dict for the Other Table calls.
+	stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
+	
+	# If inline_hist, need to generate STP entries for the historical date as well.
+	if inline_hist:
+		stp_list = get_stp_list(alliance_info, meta_chars+other_chars, inline_hist)
+
+	span_data = get_table_value(table_format, table, section, key='span', default=False)
+
+	# Special code for Spanning format here. It's a very narrow window of applicability.
+	if other_chars and not meta_chars and len(other_chars) <= 5 and span_data and not (only_team or only_members or only_side):
+
+		# If strike_team is just the entire player list, break it up into 3 groups.
+		if len(strike_teams) == 1 or only_team == 0:
+			
+			# Need to do a new sort for strike_teams if sort_by is STP.
+			sort_by = get_table_value(table_format, table, key='sort_by')
+			if sort_by == 'stp':
+				strike_temp = [get_player_list(alliance_info, sort_by, stp_list)]
+			else:
+				strike_temp = strike_teams[:]
+				
+			# Split the sorted player list into 3 groups of 8 players.
+			strike_temp = [[strike_temp[0][:8]], [strike_temp[0][8:16]], [strike_temp[0][16:]]]
+
+		# If we have defined Strike Teams, create a fake set of Strike Teams so that a label is generated.
+		else:
+			strike_temp = [[strike_teams[0],[],[]],
+						   [[],strike_teams[1],[]],
+						   [[],[],strike_teams[2]]]
+
+		# Generate 3 tables, spanning the page.
+		for strike_team in strike_temp:
+
+			# Pass in only a single chunk of 8 players three separate times.
+			html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_team, table_lbl, stp_list, html_cache, hist_date)
+			html_file += '  </td>\n'
+			html_file += '  <td><br></td>\n'
+			html_file += '  <td>\n'
+
+	# Split raid format requested. Generate info from two different lane definitions
+	elif other_chars and not meta_chars and only_side and [x for x in strike_teams if '----' in x]:
+
+		# Truncate if only_side is 'left' or 'right' -- 'left' == keep first block, 'right' == keep last block.
+		if only_side in ('left','right'):
+
+			# Flip the order if we're keeping right.
+			if only_side == 'right':
+				for x in strike_teams:
+					x.reverse()
+			
+			strike_teams = [x[:x.index('----')] for x in strike_teams]
+
+			# Flip it back if we were working on right.
+			if only_side == 'right':
+				for x in strike_teams:
+					x.reverse()
+
+		# How many iterations? 
+		block_idx = [[0]+[i for i,e in enumerate(x) if e == '----']+[len(x)] for x in strike_teams]
+		block_cnt = len(block_idx[0])-1
+
+		# Finally, generate blocks for each section
+		for idx in range(block_cnt):
+			strike_temp = [strike_teams[x][block_idx[x][idx] : block_idx[x][idx+1]] for x in range(len(strike_teams))]
+			html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_temp, table_lbl, stp_list, html_cache, hist_date)
+			
+			# Generate divider if more to come
+			if idx != block_cnt-1:
+				html_file += '  </td>\n'
+				html_file += '  <td><br></td>\n'
+				html_file += '  <td>\n'
+
+	# We are NOT spanning. Standard table generation.
+	else:
+		html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist)
+		
+		# History to the side also requested.
+		if side_hist:
+			
+			# Small space between the two tables.
+			html_file += '  </td>\n'
+			html_file += '  <td><br></td>\n'
+			html_file += '  <td>\n'
+
+			# Generate the right table with historical information if available.
+			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, side_hist)
+			if 'META' in table_lbl:
+				table_lbl = table_lbl.replace('META',f'Changes since:<br>{side_hist}')
+			elif 'OTHER' in table_lbl:
+				table_lbl = table_lbl.replace('OTHER',f'Changes since:<br>{side_hist}')
+			else:
+				table_lbl += f'<br><span class="sub">Changes since:<br>{side_hist}</span>'
+			html_file += generate_table(alliance_info, table, section, table_format, other_chars, strike_teams, table_lbl, stp_list, html_cache, side_hist, linked_hist=True)
 
 	return html_file
