@@ -188,7 +188,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 
 			# If response was UNSUCCESSFUL note the error
 			elif not response or not response.ok:
-				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received")
+				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received{ansi.reset}")
 
 		# If member's info is in the roster_csv_data, use that.
 		elif member in roster_csv_data:
@@ -287,7 +287,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 
 	
 @timed(level=3)
-def roster_results(alliance_info, start_time, rosters_output=[], logger=print):
+def roster_results(alliance_info, start_time, rosters_output=[], only_summary=False, logger=print):
 	
 	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
 	UPD = len([x for x in rosters_output if 'UPD' in x[15:]])
@@ -316,16 +316,26 @@ def roster_results(alliance_info, start_time, rosters_output=[], logger=print):
 	NOT_AVAIL = [f'* *{x[:16].strip()}*' for x in rosters_output if 'NOT AVAIL' in x]
 	TIMEOUT   = [f'* {x[:16].strip()}' for x in rosters_output if 'TIMEOUT'   in x]
 
-	if NOT_AVAIL:
-		status_key.append(f"**{len(NOT_AVAIL)}** need roster shared w/ **ALLIANCE ONLY**:")
-		status_key += NOT_AVAIL
+	if only_summary:
+		if NOT_AVAIL:
+			status_key.append(f"**{len(NOT_AVAIL)}** not sharing")
 
-	if TIMEOUT:
-		status_key.append('**TIMEOUT** API failed. Not updated:')
-		status_key += TIMEOUT
+		if TIMEOUT:
+			status_key.append(f"**{len(TIMEOUT)}** timeouts")
 
-	if status_key:
-		summary += [''] + status_key
+		if status_key:
+			summary += [f'Errors: ' + ', '.join(status_key)]
+	else:
+		if NOT_AVAIL:
+			status_key.append(f"**{len(NOT_AVAIL)}** need roster shared w/ **ALLIANCE ONLY**:")
+			status_key += NOT_AVAIL
+
+		if TIMEOUT:
+			status_key.append('**TIMEOUT** API failed. Not updated:')
+			status_key += TIMEOUT
+
+		if status_key:
+			summary += [''] + status_key
 
 	return summary
 
@@ -430,24 +440,25 @@ def get_alliance_api(AUTH):
 
 		# Grab the list of PLAYABLE chars
 		response = request_char_info(AUTH)
-		if not response or not response.ok:
-			return response, 'playable char'
-
-		PLAYABLE = response.json()
+		PLAYABLE = response.json() if response and response.ok else None
 	
 		# Grab the list of UNPLAYABLE chars
 		response = request_char_info(AUTH, PLAYABLE=False)
-		if not response or not response.ok:
-			return response, 'unplayable char'
-
-		UNPLAYABLE = response.json()
+		UNPLAYABLE = response.json() if response and response.ok else None
 	
-		# Write these json structures out and update all cached char info
-		update_cached_char_info(PLAYABLE, UNPLAYABLE)
+		# Only process responses if both requests successful
+		if PLAYABLE and UNPLAYABLE:
 
-		# Update the cached char meta to current hashtag value
-		set_cached('char_meta', char_meta)
-	
+			# Write these json structures out and update all cached char info
+			update_cached_char_info(PLAYABLE, UNPLAYABLE)
+
+			# Update the cached char meta to current hashtag value
+			set_cached('char_meta', char_meta)
+
+		# Note that we did have an issue with the API calls
+		else:
+			print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} Failed requesting updated character info.{ansi.reset}")
+
 	# Parse the provided responses into a base alliance_info
 	alliance_info = parse_alliance_api(alliance_data, alliance_members)
 
