@@ -81,7 +81,6 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 		html_file += '  </td>\n </tr>\n</table>\n'
 
 	# No segmented rendering for this output.
-	if 'render_sections' in table_format:
-		del table_format['render_sections']
+	table_format.pop('render_sections', None)
 
 	return html_file

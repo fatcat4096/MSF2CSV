@@ -242,8 +242,8 @@ def generate_html(alliance_info, table, table_format, output=''):
 		html_file += '</body>\n</html>\n'
 		html_files[output+'.html'] = html_file	
 
-	if 'render_sections' in table_format:
-		del table_format['render_sections']
+	# Done, no more sections to render
+	table_format.pop('render_sections', None)
 
 	return html_files
 
