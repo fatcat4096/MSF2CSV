@@ -31,8 +31,8 @@ def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_
 
 	table = {}
 
-	# Always include history if it's available.
-	if not table_format.get('inc_hist'):
+	# Include history by default if it's available.
+	if table_format.get('inc_hist') is None:
 		table_format['inc_hist'] = hist_date
 
 	# Get the hist_date if historical information was requested.
