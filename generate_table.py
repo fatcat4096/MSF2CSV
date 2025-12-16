@@ -72,6 +72,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			if min_change_filter:
 				filtered_chars = []
 
+				# If passed as True, then ANY change should be registered
+				if type(min_change_filter) is bool:
+					min_change_filter = 0
+
 				for char in using_chars:
 					for player in using_players:
 
@@ -86,7 +90,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						hist_diff = find_value_or_diff(alliance_info, player, char, 'power', hist_date=inline_hist)[0]
 						
 						# If relevant growth, include and move to next char
-						if hist_diff/curr_power > min_change_filter:
+						if abs(hist_diff/curr_power) > min_change_filter:
 							filtered_chars.append(char)
 							break
 
