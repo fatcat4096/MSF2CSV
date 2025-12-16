@@ -337,7 +337,7 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 3', 'traits': ['Hero', 'Non-Mythic'], 'meta': ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'Quasar', 'Blade'], 'max_others':5},
 							{'header':'Mission 4', 'meta': ACCURSED  + HELLFIRE,  'label':'Accursed or<br>Hellfire Club'},
 							{'header':'Mission 5', 'meta': SECRETWAR + BRIMSTONE, 'label':'Secret Warrior<br>or Brimstone'},
-							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'max_others':5},
+							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': IMMORTAL, 'max_others':5},
 							],[ ### Zone 3 ###
 							{'header':'Mission 1', 'traits': ['Skill',  'Non-Mythic'], 'meta': VIGILANTE, 'max_others':5},
 							{'header':'Mission 2', 'traits': ['Global', 'Non-Mythic'], 'meta': ['Old Man Logan', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw'],  'max_others':5},
