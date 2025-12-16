@@ -324,7 +324,7 @@ def roster_results(alliance_info, start_time, rosters_output=[], only_summary=Fa
 			status_key.append(f"**{len(TIMEOUT)}** timeouts")
 
 		if status_key:
-			summary += [f'Errors: ' + ', '.join(status_key)]
+			summary += [f'Issues: ' + ', '.join(status_key)]
 	else:
 		if NOT_AVAIL:
 			status_key.append(f"**{len(NOT_AVAIL)}** need roster shared w/ **ALLIANCE ONLY**:")
