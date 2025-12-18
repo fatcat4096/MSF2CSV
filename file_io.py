@@ -24,6 +24,7 @@ except:	pass
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import quote, unquote
+from pathlib import Path
 
 
 
@@ -111,13 +112,18 @@ def html_to_images(html_files=[], print_path=False, render_wait=0.1, output_path
 	options = webdriver.ChromeOptions()
 	options.add_argument('--headless=new')
 	service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
+
+	# For linux, explicitly specify the chromedriver to use
+	if os.name == 'posix':
+		service.path = '/usr/bin/chromedriver'
+
 	driver  = webdriver.Chrome(service=service, options=options)
 
 	# The html_files list contains paths to the html files.
 	for file in html_files:
  
 		# Start by opening each file with our Selenium driver.
-		driver.get(file if '://' in file else r'file:///'+file)
+		driver.get(file if 'http' in file else Path(file).as_uri())
 
 		# Give it just a moment to render the page.
 		time.sleep(render_wait)
@@ -402,7 +408,7 @@ def check_import_path(alliance_name):
 	local_path = get_local_path()
 	
 	# Check to see if a subdirectory exists with this alliance_name and if it contains valid python files 
-	if os.path.isfile(local_path+alliance_name+'\\strike_teams.py') or os.path.isfile(local_path+alliance_name+'\\raids_and_lanes.py'):
+	if os.path.isfile(local_path+alliance_name+os.sep+'strike_teams.py') or os.path.isfile(local_path+alliance_name+os.sep+'raids_and_lanes.py'):
 
 		# If so, change the import path to this path
 		# For clarity, this entry was set by us (below) to force use of local strike_teams.py and raids_and_lanes.py when using a frozen executable. 
