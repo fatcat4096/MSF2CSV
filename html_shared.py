@@ -294,6 +294,7 @@ def translate_name(value):
 						"WeaponX": "Weapon X",
 						"WebSlinger": "Web Slinger",
 						"WebWarrior": "Web<br>Warriors",
+						"WinterGuard": "Winter Guard",
 						"XFactor": "X-Factor",
 						"Xforce": "X-Force",
 						"Xmen": "X-Men",
