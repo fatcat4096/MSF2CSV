@@ -8,131 +8,23 @@ Logs into website and updates data from Alliance Information if not
 from log_utils import *
 
 import datetime
-import time
-import sys
-import traceback
 
 import importlib
 import inspect
 import json
 import char_info
 
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException, TimeoutException, WebDriverException
-from selenium.webdriver.support.ui import WebDriverWait
-
 from parse_contents       import *
 from generate_local_files import *
 from file_io              import *
-from login                import get_driver, login
 from alliance_info        import *
 from cached_info          import get_cached, set_cached
 from msf_api              import *
 
-# Returns a cached_data version of alliance_info, or one freshly updated from online.
-@timed(level=3)
-def get_alliance_info(alliance_name='', prompt=False, force='', headless=False, scopely_login=''):
-
-	cached_alliance_info = find_cached_data(alliance_name)
-
-	# If we loaded a cached_data file, need to check when updated last. 
-	if cached_alliance_info:
-
-		# If we expect cached data or if it's 'fresh enough' and we aren't forcing 'fresh'. 
-		if force == 'stale' or (not force and not prompt and fresh_enough(cached_alliance_info)):
-			print ("Using cached_data from file:", cached_alliance_info['file_path'])
-
-			# If forced stale, make no changes.
-			if force == 'stale':
-				return cached_alliance_info
-
-			# Update the strike team info if we have valid teams in strike_teams.py
-			update_strike_teams(cached_alliance_info)
-
-			# Refresh the is_stale data in the file
-			update_is_stale(cached_alliance_info)
-
-			return cached_alliance_info
-
-		# If no alliance_name specified but we found one obvious candidate, report that we are using it.
-		if not alliance_name:
-			alliance_name = cached_alliance_info['name']
-			print (f"Defaulting to alliance from cached_data: {alliance_name}")
-
-	# Didn't find a cached data file, but requested stale
-	elif force == 'stale':
-		print (f'No cached_data found for {alliance_name}. Aborting.')
-		return
-
-	# Start by logging into the website.
-	driver = login(prompt, headless, scopely_login=scopely_login)
-
-	if not driver:
-		print ('Failed to login to MSF website. Aborting.')
-		return
-
-	alliance_info = parse_alliance(driver)
-
-	# If no alliance_name specified, use the login's alliance.
-	if not alliance_name:
-		print (f"Defaulting to alliance from website login: {alliance_info['name']}")
-
-	# If the alliance requested is NOT the one from the login, fail gracefully. 
-	elif alliance_name.lower() != alliance_info['name'].lower():
-		print (f"Alliance requested ({alliance_name}) doesn't match login alliance ({alliance_info['name']}). Aborting.")
-		return
-
-	# Verify the fresh and old cached data are the same alliance 
-	# Merge data if old info available
-	find_cached_and_merge(alliance_info)
-
-	# Make note of when we begin.
-	start_time = datetime.datetime.now()
-
-	# Initialize structures used during refresh.
-	rosters_output  = []
-	roster_csv_data = {}
-
-	# Work the website or cached URLs to update alliance_info 
-	for member in list(alliance_info['members']):
-		rosters_output += process_rosters(alliance_info, driver, [member], roster_csv_data)
-
-	# If anything was updated, do some additional work.
-	status = ''.join([line[15:] for line in rosters_output])
-	if 'UPD' in status or 'NEW' in status:
-	
-		# Keep a copy of critical stats from today's run for historical analysis.
-		update_history(alliance_info)
-
-	# Close the Selenium session.
-	driver.close()
-
-	# Print a summary of the results.
-	roster_results(alliance_info, start_time, rosters_output)
-
-	# Make sure we have a valid strike_team for Raids. 
-	updated = update_strike_teams(alliance_info) 
-
-	# Generate strike_teams.py if we updated strike team definitions or if this file doesn't exist locally.
-	if updated or 'strike_teams' not in globals():
-		generate_strike_teams(alliance_info)
-
-	# Write the collected roster info to disk.
-	write_cached_data(alliance_info)
-
-	# Refresh the is_stale data in the file
-	update_is_stale(alliance_info)
-
-	return alliance_info
-
-
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_data={}, AUTH=None, log_file=None, logger=print):
+def process_rosters(alliance_info, only_process, AUTH, log_file, logger=print):
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
@@ -142,18 +34,6 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 
 	# TEMP: Pull expected member order out of info.csv.
 	member_order = [member for member in alliance_info['members'] if alliance_info['members'][member].get('avail')]
-
-	# If calling from the command line.
-	if not AUTH:
-
-		# If we're missing char_lookup, or it's a day old
-		# build the temp files with current API responses
-		if not fresh_enough('char_lookup'):
-			update_cached_char_info()
-
-		# Processes roster_csv data on first pass only 
-		if not roster_csv_data and member_order:
-			parse_roster_csv(driver.roster_csv, roster_csv_data, member_order)
 
 	# Let's iterate through the member names in alliance_info.
 	for member in list(members):
@@ -167,8 +47,8 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 		# Take note of the original TCP size.
 		tcp_start = members[member].get('tot_power',0)
 
-		# If we have AUTH, use that.
-		if AUTH and members[member].get('avail'):
+		# Only process members who have available rosters
+		if members[member].get('avail'):
 			processed_chars = {}
 			other_data      = {}
 
@@ -189,26 +69,6 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 			# If response was UNSUCCESSFUL note the error
 			elif not response or not response.ok:
 				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received{ansi.reset}")
-
-		# If member's info is in the roster_csv_data, use that.
-		elif member in roster_csv_data:
-
-			processed_chars = roster_csv_data[member]['processed_chars']
-			other_data      = roster_csv_data[member]['other_data']
-			
-			# Merge the processed roster information into our Alliance Info
-			merge_roster(alliance_info, member, processed_chars, other_data)
-
-		# If we have a Recruit URL, process from website.
-		elif members[member].get('url') and members[member].get('avail'):
-
-			# SHOULD NOT BE USED FOR /ROSTER REFRESH
-			if roster_csv_data:
-				print ('SHOULD NOT HAPPEN: Could not find member',member,'in roster_csv_data:',roster_csv_data.keys())
-
-			page_source = get_roster_html(driver, members[member]['url'], member, alliance_info)
-			if page_source:
-				parse_roster_html(page_source, alliance_info, member)
 
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
@@ -232,7 +92,7 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 		elif abs(tcp_diff) > 1000:	tcp_diff = f'{tcp_diff/1000:>+6.0f}K'
 		else:					tcp_diff = f'{tcp_diff:>+6.0f} '
 
-		# Used CSV for Roster update
+		# If we found updated info
 		if updated:
 			# If roster is NEW say so
 			if not tcp_start:
@@ -242,11 +102,11 @@ def process_rosters(alliance_info={}, driver=None, only_process=[], roster_csv_d
 				result = f'UPD:{tcp_diff}'
 				FORMAT = ansi.ltyel
 		# Roster not available on website.
-		elif member not in roster_csv_data and not members[member].get('avail'):
+		elif not members[member].get('avail'):
 			result = 'NOT AVAIL'
 			FORMAT = ansi.ltred
 		# Never received Roster page to parse.
-		elif (AUTH and not (response and response.ok)) or (member not in roster_csv_data and driver and len(driver.page_source) < 700000): 
+		elif not (response and response.ok): 
 			result = 'TIMEOUT'
 			FORMAT = ansi.ltred
 		# Not sure what happened here. Side stepping an odd error condition.
@@ -338,63 +198,6 @@ def roster_results(alliance_info, start_time, rosters_output=[], only_summary=Fa
 			summary += [''] + status_key
 
 	return summary
-
-
-
-@timed(level=3)
-def get_roster_html(driver, member_url, member='', alliance_info={}):
-
-	# Start by defining the number of retries and time limit for each attempt. 
-	retries    = 3
-	time_limit = 6
-
-	page_source = ''
-	
-	while retries:
-		try:
-			# Note when we began processing
-			start_time = datetime.datetime.now()
-
-			# Start by getting to Profile page.
-			driver.get(f"https://marvelstrikeforce.com/en/member/{member_url}/info")
-
-			# Click on the Roster button when available.
-			button = WebDriverWait(driver, 6).until(EC.element_to_be_clickable((By.XPATH,f'//a[@href="/member/{member_url}/characters"]')))
-			button.click()
-			
-			# Page loads in sections, will be > 700K after roster information loads.
-			while (datetime.datetime.now()-start_time).seconds < time_limit:
-
-				# Give it a moment, then see what's loaded.
-				time.sleep(0.25)
-				page_source = driver.page_source
-
-				# If page fully loaded, return this
-				if len(page_source)>700000:
-					return page_source
-
-			# Timed out and page hasn't fully loaded.
-			raise TimeoutException
-
-		except Exception as exc:
-			retries -= 1
-
-			# Just a timeout?
-			if isinstance(exc, TimeoutException):
-				print (f'TIMED OUT!', end=' ')
-
-			# If not, display the exception.
-			else:
-				print (f'EXCEPTION! {type(exc).__name__}: {exc}', end=' ')
-
-			print (f'{retries} retries remaining...')
-
-			# Too many retries, report exception and bail.
-			if not retries:
-				if isinstance(exc, TimeoutException):
-					return
-				print (traceback.format_exc())
-				raise
 
 
 

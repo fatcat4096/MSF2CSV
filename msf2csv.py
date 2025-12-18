@@ -9,7 +9,6 @@ from log_utils import *
 import os, sys
 import argparse
 
-from process_website import *             # Routines to get Roster data from website.
 from file_io         import *             # Routines to read and write files to disk.
 from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
@@ -19,14 +18,14 @@ import datetime
 
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
-def main(alliance_name='', prompt=False, headless=False, force='', table_format={}, scopely_login='', log_file=None):
+def main(alliance_name='', table_format={}, log_file=None):
 
 	# Were we passed an alliance_info via alliance_name?
 	if type(alliance_name) is dict and 'members' in alliance_name:
 		alliance_info = alliance_name
-	# Load roster info directly from cached data or the website.
+	# Load roster info from cached data
 	else:
-		alliance_info = get_alliance_info(alliance_name, prompt, force, headless, scopely_login)
+		alliance_info = find_cached_data(alliance_name)
 
 	# If we failed to retrieve alliance info, we've already explained. Just exit.
 	if not alliance_info:
@@ -95,25 +94,11 @@ if __name__ == '__main__':
 	formatter = lambda prog: argparse.HelpFormatter(prog, max_help_position=40)
 	parser = argparse.ArgumentParser(formatter_class=formatter, description='Create HTML tables from MSF roster data.')
 
-	group0 = parser.add_mutually_exclusive_group()
-	group0.add_argument('alliance_name', type=str, nargs='?',
-						help='e-mail address for Scopely account login', default='')
+	parser.add_argument('alliance_name', type=str, nargs='?',
+						help='use data from this alliance', default='')
 
 	parser.add_argument('-c', '--csv', action='store_true', 
 						help='just generate csv output, no html tables')
-	parser.add_argument('-p' , '--prompt', action='store_true', 
-						help='prompt and store credentials')
-	parser.add_argument('--headless', action='store_true', 
-						help='hide web browser driver during roster processing')
-
-	# Force fresh roster downloads or force use of cached data.
-	group1 = parser.add_mutually_exclusive_group()
-	group1.add_argument('-f', '--fresh', action='store_true', 
-						help='force download of Alliance roster data, regardless of timing')
-	group1.add_argument('-s', '--stale', action='store_true',
-						help='prevent download of Alliance roster data, regardless of timing')
-	group0.add_argument('--login', type=str, metavar='EMAIL',
-						help='e-mail address for Scopely account login', default='')
 
 	# Table Formatting flags. 
 	parser.add_argument('--inc_avail', action='store_true', default=None,
@@ -168,13 +153,6 @@ if __name__ == '__main__':
 						help='roster URL for solo report output')						
 	args = parser.parse_args()
 
-	# There can be only one.
-	force = ''
-	if args.fresh:
-		force = 'fresh'
-	elif args.stale:
-		force = 'stale'
-	
 	# If only summary, make sure inc_summary is set as well.
 	if args.only_summary and not args.inc_summary:
 		args.inc_summary = True
@@ -222,5 +200,5 @@ if __name__ == '__main__':
 					'sort_char_by'  : args.sort_char_by,
 					'span'          : args.span}
 	
-	main(args.alliance_name, args.prompt, args.headless, force, table_format, args.login) # Just run myself
+	main(args.alliance_name, table_format) # Just run myself
 	
