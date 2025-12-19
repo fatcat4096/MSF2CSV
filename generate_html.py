@@ -23,7 +23,7 @@ from generate_summary         import *
 
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
-def generate_html(alliance_info, table, table_format, output=''):
+def generate_html(alliance_info, table, table_format):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
