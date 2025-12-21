@@ -1,4 +1,4 @@
-def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', html_cache={}):
+def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lanes=0, hist_tab='', using_tabs=False):
 
 	html_file = '''<!doctype html>
 <html lang="en">
@@ -431,10 +431,19 @@ def add_css_header(table_name='', num_lanes=0, hist_tab='', lane_name='Lane', ht
 		html_file += '''<button class="tlnk" onclick="openPage('RosterAnalysis', this)">ROSTER ANALYSIS</button>''' + '\n'
 		html_file += '''<button class="tlnk" onclick="openPage('AllianceInfo', this)">ALLIANCE INFO</button>''' + '\n'
 		html_file += '''<button class="tlnk" onclick="openPage('ByChar', this)">INFO BY CHAR</button><br>''' + '\n'
-	return html_file
 
-def add_sort_scripts():
-	return '''
+	# Add the generated HTML and scripts to support sorting 
+	html_file += ORIG_HTML + SORT_SCRIPTS
+	
+	# If using tabs, add the Javascript to control tabbed display.
+	if using_tabs:
+		html_file += TABBED_FOOTER
+
+	return html_file + '</body>\n</html>\n'
+
+
+
+SORT_SCRIPTS = '''
 <script>
 function strip(html){
 	 let doc = new DOMParser().parseFromString(html, 'text/html');
@@ -609,9 +618,10 @@ function toTable(from_elem,to_elem) {
 </script>
 '''
 
+
+
 # Quick and dirty Javascript to allow Tabbed implementation for raids with lanes.
-def add_tabbed_footer():
-	return '''
+TABBED_FOOTER = '''
 <script>
 function openPage(pageName,elmnt) {
 	var i, tabcontent, tablinks;
