@@ -23,7 +23,7 @@ from generate_summary         import *
 
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
-def generate_html(alliance_info, table, table_format):
+def generate_html(alliance_info, table, table_format, only_body=False):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -54,37 +54,62 @@ def generate_html(alliance_info, table, table_format):
 		only_image     = table_format.get('only_image',False)
 		sections_per   = table_format.get('sections_per',0)
 		lane_overlay   = table_format.get('lane_overlay',None)
-		one_per_member = table_format.get('one_per_member')
+		num_per_image  = table_format.get('num_per_image')
 
 		# If we need to generate one output per user, dupe the table_format and use a copy
-		if one_per_member:
+		if num_per_image:
 			
 			# Create a base case if no members specified, reverse the sort so pops in alphabetical order
 			only_members = table_format['only_members'] = sorted(table_format.get('only_members', alliance_info.get('members')), reverse=True, key=str.lower)
 			
-			# More than one requested? Iterate members 4 at a time.
+			# More than one requested? Not base case, gang these up as requested.
 			if len(only_members) > 1:
-				NUM_IMAGES = min(4,len(only_members))
-
-				# Make a note of the players we're rendering in case we need to re-render
-				table_format['redo_if_stale'] = only_members[-NUM_IMAGES:]
 
 				# Use a copy of the table_format for recursive calls
 				table_format_copy = copy.deepcopy(table_format)
+				
+				# Keep track of which entries we've completed
+				REDO = table_format.setdefault('redo_if_stale',[])
 
-				for x in range(NUM_IMAGES):
-					table_format_copy['only_members'] = [only_members.pop()]
-					html_files.update(generate_html(alliance_info, table, table_format_copy))
-					
+				# Iterate through the list, looking for valid entries in increments of num_per_image
+				while len(html_files) != 4 and only_members:
+
+					# Get the next member from the list
+					MEMBER_NAME = only_members.pop()
+
+					# New image? Start with empty file, new name 
+					if not (len(REDO) % num_per_image):
+						html_file = ''
+						html_name = f'{output}-{MEMBER_NAME}.html'
+
+					# Generate Report only for this member
+					table_format_copy['only_members'] = [MEMBER_NAME]
+					MEMBER_HTML = generate_html(alliance_info, table, table_format_copy, only_body=True)
+
+					# Did we get back a valid report?
+					if MEMBER_HTML:
+						
+						# Add report to the current image
+						html_file += MEMBER_HTML
+
+						# Add name to the Redo list -- will need to Redo if data was stale
+						REDO.append(MEMBER_NAME)
+						
+						# Was this the last entry in an image or in the only_members list?
+						if not (len(REDO) % num_per_image and only_members):
+							
+							# Include the footer/header and add it to the list
+							html_files[html_name] = add_css_header(table_name, html_cache, html_file, lane_name)
+		
 				# Tell it to keep rendering using the 'render_sections' flag
 				if only_members:
 					table_format['render_sections'] = True
 				else:
 					table_format.pop('render_sections', None)
-					
+			
 				return html_files
 
-			# Add the member's name to ensure file is unique
+			# Add the first member's name to ensure file is unique
 			output = f'{output}-{only_members[0]}'
 
 		# Integrate Custom Teams in Table output if all entries requested
@@ -165,8 +190,8 @@ def generate_html(alliance_info, table, table_format):
 				if only_summary:
 					tab_name = ('TEAM POWER SUMMARY')
 
-				# Include the label for the lane plus the requested sections.
-				html_file = get_tab_header(tab_name)	
+				# Gotta start somewhere
+				html_file = ''
 
 				# Insert summary if requested, but only if generating entire lane.
 				if only_summary or (inc_summary and not only_section and sections_per == len(lane)):
@@ -190,7 +215,7 @@ def generate_html(alliance_info, table, table_format):
 						html_file += generate_lanes(alliance_info, table, [[section]], table_format, side_hist=side_hist, html_cache=html_cache)
 
 						# Include the history information if we have it and can include it.
-						if hist_date:
+						if html_file and hist_date:
 							html_file += get_tab_header(get_hist_tab(hist_date, table_format))	
 							html_file += generate_lanes(alliance_info, table, [[section]], table_format, hist_date, html_cache=html_cache)
 
@@ -200,11 +225,23 @@ def generate_html(alliance_info, table, table_format):
 						if len(sections) != 1:
 							section_num += f'-{section_idx+len(sections):02}'
 
-				# Include scripts to support sorting.
-				html_file += add_sort_scripts()
 
-				# Finsh it by adding the CSS to the top with all the defined colors.
-				html_file  = add_css_header(table_name, lane_name=lane_name, html_cache=html_cache) + html_file + '</body>\n</html>\n'		
+				# If nothing was generated, explicitly indicate this
+				if not html_file: 
+					tab_name = 'EMPTY REPORT - NO INFO GENERATED'
+
+				# Only include headers and footers if necessary
+				if html_file or not only_body:
+					html_file = get_tab_header(tab_name) + html_file
+
+				# Finish it by adding the CSS to the top w/ defined colors, scripts at bottom
+				if html_file:
+					html_file = add_css_header(table_name, html_cache, html_file, lane_name)
+
+				# Are we just wanting the body of this file?
+				if only_body:
+					return html_file
+
 				html_files[output+'%s%s.html' % (file_num, section_num)] = html_file
 
 			# Manually resetting the loop.
@@ -228,18 +265,13 @@ def generate_html(alliance_info, table, table_format):
 		elif output == 'by_char':
 			html_file += generate_by_char_tab(alliance_info, table_format, html_cache=html_cache)
 
-		# Include scripts to support sorting.
-		html_file += add_sort_scripts()
+		table_name = {	'roster_analysis':'Roster Analysis',
+						'alliance_info'  :'Alliance Info',
+						'by_char'        :'Info by Char'}[output]
 
-		report_descriptions = {	'roster_analysis':'Roster Analysis',
-								'alliance_info'  :'Alliance Info',
-								'by_char'        :'Info by Char'}
+		# Finish by adding the CSS Header and scripts to support sorting
+		html_file = add_css_header(table_name, html_cache, html_file)
 
-		# Finish by adding the CSS Header to the top.
-		html_file = add_css_header(report_descriptions[output], html_cache=html_cache) + html_file
-
-		# Wrap it up and add it to the collection.
-		html_file += '</body>\n</html>\n'
 		html_files[output+'.html'] = html_file	
 
 	# Done, no more sections to render
@@ -308,16 +340,8 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	if table_format.get('opt_if_large') and len(html_file) > 5000000:
 		html_file = ''.join([x.strip() for x in html_file.split('\n')])
 	
-	# Include scripts to support sorting.
-	html_file += add_sort_scripts()
-
-	# Finally, add the Javascript to control tabbed display.
-	html_file += add_tabbed_footer()
-		
 	# Finish it with the CSS Header at the top and final lines on the end.
-	html_file = add_css_header(table_name, len(lanes), hist_tab, lane_name=lane_name, html_cache=html_cache) + html_file + '</body>\n</html>\n'
-
-	return html_file
+	return add_css_header(table_name, html_cache, html_file, lane_name, len(lanes), hist_tab, using_tabs=True)
 
 
 
@@ -374,11 +398,6 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section_idx, section in enumerate(lane):
 
-			# Let's make it easy on ourselves. Start every section the same way.
-			html_file += '<table>\n'
-			html_file += ' <tr style="vertical-align:top">'
-			html_file += '  <td>\n'
-
 			# Do we have subsections defined?
 			subsections = section.pop('subsections', None)
 			
@@ -423,10 +442,9 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 			else:
 				html_file += generate_section(alliance_info, table, section, table_format, strike_teams, hist_date, side_hist, html_cache)
 
-			# End every section the same way.
-			html_file += '  </td>\n'
-			html_file += ' </tr>\n'
-			html_file += '</table>\n'
+			# Let's make it easy on ourselves. Start and end every section the same way.
+			if html_file:
+				html_file = '<table>\n <tr style="vertical-align:top">  <td>\n' + html_file + '  </td>\n </tr>\n</table>\n'
 
 			# If not the final section, add a divider row. 
 			if not section_idx == len(lane)-1:
