@@ -1257,6 +1257,9 @@ playable   = {
     },
     {
       "description": "When he isn't using his superhuman durability to deflect enemy attacks, Sam Guthrie delivers crushing blows that slow and stun the opposition.",
+      "eventTraits": [
+        "Stormbound"
+      ],
       "id": "Cannonball",
       "mission": false,
       "name": "Cannonball",
@@ -5737,6 +5740,9 @@ playable   = {
     },
     {
       "description": "Magik uses dark sorcery to charge up her allies and her mutant teleportation power to get the drop on enemies. As the demonic Darkchylde, she can inflict heavy damage.",
+      "eventTraits": [
+        "Stormbound"
+      ],
       "id": "Magik",
       "invisibleTraits": [
         "Xmen",
@@ -10168,6 +10174,9 @@ playable   = {
     },
     {
       "description": "The hot-headed Sunspot possesses the ability to absorb and redirect the sun's power, letting him deal massive damage and grant ability energy to his X-Men allies.",
+      "eventTraits": [
+        "Stormbound"
+      ],
       "id": "Sunspot",
       "invisibleTraits": [
         "Xmen",
@@ -11412,6 +11421,9 @@ playable   = {
     },
     {
       "description": "A techno-organic lifeform befriended by the New Mutants, Warlock uses his shapeshifting abilities to siphon positive effects from enemies to allies.",
+      "eventTraits": [
+        "Stormbound"
+      ],
       "id": "Warlock",
       "mission": false,
       "name": "Warlock",
@@ -11578,6 +11590,9 @@ playable   = {
     },
     {
       "description": "Rahne Sinclair, always on the prowl for the perfect strike, leverages her keen senses and lycanthropic strength to deal long-lasting damage to enemies.",
+      "eventTraits": [
+        "Stormbound"
+      ],
       "id": "Wolfsbane",
       "mission": false,
       "name": "Wolfsbane",
@@ -12068,13 +12083,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "6f13a553a1636c997d89",
-      "chars": "f4cd7bc60b0e8f5518b3",
-      "drops": "0a437fec68f310aae84e",
-      "events": "33a411c83e25ca592ed2",
-      "locs": "10533c7173d5e0c6f5aa",
-      "nodes": "6f0ead6911e04d33d107",
-      "other": "18b030f896fa359ddf7a"
+      "all": "5f2796277499dbbec968",
+      "chars": "085cb27f373d84b0abb3",
+      "drops": "9d7b7f3f8b558a71eafd",
+      "events": "9361c2336fe35e88c83e",
+      "locs": "1592be9bae526c2345c6",
+      "nodes": "44078fe72b36b0b93fab",
+      "other": "176e8a74846db3ae4b69"
     },
     "perTotal": 351,
     "version": 1
@@ -12914,13 +12929,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "6f13a553a1636c997d89",
-      "chars": "f4cd7bc60b0e8f5518b3",
-      "drops": "0a437fec68f310aae84e",
-      "events": "33a411c83e25ca592ed2",
-      "locs": "10533c7173d5e0c6f5aa",
-      "nodes": "6f0ead6911e04d33d107",
-      "other": "18b030f896fa359ddf7a"
+      "all": "5f2796277499dbbec968",
+      "chars": "085cb27f373d84b0abb3",
+      "drops": "9d7b7f3f8b558a71eafd",
+      "events": "9361c2336fe35e88c83e",
+      "locs": "1592be9bae526c2345c6",
+      "nodes": "44078fe72b36b0b93fab",
+      "other": "176e8a74846db3ae4b69"
     },
     "perTotal": 43,
     "version": 1
