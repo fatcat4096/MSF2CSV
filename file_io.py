@@ -349,10 +349,15 @@ def find_cached_data(file_or_alliance=''):
 			# Look in local directory, subdirectory named for alliance, and cached_data directory
 			for local_path in [get_local_path(), get_local_path()+os.sep+file_or_alliance, get_local_path()+os.sep+'cached_data']:
 
-				# Look for name with encoding, without encoding, and do a reverse search ignoring tags and encoding
-				for file_list in [glob.glob(os.path.join(local_path,f'cached_data-{file_or_alliance}.msf')),
-								  glob.glob(os.path.join(local_path,f'cached_data-{encode_tags(file_or_alliance)}.msf')),
-								  [x for x in glob.iglob(os.path.join(local_path,f'cached_data-*.msf')) if remove_tags(decode_tags(x)).lower().endswith(f'{os.sep}cached_data-{file_or_alliance}.msf')]]:
+				# Find file even if marked retired
+				for data_type in ['cached_data', 'OLD_DATA']:
+
+					# Look for name with encoding, without encoding, and do a reverse search ignoring tags and encoding
+					for file_list in [glob.glob(os.path.join(local_path,f'{data_type}-{file_or_alliance}.msf')),
+									  glob.glob(os.path.join(local_path,f'{data_type}-{encode_tags(file_or_alliance)}.msf')),
+									  [x for x in glob.iglob(os.path.join(local_path,f'{data_type}-*.msf')) if remove_tags(decode_tags(x)).lower().endswith(f'{os.sep}{data_type}-{file_or_alliance}.msf')]]:
+						if len(file_list) == 1:
+							break
 					if len(file_list) == 1:
 						break
 				if len(file_list) == 1:
