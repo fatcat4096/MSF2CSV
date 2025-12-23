@@ -17,7 +17,7 @@ from html_shared   import *
 def generate_roster_analysis(alliance_info, html_cache, hist_date, table_format=None, using_tabs=False):
 
 	# Initialize the mutables
-	if not table_format:
+	if table_format is None:
 		table_format = {}
 
 	# Pull formatting info from table_format

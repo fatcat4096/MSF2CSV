@@ -23,7 +23,7 @@ from generate_summary         import *
 
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
-def generate_html(alliance_info, table, table_format, only_body=False):
+def generate_html(alliance_info, table, table_format, html_cache=None, only_body=False):
 
 	default_lanes = [[{'traits': ['Mutant']},
 					  {'traits': ['Bio']},
@@ -32,7 +32,8 @@ def generate_html(alliance_info, table, table_format, only_body=False):
 					  {'traits': ['Tech']}]]
 
 	html_files = {}
-	html_cache = {}
+	if html_cache is None:
+		html_cache = {}
 	
 	output = table_format.get('output','query')
 	
@@ -84,7 +85,7 @@ def generate_html(alliance_info, table, table_format, only_body=False):
 
 					# Generate Report only for this member
 					table_format_copy['only_members'] = [MEMBER_NAME]
-					MEMBER_HTML = generate_html(alliance_info, table, table_format_copy, only_body=True)
+					MEMBER_HTML = generate_html(alliance_info, table, table_format_copy, html_cache, only_body=True)
 
 					# Did we get back a valid report?
 					if MEMBER_HTML:
@@ -203,7 +204,7 @@ def generate_html(alliance_info, table, table_format, only_body=False):
 					strike_teams = get_strike_teams(alliance_info, table, table_format)
 
 					# Add the table to the top!
-					html_file += generate_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache=html_cache)
+					html_file += generate_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date, html_cache)
 
 				# If not only summary, generate the rest of the lane.
 				section_num = ''
@@ -212,12 +213,12 @@ def generate_html(alliance_info, table, table_format, only_body=False):
 					# Process the lane, section by section.
 					sections = lane[section_idx:section_idx+sections_per]
 					for section in sections:
-						html_file += generate_lanes(alliance_info, table, [[section]], table_format, side_hist=side_hist, html_cache=html_cache)
+						html_file += generate_lanes(alliance_info, table, [[section]], table_format, html_cache, side_hist=side_hist)
 
 						# Include the history information if we have it and can include it.
 						if html_file and hist_date:
 							html_file += get_tab_header(get_hist_tab(hist_date, table_format))	
-							html_file += generate_lanes(alliance_info, table, [[section]], table_format, hist_date, html_cache=html_cache)
+							html_file += generate_lanes(alliance_info, table, [[section]], table_format, html_cache, hist_date)
 
 					# Wrap it up and add it to the collection.
 					if only_section or sections_per != len(lane):
@@ -255,15 +256,15 @@ def generate_html(alliance_info, table, table_format, only_body=False):
 
 		# Generate the appropriate midsection, either Roster Analysis...
 		if output == 'roster_analysis':
-			html_file += generate_roster_analysis(alliance_info, table_format, hist_date=hist_date, html_cache=html_cache)
+			html_file += generate_roster_analysis(alliance_info, html_cache, hist_date, table_format)
 
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
-			html_file += generate_alliance_tab(alliance_info, hist_date=hist_date, html_cache=html_cache)
+			html_file += generate_alliance_tab(alliance_info, html_cache, hist_date)
 
 		# ...or By Char, generate one entry for each character included in the main report
 		elif output == 'by_char':
-			html_file += generate_by_char_tab(alliance_info, table_format, html_cache=html_cache)
+			html_file += generate_by_char_tab(alliance_info, html_cache, hist_date, table_format)
 
 		table_name = {	'roster_analysis':'Roster Analysis',
 						'alliance_info'  :'Alliance Info',
@@ -325,16 +326,16 @@ def generate_tabbed_html(alliance_info, table, table_format):
 		side_hist, hist_date = hist_date, None
 
 	# Add a tab for each lane. 
-	html_file = generate_lanes(alliance_info, table, lanes, table_format, using_tabs=True, side_hist=side_hist, html_cache=html_cache)
+	html_file = generate_lanes(alliance_info, table, lanes, table_format, html_cache, side_hist=side_hist, using_tabs=True)
 
 	# Add a historical info tab.
 	if hist_date:
-		html_file += generate_lanes(alliance_info, table, lanes, table_format, hist_date, using_tabs=True, html_cache=html_cache)
+		html_file += generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_date, using_tabs=True)
 
 	# After all Lanes are added, add the Roster Analysis, Alliance Info, and ByChars tabs.
-	html_file += generate_roster_analysis(alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
-	html_file += generate_alliance_tab   (alliance_info, using_tabs=True, hist_date=hist_date or side_hist, html_cache=html_cache)
-	html_file += generate_by_char_tab    (alliance_info, using_tabs=True, hist_date=hist_date or True, html_cache=html_cache)
+	html_file += generate_roster_analysis(alliance_info, html_cache, hist_date or side_hist, using_tabs=True)
+	html_file += generate_alliance_tab   (alliance_info, html_cache, hist_date or side_hist, using_tabs=True)
+	html_file += generate_by_char_tab    (alliance_info, html_cache, hist_date or True,      using_tabs=True)
 
 	# Optimize if large? Remove white space and carriage returns from center section.
 	if table_format.get('opt_if_large') and len(html_file) > 5000000:
@@ -347,14 +348,14 @@ def generate_tabbed_html(alliance_info, table, table_format):
 
 # If we're doing a single lane format and we have history, let's generate a historical data tab. 
 @timed(level=3)
-def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
+def get_hist_tab(hist_date, table_format, lanes: list=None, tabbed=False):
 
 	# Default it to empty.
 	hist_tab = ''
 
 	# If this format qualifies for History and it's being requested, generate the tab label.
 	if hist_date:
-		if (tabbed and len(lanes) == 1) or (not tabbed and table_format.get('only_section') or table_format.get('sections_per') == 1):
+		if (tabbed and lanes and len(lanes) == 1) or (not tabbed and table_format.get('only_section') or table_format.get('sections_per') == 1):
 			hist_tab = "CHANGES SINCE %s" % hist_date
 
 	return hist_tab
@@ -363,7 +364,7 @@ def get_hist_tab(hist_date, table_format, lanes=[], tabbed=False):
 
 # Generate the contents for each lane.
 @timed(level=3)
-def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, side_hist=None, using_tabs=False, html_cache={}):
+def generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_date=None, side_hist=None, using_tabs=False):
 
 	html_file = ''
 
@@ -393,7 +394,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 			team_list = [get_section_label(section) for section in lane]
 
 			# Add the table to the top!
-			html_file += generate_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date or side_hist, html_cache=html_cache)
+			html_file += generate_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date or side_hist, html_cache)
 
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section_idx, section in enumerate(lane):
@@ -460,7 +461,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, hist_date=None, si
 
 # Generate the table for each section as requested.
 @timed(level=3)
-def generate_section(alliance_info, table, section, table_format, strike_teams, hist_date=None, side_hist=None, html_cache={}):
+def generate_section(alliance_info, table, section, table_format, strike_teams, hist_date, side_hist, html_cache):
 
 	html_file = ''
 

@@ -67,7 +67,7 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, table: 
 def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict: dict=None):
 	
 	# Initialize the mutables
-	if not team_pwr_dict:
+	if team_pwr_dict is None:
 		team_pwr_dict = {}
 	
 	# Get the list of Alliance Members 

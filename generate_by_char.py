@@ -19,7 +19,7 @@ from generate_table import *
 def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format=None, using_tabs=False):
 
 	# Initialize the mutables
-	if not table_format:
+	if table_format is None:
 		table_format = {}
 
 	html_file = ''
