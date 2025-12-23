@@ -135,8 +135,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	for player_name in player_list:
 		for char_name in meta_chars+other_chars:
 
+			# Not summoned is under_min
+			under_min = find_value_or_diff(alliance_info, player_name, char_name, 'power' )[0] == 0
+
 			# ...calculate whether entry is under the min requirements for use in this raid/mode .
-			under_min = 0
 			if min_lvl:
 				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'lvl' )[0] < min_lvl
 			if min_tier:
