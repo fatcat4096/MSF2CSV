@@ -16,7 +16,11 @@ from generate_table import *
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_by_char_tab(alliance_info, table_format={}, using_tabs=False, hist_date=True, html_cache={}):
+def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format=None, using_tabs=False):
+
+	# Initialize the mutables
+	if not table_format:
+		table_format = {}
 
 	html_file = ''
 

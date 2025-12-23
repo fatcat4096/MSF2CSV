@@ -13,7 +13,7 @@ from html_shared    import *
 from generate_table import *
 
 @timed(level=3)
-def generate_summary(alliance_info, table, lanes, table_format, team_list, strike_teams, hist_date=None, html_cache={}):
+def generate_summary(alliance_info, table, lanes, table_format, team_list, strike_teams, hist_date, html_cache):
 
 	html_file = ''
 

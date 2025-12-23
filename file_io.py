@@ -100,7 +100,7 @@ def write_file(pathname, file_content, print_path=True):
 
 
 @timed(level=3)
-def html_to_images(html_files=[], print_path=False, render_wait=0.1, output_path=None):
+def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=None):
 
 	# Handle base case of single file or URL
 	if type(html_files) == str:

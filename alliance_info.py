@@ -34,9 +34,9 @@ def get_hist_date(alliance_info, table_format):
 
 
 # Bring back a sorted list of players from alliance_info
-def get_player_list(alliance_info, sort_by='', stp_list={}, table={}, char_list=[]):
+def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, table: dict=None, char_list: list=[]):
 
-	player_list = alliance_info.get('members',[])
+	player_list = alliance_info.get('members', [])
 
 	# If Sort Order specified, sort player_list in the correct order. 
 	if sort_by == 'stp' and stp_list:
@@ -64,7 +64,11 @@ def get_player_list(alliance_info, sort_by='', stp_list={}, table={}, char_list=
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
-def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict={}):
+def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict: dict=None):
+	
+	# Initialize the mutables
+	if not team_pwr_dict:
+		team_pwr_dict = {}
 	
 	# Get the list of Alliance Members 
 	player_list = get_player_list(alliance_info)
@@ -640,7 +644,7 @@ def is_stale(alliance_info, member_name):
 
 
 # All settings, we build up the same way
-def get_table_value(table_format, table, section={}, key='', default=None):
+def get_table_value(table_format, table, section: dict={}, key: str='', default=None):
 
 	# Check for a custom value in table_format
 	value = table_format.get(key)

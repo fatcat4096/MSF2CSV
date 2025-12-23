@@ -147,7 +147,7 @@ def process_rosters(alliance_info, only_process, AUTH, log_file, logger=print):
 
 	
 @timed(level=3)
-def roster_results(alliance_info, start_time, rosters_output=[], only_summary=False, logger=print):
+def roster_results(alliance_info, start_time, rosters_output, only_summary=False, logger=print):
 	
 	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
 	UPD = len([x for x in rosters_output if 'UPD' in x[15:]])

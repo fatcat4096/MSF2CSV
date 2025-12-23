@@ -19,7 +19,7 @@ import datetime
 
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
-def main(alliance_name='', table_format={}, log_file=None):
+def main(alliance_name='', table_format, log_file=None):
 
 	# Were we passed an alliance_info via alliance_name?
 	if type(alliance_name) is dict and 'members' in alliance_name:
