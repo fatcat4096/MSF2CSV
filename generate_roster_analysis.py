@@ -14,7 +14,11 @@ from html_shared   import *
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_roster_analysis(alliance_info, table_format={}, using_tabs=False, hist_date=None, html_cache={}):
+def generate_roster_analysis(alliance_info, html_cache, hist_date, table_format=None, using_tabs=False):
+
+	# Initialize the mutables
+	if not table_format:
+		table_format = {}
 
 	# Pull formatting info from table_format
 	INC_PROG  = table_format.get('progress', True)
@@ -24,17 +28,17 @@ def generate_roster_analysis(alliance_info, table_format={}, using_tabs=False, h
 		html_file = '<div id="RosterAnalysis" class="tcon">\n'
 	else:
 		html_file = get_tab_header('ROSTER ANALYSIS (ACTUAL)')
-	html_file += generate_analysis_table(alliance_info, table_format, stat_type='actual', html_cache=html_cache)
+	html_file += generate_analysis_table(alliance_info, table_format, html_cache, stat_type='actual')
 
 	# Add the progressive form in as well. :)
 	if INC_PROG:
 		html_file += get_tab_header('ROSTER ANALYSIS (PROGRESSIVE)')
-		html_file += generate_analysis_table(alliance_info, table_format, stat_type='progressive', html_cache=html_cache)
+		html_file += generate_analysis_table(alliance_info, table_format, html_cache, stat_type='progressive')
 		
 	# Add the historical form in if hist_date is available.
 	if hist_date:
 		html_file += get_tab_header(f'ROSTER ANALYSIS (CHANGES SINCE {hist_date.strftime("%m/%d/%y")})')
-		html_file += generate_analysis_table(alliance_info, table_format, stat_type='progressive', hist_date=hist_date, html_cache=html_cache)
+		html_file += generate_analysis_table(alliance_info, table_format, html_cache, stat_type='progressive', hist_date=hist_date)
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
@@ -44,7 +48,7 @@ def generate_roster_analysis(alliance_info, table_format={}, using_tabs=False, h
 		
 
 
-def generate_analysis_table(alliance_info, table_format, stat_type='actual', hist_date=None, html_cache={}):
+def generate_analysis_table(alliance_info, table_format, html_cache, stat_type, hist_date=None):
 
 	# Start by doing stat analysis.	
 	stats = get_roster_stats(alliance_info, stat_type, hist_date)
