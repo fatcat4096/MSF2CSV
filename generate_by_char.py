@@ -61,7 +61,7 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 		table_lbl = translate_name(char).upper()
 
 		# Build stp_list to simplify sort_by='stp'.
-		stp_list = get_stp_list(alliance_info, [char])
+		stp_list = get_stp_list(alliance_info, [char], hist_date)
 	
 		# Get the list of Alliance Members 
 		member_list = get_player_list(alliance_info)
@@ -95,9 +95,6 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 
 		# Generate the right table with historical information if available.
 		if hist_date:
-			# Create a new stp_list for the requested hist_date
-			stp_list = get_stp_list(alliance_info, [char], hist_date)	
-
 			# Create a sub-heading for the Table Label
 			changes_since = f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
 

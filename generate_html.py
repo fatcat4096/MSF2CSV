@@ -498,11 +498,7 @@ def generate_section(alliance_info, table, section, table_format, strike_teams, 
 	if meta_chars:
 		meta_lbl = table_lbl+'<br><span class="sub">META</span>'
 
-		stp_list = get_stp_list(alliance_info, meta_chars, hist_date)
-
-		# If inline_hist, need to generate STP entries for the historical date as well.
-		if inline_hist:
-			stp_list = get_stp_list(alliance_info, meta_chars, inline_hist)
+		stp_list = get_stp_list(alliance_info, meta_chars, hist_date or inline_hist or side_hist)
 
 		html_file += generate_table(alliance_info, table, section, table_format, meta_chars, strike_teams, meta_lbl, stp_list, html_cache, hist_date, linked_hist=side_hist)
 
@@ -523,11 +519,7 @@ def generate_section(alliance_info, table, section, table_format, strike_teams, 
 		table_lbl += f'<br><span class="sub">TOP {len(other_chars)}</span>'
 
 	# Generate stp_list dict for the Other Table calls.
-	stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
-	
-	# If inline_hist, need to generate STP entries for the historical date as well.
-	if inline_hist:
-		stp_list = get_stp_list(alliance_info, meta_chars+other_chars, inline_hist)
+	stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date or inline_hist or side_hist)
 
 	span_data = get_table_value(table_format, table, section, key='span', default=False)
 
@@ -608,7 +600,6 @@ def generate_section(alliance_info, table, section, table_format, strike_teams, 
 			html_file += '  <td>\n'
 
 			# Generate the right table with historical information if available.
-			stp_list = get_stp_list(alliance_info, meta_chars+other_chars, side_hist)
 			if 'META' in table_lbl:
 				table_lbl = table_lbl.replace('META',f'Changes since:<br>{side_hist}')
 			elif 'OTHER' in table_lbl:

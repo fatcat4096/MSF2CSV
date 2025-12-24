@@ -41,6 +41,7 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, table: 
 	# If Sort Order specified, sort player_list in the correct order. 
 	if sort_by == 'stp' and stp_list:
 		return sorted(player_list, key=lambda x: -stp_list[None][x])
+
 	# Sort by avail if requested, use stp as secondary criteria.
 	elif sort_by == 'avail' and table:
 
@@ -64,24 +65,26 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, table: 
 
 
 # Pull out STP values from either Meta Chars or all Active Chars.
-def get_stp_list(alliance_info, char_list, hist_date=None, team_pwr_dict: dict=None):
+def get_stp_list(alliance_info, char_list, hist_date=None):
 	
-	# Initialize the mutables
-	if team_pwr_dict is None:
-		team_pwr_dict = {}
-	
+	stp_list = {}
+
 	# Get the list of Alliance Members 
 	player_list = get_player_list(alliance_info)
 
-	for player_name in player_list:
+	# Do it twice if we're passed a valid hist_date
+	for date_to_use in {None}.union({hist_date}):
 
-		# Build a list of all character powers.
-		all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] for char_name in char_list])
+		# Iterate through player_list building up STP for each player on the dates in question
+		for player_name in player_list:
 
-		# And sum up the Top 5 power entries for STP.
-		team_pwr_dict.setdefault(hist_date,{})[player_name] = sum(all_char_pwr[-5:])
+			# Build a list of all character powers.
+			all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', date_to_use)[0] for char_name in char_list])
 
-	return team_pwr_dict
+			# And sum up the Top 5 power entries for STP.
+			stp_list.setdefault(date_to_use,{})[player_name] = sum(all_char_pwr[-5:])
+
+	return stp_list
 
 
 
