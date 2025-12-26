@@ -41,24 +41,24 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 				# Get the STPs for this team. 
 				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
 
+				# Make a dict with each players rank
+				rank_dict = {member:idx+1 for idx, member in enumerate(get_player_list(alliance_info, 'stp', stp_list))}
+				
 				# Get the rank and available counts for this team. 
 				for member in alliance_info['members']:
 					if 'processed_chars' in alliance_info['members'][member]:
 
-						# Pull STP from the calculated STP list.
-						stp = stp_list[hist_date][member]
+						# Pull STP from the calculated STP list
+						stp = stp_list[None][member]
 
 						# Get the num_avail for this section
-						avail = set([char for char in table.get('under_min',{}).get(member,{}) if char in meta_chars+other_chars and not table.get('under_min',{}).get(member,{}).get(char)])
+						avail = {char for char in meta_chars+other_chars if not section.get('under_min',{}).get(member,{}).get(char)}
 
 						# Find Rank for this member's team
-						rank  = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(member)+1
-					
-						# Create a fake entry for this section using the section label as the "Character Name" in processed_chars.
-						alliance_info['members'][member]['processed_chars'][section_label] = {'stp':stp, 'avail':avail, 'rank':rank}
+						rank = rank_dict[member]
 
-		# Create an STP list of the meta "characters" we just generated.
-		stp_list = get_stp_list(alliance_info, [get_section_label(section) for section in lane], hist_date)
+						# Create a fake entry for this section using the section label as the "Character Name" in processed_chars.
+						alliance_info['members'][member]['processed_chars'][section_label] = {'stp':stp, 'avail':avail, 'rank':rank_dict[member]}
 
 		# Just create an empty section entry.
 		section = {}
@@ -75,8 +75,8 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 		html_file += '<table>\n <tr>\n  <td>\n'
 
 		# Generate a table.
-		html_file += generate_table(alliance_info, table, section, table_format, team_list, strike_teams, table_lbl, stp_list, html_cache, hist_date, team_power_summary=True)
-		
+		html_file += generate_table(alliance_info, table, section, table_format, team_list, strike_teams, table_lbl, stp_list, html_cache, team_power_summary=True)
+
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'
 
