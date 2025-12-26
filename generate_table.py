@@ -42,7 +42,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
 
 	# Get the list of Alliance Members we will iterate through as rows.	
-	player_list = get_player_list(alliance_info, sort_by, stp_list, table, char_list)
+	player_list = get_player_list(alliance_info, sort_by, stp_list, section, char_list)
 
 	# If there are no players in this table, don't generate a table.
 	using_players = [player for player in sum(strike_teams, []) if player in player_list]
@@ -106,7 +106,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		return ''
 
 	# Dim Image if under_min but still included
-	dim_image = [char for char in using_chars if char not in remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)]
+	img_list  = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)
+	dim_image = [char for char in using_chars if char not in img_list]
 
 	# Generate a table ID to allow sorting. 
 	
@@ -226,7 +227,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
 
 				# Control background color of Character image if Spec Ops report
-				background_color = ' '+spec_ops_background(table, char, player_list, html_cache) if spec_ops else ''
+				background_color = ' '+spec_ops_background(section, char, player_list, html_cache) if spec_ops else ''
 
 				# Dim image if under_min
 				background_color += ' dim_img' if char in dim_image else ''
@@ -271,7 +272,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				player_list = sorted(player_list, key=lambda x : f'{avail_range[x]:03}{alliance_info["members"][x].get("tcp",0):012}', reverse=True)
 
 		elif inc_avail:
-			avail_range = {player:len([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)]) for player in player_list}
+			avail_range = {player:len([char for char in section.get('under_min',{}).get(player,{}) if not section.get('under_min',{}).get(player,{}).get(char)]) for player in player_list}
 
 		# Iterate through each Strike Team.
 		for strike_team in strike_teams:
@@ -342,7 +343,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
-					not_ready = sum([not table.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in table.get('section_chars', char_list)]) < 5
+					not_ready = sum([not section.get('under_min',{}).get(player_name,{}).get(char_name) for char_name in section.get('section_chars', char_list)]) < 5
 				# Otherwise, check for Dark Dimension readiness.
 				else:
 					not_ready = num_avail < min_count and len(char_list) >= min_count 
@@ -398,7 +399,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						if team_power_summary:
 							under_min = not_completed and min_count and len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date, set())[0]) < min_count - (DD7 and char_name=='Mythic')
 						else:
-							under_min = table.get('under_min',{}).get(player_name,{}).get(char_name)
+							under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
 
 						for key in keys:
 
@@ -627,10 +628,10 @@ def calculate_line_wrap(using_chars):
 
 
 # Hide the messy calculations behind Spec Ops background colors
-def spec_ops_background(table, char, player_list, html_cache):
+def spec_ops_background(section, char, player_list, html_cache):
 
 	# Find num above mins for this toon
-	avail_count = 24-sum([table.get('under_min',{}).get(player,{}).get(char,False) for player in player_list])
+	avail_count = 24-sum([section.get('under_min',{}).get(player,{}).get(char,False) for player in player_list])
 
 	# Only dim the background if near the top of the range.
 	darken_amt  = 0 if avail_count<14 else (((avail_count-14)/10)**2) * 0.6

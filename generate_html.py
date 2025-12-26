@@ -411,7 +411,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_d
 
 				# Get the full list of chars available in this section and save them to calc num_avail in subsections
 				meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
-				table['section_chars']  = meta_chars+other_chars
+				section['section_chars']  = meta_chars+other_chars
 
 				for subsection_idx,subsection in enumerate(subsections):
 
