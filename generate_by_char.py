@@ -60,9 +60,6 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 		# Just specify the Character name for the table title
 		table_lbl = translate_name(char).upper()
 
-		# Build stp_list to simplify sort_by='stp'.
-		stp_list = get_stp_list(alliance_info, [char], hist_date)
-	
 		# Get the list of Alliance Members 
 		member_list = get_player_list(alliance_info)
 
@@ -87,6 +84,9 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 		
 		traits = f'<br><span class="sub">{", ".join(traits)}</span>'
 		
+		# Build stp_list to simplify sort_by='stp'.
+		stp_list = get_stp_list(alliance_info, [char], hist_date)
+	
 		# Generate the left table with current stats.
 		html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], f'{table_lbl}{traits}', stp_list, html_cache, None, linked_hist=True)
 
