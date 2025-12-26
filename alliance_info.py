@@ -34,26 +34,26 @@ def get_hist_date(alliance_info, table_format):
 
 
 # Bring back a sorted list of players from alliance_info
-def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, table: dict=None, char_list: list=[]):
+def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, section: dict=None, char_list: list=[], hist_date=None):
 
 	player_list = alliance_info.get('members', [])
 
 	# If Sort Order specified, sort player_list in the correct order. 
 	if sort_by == 'stp' and stp_list:
-		return sorted(player_list, key=lambda x: -stp_list[None][x])
+		return sorted(player_list, key=lambda x: -stp_list[hist_date][x])
 
 	# Sort by avail if requested, use stp as secondary criteria.
-	elif sort_by == 'avail' and table:
+	elif sort_by == 'avail' and section:
 
 		# Factor in STP when sorting by availability.
 		local_stp = {}
 
 		for player in player_list:
-			inc_char = set([char for char in table.get('under_min',{}).get(player,{}) if not table.get('under_min',{}).get(player,{}).get(char)] + char_list)
+			inc_char = set([char for char in section.get('under_min',{}).get(player,{}) if not section.get('under_min',{}).get(player,{}).get(char)] + char_list)
 			pow_list = sorted([find_value_or_diff(alliance_info, player, char_name, 'power')[0] for char_name in inc_char])
 			local_stp[player] = sum(pow_list[-5:])
 
-		return sorted(player_list, key=lambda x: -len([char for char in table.get('under_min',{}).get(x,{}) if not table.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
+		return sorted(player_list, key=lambda x: -len([char for char in section.get('under_min',{}).get(x,{}) if not section.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
 
 	# If we weren't provided a list of STPs, fall back to using TCP.
 	elif sort_by in ('tcp','stp','avail'):
@@ -122,41 +122,13 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	# Filter out anyone less than the min_iso / min_tier
 	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
 
-	# 
-
 	# Calculate info for an under_min section, hide it in table for later use. 
-	table['under_min'] = {}
-
-	# Load up arguments from table, with defaults if necessary
-	min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
-	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
-	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
-	min_yel  = get_table_value(table_format, table, section, key='min_yel',  default=0)
-	min_red  = get_table_value(table_format, table, section, key='min_red',  default=0)
+	section['under_min'] = {}
 
 	# Before filtering further, while we have visibility for the entire section...
 	for player_name in player_list:
 		for char_name in meta_chars+other_chars:
-
-			# Not summoned is under_min
-			under_min = find_value_or_diff(alliance_info, player_name, char_name, 'power' )[0] == 0
-
-			# ...calculate whether entry is under the min requirements for use in this raid/mode .
-			if min_lvl:
-				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'lvl' )[0] < min_lvl
-			if min_tier:
-				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'tier')[0] < min_tier
-			if min_iso:
-				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'iso' )[0] < min_iso
-			if min_yel:
-				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'yel' )[0] < min_yel
-			if min_red:
-				under_min = under_min or find_value_or_diff(alliance_info, player_name, char_name, 'red' )[0] < min_red
-			table['under_min'].setdefault(player_name,{})[char_name] = under_min 
-
-		# Anything completely filtered was under_min
-		for char_name in [char for char in before_filter if char not in other_chars]:
-			table['under_min'].setdefault(player_name,{})[char_name] = True 
+			is_under_min(alliance_info, player_name, char_name, table_format, table, section) 
 
 	# Start by pulling value from table_format or table
 	max_others  = get_table_value(table_format, table, section, key='max_others', default=len(other_chars))
@@ -195,12 +167,12 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
 		# If we have min_iso/min_tier criteria, also use this to sort/filter the character list.
 		dict_ready = {}
-		if sort_char_by == 'avail' or min_lvl or min_tier or min_iso or min_yel or min_red:
-			dict_ready = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in player_list]) for char in other_chars}
+		if sort_char_by == 'avail':
+			dict_ready = {char:sum([not section['under_min'].get(player,{}).get(char,True) for player in player_list]) for char in other_chars}
 				
 		# Determine which players are actually being included and which chars they have at level.
 		players_in_report = sum(get_strike_teams(alliance_info, table, table_format),[])
-		chars_in_report = {char:sum([not table['under_min'].get(player,{}).get(char,True) for player in players_in_report]) for char in other_chars}
+		chars_in_report = {char:sum([not section['under_min'].get(player,{}).get(char,True) for player in players_in_report]) for char in other_chars}
 
 		# When evaluating character popularity, only consider chars that will actually be included.
 		dict_score = {f'{dict_ready.get(char,0):03}{dict_power[char]:010}':char for char in other_chars if chars_in_report[char]}
@@ -299,28 +271,43 @@ def filter_on_traits(section, traits_req='any', char_list=None):
 
 
 
+# Filter char list for only characters built to min specs
 def remove_min_iso_tier(alliance_info, table_format, table, section, player_list, char_list):
 
-	# Load up arguments from table, with defaults if necessary.
-	min_lvl  = get_table_value(table_format, table, section, key='min_lvl',  default=0)
-	min_tier = get_table_value(table_format, table, section, key='min_tier', default=0)
-	min_iso  = get_table_value(table_format, table, section, key='min_iso',  default=0)
-	min_yel  = get_table_value(table_format, table, section, key='min_yel',  default=0)
-	min_red  = get_table_value(table_format, table, section, key='min_red',  default=0)
- 
-	# If there are minimums or trait filters for this section, evaluate each character before using the active_chars list.
-	if min_lvl:
-		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'lvl' )[0] for player in player_list]) >= min_lvl]
-	if min_tier:
-		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'tier')[0] for player in player_list]) >= min_tier]
-	if min_iso:
-		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'iso' )[0] for player in player_list]) >= min_iso]
-	if min_yel:
-		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'yel' )[0] for player in player_list]) >= min_yel]
-	if min_red:
-		char_list = [char for char in char_list if max([find_value_or_diff(alliance_info, player, char, 'red' )[0] for player in player_list]) >= min_red]
+	final_list = []
 
-	return char_list
+	for char in char_list:
+		for player in player_list:
+
+			# If at least one player has this char built to min specs, include in list and move on
+			if not is_under_min(alliance_info, player, char, table_format, table, section):
+				final_list.append(char)
+				break
+
+	return final_list
+
+
+
+def is_under_min(alliance_info, player_name, char_name, table_format, table, section, hist_date=None):
+
+	# Short-circuit if possible
+	under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
+	if under_min is not None:
+		return under_min
+
+	# Not summoned is under_min
+	if find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] == 0:
+		section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
+		return True
+
+	# Calculate whether entry is under the min requirements for use in this raid/mode.
+	for key in ('lvl','tier','iso','yel','red'):
+		min_val  = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
+		if min_val and find_value_or_diff(alliance_info, player_name, char_name, key, hist_date)[0] < min_val:
+			section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
+			return True
+	
+	section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = False
 
 
 
@@ -361,7 +348,7 @@ def get_strike_teams(alliance_info, table, table_format):
 
 	# Use the full Player List sorted by stp if explicit Strike Teams haven't been defined.
 	if not strike_teams or only_team == 0:
-		strike_teams = [get_player_list(alliance_info, sort_by, table=table)]
+		strike_teams = [get_player_list(alliance_info, sort_by)]
 
 	return strike_teams
 
