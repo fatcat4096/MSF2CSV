@@ -52,7 +52,7 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 		max_val = 1000
 
 		# Remove zero from the set when calculating distribution.
-		new_range = sorted(set([x for x in val_range if x]))
+		new_range = sorted({x for x in val_range if x})
 
 		# For historical data, there's always room to grow.
 		if hist_date:
