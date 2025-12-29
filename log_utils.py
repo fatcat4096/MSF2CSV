@@ -386,6 +386,11 @@ class ansi():
 
 
 
+def discord_ansi(msg):
+	return msg.replace('[9','[1;3').replace('[3','[0;3')
+
+
+
 def print_exc(exc):
 	return f'{ansi.ltred}EXCEPTION:{ansi.reset} {type(exc).__name__}: {exc}'
 
