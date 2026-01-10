@@ -1122,9 +1122,6 @@ playable   = {
     },
     {
       "description": "A brilliant scientist turned living antimatter reactor, Adam Brashear channles cosmic energy to deliver devastating blows. As one of Earth's most powerful champions, he brings unmatched resilience and can remove powerful effects from enemies in any battle.",
-      "eventTraits": [
-        "ChaosTeam"
-      ],
       "id": "BlueMarvel",
       "mission": false,
       "name": "Blue Marvel",
@@ -1258,6 +1255,7 @@ playable   = {
     {
       "description": "When he isn't using his superhuman durability to deflect enemy attacks, Sam Guthrie delivers crushing blows that slow and stun the opposition.",
       "eventTraits": [
+        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Cannonball",
@@ -2081,6 +2079,40 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Laynia Petrovna uses her mutant powers over the Darkforce, to saturate her enemies in dark energy and siphon whats left of them to restore herself and her allies.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
+      "id": "Darkstar",
+      "mission": false,
+      "name": "Darkstar",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Darkstar_48b9b4e9.png",
+      "starItems": [
+        "SHARD_DARKSTAR",
+        "RS_DARKSTAR_1",
+        "RS_DARKSTAR_2",
+        "RS_DARKSTAR_3",
+        "RS_DARKSTAR_4",
+        "RS_DARKSTAR_5",
+        "RS_DARKSTAR_6",
+        "RS_DARKSTAR_7",
+        "PD_DARKSTAR_1",
+        "PD_DARKSTAR_2",
+        "PD_DARKSTAR_3",
+        "PD_DARKSTAR_4",
+        "PD_DARKSTAR_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "Global",
+        "Mutant",
+        "Support",
+        "WinterGuard"
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "International pop diva and super hero, Dazzler's mutant power to convert sound into energy creates light shows that can captivate audiences or protect her fellow X-Men in battle.",
       "id": "Dazzler",
       "invisibleTraits": [
@@ -2117,6 +2149,9 @@ playable   = {
     },
     {
       "description": "A magical unicorn who specializes in stab-shooting vulnerable targets.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
       "id": "Deadpool",
       "mission": false,
       "name": "Deadpool",
@@ -2727,9 +2762,6 @@ playable   = {
     },
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
-      "eventTraits": [
-        "ChaosTeam"
-      ],
       "id": "Falcon",
       "invisibleTraits": [
         "Avenger"
@@ -3391,6 +3423,9 @@ playable   = {
     },
     {
       "description": "Hey, Commander, Gwendolyn Poole here! First of all? Huge fan! Second, you can count on me to charge up my New Warrior buddies and unleash mayhem on the battlefield!",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
       "id": "Gwenpool",
       "mission": false,
       "name": "Gwenpool",
@@ -3820,9 +3855,6 @@ playable   = {
     },
     {
       "description": "With the strength of a demigod and the heart of a hero, Hercules charges into the fight using his immense power to control the battlefield.",
-      "eventTraits": [
-        "ChaosTeam"
-      ],
       "id": "Hercules",
       "invisibleTraits": [
         "Avenger"
@@ -4230,7 +4262,6 @@ playable   = {
       "description": "Mark Milton uses his abilities as an Eternal to heal himself and manipulate Taunt on the battlefield.",
       "eventTraits": [
         "Harbingers",
-        "ChaosTeam",
         "KnullChallengers"
       ],
       "id": "Hyperion",
@@ -4331,8 +4362,7 @@ playable   = {
     {
       "description": "Invisible Woman is a Protector who grants Barrier to her teammates and reveals hidden enemies.",
       "eventTraits": [
-        "KnowhereHeist",
-        "ChaosTeam"
+        "KnowhereHeist"
       ],
       "id": "InvisibleWoman",
       "invisibleTraits": [
@@ -4409,7 +4439,6 @@ playable   = {
     {
       "description": "A versatile martial artist with healing abilities and a powerful single target attack.",
       "eventTraits": [
-        "ChaosTeam",
         "KnullChallengers",
         "Stormbound"
       ],
@@ -4450,7 +4479,6 @@ playable   = {
     {
       "description": "Orson Randall uses his Chi to heal allies and empower his guns to fight the AXIS in WWII.",
       "eventTraits": [
-        "ChaosTeam",
         "KnullChallengers",
         "Stormbound"
       ],
@@ -4723,6 +4751,33 @@ playable   = {
         "UncannyAvenger"
       ],
       "unlockStars": 3
+    },
+    {
+      "description": "Playful and quirky land shark, Jeff the Land Shark might seem adorable but his attacks are as dangerous as a real shark, his abilities will control the battle field and with a new fun effect he will boost Retcon allies damage output.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
+      "id": "JeffTheLandShark",
+      "mission": false,
+      "name": "Jeff the Land Shark",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_JeffTheLandShark_e45dd9e2.png",
+      "starItems": [
+        "SHARD_JEFFTHELANDSHARK",
+        "RS_JEFFTHELANDSHARK_1",
+        "RS_JEFFTHELANDSHARK_2",
+        "RS_JEFFTHELANDSHARK_3",
+        "RS_JEFFTHELANDSHARK_4",
+        "RS_JEFFTHELANDSHARK_5",
+        "RS_JEFFTHELANDSHARK_6",
+        "RS_JEFFTHELANDSHARK_7",
+        "PD_JEFFTHELANDSHARK_1",
+        "PD_JEFFTHELANDSHARK_2",
+        "PD_JEFFTHELANDSHARK_3",
+        "PD_JEFFTHELANDSHARK_4",
+        "PD_JEFFTHELANDSHARK_5"
+      ],
+      "status": "playable",
+      "unlockStars": 4
     },
     {
       "description": "A resilient fighter who removes positive effects from enemies and clears negative effects from allies.",
@@ -5400,7 +5455,6 @@ playable   = {
     {
       "description": "After unintentionally being saved by Bullseye from the Yakuza, Maki Matsumoto saw her destiny. Taking the name, Lady Bullseye, she is the deadliest assassin the Hand has to offer.",
       "eventTraits": [
-        "ChaosTeam",
         "KnullChallengers",
         "Stormbound"
       ],
@@ -5741,6 +5795,7 @@ playable   = {
     {
       "description": "Magik uses dark sorcery to charge up her allies and her mutant teleportation power to get the drop on enemies. As the demonic Darkchylde, she can inflict heavy damage.",
       "eventTraits": [
+        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Magik",
@@ -7306,6 +7361,9 @@ playable   = {
     },
     {
       "description": "Omega Red uses his Mutant Death Aura to apply the Trauma status to foes, preventing their negative effects from being removed or flipped.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
       "id": "OmegaRed",
       "invisibleTraits": [
         "Chargeable"
@@ -7335,7 +7393,8 @@ playable   = {
         "Mutant",
         "Controller",
         "WeaponX",
-        "Legendary"
+        "Legendary",
+        "WinterGuard"
       ],
       "unlockStars": 2
     },
@@ -8167,6 +8226,9 @@ playable   = {
     },
     {
       "description": "Russian warrior of the Cold War, Red Guardian uses his boldness and military tactics to steal positive effects from enemies and grant them to his allies.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
       "id": "RedGuardian",
       "mission": false,
       "name": "Red Guardian",
@@ -8192,7 +8254,8 @@ playable   = {
         "Global",
         "Skill",
         "Protector",
-        "Military"
+        "Military",
+        "WinterGuard"
       ],
       "unlockStars": 3
     },
@@ -8651,9 +8714,6 @@ playable   = {
     },
     {
       "description": "A mystical controller that prolongs negative effects and redistributes health across her teammates.",
-      "eventTraits": [
-        "ChaosTeam"
-      ],
       "id": "ScarletWitch",
       "invisibleTraits": [
         "Avenger"
@@ -9062,6 +9122,9 @@ playable   = {
     },
     {
       "description": "Delivering gamma-powered justice, She-Hulk applies negative effects to her foes with every smash.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
       "id": "SheHulk",
       "invisibleTraits": [
         "Chargeable"
@@ -9473,7 +9536,6 @@ playable   = {
       "description": "Melissa Gold, a reformed villain, that uses her sonic abilities to flip her enemies positive effects and defend her allies.",
       "eventTraits": [
         "Harbingers",
-        "ChaosTeam",
         "KnullChallengers"
       ],
       "id": "Songbird",
@@ -9825,6 +9887,9 @@ playable   = {
     },
     {
       "description": "Squirrel Girl is a Young Avenger who uses her unbeatable squirrel powers to eat nuts and kick butts!",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
       "id": "SquirrelGirl",
       "invisibleTraits": [
         "Avenger"
@@ -9992,7 +10057,6 @@ playable   = {
     {
       "description": "Steel Serpent, also known as Davos, is a formidable martial artist from K'un-Lun, driven by an unrelenting quest to claim Shou-Lao's power. Regardless of the challenges or the time it demands, he is determined to seize the title of Iron Fist.",
       "eventTraits": [
-        "ChaosTeam",
         "KnullChallengers",
         "Stormbound"
       ],
@@ -10175,6 +10239,7 @@ playable   = {
     {
       "description": "The hot-headed Sunspot possesses the ability to absorb and redirect the sun's power, letting him deal massive damage and grant ability energy to his X-Men allies.",
       "eventTraits": [
+        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Sunspot",
@@ -10322,7 +10387,6 @@ playable   = {
     {
       "description": "Armed with the legendary Sword of Fu Xi, Lin Lie's mystical blade cleaves through all foes, leaving few swordsmen able to withstand his formidable skill.",
       "eventTraits": [
-        "ChaosTeam",
         "KnullChallengers",
         "Stormbound"
       ],
@@ -11133,6 +11197,40 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Mikhail Ursus's mutant power turned him into an immense bear man. He uses his immense strength and durability to protect mother nature from those who would do it harm.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
+      "id": "UrsaMajor",
+      "mission": false,
+      "name": "Ursa Major",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_UrsaMajor_b43b91b2.png",
+      "starItems": [
+        "SHARD_URSAMAJOR",
+        "RS_URSAMAJOR_1",
+        "RS_URSAMAJOR_2",
+        "RS_URSAMAJOR_3",
+        "RS_URSAMAJOR_4",
+        "RS_URSAMAJOR_5",
+        "RS_URSAMAJOR_6",
+        "RS_URSAMAJOR_7",
+        "PD_URSAMAJOR_1",
+        "PD_URSAMAJOR_2",
+        "PD_URSAMAJOR_3",
+        "PD_URSAMAJOR_4",
+        "PD_URSAMAJOR_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "Global",
+        "Mutant",
+        "Protector",
+        "WinterGuard"
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "When the world needed a Captain America, John Walker stepped up. As the Super Soldier U.S. Agent, he helps the Project Rebirth team by blocking enemies' abilities and giving his allies bursts of speed.",
       "id": "USAgent",
       "mission": false,
@@ -11275,7 +11373,6 @@ playable   = {
       "description": "The sharp-minded and pragmatic strategist behind Project A.E.G.I.S., Victoria Hand is a powerful healer that clears negative effects.",
       "eventTraits": [
         "Harbingers",
-        "ChaosTeam",
         "KnullChallengers"
       ],
       "id": "VictoriaHand",
@@ -11311,9 +11408,6 @@ playable   = {
     },
     {
       "description": "A synthetic being that avoids enemy attacks and disables his foes.",
-      "eventTraits": [
-        "ChaosTeam"
-      ],
       "id": "Vision",
       "invisibleTraits": [
         "Avenger"
@@ -11422,6 +11516,7 @@ playable   = {
     {
       "description": "A techno-organic lifeform befriended by the New Mutants, Warlock uses his shapeshifting abilities to siphon positive effects from enemies to allies.",
       "eventTraits": [
+        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Warlock",
@@ -11591,6 +11686,7 @@ playable   = {
     {
       "description": "Rahne Sinclair, always on the prowl for the perfect strike, leverages her keen senses and lycanthropic strength to deal long-lasting damage to enemies.",
       "eventTraits": [
+        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Wolfsbane",
@@ -11763,6 +11859,9 @@ playable   = {
     },
     {
       "description": "Yelena Belova's training in Russia's \"Red Room\" allows her to strike with deadly precision, dealing bonus Crit damage to her enemies.",
+      "eventTraits": [
+        "ChaosTeam"
+      ],
       "id": "Yelena",
       "mission": false,
       "name": "Yelena Belova",
@@ -11788,7 +11887,8 @@ playable   = {
         "Global",
         "Skill",
         "Blaster",
-        "Military"
+        "Military",
+        "WinterGuard"
       ],
       "unlockStars": 2
     },
@@ -12083,15 +12183,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "5f2796277499dbbec968",
-      "chars": "085cb27f373d84b0abb3",
-      "drops": "9d7b7f3f8b558a71eafd",
-      "events": "9361c2336fe35e88c83e",
-      "locs": "1592be9bae526c2345c6",
-      "nodes": "44078fe72b36b0b93fab",
-      "other": "176e8a74846db3ae4b69"
+      "all": "c87b44eaab70bf544b31",
+      "chars": "09bfe627c04296036210",
+      "drops": "7fd11b96884f625fc166",
+      "events": "3ca564271fef6068006e",
+      "locs": "1ad43cb5528ac02257d6",
+      "nodes": "325b11ff9ade071b6d9e",
+      "other": "6f0700951803eebb5f15"
     },
-    "perTotal": 351,
+    "perTotal": 354,
     "version": 1
   }
 }
@@ -12929,13 +13029,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "5f2796277499dbbec968",
-      "chars": "085cb27f373d84b0abb3",
-      "drops": "9d7b7f3f8b558a71eafd",
-      "events": "9361c2336fe35e88c83e",
-      "locs": "1592be9bae526c2345c6",
-      "nodes": "44078fe72b36b0b93fab",
-      "other": "176e8a74846db3ae4b69"
+      "all": "c87b44eaab70bf544b31",
+      "chars": "09bfe627c04296036210",
+      "drops": "7fd11b96884f625fc166",
+      "events": "3ca564271fef6068006e",
+      "locs": "1ad43cb5528ac02257d6",
+      "nodes": "325b11ff9ade071b6d9e",
+      "other": "6f0700951803eebb5f15"
     },
     "perTotal": 43,
     "version": 1

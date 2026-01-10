@@ -333,7 +333,7 @@ def translate_name(value):
 						"Iron Man (Infinity War)":"Iron Man<br>(Infinity War)",
 						"Iron Man (Zombie)":"Iron Man<br>(Zombie)",
 						"Ironheart (MKII)": "Ironheart<br>(MKII)",
-						"Jeff the Land Shark":"Jeff the<br>Landshark",
+						"Jeff the Land Shark":"Jeff the<br>Land Shark",
 						"Juggernaut (Zombie)":"Juggernaut<br>(Zombie)",
 						"Kang the Conqueror":"Kang<br>the Conqueror",
 						"Korath the Pursuer":"Korath<br>the Pursuer",
