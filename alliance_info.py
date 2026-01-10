@@ -562,7 +562,7 @@ def update_history(alliance_info):
 		
 	# Compare today's data vs. the most recent History entry. 
 	# If anything identical to previous entry, point today's entry at the previous entry.
-	hist_list = list(hist)
+	hist_list = sorted(hist)
 	hist_list.remove(today)
 	
 	for member in alliance_members:
@@ -592,22 +592,19 @@ def update_history(alliance_info):
 				member_info['processed_chars'] = hist[max(hist_list)][member]
 				today_info[member] = hist[max(hist_list)][member]
 
-	# Keep every day for a week, keep every other day after a week, keep one per week after two weeks, keep one per month after two months, anything over 270 days is deleted
-	prev_month = None
+	# Keep every day for a week, keep every other day after a week, keep one per week after two weeks, anything over 365 days is deleted
 	prev_week  = None
 	prev_day   = None
 
 	for key in hist_list:
 		date_diff = (today-key).days
 
-		key_month = int(date_diff/30)
 		key_week  = key.isocalendar().week
 		key_day   = int(key.timetuple().tm_yday/2)
 		
-		if date_diff > 270 or (date_diff > 60 and key_month == prev_month) or (date_diff > 14 and key_week == prev_week) or (date_diff > 7 and key_day == prev_day):
+		if date_diff > 365 or (date_diff > 14 and key_week == prev_week) or (date_diff > 7 and key_day == prev_day):
 			del alliance_info['hist'][key]
 
-		prev_month = key_month
 		prev_week  = key_week
 		prev_day   = key_day
 		
@@ -651,103 +648,6 @@ def get_table_value(table_format, table, section: dict={}, key: str='', default=
 		value = table.get(key,default)
 	
 	return value
-
-
-
-# parse a string containing roster URLs, return only the first old format User ID.
-@timed(level=3)
-def find_old_format_roster_url(field_value):
-	
-	found_url = ''
-	
-	# Parse the whole string and only extract the first if any found.
-	found_urls = find_old_format_roster_urls(field_value)
-	if found_urls:
-		found_url = found_urls[0]
-		
-	return found_url
-
-
-
-# parse a string containing roster URLs, looking for old format user IDs.
-@timed(level=3)
-def find_old_format_roster_urls(field_value):
-
-	found_urls = []
-
-	# Short-circuit if we received None
-	if not field_value:
-		return found_urls	
-			
-	# If multiple values entered in a single field, process them all.
-	for value in field_value.split():
-
-		# If it looks like a URL or Roster ID, check it out. 
-		for piece in value.split('/'):
-			if is_old_format_user_id(piece):
-				found_urls.append(piece)
-	
-	return found_urls
-
-
-
-# Validate user_id formatting.
-@timed(level=3)
-def is_old_format_user_id(s):
-	if not s:
-		return False
-	if len(s) == 13 and set(s).issubset(string.hexdigits):
-		return True
-	elif len(s) == 36 and s[8]+s[13]+s[18]+s[23] == '----' and s.count('-') == 4 and set(s).issubset(string.hexdigits+'-'):
-		return True
-	return False
-
-
-
-## parse a string containing roster_urls, return only the first valid alliance ID.
-@timed(level=3)
-def find_valid_alliance_url(field_value):
-	
-	found_url = ''
-	
-	# Parse the whole string and only extract the first if any found.
-	found_urls = find_valid_alliance_urls(field_value)
-	if found_urls:
-		found_url = found_urls[0]
-		
-	return found_url
-
-
-
-# parse a string containing alliance_urls, looking for valid alliance IDs.
-@timed(level=3)
-def find_valid_alliance_urls(field_value):
-
-	found_urls = []
-
-	# Short-circuit if we received None
-	if not field_value:
-		return found_urls	
-			
-	# If multiple values entered in a single field, process them all.
-	for value in field_value.split():
-
-		# If it looks like a URL or Roster ID, check it out. 
-		for piece in value.split('/'):
-			# Remove user ID if included.
-			if piece.count(':')==2:
-				piece = piece.rsplit(':',1)[0]
-			if is_valid_alliance_id(piece):
-				found_urls.append(piece)
-	
-	return found_urls
-
-
-
-# Validate user_id formatting.
-@timed(level=3)
-def is_valid_alliance_id(s):
-	return re.fullmatch(r"^[-:0-9a-fA-F]+$", s or "") and len(s)==48
 
 
 
