@@ -79,6 +79,9 @@ def write_file(pathname, file_content, print_path=True):
 		# Get the actual path and filename (sanitize this path)
 		path,file = os.path.split(remove_tags(pathname+filename))
 
+		# Encode unsafe characters
+		file = encode_tags(file)
+
 		if print_path:
 			print (f'Writing {format_filename(os.path.join(path,file))}')
 
