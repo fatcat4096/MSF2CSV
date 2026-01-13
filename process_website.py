@@ -184,11 +184,12 @@ def roster_results(alliance_info, start_time, rosters_output, only_summary=False
 			status_key.append(f"**{len(TIMEOUT)}** timeouts")
 
 		if status_key:
-			summary += [f'Issues: ' + ', '.join(status_key)]
+			summary += [f'Note: ' + ', '.join(status_key)]
 	else:
 		if NOT_AVAIL:
 			status_key.append(f"**{len(NOT_AVAIL)}** need roster shared w/ **ALLIANCE ONLY**:")
 			status_key += NOT_AVAIL
+			status_key.append(f"-# *(Learn how to fix this: **/help Not Shared**)*")
 
 		if TIMEOUT:
 			status_key.append('**TIMEOUT** API failed. Not updated:')
