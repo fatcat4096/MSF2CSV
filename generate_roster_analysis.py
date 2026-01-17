@@ -20,6 +20,11 @@ def generate_roster_analysis(alliance_info, html_cache, hist_date, table_format=
 	if table_format is None:
 		table_format = {}
 
+	# Explicitly include 'dmd' if 'red' included
+	INC_KEYS = table_format.setdefault('inc_keys', ['yel', 'red', 'dmd', 'lvl', 'iso', 'tier', 'abil', 'op'])
+	if 'red' in INC_KEYS and 'dmd' not in INC_KEYS:
+		INC_KEYS.insert(INC_KEYS.index('red')+1, 'dmd')
+
 	# Pull formatting info from table_format
 	INC_PROG  = table_format.get('progress', True)
 
@@ -48,10 +53,11 @@ def generate_roster_analysis(alliance_info, html_cache, hist_date, table_format=
 		
 
 
+@timed(level=3)
 def generate_analysis_table(alliance_info, table_format, html_cache, stat_type, hist_date=None):
 
 	# Start by doing stat analysis.	
-	stats = get_roster_stats(alliance_info, stat_type, hist_date)
+	stats = get_roster_stats(alliance_info, table_format, stat_type, hist_date)
 
 	# Generate the header for the Roster Analysis table
 	html_file = generate_analysis_header(table_format, stats, stat_type, html_cache)
@@ -63,33 +69,23 @@ def generate_analysis_table(alliance_info, table_format, html_cache, stat_type, 
 
 
 
+@timed(level=3)
 def generate_analysis_header(table_format, stats, stat_type, html_cache):
 
 	ACTUALS = stat_type == 'actual'
 
 	# Pull max values for each type
-	MAX_YEL  = stats['max_yel'] 
-	MAX_RED  = stats['max_red'] 
-	MAX_DMD  = stats['max_dmd'] 
-	MAX_ISO  = stats['max_iso'] 
-	MIN_ISO  = stats['min_iso'] 
-	MAX_TIER = stats['max_tier']
-	MAX_LVL  = stats['max_lvl']
-	MAX_OP   = stats['max_op']  
+	MAX_YEL  = stats.get('MAX_YEL')
+	MAX_RED  = stats.get('MAX_RED')
+	MAX_DMD  = stats.get('MAX_DMD')
+	MAX_ISO  = stats.get('MAX_ISO')
+	MIN_ISO  = stats.get('MIN_ISO')
+	MAX_TIER = stats.get('MAX_TIER')
+	MAX_LVL  = stats.get('MAX_LVL')
+	MAX_OP   = stats.get('MAX_OP')
 
-	# Explicitly include 'dmd' if 'red' included
-	INC_KEYS = table_format.get('inc_keys', {})
-	if 'red' in INC_KEYS and MAX_DMD and 'dmd' not in INC_KEYS:
-		INC_KEYS.insert(INC_KEYS.index('red')+1, 'dmd')
-
-	# Pull formatting info from table_format
-	INC_YEL  = 'yel'  in INC_KEYS
-	INC_RED  = 'red'  in INC_KEYS
-	INC_ISO  = 'iso'  in INC_KEYS
-	INC_TIER = 'tier' in INC_KEYS
-	INC_ABIL = 'abil' in INC_KEYS
-	INC_LVL  = 'lvl'  in INC_KEYS
-	INC_OP   = 'op'   in INC_KEYS
+	# Get list of fields to include
+	INC_KEYS = table_format.get('inc_keys')
 
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
@@ -111,43 +107,43 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 	
 	# Alter the size of the header based on the information being included.
-	AVG_KEYS = len(INC_KEYS) - ('abil' in INC_KEYS)
-	WIDTH    = AVG_KEYS*50
-	COLSPAN  = AVG_KEYS
-	AVERAGE  = 'Avg' if AVG_KEYS == 1 else 'Average'
+	AVG_COLS = [key for key in INC_KEYS if key != 'abil']
 
-	html_file += f' <td width="{WIDTH}" colspan="{COLSPAN}">{AVERAGE}</td>\n'		# All Avg Stats
-	html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
+	if AVG_COLS:
+		AVERAGE = 'Avg' if len(AVG_COLS) == 1 else 'Average'
+		html_file += f' <td width="{len(AVG_COLS)*50}" colspan="{len(AVG_COLS)}">{AVERAGE}</td>\n'		# All Avg Stats
+		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_YEL:
+	if MAX_YEL:
 		html_file += f' <td width="180" colspan="4">Stars</td>\n'		# Yel - 4 cols
 		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_RED:
+	if MAX_RED:
 		html_file += f' <td width="180" colspan="4">Red Stars</td>\n'	# Red - 4 cols
 		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_RED and MAX_DMD:
+	if MAX_DMD:
 		html_file += f' <td width="{40*MAX_DMD}" colspan="{MAX_DMD}">Diamonds</td>\n'				# Diamonds - 3 cols
 		html_file += ' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_LVL:
-		html_file += f' <td width="280" colspan="5">Levels</td>\n'
+	if MAX_LVL:
+		LVL_COLS = get_lvl_cols(MAX_LVL, stats['DETAILS'])
+		html_file += f' <td width="{len(LVL_COLS)*55}" colspan="{len(LVL_COLS)}">Levels</td>\n'
 		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_ISO:
+	if MAX_ISO:
 		html_file += f' <td width="180" colspan="4">ISO</td>\n'			# ISO - 4 cols
 		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_TIER:
+	if MAX_TIER:
 		html_file += f' <td width="240" colspan="5">Gear Tier</td>\n'	# Tier - 5 cols
 		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_ABIL:
+	if 'abil' in INC_KEYS:
 		html_file += f' <td width="180" colspan="4">T4 Abilities</td>\n'	# Bas/Spc/Ult/Pas
 		html_file += f' <td width="2" rowspan="2" style="background:#343734;"></td>\n' 				# Vertical Divider
 
-	if INC_OP:
+	if MAX_OP:
 		html_file += f' <td width="180" colspan="4">OP</td>\n'		    # OP - 4 cols
 		html_file += f'</tr>\n'
 
@@ -160,26 +156,26 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	BASE_COLS = 5
 
 	# Averages
-	for key in INC_KEYS:
-		if key != 'abil':
+	if AVG_COLS:
+		for idx, key in enumerate(AVG_COLS):
 			KEY = {'iso':'ISO','op':'OP'}.get(key, key.title())
-			html_file += f' <td {sort_func % BASE_COLS}>{KEY}</td>\n'
-			BASE_COLS += 1
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>{KEY}</td>\n'
+		BASE_COLS += len(AVG_COLS) + 1
 
 	# Yellow Stars
-	if INC_YEL:
+	if MAX_YEL:
 		for idx in range(4):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_YEL-3}'+['','+'][idx!=3 and not ACTUALS])
 		BASE_COLS += 5
 	
 	# Red Stars
-	if INC_RED:
+	if MAX_RED:
 		for idx in range(4):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_RED-3}'+['','+'][idx!=3 and not ACTUALS])
 		BASE_COLS += 5
 
 	# Diamonds are included in Red Stars
-	if INC_RED and MAX_DMD:
+	if MAX_DMD:
 		for idx in range(MAX_DMD):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>{idx+1}&#x1F48E;</td>\n'
 		BASE_COLS += MAX_DMD+1
@@ -188,30 +184,36 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb lvl", '%s', table_id)
 
 	# Level Ranges
-	if INC_LVL:
-		for idx in range(5):
-			LVL_END = ['+',f'-{(idx*5+MAX_LVL-16)%[100,10][idx*5+MAX_LVL>120]}'][ACTUALS] if idx!=4 else ''
-			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx*5+MAX_LVL-20}{LVL_END}')
-		BASE_COLS += 6
+	if MAX_LVL:
+		LVL_BASE = MAX_LVL+4 - (MAX_LVL+4)%5 - 5
+
+		for idx, key in enumerate(LVL_COLS):
+			if ACTUALS:
+				LVL_END = f'-{key+4 if key<100 else (key+4)%10}' if key < LVL_BASE else ''
+			else:
+				LVL_END = '+' if key < MAX_LVL else ''
+
+			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{key}{LVL_END}')
+		BASE_COLS += len(LVL_COLS)+1
 
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',2)"' % ("ltbb", '%s', table_id)
 
 	# ISO Levels
-	if INC_ISO:
+	if MAX_ISO:
 		html_file += f' <td {sort_func % (BASE_COLS)}>%s</td>\n' % ([f'{MAX_ISO-3}+',f'{MIN_ISO}-{MAX_ISO-3}'][ACTUALS])
 		for idx in range(3):
 			html_file += f' <td {sort_func % (BASE_COLS+idx+1)}>%s</td>\n' % (f'{idx + MAX_ISO-2}' + ['','+'][idx!=2 and not ACTUALS])
 		BASE_COLS += 5
 
 	# Gear Tiers
-	if INC_TIER:
+	if MAX_TIER:
 		for idx in range(5):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_TIER-4}'+['','+'][idx!=4 and not ACTUALS])
 		BASE_COLS += 6
 
 	# T4 Abilities
-	if INC_ABIL:
+	if 'abil' in INC_KEYS:
 		html_file += f' <td {sort_func % (BASE_COLS)}>Bas</td>\n'
 		html_file += f' <td {sort_func % (BASE_COLS+1)}>Spc</td>\n'
 		html_file += f' <td {sort_func % (BASE_COLS+2)}>Ult</td>\n'
@@ -219,7 +221,7 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 		BASE_COLS += 5
 
 	# Overpower Levels
-	if INC_OP:
+	if MAX_OP:
 		for idx in range(4):
 			html_file += f' <td {sort_func % (BASE_COLS+idx)}>%s</td>\n' % (f'{idx + MAX_OP-3}'+['','+'][idx!=3 and not ACTUALS])
 		BASE_COLS +=5
@@ -227,104 +229,106 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	html_file += '</tr>\n'
 	
 	return html_file
-	
 
 
+
+@timed(level=3)
 def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_cache):
 
 	# Pull formatting info from table_format
-	INC_KEYS  = table_format.get('inc_keys', {})
+	INC_KEYS  = table_format.get('inc_keys')
 	COLOR_SET = table_format.get('color_set', 'set')
 
 	# Pull max values for each type
-	MAX_YEL  = stats['max_yel'] 
-	MAX_RED  = stats['max_red'] 
-	MAX_DMD  = stats['max_dmd'] 
-	MAX_ISO  = stats['max_iso'] 
-	MAX_TIER = stats['max_tier']
-	MAX_LVL  = stats['max_lvl']
-	MAX_OP   = stats['max_op']  
+	MAX_YEL  = stats.get('MAX_YEL')
+	MAX_RED  = stats.get('MAX_RED')
+	MAX_DMD  = stats.get('MAX_DMD')
+	MAX_ISO  = stats.get('MAX_ISO')
+	MAX_TIER = stats.get('MAX_TIER')
+	MAX_LVL  = stats.get('MAX_LVL')
+	MAX_OP   = stats.get('MAX_OP')
 
 	html_file = ''
 
 	# Get a sorted list of members to use for this table output.
-	member_list = sorted(alliance_info['members'].keys(), key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
+	member_list = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
 
 	# Iterate through each row for members in the table.
 	for member in member_list:
-			member_info  = alliance_info['members'][member]
-			member_stats = stats.get(member,{})
-			stats_range  = stats['range']
+		member_info  = alliance_info['members'][member]
+		member_stats = stats.get(member,{})
+		stats_range  = stats['range']
 
-			# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
-			stale_data = member_info['is_stale']
+		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
+		stale_data = member_info['is_stale']
 
-			html_file += '<tr>\n'
+		html_file += '<tr>\n'
 
-			member_url = ''
-			if member_info.get('avail'):
-				member_url = f' href="https://marvelstrikeforce.com/en/member/{member_info.get("url")}/characters" target="_blank"'
+		member_url = ''
+		if member_info.get('avail'):
+			member_url = f' href="https://marvelstrikeforce.com/en/member/{member_info.get("url")}/characters" target="_blank"'
+	
+		html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % ('ngra' if stale_data else 'nblu', member_url, member_info.get('display_name',member))
 		
-			html_file += ' <td class="%s urlb"><a style="text-decoration:none; color:black;"%s>%s</a></td>\n' % ('ngra' if stale_data else 'nblu', member_url, member_info.get('display_name',member))
-			
-			for stat in ['tcp','stp','tcc']:
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat)
+		for stat in ['tcp','stp','tcc']:
+			html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat)
+		html_file += ' <td></td>\n' 										# Vertical Divider
+
+		# Averages
+		AVG_COLS = [key for key in INC_KEYS if key != 'abil']
+		if AVG_COLS:
+			for stat in AVG_COLS:
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, f'avg_{stat}')
+			html_file += ' <td></td>\n' 										# Vertical Divider
+		
+		# Yellow Stars
+		if MAX_YEL:
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'yel', key + MAX_YEL-3)
+			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+
+		# Red Stars
+		if MAX_RED:
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
+			html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+
+		# Diamonds are dependent on Red Stars
+		if MAX_DMD:
+			for key in range(MAX_DMD):
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
+			html_file += ' <td></td>\n' 										# Vertical Divider                             
+
+		# Level Ranges
+		if MAX_LVL:
+			for key in get_lvl_cols(MAX_LVL, stats['DETAILS']):
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'lvl', key)
 			html_file += ' <td></td>\n' 										# Vertical Divider
 
-			# Averages
-			for stat in INC_KEYS:
-				if stat != 'abil':
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, f'avg_{stat}')
+		# ISO Levels                                                                                                       
+		if MAX_ISO:
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'iso', key + MAX_ISO-3)
 			html_file += ' <td></td>\n' 										# Vertical Divider
-			
-			# Yellow Stars
-			if 'yel' in INC_KEYS:
-				for key in range(4):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'yel', key + MAX_YEL-3)
-				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
 
-			# Red Stars
-			if 'red' in INC_KEYS:
-				for key in range(4):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
-				html_file += ' <td></td>\n' 										# Vertical Divider                                                            
+		# Gear Tiers
+		if MAX_TIER:
+			for key in range(5):
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'tier', key + MAX_TIER-4)
+			html_file += ' <td></td>\n' 										# Vertical Divider
 
-				# Diamonds are dependent on Red Stars
-				if MAX_DMD:
-					for key in range(MAX_DMD):
-						html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
-					html_file += ' <td></td>\n' 										# Vertical Divider                             
+		# T4 Abilities
+		if 'abil' in INC_KEYS:
+			for stat in ['bas','spc','ult','pas']:
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat, 7)
+			html_file += ' <td></td>\n' 										# Vertical Divider
 
-			# Level Ranges
-			if 'lvl' in INC_KEYS:
-				for key in range(5):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'lvl', key*5 + MAX_LVL-20)
-				html_file += ' <td></td>\n' 										# Vertical Divider
+		# OP Ranges
+		if MAX_OP:
+			for key in range(4):
+				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
 
-			# ISO Levels                                                                                                       
-			if 'iso' in INC_KEYS:
-				for key in range(4):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'iso', key + MAX_ISO-3)
-				html_file += ' <td></td>\n' 										# Vertical Divider
-
-			# Gear Tiers
-			if 'tier' in INC_KEYS:
-				for key in range(5):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'tier', key + MAX_TIER-4)
-				html_file += ' <td></td>\n' 										# Vertical Divider
-
-			# T4 Abilities
-			if 'abil' in INC_KEYS:
-				for stat in ['bas','spc','ult','pas']:
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat, 7)
-				html_file += ' <td></td>\n' 										# Vertical Divider
-
-			# OP Ranges
-			if 'op' in INC_KEYS:
-				for key in range(4):
-					html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
-
-			html_file += '</tr>\n'
+		html_file += '</tr>\n'
 
 	html_file += '</table>\n'
 
@@ -355,21 +359,15 @@ def get_member_stat(member_stats, stats_range, color_set, html_cache, stale_data
 
 
 @timed(level=3)
-def get_roster_stats(alliance_info, stat_type, hist_date=None):
-	
+def get_roster_stats(alliance_info, table_format, stat_type, hist_date=None):
+
 	hist = alliance_info.get('hist',{})
 	
 	# Calculate stats for most recent roster refresh
-	stats = analyze_rosters(alliance_info, stat_type, hist[max(hist)])
+	stats = analyze_rosters(alliance_info, table_format, stat_type, hist[max(hist)])
 
-	# Determine max values for each
-	MAX_YEL  = stats['max_yel'] 
-	MAX_RED  = stats['max_red'] 
-	MAX_DMD  = stats['max_dmd'] 
-	MAX_ISO  = stats['max_iso'] 
-	MAX_TIER = stats['max_tier']
-	MAX_LVL  = stats['max_lvl']
-	MAX_OP   = stats['max_op']  
+	# Pull formatting info from table_format
+	INC_KEYS  = table_format.get('inc_keys')
 
 	# If Historical analysis, a little more work to do.
 	if hist_date:
@@ -378,13 +376,10 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 		stats_range = stats['range'] = {}
 
 		# Calculate stats for requested date
-		hist_stats = analyze_rosters(alliance_info, stat_type, hist[hist_date])
+		hist_stats = analyze_rosters(alliance_info, table_format, stat_type, hist[hist_date])
 
-		# Get the list of Alliance Members 
-		member_list = list(alliance_info.get('members',{}))
-		
 		# Find differences between current stats and hist_stats.
-		for member in member_list:
+		for member in alliance_info['members']:
 
 			stats[member]['tcp'] -= hist_stats[member]['tcp']
 			stats[member]['stp'] -= hist_stats[member]['stp']
@@ -395,44 +390,76 @@ def get_roster_stats(alliance_info, stat_type, hist_date=None):
 			stats_range.setdefault('tcc',[]).append(stats[member]['tcc'])
 
 			# Totals (and create dicts for the rest of the ranges)
-			for key in ['yel','red','dmd','tier','lvl','iso','op']:
+			for key in [key for key in INC_KEYS if key != 'abil']:
 				stats[member]['avg_'+key] -= hist_stats[member].get('avg_'+key, 0)
 				stats_range.setdefault('avg_'+key,[]).append(stats[member]['avg_'+key])		
 				
 			# Yellow Stars
-			for key in range(4):
-				get_stat_diff(stats, hist_stats, member, 'yel', key + MAX_YEL-3)
+			if stats.get('MAX_YEL'):
+				for key in range(4):
+					get_stat_diff(stats, hist_stats, member, 'yel', key + stats.get('MAX_YEL')-3)
 
 			# Red Stars
-			for key in range(4):
-				get_stat_diff(stats, hist_stats, member, 'red', key + MAX_RED-3)
+			if stats.get('MAX_RED'):
+				for key in range(4):
+					get_stat_diff(stats, hist_stats, member, 'red', key + stats.get('MAX_RED')-3)
 
 			# Diamonds
-			if MAX_DMD:
+			if stats.get('MAX_DMD'):
 				for key in range(1,6):
 					get_stat_diff(stats, hist_stats, member, 'dmd', key)
 
 			# ISO Levels
-			for key in range(4):
-				get_stat_diff(stats, hist_stats, member, 'iso', key + MAX_ISO-3)
+			if stats.get('MAX_ISO'):
+				for key in range(4):
+					get_stat_diff(stats, hist_stats, member, 'iso', key + stats.get('MAX_ISO')-3)
 
 			# Gear Tiers
-			for key in range(5):
-				get_stat_diff(stats, hist_stats, member, 'tier', key + MAX_TIER-4)
+			if stats.get('MAX_TIER'):
+				for key in range(5):
+					get_stat_diff(stats, hist_stats, member, 'tier', key + stats.get('MAX_TIER')-4)
 
 			# Level Ranges
-			for key in range(5):
-				get_stat_diff(stats, hist_stats, member, 'lvl', key*5 + MAX_LVL-20)
+			if stats.get('MAX_LVL'):
+				for key in get_lvl_cols(stats.get('MAX_LVL'), stats['DETAILS']):
+					get_stat_diff(stats, hist_stats, member, 'lvl', key)
 
 			# OP Ranges
-			for key in range(4):
-				get_stat_diff(stats, hist_stats, member, 'op', key + MAX_OP-3)
+			if stats.get('MAX_OP'):
+				for key in range(4):
+					get_stat_diff(stats, hist_stats, member, 'op', key + stats.get('MAX_OP')-3)
 
 			# T4 Abilities
-			for stat in ['bas','spc','ult','pas']:
-				get_stat_diff(stats, hist_stats, member, stat, 7)
+			if 'abil' in INC_KEYS:
+				for stat in ['bas','spc','ult','pas']:
+					get_stat_diff(stats, hist_stats, member, stat, 7)
 	
 	return stats
+
+
+
+# Generate the list of keys used for Level columns
+@timed(level=3)
+def get_lvl_cols(MAX_LVL, DETAILS):
+
+	# Return the basic five column output if not using Detailed Levels mode
+	if not DETAILS:
+		return [key*5 + MAX_LVL-20 for key in range(5)]
+
+	# Find the start of the individually reported levels
+	LVL_BASE = MAX_LVL+4 - (MAX_LVL+4)%5 - 5
+
+	# List of the individually reported levels
+	LVL_COLS = list(range(LVL_BASE, MAX_LVL+1))
+
+	# Calculate the number of 5-level columns required 
+	NUM_COLS = 7 - len(LVL_COLS)
+
+	# List of the lower limits of the 5-level ranged columns, i.e. 90 = 90-94
+	LVL_REST = list(range(LVL_BASE-5*NUM_COLS, LVL_BASE, 5))
+
+	# Return the combination of ranged and individually reported columns
+	return LVL_REST + LVL_COLS
 
 
 
@@ -443,7 +470,12 @@ def get_stat_diff(stats, hist_stats, member, stat, key):
 
 
 
-def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
+@timed(level=3)
+def analyze_rosters(alliance_info, table_format, stat_type, rosters_to_analyze):
+
+	# Pull formatting info from table_format
+	INC_KEYS = [key for key in table_format.get('inc_keys') if key != 'abil']
+	INC_ABIL = 'abil' in table_format.get('inc_keys')
 
 	# Create stats and stats_range to start
 	stats = {}
@@ -452,90 +484,88 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 	# We'll be making changes, work with a copy.
 	rosters_to_analyze = copy.deepcopy(rosters_to_analyze)
 
-	# Get the list of Alliance Members 
-	member_list = list(alliance_info.get('members',{}))
+	# Find MAX_LVL if Levels included in output
+	if 'lvl' in INC_KEYS:
 
-	# Get the list of usable characters for analysis.
-	char_list = get_cached('char_list')
+		levels = {member_info['level'] for member_info in alliance_info['members'].values()}
 
-	# Initialize MAX_LVL (min value 20)
-	MAX_LVL = 20
+		# Find MAX_LVL based on earned levels, i.e. next multiple of 5
+		MAX_LVL = max(levels)+4-(max(levels)+4)%5
 
-	# Determine MAX_ISO (min value 8)
-	MAX_ISO = 8
-	for member in member_list:
-		for char in char_list:
-			MAX_ISO = max(rosters_to_analyze.get(member,{}).get(char,{}).get('iso',0), MAX_ISO)
+		# Detailed levels trigger if a number of criteria met
+		# * More than one level is present
+		# * All levels are within range MAX_LVL-5 to MAX_LVL
 
-	# Use MAX_ISO to determine MIN_ISO
-	MIN_ISO = MAX_ISO-(MAX_ISO-1)%5-5 if MAX_ISO > 10 else 1
+		stats['DETAILS'] = DETAILS = len(levels) > 1 and all(level in range(MAX_LVL-5, MAX_LVL+1) for level in levels)
+
+		# If not DETAILS, MAX_LVL has min value 20
+		stats['MAX_LVL'] = MAX_LVL = max(levels) if DETAILS else max(MAX_LVL, 20)
+
+	# Find MAX_ISO if ISO included in output
+	if 'iso' in INC_KEYS:
+
+		# MAX_ISO has min value 8
+		stats['MAX_ISO'] = MAX_ISO = max({char_stats.get("iso",0) for processed_chars in rosters_to_analyze.values() for char_stats in processed_chars.values()} | {8})
+
+		# Use MAX_ISO to determine MIN_ISO
+		stats['MIN_ISO'] = MIN_ISO = MAX_ISO-(MAX_ISO-1)%5-5 if MAX_ISO > 10 else 1
 
 	# Start by doing stat analysis.	
-	for member in member_list:
-	
+	for member in alliance_info['members']:
+
 		tot_vals = {'power':[]}
 	
 		# Get a little closer to our work.
 		member_stats = stats.setdefault(member,{})
-		
-		# Don't include stats from heroes that haven't been recruited yet.
-		recruited_chars = [char for char in char_list if rosters_to_analyze.get(member,{}).get(char,{}).get('power')]
 
 		# Loop through every char
-		for char in recruited_chars:
-		
-			# Get a little closer to our work.
-			char_stats = rosters_to_analyze[member][char]
+		for char, char_stats in rosters_to_analyze.get(member,{}).items():
 
-			# Use for Total / Average # columns -- do this BEFORE normalizing data.
-			for key in ['yel','red','dmd','tier','lvl','iso','op']:
+			# Use for Total / Average # columns -- do this BEFORE normalizing data
+			for key in INC_KEYS:
 				tot_vals[key] = tot_vals.get(key,0) + char_stats.get(key,0)
 
-			# Only report the highest USABLE red star and diamonds only valid if 7R.
-			if char_stats['red'] > char_stats['yel']:
-				char_stats['red'] = char_stats['yel']
-			if char_stats['red'] != 7:
-				char_stats['dmd'] = 0
- 				
 			# Normalize the data.
 			# If stat_type = 'actual', combine ISO and LVL columns before tallying
-			# If 'progressive', make each entry count in those below it.
+			# If 'progressive', make each entry count in those below it
 
-			# For either stat_type, combine certain columns for ISO and Level data.
+			# For either stat_type, combine certain columns for ISO and Level data
 
-			# Use info before normalization to get MAX_LVL
-			MAX_LVL = max(MAX_LVL, (char_stats['lvl']+4)-(char_stats['lvl']+4)%5)
+			# If DETAILS, need to preprocess for 'lvl' < TOP_LVL-5
+			# Info from MAX_LVL-5 to MAX_LVL will not be normalized
+			if 'lvl' in INC_KEYS and (not DETAILS or char_stats['lvl'] < MAX_LVL-5):
 
-			# Round level down to nearest multiple of 5.
-			char_stats['lvl'] -= char_stats['lvl']%5			
+				# Round level down to nearest multiple of 5
+				char_stats['lvl'] -= char_stats['lvl']%5			
 
 			# Gather ISO 6-11 into ISO 12
-			if stat_type == 'actual' and char_stats['iso'] in range(MIN_ISO, MAX_ISO-3):
+			if 'iso' in INC_KEYS and stat_type == 'actual' and char_stats['iso'] in range(MIN_ISO, MAX_ISO-3):
 				char_stats['iso'] = MAX_ISO-3
 
-			# Just tally the values in each key. Increment the count of each value found.
-			for key in ['yel', 'lvl', 'red', 'dmd', 'tier', 'iso', 'op']:
+			# Just tally the values in each key. Increment the count of each value found
+			for key in INC_KEYS:
 				if stat_type == 'progressive':
 					for x in range(0,char_stats.get(key,0)+1):
 						member_stats.setdefault(key,{})[x] = member_stats.get(key,{}).setdefault(x,0)+1
 				else:
 					member_stats.setdefault(key,{})[char_stats.get(key,0)] = member_stats.get(key,{}).setdefault(char_stats.get(key,0),0)+1
 					
-			# Abilities have to be treated a little differently. 
-			bas,abil = divmod(char_stats['abil'],1000)
-			spc,abil = divmod(abil,100)
-			ult,pas  = divmod(abil,10)
-			abil_stats = {'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
-			
-			# Normalize skill data: anything T4 and above is included in level 7. 
-			for key in ['bas','spc','ult']:
-				if abil_stats[key] == 8: 
-					abil_stats[key] = 7
-			if abil_stats['pas'] in (5,6):
-				abil_stats['pas'] = 7
+			# Abilities have to be treated a little differently
+			if INC_ABIL:
+				bas,abil = divmod(char_stats['abil'],1000)
+				spc,abil = divmod(abil,100)
+				ult,pas  = divmod(abil,10)
+				abil_stats = {'bas':bas, 'spc':spc, 'ult':ult, 'pas':pas}
+				
+				# Normalize skill data: anything T4 and above is included in level 7
+				for key in ['bas','spc','ult']:
+					if abil_stats[key] == 8: 
+						abil_stats[key] = 7
+				if abil_stats['pas'] in (5,6):
+					abil_stats['pas'] = 7
 
-			for key in abil_stats:
-				member_stats.setdefault(key,{})[abil_stats[key]] = member_stats.get(key,{}).setdefault(abil_stats[key],0)+1
+				for key in abil_stats:
+					member_stats.setdefault(key,{})[abil_stats[key]] = member_stats.get(key,{}).setdefault(abil_stats[key],0)+1
 
 			# Use for TCP, STP, TCC columns
 			tot_vals['power'].append(char_stats['power'])
@@ -545,7 +575,7 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 			member_stats['tcp'] = sum(tot_vals['power'])
 			member_stats['stp'] = sum(sorted(tot_vals['power'])[-5:])
 			member_stats['tcc'] = len(tot_vals['power'])
-		# If no roster data available, use values from alliance_info.
+		# If no roster data available, use values from alliance_info
 		else:
 			member_stats['tcp'] = alliance_info['members'].get(member,{}).get('tcp')
 			member_stats['stp'] = alliance_info['members'].get(member,{}).get('stp')
@@ -556,8 +586,8 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 		stats_range.setdefault('stp',[]).append(member_stats['stp'])
 		stats_range.setdefault('tcc',[]).append(member_stats['tcc'])
 
-		# Calc avg_ values from tot_ values.
-		for key in ['yel','red','dmd','tier','lvl','iso','op']:
+		# Calc avg_ values from tot_ values
+		for key in INC_KEYS:
 			member_stats['avg_'+key] = tot_vals.get(key,0) / max(member_stats['tcc'],1)
 
 			# Add these average to our ranges
@@ -568,20 +598,22 @@ def analyze_rosters(alliance_info, stat_type, rosters_to_analyze):
 				stats_range.setdefault(key,{}).setdefault(entry,[]).append(member_stats[key][entry])
 
 		# Build ranges for the abilities as well
-		for key in ['bas','spc','ult','pas']:
-			for entry in member_stats.get(key,{}):
-				stats_range.setdefault(key,{}).setdefault(entry,[]).append(member_stats[key][entry])
+		if INC_ABIL:
+			for key in ['bas','spc','ult','pas']:
+				for entry in member_stats.get(key,{}):
+					stats_range.setdefault(key,{}).setdefault(entry,[]).append(member_stats[key][entry])
 
-	# Finally, pre-calculate maxes for each range with set mins
-	stats['max_yel']  = max(max(stats_range['yel']),  4)
-	stats['max_red']  = max(max(stats_range['red']),  4)
-	stats['max_dmd']  = max(stats_range['dmd'])
-	stats['max_dmd']  = 3 if stats['max_dmd'] in (1,2) else stats['max_dmd']
-	stats['max_iso']  = MAX_ISO
-	stats['min_iso']  = MIN_ISO
-	stats['max_tier'] = max(max(stats_range['tier']), 5)
-	stats['max_lvl']  = MAX_LVL
-	stats['max_op']   = max(max(stats_range['op']),   4)
+	# Finally, pre-calculate other maxes for each range with set mins
+	if 'yel' in INC_KEYS:
+		stats['MAX_YEL']  = max(max(stats_range['yel']),  4)
+	if 'red' in INC_KEYS:	
+		stats['MAX_RED']  = max(max(stats_range['red']),  4)
+		stats['MAX_DMD']  = max(stats_range['dmd'])
+		stats['MAX_DMD']  = 3 if stats['MAX_DMD'] in (1,2) else stats['MAX_DMD']
+	if 'tier' in INC_KEYS:
+		stats['MAX_TIER'] = max(max(stats_range['tier']), 5)
+	if 'op' in INC_KEYS:
+		stats['MAX_OP']   = max(max(stats_range['op']),   4)
 
 	return stats
 
