@@ -2179,7 +2179,8 @@ playable   = {
         "Brawler",
         "Xforce",
         "Mercenary",
-        "MercsForMoney"
+        "MercsForMoney",
+        "Retcon"
       ],
       "unlockStars": 1
     },
@@ -3451,7 +3452,8 @@ playable   = {
         "City",
         "Mystic",
         "Brawler",
-        "NewWarrior"
+        "NewWarrior",
+        "Retcon"
       ],
       "unlockStars": 3
     },
@@ -4777,6 +4779,13 @@ playable   = {
         "PD_JEFFTHELANDSHARK_5"
       ],
       "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Bio",
+        "Controller",
+        "Retcon"
+      ],
       "unlockStars": 4
     },
     {
@@ -9153,7 +9162,8 @@ playable   = {
         "City",
         "Bio",
         "Protector",
-        "Gamma"
+        "Gamma",
+        "Retcon"
       ],
       "unlockStars": 3
     },
@@ -9918,7 +9928,8 @@ playable   = {
         "City",
         "Bio",
         "Support",
-        "YoungAvenger"
+        "YoungAvenger",
+        "Retcon"
       ],
       "unlockStars": 2
     },
@@ -12183,13 +12194,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "b0c3fdd2d60ba8a852fe",
-      "chars": "cd5ff3198900fbe751c3",
-      "drops": "28e22f655e126559183a",
-      "events": "666b315a90de07f0a3bc",
-      "locs": "cc9211e617b8f8e69579",
-      "nodes": "ffcf3a16029969729b7a",
-      "other": "5b938e11efe8f47e7935"
+      "all": "7badfc6da84ccbbfb964",
+      "chars": "495e3fde3872c0b285bd",
+      "drops": "b62b59a9eda577d32b66",
+      "events": "cd452fb9dde36c95d4ee",
+      "locs": "e4f77ec023247b1cbbf7",
+      "nodes": "216adbd088f23cd8a214",
+      "other": "073a3af770c144709b05"
     },
     "perTotal": 354,
     "version": 1
@@ -13029,13 +13040,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "b0c3fdd2d60ba8a852fe",
-      "chars": "cd5ff3198900fbe751c3",
-      "drops": "28e22f655e126559183a",
-      "events": "666b315a90de07f0a3bc",
-      "locs": "cc9211e617b8f8e69579",
-      "nodes": "ffcf3a16029969729b7a",
-      "other": "5b938e11efe8f47e7935"
+      "all": "7badfc6da84ccbbfb964",
+      "chars": "495e3fde3872c0b285bd",
+      "drops": "b62b59a9eda577d32b66",
+      "events": "cd452fb9dde36c95d4ee",
+      "locs": "e4f77ec023247b1cbbf7",
+      "nodes": "216adbd088f23cd8a214",
+      "other": "073a3af770c144709b05"
     },
     "perTotal": 43,
     "version": 1
