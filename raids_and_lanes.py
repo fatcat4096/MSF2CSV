@@ -250,6 +250,7 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
 					'sort_by': 'stp',
+					'inc_keys': ['power','lvl','tier','iso'],
 					'span': True,
 					'max_others': 10,
 					'min_others': True,
