@@ -185,7 +185,7 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 
 	# Level Ranges
 	if MAX_LVL:
-		LVL_BASE = MAX_LVL+4 - (MAX_LVL+4)%5 - 5
+		LVL_BASE = MAX_LVL+4 - (MAX_LVL+4)%5 - 5*stats['DETAILS']
 
 		for idx, key in enumerate(LVL_COLS):
 			if ACTUALS:
@@ -343,7 +343,7 @@ def get_member_stat(member_stats, stats_range, color_set, html_cache, stale_data
 		stat_range = stats_range[stat]
 	else:
 		member_stat = member_stats.get(stat,{}).get(key,0)
-		stat_range = stats_range[stat].get(key,[])
+		stat_range = stats_range.get(stat,{}).get(key,[])
 	
 	if not member_stat:
 		field_value = '-'
@@ -364,7 +364,7 @@ def get_roster_stats(alliance_info, table_format, stat_type, hist_date=None):
 	hist = alliance_info.get('hist',{})
 	
 	# Calculate stats for most recent roster refresh
-	stats = analyze_rosters(alliance_info, table_format, stat_type, hist[max(hist)])
+	stats = analyze_rosters(alliance_info, table_format, stat_type, hist[max(hist)] if hist else {})
 
 	# Pull formatting info from table_format
 	INC_KEYS  = table_format.get('inc_keys')
@@ -605,15 +605,15 @@ def analyze_rosters(alliance_info, table_format, stat_type, rosters_to_analyze):
 
 	# Finally, pre-calculate other maxes for each range with set mins
 	if 'yel' in INC_KEYS:
-		stats['MAX_YEL']  = max(max(stats_range['yel']),  4)
+		stats['MAX_YEL']  = max(max(stats_range.get('yel', [0])), 4)
 	if 'red' in INC_KEYS:	
-		stats['MAX_RED']  = max(max(stats_range['red']),  4)
-		stats['MAX_DMD']  = max(stats_range['dmd'])
+		stats['MAX_RED']  = max(max(stats_range.get('red', [0])), 4)
+		stats['MAX_DMD']  = max(stats_range.get('dmd', [0]))
 		stats['MAX_DMD']  = 3 if stats['MAX_DMD'] in (1,2) else stats['MAX_DMD']
 	if 'tier' in INC_KEYS:
-		stats['MAX_TIER'] = max(max(stats_range['tier']), 5)
+		stats['MAX_TIER'] = max(max(stats_range.get('tier', [0])), 5)
 	if 'op' in INC_KEYS:
-		stats['MAX_OP']   = max(max(stats_range['op']),   4)
+		stats['MAX_OP']   = max(max(stats_range.get('op', [0])), 4)
 
 	return stats
 
