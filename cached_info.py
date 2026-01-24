@@ -15,11 +15,11 @@ cached_info = {}
 
 # Just return a value from the global
 @timed(level=3)
-def get_cached(key):
+def get_cached(key, refresh=False):
 	global cached_info
 
 	# Load at first request - 'char_list','char_lookup','portraits','trait_list','traits'
-	if key not in cached_info:
+	if key not in cached_info or refresh:
 		cached_info[key] = load_cached_file(key)
 	
 	return deepcopy(cached_info.get(key))
