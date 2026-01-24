@@ -95,6 +95,7 @@ playable   = {
         "Mystic",
         "Support",
         "InfinityWatch",
+        "GalacticCouncil",
         "Legendary"
       ],
       "unlockStars": 2
@@ -1085,6 +1086,7 @@ playable   = {
         "Cosmic",
         "Bio",
         "Blaster",
+        "GalacticCouncil",
         "Legendary"
       ],
       "unlockStars": 4
@@ -8004,6 +8006,7 @@ playable   = {
         "Cosmic",
         "Mystic",
         "Brawler",
+        "GalacticCouncil",
         "Legendary"
       ],
       "unlockStars": 4
@@ -9995,6 +9998,7 @@ playable   = {
         "Tech",
         "Controller",
         "GotG",
+        "GalacticCouncil",
         "Legendary"
       ],
       "unlockStars": 2
@@ -10925,6 +10929,7 @@ playable   = {
         "Mystic",
         "Support",
         "Asgard",
+        "GalacticCouncil",
         "Legendary"
       ],
       "unlockStars": 4
@@ -12194,13 +12199,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "7badfc6da84ccbbfb964",
-      "chars": "495e3fde3872c0b285bd",
-      "drops": "b62b59a9eda577d32b66",
-      "events": "cd452fb9dde36c95d4ee",
-      "locs": "e4f77ec023247b1cbbf7",
-      "nodes": "216adbd088f23cd8a214",
-      "other": "073a3af770c144709b05"
+      "all": "73f94242080b45695df4",
+      "chars": "74c61b9e3d66af49e378",
+      "drops": "b17c80e1c3700aad20b7",
+      "events": "259c0b20f5853fc9f8af",
+      "locs": "06e0263dbd1169eb5c3c",
+      "nodes": "9e32b8082a8eaff714d3",
+      "other": "10afa8238a8abb55c278"
     },
     "perTotal": 354,
     "version": 1
@@ -13040,13 +13045,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "7badfc6da84ccbbfb964",
-      "chars": "495e3fde3872c0b285bd",
-      "drops": "b62b59a9eda577d32b66",
-      "events": "cd452fb9dde36c95d4ee",
-      "locs": "e4f77ec023247b1cbbf7",
-      "nodes": "216adbd088f23cd8a214",
-      "other": "073a3af770c144709b05"
+      "all": "73f94242080b45695df4",
+      "chars": "74c61b9e3d66af49e378",
+      "drops": "b17c80e1c3700aad20b7",
+      "events": "259c0b20f5853fc9f8af",
+      "locs": "06e0263dbd1169eb5c3c",
+      "nodes": "9e32b8082a8eaff714d3",
+      "other": "10afa8238a8abb55c278"
     },
     "perTotal": 43,
     "version": 1
