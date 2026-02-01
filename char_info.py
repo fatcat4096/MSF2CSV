@@ -69,6 +69,9 @@ playable   = {
     },
     {
       "description": "Guardian of the Soul Stone, Adam Warlock prevents his Infinity Watch allies' positive effects from being cleared or flipped.",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
       "id": "AdamWarlock",
       "mission": false,
       "name": "Adam Warlock",
@@ -330,6 +333,9 @@ playable   = {
     },
     {
       "description": "Brawn exercises his brilliant mind to control his Hulk persona, supporting his Gamma allies to keep them in the fight.",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
       "id": "AmadeusCho",
       "mission": false,
       "name": "Brawn",
@@ -355,7 +361,8 @@ playable   = {
         "Global",
         "Bio",
         "Support",
-        "Gamma"
+        "Gamma",
+        "Champion"
       ],
       "unlockStars": 3
     },
@@ -1059,7 +1066,8 @@ playable   = {
       "eventTraits": [
         "ChaosTeam",
         "KnullChallengers",
-        "Conqueror"
+        "Conqueror",
+        "AnnihilationWave"
       ],
       "id": "Blastaar",
       "mission": false,
@@ -2083,7 +2091,9 @@ playable   = {
     {
       "description": "Laynia Petrovna uses her mutant powers over the Darkforce, to saturate her enemies in dark energy and siphon whats left of them to restore herself and her allies.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "Stormbound",
+        "AnnihilationWave"
       ],
       "id": "Darkstar",
       "mission": false,
@@ -2152,7 +2162,8 @@ playable   = {
     {
       "description": "A magical unicorn who specializes in stab-shooting vulnerable targets.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "AnnihilationWave"
       ],
       "id": "Deadpool",
       "mission": false,
@@ -3427,7 +3438,8 @@ playable   = {
     {
       "description": "Hey, Commander, Gwendolyn Poole here! First of all? Huge fan! Second, you can count on me to charge up my New Warrior buddies and unleash mayhem on the battlefield!",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "AnnihilationWave"
       ],
       "id": "Gwenpool",
       "mission": false,
@@ -4759,7 +4771,8 @@ playable   = {
     {
       "description": "Playful and quirky land shark, Jeff the Land Shark might seem adorable but his attacks are as dangerous as a real shark, his abilities will control the battle field and with a new fun effect he will boost Retcon allies damage output.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "AnnihilationWave"
       ],
       "id": "JeffTheLandShark",
       "mission": false,
@@ -5877,6 +5890,41 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Seeking a new host, a variant reality Phoenix Force possesses Magneto! Now Master of Magnetism AND Fire he blasts through enemies leaving Silence and Trauma in his wake.",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
+      "id": "MagnetoPhoenixForce",
+      "mission": false,
+      "name": "Magneto (Phoenix Force)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_MagnetoPhoenixForce_a40d4ec9.png",
+      "starItems": [
+        "SHARD_MAGNETOPHOENIXFORCE",
+        "RS_MAGNETOPHOENIXFORCE_1",
+        "RS_MAGNETOPHOENIXFORCE_2",
+        "RS_MAGNETOPHOENIXFORCE_3",
+        "RS_MAGNETOPHOENIXFORCE_4",
+        "RS_MAGNETOPHOENIXFORCE_5",
+        "RS_MAGNETOPHOENIXFORCE_6",
+        "RS_MAGNETOPHOENIXFORCE_7",
+        "PD_MAGNETOPHOENIXFORCE_1",
+        "PD_MAGNETOPHOENIXFORCE_2",
+        "PD_MAGNETOPHOENIXFORCE_3",
+        "PD_MAGNETOPHOENIXFORCE_4",
+        "PD_MAGNETOPHOENIXFORCE_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "Global",
+        "Mutant",
+        "Blaster",
+        "PhoenixForce",
+        "Epic"
+      ],
+      "unlockStars": 2
+    },
+    {
       "description": "An ancient and powerful force of nature, whatever knows fear burns at the touch of... The Man-Thing!",
       "id": "ManThing",
       "mission": false,
@@ -6353,6 +6401,46 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Lunella Lafayette, super-genius kid turned superhero, teams up with Devil Dinosaur! Together they make a dynamic duo that disrupts enemy plans while slowing down the battlefield.",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
+      "id": "MoonGirl",
+      "invisibleTraits": [
+        "Chargeable",
+        "AForce"
+      ],
+      "mission": false,
+      "name": "Moon Girl",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_MoonGirl_fb61cb95.png",
+      "starItems": [
+        "SHARD_MOONGIRL",
+        "RS_MOONGIRL_1",
+        "RS_MOONGIRL_2",
+        "RS_MOONGIRL_3",
+        "RS_MOONGIRL_4",
+        "RS_MOONGIRL_5",
+        "RS_MOONGIRL_6",
+        "RS_MOONGIRL_7",
+        "PD_MOONGIRL_1",
+        "PD_MOONGIRL_2",
+        "PD_MOONGIRL_3",
+        "PD_MOONGIRL_4",
+        "PD_MOONGIRL_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Tech",
+        "Controller",
+        "Inhuman",
+        "AbsoluteAForce",
+        "Champion"
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "Returned to life by the god Khonshu, Moon Knight battles criminals and his own shattered psyche using random status effects.",
       "id": "MoonKnight",
       "mission": false,
@@ -6623,6 +6711,9 @@ playable   = {
     },
     {
       "description": "A plucky Super Hero brawler who assists and generates ability energy for her allies.",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
       "id": "MsMarvel",
       "invisibleTraits": [
         "Avenger"
@@ -6652,7 +6743,8 @@ playable   = {
         "Bio",
         "Brawler",
         "Inhuman",
-        "YoungAvenger"
+        "YoungAvenger",
+        "Champion"
       ],
       "unlockStars": 1
     },
@@ -7231,6 +7323,44 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Taking up his missing father's mantle, Samuel Alexander channels the Nova Force to break down enemy defenses and fortify his team against incoming attacks.",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
+      "id": "NovaSamAlexander",
+      "invisibleTraits": [
+        "Chargeable"
+      ],
+      "mission": false,
+      "name": "Nova (Sam Alexander)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_NovaSamAlexander_efd9722f.png",
+      "starItems": [
+        "SHARD_NOVASAMALEXANDER",
+        "RS_NOVASAMALEXANDER_1",
+        "RS_NOVASAMALEXANDER_2",
+        "RS_NOVASAMALEXANDER_3",
+        "RS_NOVASAMALEXANDER_4",
+        "RS_NOVASAMALEXANDER_5",
+        "RS_NOVASAMALEXANDER_6",
+        "RS_NOVASAMALEXANDER_7",
+        "PD_NOVASAMALEXANDER_1",
+        "PD_NOVASAMALEXANDER_2",
+        "PD_NOVASAMALEXANDER_3",
+        "PD_NOVASAMALEXANDER_4",
+        "PD_NOVASAMALEXANDER_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Cosmic",
+        "Bio",
+        "Protector",
+        "Starjammer",
+        "Champion"
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "Karen Page was an investigative reporter before a vampire turned her into one of the undead. Now, with the help of the other Nightstalkers, she uses her vampiric abilities to protect the innocent!",
       "id": "Oath",
       "invisibleTraits": [
@@ -7373,7 +7503,9 @@ playable   = {
     {
       "description": "Omega Red uses his Mutant Death Aura to apply the Trauma status to foes, preventing their negative effects from being removed or flipped.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "Stormbound",
+        "AnnihilationWave"
       ],
       "id": "OmegaRed",
       "invisibleTraits": [
@@ -7411,6 +7543,9 @@ playable   = {
     },
     {
       "description": "Breaking through the cracked walls of reality, a Phoenix Force from another world arrives on Nexus Earth, possessing a new host - Omega Red! His insatiable appetite for life combined with unspeakable cosmic power caused him to immediately become an avatar of death, the Dark Phoenix!",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
       "id": "OmegaRedPhoenix",
       "mission": false,
       "name": "Omega Red (Phoenix Force)",
@@ -7665,6 +7800,9 @@ playable   = {
     },
     {
       "description": "Jean Grey absorbs her enemies negative status effects, being reborn as Dark Phoenix if she falls in battle.",
+      "eventTraits": [
+        "AnnihilationWave"
+      ],
       "id": "Phoenix",
       "invisibleTraits": [
         "Xmen"
@@ -7976,7 +8114,8 @@ playable   = {
         "Harbingers",
         "ChaosTeam",
         "KnullChallengers",
-        "Conqueror"
+        "Conqueror",
+        "AnnihilationWave"
       ],
       "id": "Quasar",
       "invisibleTraits": [
@@ -8239,7 +8378,9 @@ playable   = {
     {
       "description": "Russian warrior of the Cold War, Red Guardian uses his boldness and military tactics to steal positive effects from enemies and grant them to his allies.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "Stormbound",
+        "AnnihilationWave"
       ],
       "id": "RedGuardian",
       "mission": false,
@@ -9135,7 +9276,8 @@ playable   = {
     {
       "description": "Delivering gamma-powered justice, She-Hulk applies negative effects to her foes with every smash.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "AnnihilationWave"
       ],
       "id": "SheHulk",
       "invisibleTraits": [
@@ -9901,7 +10043,8 @@ playable   = {
     {
       "description": "Squirrel Girl is a Young Avenger who uses her unbeatable squirrel powers to eat nuts and kick butts!",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "AnnihilationWave"
       ],
       "id": "SquirrelGirl",
       "invisibleTraits": [
@@ -9970,7 +10113,8 @@ playable   = {
     {
       "description": "A charismatic leader who generates ability energy for allies and distracts enemies.",
       "eventTraits": [
-        "KnowhereHeist"
+        "KnowhereHeist",
+        "AnnihilationWave"
       ],
       "id": "StarLord",
       "mission": false,
@@ -10898,7 +11042,8 @@ playable   = {
       "eventTraits": [
         "ChaosTeam",
         "KnullChallengers",
-        "Stormbound"
+        "Stormbound",
+        "AnnihilationWave"
       ],
       "id": "Thunderstrike",
       "invisibleTraits": [
@@ -11142,7 +11287,8 @@ playable   = {
     {
       "description": "Miles Morales controls the field with web blasts and electrical shocks that prolong negative effects and apply Disrupted.",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "AnnihilationWave"
       ],
       "id": "UltSpiderMan",
       "invisibleTraits": [
@@ -11174,7 +11320,8 @@ playable   = {
         "Brawler",
         "SpiderVerse",
         "YoungAvenger",
-        "WebWarrior"
+        "WebWarrior",
+        "Champion"
       ],
       "unlockStars": 2
     },
@@ -11215,7 +11362,9 @@ playable   = {
     {
       "description": "Mikhail Ursus's mutant power turned him into an immense bear man. He uses his immense strength and durability to protect mother nature from those who would do it harm.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "Stormbound",
+        "AnnihilationWave"
       ],
       "id": "UrsaMajor",
       "mission": false,
@@ -11876,7 +12025,9 @@ playable   = {
     {
       "description": "Yelena Belova's training in Russia's \"Red Room\" allows her to strike with deadly precision, dealing bonus Crit damage to her enemies.",
       "eventTraits": [
-        "ChaosTeam"
+        "ChaosTeam",
+        "Stormbound",
+        "AnnihilationWave"
       ],
       "id": "Yelena",
       "mission": false,
@@ -12199,15 +12350,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "73f94242080b45695df4",
-      "chars": "74c61b9e3d66af49e378",
-      "drops": "b17c80e1c3700aad20b7",
-      "events": "259c0b20f5853fc9f8af",
-      "locs": "06e0263dbd1169eb5c3c",
-      "nodes": "9e32b8082a8eaff714d3",
-      "other": "10afa8238a8abb55c278"
+      "all": "257cfaaabb7d28f873a5",
+      "chars": "9461b5e69e3025e21dcc",
+      "drops": "b3d392e27a82a44de6a6",
+      "events": "4b810e38dacfaea49b64",
+      "locs": "429ea7d6edf597aec447",
+      "nodes": "4c2cb778f304d98918c3",
+      "other": "fc67b83a59801bceb087"
     },
-    "perTotal": 354,
+    "perTotal": 357,
     "version": 1
   }
 }
@@ -13045,13 +13196,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "73f94242080b45695df4",
-      "chars": "74c61b9e3d66af49e378",
-      "drops": "b17c80e1c3700aad20b7",
-      "events": "259c0b20f5853fc9f8af",
-      "locs": "06e0263dbd1169eb5c3c",
-      "nodes": "9e32b8082a8eaff714d3",
-      "other": "10afa8238a8abb55c278"
+      "all": "257cfaaabb7d28f873a5",
+      "chars": "9461b5e69e3025e21dcc",
+      "drops": "b3d392e27a82a44de6a6",
+      "events": "4b810e38dacfaea49b64",
+      "locs": "429ea7d6edf597aec447",
+      "nodes": "4c2cb778f304d98918c3",
+      "other": "fc67b83a59801bceb087"
     },
     "perTotal": 43,
     "version": 1
