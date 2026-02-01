@@ -50,7 +50,7 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, section
 
 		for player in player_list:
 			inc_char = set([char for char in section.get('under_min',{}).get(player,{}) if not section.get('under_min',{}).get(player,{}).get(char)] + char_list)
-			pow_list = sorted([find_value_or_diff(alliance_info, player, char_name, 'power')[0] for char_name in inc_char])
+			pow_list = sorted([find_value_or_diff(alliance_info, player, char_name, 'power') for char_name in inc_char])
 			local_stp[player] = sum(pow_list[-5:])
 
 		return sorted(player_list, key=lambda x: -len([char for char in section.get('under_min',{}).get(x,{}) if not section.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
@@ -79,7 +79,7 @@ def get_stp_list(alliance_info, char_list, hist_date=None):
 		for player_name in player_list:
 
 			# Build a list of all character powers.
-			all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', date_to_use)[0] for char_name in char_list])
+			all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', date_to_use) for char_name in char_list])
 
 			# And sum up the Top 5 power entries for STP.
 			stp_list.setdefault(date_to_use,{})[player_name] = sum(all_char_pwr[-5:])
@@ -114,7 +114,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	other_chars = filter_on_traits(section, traits_req, other_chars)
 
 	# Filter out any characters which no one has summoned
-	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power')[0] for player in player_list])]
+	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power') for player in player_list])]
 
 	# Set aside a list of the other_chars prior to filtering for minimums
 	before_filter = other_chars[:]
@@ -159,10 +159,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		hist_date = get_hist_date(alliance_info, table_format)
 
 		# Number of people who have summoned a character.
-		dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] != 0 for player in player_list]) for char in other_chars}
+		dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) != 0 for player in player_list]) for char in other_chars}
 
 		# Average power of this char across all rosters who have summoned.
-		dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] for player in player_list])/max(dict_count[char],1)) for char in other_chars}
+		dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) for player in player_list])/max(dict_count[char],1)) for char in other_chars}
 
 		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
 		# If we have min_iso/min_tier criteria, also use this to sort/filter the character list.
@@ -189,10 +189,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 			before_filter = [char for char in before_filter if char not in other_chars]
 			
 			# Number of people who have summoned a character
-			dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] != 0 for player in player_list]) for char in before_filter}
+			dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) != 0 for player in player_list]) for char in before_filter}
 
 			# Calc average power for these toons
-			dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date)[0] for player in player_list])/max(dict_count[char],1)) for char in before_filter}
+			dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) for player in player_list])/max(dict_count[char],1)) for char in before_filter}
 
 			# Calculate a score for these toons
 			dict_score = {f'{dict_power[char]:010}':char for char in before_filter}
@@ -296,17 +296,20 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 		return under_min
 
 	# Not summoned is under_min
-	if find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date)[0] == 0:
+	if find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date) == 0:
 		section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
 		return True
 
+	# Profile only non-historical data
+	PROFILE = {} if hist_date else table_format.setdefault('profile', {}).setdefault('min', {})
+
 	# Calculate whether entry is under the min requirements for use in this raid/mode.
 	for key in ('lvl','tier','iso','yel','red'):
-		min_val  = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
-		if min_val and find_value_or_diff(alliance_info, player_name, char_name, key, hist_date)[0] < min_val:
+		min_val = PROFILE[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
+		if min_val and find_value_or_diff(alliance_info, player_name, char_name, key, hist_date) < min_val:
 			section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
 			return True
-	
+
 	section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = False
 
 
@@ -401,9 +404,7 @@ def insert_dividers(strike_teams, raid_type):
 	
 
 # Find this member's oldest entry in our historical entries.
-def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=None, null=0):
-
-	other_data = ''
+def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=None, null=0, other_info=''):
 
 	# Find the current value. 
 	char_info = alliance_info['members'][player_name].get('processed_chars',{}).get(char_name,{})
@@ -425,26 +426,24 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 	if not hist_date:
 	
 		# If we're on a 'power' entry, summarize the other stats for display in a tooltip
-		if key == 'power' and current_val:
+		if other_info and key == 'power' and current_val:
 			
-			lvl  = char_info.get('lvl',0)
-			tier = char_info.get('tier',0)
+			lvl_info = f"Lvl: {char_info.get('lvl',0)}t{char_info.get('tier',0)}<br>"
+
 			iso  = char_info.get('iso',0)
-			yel  = char_info.get('yel',0)
+			iso_info = f'ISO: {int((iso-1)/5)+1}-{(iso-1)%5+1}<br>' if iso else ''
+
 			red  = char_info.get('red',0)
 			dmd  = char_info.get('dmd',0)
-			abil = char_info.get('abil','n/a')
+			red_or_dmd = f'{dmd}D' if dmd else f'{red}R' if red else ''
 
-			data = [f'Lvl: {lvl}t{tier}']
-			if iso:
-				data.append('ISO: %s-%s' % (int((iso-1)/5)+1,(iso-1)%5+1))
-			data.append(f'Rank: {yel}Y' + [f'{red}R',''][(not red) + (dmd !=0)] + [f'{dmd}D',''][not dmd])
-			data.append(f'Abil: {abil}')
+			star_info = f"Rank: {char_info.get('yel',0)}Y{red_or_dmd}<br>"
+			abil_info = f"Abil: {char_info.get('abil','n/a')}"
 
 			# Create a tooltip with the noted differences.
-			other_data = '<span class="TT">%s</span>' % ('<br>'.join(data))
+			other_info = f'<span class="TT">{lvl_info}{iso_info}{star_info}{abil_info}</span>'
 	
-		return current_val,other_data
+		return (current_val, other_info) if other_info else current_val
 
 	# If requested date doesn't exist or no date specified, use the oldest date available.
 	if hist_date not in alliance_info['hist']:
@@ -469,7 +468,7 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 			delta_val -= hist_info.get('dmd',0)
 
 		# If there's a difference and the key is power, we need details for tooltip. 
-		if delta_val and key == 'power':
+		if other_info and delta_val and key == 'power':
 
 			# Iterate through all the stats we're currently tracking.
 			diffs = []
@@ -496,12 +495,12 @@ def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=Non
 								diffs.append(f'{abil.title()}: {abil_diffs[abil]:+}')
 
 			# Create a tooltip with the noted differences.
-			other_data = ['<span class="TT">%s</span>' % ('<br>'.join(diffs)),''][not diffs]
+			other_info = f'<span class="TT">{"<br>".join(diffs)}</span>' if diffs else ''
 		
-		return delta_val, other_data
+		return (delta_val, other_info) if other_info else delta_val
 
 	# Should not happen. Missing alliance members should be copied into all historical entries.
-	return null,other_data
+	return (null, other_info) if other_info else null
 
 
 
