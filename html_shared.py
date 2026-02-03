@@ -226,6 +226,7 @@ def translate_name(value):
 						"AbsoluteAForce": "Absolute<br>A-Force",
 						"AlphaFlight": "Alpha Flight",
 						"AnniversaryElite": "Anniversary<br>Elite",
+						"AnnihilationWave": "Annihilation<br>Wave",
 						"Asgard": "Asgardians",
 						"Astonishing": "Astonishing<br>X-Men",
 						"Astonishing X-Men": "Astonishing<br>X-Men",

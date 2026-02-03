@@ -5007,7 +5007,7 @@ playable   = {
         "Blaster",
         "MastersOfEvil"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "An Inhuman Controller, Karnak uses his power to see his enemies' weakness to strike at them with surgical precision.",
@@ -12350,13 +12350,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "257cfaaabb7d28f873a5",
-      "chars": "9461b5e69e3025e21dcc",
-      "drops": "b3d392e27a82a44de6a6",
-      "events": "4b810e38dacfaea49b64",
-      "locs": "429ea7d6edf597aec447",
-      "nodes": "4c2cb778f304d98918c3",
-      "other": "fc67b83a59801bceb087"
+      "all": "ca9524149cb7e741e3db",
+      "chars": "1561f68bd069a7e285dc",
+      "drops": "499c50235a9cbf1e14b9",
+      "events": "0d33a7243c9f496833be",
+      "locs": "5c1ff3c7f0290f0eb4bb",
+      "nodes": "87d249e6e64449e23c7c",
+      "other": "e4de4d11226226875701"
     },
     "perTotal": 357,
     "version": 1
@@ -13196,13 +13196,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "257cfaaabb7d28f873a5",
-      "chars": "9461b5e69e3025e21dcc",
-      "drops": "b3d392e27a82a44de6a6",
-      "events": "4b810e38dacfaea49b64",
-      "locs": "429ea7d6edf597aec447",
-      "nodes": "4c2cb778f304d98918c3",
-      "other": "fc67b83a59801bceb087"
+      "all": "ca9524149cb7e741e3db",
+      "chars": "1561f68bd069a7e285dc",
+      "drops": "499c50235a9cbf1e14b9",
+      "events": "0d33a7243c9f496833be",
+      "locs": "5c1ff3c7f0290f0eb4bb",
+      "nodes": "87d249e6e64449e23c7c",
+      "other": "e4de4d11226226875701"
     },
     "perTotal": 43,
     "version": 1

@@ -156,25 +156,19 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		# Only profile first table for non-historical data
 		profile_fields = {} if hist_date or table_format.get('profile',{}).get('val') else {'yel','red','lvl','tier','iso'}
-		PROFILE = table_format.setdefault('profile', {}).setdefault('val', {key:set() for key in profile_fields})
+		PROFILE = table_format.setdefault('profile', {}).setdefault('val', {key:{*()} for key in profile_fields})
 
 		for char_name in using_chars:
 			key_ranges = alliance_info.setdefault('key_ranges',{}).setdefault(hist_date,{}).setdefault(char_name,{})
 			for key in keys:
-				key_ranges[key] = [find_value_or_diff(alliance_info, player, char_name, key, hist_date, set() if key=='avail' else 0) for player in player_list]
+				key_ranges[key] = [find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list]
 
 				if key in profile_fields:
 					PROFILE[key] |= set(key_ranges[key])
 
 			# Profile the other fields as well
 			for key in [field for field in profile_fields if field not in keys]:
-				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, set() if key=='avail' else 0) for player in player_list}
-
-		#
-		# TEMP: PURELY DIAGNOSTIC
-		#
-		if profile_fields:
-			print (f'{table_format.setdefault("profile")=}')
+				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list}
 
 	# Auto-calc the best value for line wrap length if an explicit value not defined
 	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=calculate_line_wrap(using_chars)) 
@@ -293,9 +287,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			for player in player_list:
 
 				# char_list == teams/sections
-				avail_set = set()
+				avail_set = {*()}
 				for sect in char_list:
-					avail_set.update(find_value_or_diff(alliance_info, player, sect, 'avail', False, set()))
+					avail_set.update(find_value_or_diff(alliance_info, player, sect, 'avail', False, {*()}))
 
 				avail_range[player] = len(avail_set)
 			
@@ -371,7 +365,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# Include not_completed because if they've completed it, they're OBVIOUSLY ready
 				if team_power_summary:
 					not_completed = not get_summary_comp(alliance_info, player_name, inc_comp)
-					not_ready = not_completed and min_count and any([len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', False, set())) < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+					not_ready = not_completed and min_count and any([len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', False, {*()})) < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
 
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
@@ -424,7 +418,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 						# TEAM POWER SUMMARY: Calculate under_min for a team/section so that the Power/Avail/Rank is dimmed if not 5 toons are available yet.
 						if team_power_summary:
-							under_min = not_completed and min_count and len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date, set())) < min_count - (DD7 and char_name=='Mythic')
+							under_min = not_completed and min_count and len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date, {*()})) < min_count - (DD7 and char_name=='Mythic')
 						else:
 							under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
 
