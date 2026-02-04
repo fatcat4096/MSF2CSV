@@ -137,7 +137,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			break
 
 	# Get keys from table_format/table, with defaults if necessary.
-	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','tier','iso'])
+	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','tier','iso'], profile=True)
 
 	# Treat 'abil' as 4 separate entries.
 	if 'abil' in keys:
@@ -155,8 +155,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	for hist_date in hist_list:
 
 		# Only profile first table for non-historical data
-		profile_fields = {} if hist_date or table_format.get('profile',{}).get('val') else {'yel','red','lvl','tier','iso'}
-		PROFILE = table_format.setdefault('profile', {}).setdefault('val', {key:{*()} for key in profile_fields})
+		profile_fields = {} if hist_date or table_format['profile'].get('val') else {'yel','red','lvl','tier','iso'}
+		PROFILE = table_format['profile'].setdefault('val', {key:{*()} for key in profile_fields})
 
 		for char_name in using_chars:
 			key_ranges = alliance_info.setdefault('key_ranges',{}).setdefault(hist_date,{}).setdefault(char_name,{})
@@ -195,9 +195,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Include Available, Include Position, and Include ISO Class flags
 		# Get value from table_format/table, with defaults if necessary
 
-		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False) and 'OTHERS' not in table_lbl
-		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False) and 'OTHERS' not in table_lbl and not team_power_summary
-		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False) and not hist_date and not team_power_summary
+		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False, profile=True) and 'OTHERS' not in table_lbl
+		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False, profile=True) and 'OTHERS' not in table_lbl and not team_power_summary
+		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not hist_date and not team_power_summary
 		inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
 		spec_ops  = get_table_value(table_format, table, section, key='spec_ops')
 

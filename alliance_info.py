@@ -632,7 +632,7 @@ def is_stale(alliance_info, member_name):
 
 
 # All settings, we build up the same way
-def get_table_value(table_format, table, section: dict={}, key: str='', default=None):
+def get_table_value(table_format, table, section: dict={}, key: str='', default=None, profile=False):
 
 	# Check for a custom value in table_format
 	value = table_format.get(key)
@@ -645,6 +645,10 @@ def get_table_value(table_format, table, section: dict={}, key: str='', default=
 	# If nothing there fall back to the default value.
 	if value is None:
 		value = table.get(key,default)
+
+	# Keep a copy for control frame
+	if profile:
+		table_format.setdefault('profile', {})[key] = copy.deepcopy(value)
 	
 	return value
 

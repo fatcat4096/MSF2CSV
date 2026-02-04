@@ -20,8 +20,12 @@ def generate_roster_analysis(alliance_info, html_cache, hist_date, table_format=
 	if table_format is None:
 		table_format = {}
 
+	INC_KEYS = table_format.setdefault('inc_keys', ['yel', 'red', 'lvl', 'iso', 'tier', 'abil', 'op'])
+
+	# Keep a copy for control frame 
+	table_format.setdefault('profile',{})['inc_keys'] = INC_KEYS[:]
+
 	# Explicitly include 'dmd' if 'red' included
-	INC_KEYS = table_format.setdefault('inc_keys', ['yel', 'red', 'dmd', 'lvl', 'iso', 'tier', 'abil', 'op'])
 	if 'red' in INC_KEYS and 'dmd' not in INC_KEYS:
 		INC_KEYS.insert(INC_KEYS.index('red')+1, 'dmd')
 
