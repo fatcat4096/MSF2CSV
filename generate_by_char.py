@@ -69,11 +69,15 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 		# By default, no section-specific formatting
 		section={}
 
+		# Add under_min information
+		for player_name in member_list:
+			is_under_min(alliance_info, player_name, char, table_format, table, section) 
+
 		# Create a sub-heading for the Table Label
 		traits = [translate_name(key).replace('<br>',' ') for key in extracted_traits if extracted_traits[key].get(char)]
 		
 		# Just hide certain traits -- no one cares
-		for to_filter in ['Chaos Team', 'Harbinger', 'Mercenary', 'Military', 'MSF Original', 'Spider-Verse']:
+		for to_filter in ['Chaos Team', 'Harbinger', 'Mercenary', 'Military', 'MSF Original', 'Spider-Verse', 'Annihilation Wave']:
 			if to_filter in traits:
 				traits.remove(to_filter)
 

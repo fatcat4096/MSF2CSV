@@ -278,7 +278,6 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 
 	for char in char_list:
 		for player in player_list:
-
 			# If at least one player has this char built to min specs, include in list and move on
 			if not is_under_min(alliance_info, player, char, table_format, table, section):
 				final_list.append(char)
@@ -288,7 +287,7 @@ def remove_min_iso_tier(alliance_info, table_format, table, section, player_list
 
 
 
-def is_under_min(alliance_info, player_name, char_name, table_format, table, section, hist_date=None):
+def is_under_min(alliance_info, player_name, char_name, table_format, table, section):
 
 	# Short-circuit if possible
 	under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
@@ -296,17 +295,18 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 		return under_min
 
 	# Not summoned is under_min
-	if find_value_or_diff(alliance_info, player_name, char_name, 'power', hist_date) == 0:
+	if find_value_or_diff(alliance_info, player_name, char_name, 'power') == 0:
 		section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
 		return True
 
 	# Profile only non-historical data
-	PROFILE = {} if hist_date else table_format.setdefault('profile', {}).setdefault('min', {})
+	PROFILE = table_format.setdefault('profile', {}).setdefault('min', {})
 
 	# Calculate whether entry is under the min requirements for use in this raid/mode.
 	for key in ('lvl','tier','iso','yel','red'):
 		min_val = PROFILE[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
-		if min_val and find_value_or_diff(alliance_info, player_name, char_name, key, hist_date) < min_val:
+
+		if min_val and find_value_or_diff(alliance_info, player_name, char_name, key) < min_val:
 			section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
 			return True
 
