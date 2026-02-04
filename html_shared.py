@@ -343,6 +343,7 @@ def translate_name(value):
 						"Kree Royal Guard":"Kree<br>Royal Guard",
 						"Lady Deathstrike":"Lady<br>Deathstrike",
 						"Madelyne Pryor":"Madelyne<br>Pryor",
+						"Magneto (Phoenix Force)":"Magneto<br>(P. Force)",
 						"Mercenary Lieutenant":"Mercenary<br>Lieutenant",
 						"Mercenary Riot Guard":"Mercenary<br>Riot Guard",
 						"Mercenary Sniper":"Mercenary<br>Sniper",
