@@ -139,7 +139,7 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		color = get_scaled_value(min_val, mid_val, max_val, value, hist_date)
 	
 	# Dim values slightly if under the minimum specified for the report.
-	if under_min and not hist_date:
+	if under_min:# and not hist_date:
 		color = darken(color)
 	elif darken_amt:
 		color = darken(color,darken_amt)

@@ -90,7 +90,7 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 		
 		# Build stp_list to simplify sort_by='stp'.
 		stp_list = get_stp_list(alliance_info, [char], hist_date)
-	
+
 		# Generate the left table with current stats.
 		html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], f'{table_lbl}{traits}', stp_list, html_cache, None, linked_hist=True)
 

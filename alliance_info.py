@@ -299,7 +299,6 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 		section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
 		return True
 
-	# Profile only non-historical data
 	PROFILE = table_format.setdefault('profile', {}).setdefault('min', {})
 
 	# Calculate whether entry is under the min requirements for use in this raid/mode.

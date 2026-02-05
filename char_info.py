@@ -468,6 +468,9 @@ playable   = {
     },
     {
       "description": "A master thief skilled at disabling powerful opponents with the help of his Pym Particle powered suit.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "AntMan",
       "mission": false,
       "name": "Ant-Man",
@@ -781,6 +784,9 @@ playable   = {
     },
     {
       "description": "The King of the Inhumans, Black Bolt is a Blaster whose voice deals massive damage and prevents enemies from reviving.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "BlackBolt",
       "mission": false,
       "name": "Black Bolt",
@@ -887,6 +893,9 @@ playable   = {
     },
     {
       "description": "An agile, relentless hunter who shreds his enemies with rapid attacks.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "BlackPanther",
       "invisibleTraits": [
         "Chargeable"
@@ -1300,6 +1309,9 @@ playable   = {
     },
     {
       "description": "A resilient leader who provides energy to his team while blocking enemy attacks.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "CaptainAmerica",
       "invisibleTraits": [
         "Avenger",
@@ -1765,6 +1777,9 @@ playable   = {
     },
     {
       "description": "A member of the Inhuman royal family, Crystal's mastery of the elements makes her a versatile Blaster.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Crystal",
       "mission": false,
       "name": "Crystal",
@@ -1827,6 +1842,9 @@ playable   = {
     },
     {
       "description": "Cyclops grants his teammates extra attacks and assails his enemies with optic blasts.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Cyclops",
       "invisibleTraits": [
         "Xmen",
@@ -2985,6 +3003,9 @@ playable   = {
     },
     {
       "description": "With a dash of Cajun charm, Gambit fights alongside the X-Men using his mutant ability to charge objects with kinetic energy, transforming them into deadly explosives.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Gambit",
       "invisibleTraits": [
         "Xmen",
@@ -3164,7 +3185,8 @@ playable   = {
     {
       "description": "Ghost-Spider hails from a universe where Gwen Stacy was bitten by a radioactive spider. She's an agile Web-Warrior that can prevent enemies from using their abilities.",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "Couples"
       ],
       "id": "GhostSpider",
       "mission": false,
@@ -3698,6 +3720,9 @@ playable   = {
     },
     {
       "description": "An expert archer who delivers unavoidable attacks to disable his foes.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Hawkeye",
       "invisibleTraits": [
         "Avenger",
@@ -4346,6 +4371,9 @@ playable   = {
     },
     {
       "description": "The Eternal Ikaris strafes foes with laser vision and uses super strength to slam down on them, fighting even more intensely when allied with Sersi.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Ikaris",
       "mission": false,
       "name": "Ikaris",
@@ -4378,7 +4406,8 @@ playable   = {
     {
       "description": "Invisible Woman is a Protector who grants Barrier to her teammates and reveals hidden enemies.",
       "eventTraits": [
-        "KnowhereHeist"
+        "KnowhereHeist",
+        "Couples"
       ],
       "id": "InvisibleWoman",
       "invisibleTraits": [
@@ -4417,6 +4446,7 @@ playable   = {
     {
       "description": "A damage dealer and battlefield manipulator, Invisible Woman weakens enemies with crippling negative status effects, pulls enemies into clusters and sets up her team to deal brutal strikes.",
       "eventTraits": [
+        "Couples",
         "Harbingers",
         "Conqueror"
       ],
@@ -4636,6 +4666,9 @@ playable   = {
     },
     {
       "description": "Determined to save the Earth and those he loves, Tony Stark pulls out all the stops, granting positive Status Effects to his allies and dealing blows to those that would harm them.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "IronManInfinityWar",
       "mission": false,
       "name": "Iron Man (Infinity War)",
@@ -4699,6 +4732,9 @@ playable   = {
     },
     {
       "description": "Deemed worthy by Mjolnir, Jane Foster, also known as the Mighty Thor, attacks her foes with blinding lightning and charges up her ally Hero Asgardians.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "JaneThor",
       "invisibleTraits": [
         "Chargeable"
@@ -4733,6 +4769,9 @@ playable   = {
     },
     {
       "description": "An original member of the X-Men with unparalleled telepathic and telekinetic abilities, Jean Grey is a formidable ally with the power to protect her allies and Disrupt her enemies.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "JeanGrey",
       "invisibleTraits": [
         "Avenger",
@@ -4805,6 +4844,9 @@ playable   = {
     },
     {
       "description": "A resilient fighter who removes positive effects from enemies and clears negative effects from allies.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "JessicaJones",
       "mission": false,
       "name": "Jessica Jones",
@@ -5748,6 +5790,9 @@ playable   = {
     },
     {
       "description": "An extremely tough taunting protector with high damage and health.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "LukeCage",
       "invisibleTraits": [
         "Chargeable"
@@ -6063,6 +6108,9 @@ playable   = {
     },
     {
       "description": "Queen of the Inhumans, Medusa uses her impossibly strong prehensile hair to protect any granted gifts by the Terrigen Mists.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Medusa",
       "invisibleTraits": [
         "AForce"
@@ -6328,6 +6376,9 @@ playable   = {
     },
     {
       "description": "Bobbi Morse is an agent of S.H.I.E.L.D operative known as Mockingbird. She is a master undercover operative that can use her battle stave to lethal effectiveness.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Mockingbird",
       "invisibleTraits": [
         "Avenger"
@@ -6367,6 +6418,9 @@ playable   = {
     },
     {
       "description": "Moondragon and her partner Phyla-Vell are key members of the Infinity Watch, with Moondragon providing psychic healing support.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Moondragon",
       "invisibleTraits": [
         "Chargeable"
@@ -6572,6 +6626,9 @@ playable   = {
     },
     {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "MrFantastic",
       "mission": false,
       "name": "Mister Fantastic",
@@ -6605,6 +6662,7 @@ playable   = {
     {
       "description": "A stalwart and resilient guardian, Mr. Fantastic shields his allies with barriers, purges harmful effects, and delivers punishing blows while ensuring his team stays protected.",
       "eventTraits": [
+        "Couples",
         "Harbingers",
         "Conqueror"
       ],
@@ -7672,6 +7730,9 @@ playable   = {
     },
     {
       "description": "A brilliant codebreaker and key member of the Strategic Scientific Reserve, Peggy Carter helped the Allies defeat the Axis powers and would go on to found S.H.I.E.L.D., protecting humanity for decades to come.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "PeggyCarter",
       "mission": false,
       "name": "Peggy Carter",
@@ -7878,6 +7939,9 @@ playable   = {
     },
     {
       "description": "Phyla-Vell and her partner Moondragon help form the Infinity Watch, with Phyla-Vell's Quantum Sword crushing enemies and bolstering the team's defenses.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "PhylaVell",
       "mission": false,
       "name": "Phyla-Vell",
@@ -8152,6 +8216,9 @@ playable   = {
     },
     {
       "description": "Quicksilver, the twin brother of Wanda Maximoff, is a supersonic speedster with undodgeable piercing attacks that wear down his enemies.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Quicksilver",
       "invisibleTraits": [
         "Chargeable"
@@ -8489,6 +8556,9 @@ playable   = {
     },
     {
       "description": "An armored hero who protects allies with her barrier and enhances Power Armor allies' attacks.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Rescue",
       "mission": false,
       "name": "Rescue",
@@ -8591,6 +8661,9 @@ playable   = {
     },
     {
       "description": "A Southern belle with the mutant power to drain her enemies through physical touch, Rogue tears down her foes' defenses and protects her allies.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Rogue",
       "invisibleTraits": [
         "Xmen",
@@ -8867,6 +8940,9 @@ playable   = {
     },
     {
       "description": "A mystical controller that prolongs negative effects and redistributes health across her teammates.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "ScarletWitch",
       "invisibleTraits": [
         "Avenger"
@@ -9112,6 +9188,9 @@ playable   = {
     },
     {
       "description": "Sersi copies her enemies' positive effects, and when her Eternal ally Ikaris is with her, also turns those effects against them!",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Sersi",
       "mission": false,
       "name": "Sersi",
@@ -10250,6 +10329,9 @@ playable   = {
     },
     {
       "description": "A powerful weather controller that charges up devastating attacks to lead her mutant allies to victory.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Storm",
       "invisibleTraits": [
         "Xmen",
@@ -10969,6 +11051,9 @@ playable   = {
     },
     {
       "description": "The God of Thunder who deals great damage and weakens multiple foes.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Thor",
       "invisibleTraits": [
         "Avenger",
@@ -11288,6 +11373,7 @@ playable   = {
       "description": "Miles Morales controls the field with web blasts and electrical shocks that prolong negative effects and apply Disrupted.",
       "eventTraits": [
         "WebSlinger",
+        "Couples",
         "AnnihilationWave"
       ],
       "id": "UltSpiderMan",
@@ -11573,6 +11659,9 @@ playable   = {
     },
     {
       "description": "A synthetic being that avoids enemy attacks and disables his foes.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Vision",
       "invisibleTraits": [
         "Avenger"
@@ -11750,6 +11839,9 @@ playable   = {
     },
     {
       "description": "A highly elusive blaster capable of stunning and chaining to multiple opponents.",
+      "eventTraits": [
+        "Couples"
+      ],
       "id": "Wasp",
       "invisibleTraits": [
         "Chargeable",
@@ -12350,13 +12442,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "995a3571fc7617bed58d",
-      "chars": "72e4098b075bc730b9f3",
+      "all": "ec4567f3952408618aaf",
+      "chars": "8f4eebc9fc9d138a5499",
       "drops": "be1f34c62b2941d1373d",
-      "events": "16d478b2c8f61e463266",
+      "events": "1fe45ff33e0278ce10bf",
       "locs": "075b9ac1c5a7b3412c21",
       "nodes": "42b37798850a744ae40d",
-      "other": "425854315e128b78ece1"
+      "other": "a2389ebe454ffbfff00c"
     },
     "perTotal": 357,
     "version": 1
@@ -13196,13 +13288,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "995a3571fc7617bed58d",
-      "chars": "72e4098b075bc730b9f3",
+      "all": "ec4567f3952408618aaf",
+      "chars": "8f4eebc9fc9d138a5499",
       "drops": "be1f34c62b2941d1373d",
-      "events": "16d478b2c8f61e463266",
+      "events": "1fe45ff33e0278ce10bf",
       "locs": "075b9ac1c5a7b3412c21",
       "nodes": "42b37798850a744ae40d",
-      "other": "425854315e128b78ece1"
+      "other": "a2389ebe454ffbfff00c"
     },
     "perTotal": 43,
     "version": 1
