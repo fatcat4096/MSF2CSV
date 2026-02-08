@@ -41,6 +41,7 @@ tables = {}
 ACCURSED   = ['Hellverine', 'Juggernaut', 'Mordo', 'Satana', 'The Hood']
 ASTRAL     = ['Ancient One', 'Doctor Strange', 'Emma Frost (X-Men)', 'Moondragon', 'Shadow King']
 BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']
+CHAMPIONS  = ['Brawn', 'Moon Girl', 'Ms. Marvel', 'Nova (Sam Alexander)', 'Spider-Man (Miles)']
 F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
 F4MCUTEAM  = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
 IMMORTAL   = ['Iron Fist','Iron Fist (WWII)','Lady Bullseye','Steel Serpent','Sword Master']
@@ -103,9 +104,9 @@ tables['anni'] = { 'name': 'Annihilation Raid',
 							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
 							{'traits': ['Global'], 'meta': UNCANNY,   'label':'Global<br>(Uncanny)'},
 							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
-							{'traits': ['Bio'],    'meta': TBOLTS,    'label':'Bio<br>(Thunder)'}, 
 							{'traits': ['Tech'],   'meta': INSIDIOUS, 'label':'Tech<br>(Insidious)'}, 
-							{'traits': ['Mystic'], 'meta': IMMORTAL,  'label':'Mystic<br>(Immortal)'},
+							{'traits': ['Mystic'], 'meta': IMMORTAL,  'label':'Mystic<br>(Imm. Weaps)'},
+							{'traits': ['Bio'],    'meta': CHAMPIONS, 'label':'Bio<br>(Champions)'}, 
 							] ],
 					}
 
@@ -120,9 +121,9 @@ tables['annid89'] = { 'name': 'Annihilation Raid (8/9)',
 							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
 							{'traits': ['Global'], 'meta': UNCANNY,   'label':'Global<br>(Uncanny)'},
 							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
-							{'traits': ['Bio'],    'meta': TBOLTS,    'label':'Bio<br>(Thunder)'}, 
 							{'traits': ['Tech'],   'meta': INSIDIOUS, 'label':'Tech<br>(Insidious)'}, 
-							{'traits': ['Mystic'], 'meta': NIGHTSTALK + IMMORTAL, 'label':'Mystic<br>(N. Stalkers<br>Imm. Weaps)'},
+							{'traits': ['Mystic'], 'meta': IMMORTAL,  'label':'Mystic<br>(Imm. Weaps)'},
+							{'traits': ['Bio'],    'meta': CHAMPIONS + TBOLTS,    'label':'Bio<br>(Champions<br>or T-Bolts)'}, 
 							] ],
 					}
 
@@ -267,7 +268,7 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['BlackOrder'], 'meta': ['Corvus Glaive', 'Cull Obsidian', 'Ebony Maw', 'Proxima Midnight', 'Thanos']},
 							{'traits': ['Brimstone'], 'meta': BRIMSTONE},
 							{'traits': ['Cabal']},
-							{'traits': ['Champions'], 'meta': ['Moon Girl', 'Nova (Sam Alexander)', 'Brawn', 'Spider-Man (Miles)', 'Ms. Marvel']},
+							{'traits': ['Champions'], 'meta': CHAMPIONS},
 							{'traits': ['Darkhold']},
 #							{'traits': ['DarkHunter']},
 #							{'traits': ['Deathseed']},
