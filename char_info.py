@@ -70,6 +70,7 @@ playable   = {
     {
       "description": "Guardian of the Soul Stone, Adam Warlock prevents his Infinity Watch allies' positive effects from being cleared or flipped.",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "AdamWarlock",
@@ -334,6 +335,7 @@ playable   = {
     {
       "description": "Brawn exercises his brilliant mind to control his Hulk persona, supporting his Gamma allies to keep them in the fight.",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "AmadeusCho",
@@ -1274,7 +1276,6 @@ playable   = {
     {
       "description": "When he isn't using his superhuman durability to deflect enemy attacks, Sam Guthrie delivers crushing blows that slow and stun the opposition.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Cannonball",
@@ -2109,7 +2110,6 @@ playable   = {
     {
       "description": "Laynia Petrovna uses her mutant powers over the Darkforce, to saturate her enemies in dark energy and siphon whats left of them to restore herself and her allies.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound",
         "AnnihilationWave"
       ],
@@ -5864,7 +5864,6 @@ playable   = {
     {
       "description": "Magik uses dark sorcery to charge up her allies and her mutant teleportation power to get the drop on enemies. As the demonic Darkchylde, she can inflict heavy damage.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Magik",
@@ -5937,6 +5936,7 @@ playable   = {
     {
       "description": "Seeking a new host, a variant reality Phoenix Force possesses Magneto! Now Master of Magnetism AND Fire he blasts through enemies leaving Silence and Trauma in his wake.",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "MagnetoPhoenixForce",
@@ -6457,6 +6457,7 @@ playable   = {
     {
       "description": "Lunella Lafayette, super-genius kid turned superhero, teams up with Devil Dinosaur! Together they make a dynamic duo that disrupts enemy plans while slowing down the battlefield.",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "MoonGirl",
@@ -6770,6 +6771,7 @@ playable   = {
     {
       "description": "A plucky Super Hero brawler who assists and generates ability energy for her allies.",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "MsMarvel",
@@ -7383,6 +7385,7 @@ playable   = {
     {
       "description": "Taking up his missing father's mantle, Samuel Alexander channels the Nova Force to break down enemy defenses and fortify his team against incoming attacks.",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "NovaSamAlexander",
@@ -7561,7 +7564,6 @@ playable   = {
     {
       "description": "Omega Red uses his Mutant Death Aura to apply the Trauma status to foes, preventing their negative effects from being removed or flipped.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound",
         "AnnihilationWave"
       ],
@@ -7602,6 +7604,7 @@ playable   = {
     {
       "description": "Breaking through the cracked walls of reality, a Phoenix Force from another world arrives on Nexus Earth, possessing a new host - Omega Red! His insatiable appetite for life combined with unspeakable cosmic power caused him to immediately become an avatar of death, the Dark Phoenix!",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "OmegaRedPhoenix",
@@ -7862,6 +7865,7 @@ playable   = {
     {
       "description": "Jean Grey absorbs her enemies negative status effects, being reborn as Dark Phoenix if she falls in battle.",
       "eventTraits": [
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "Phoenix",
@@ -8445,7 +8449,6 @@ playable   = {
     {
       "description": "Russian warrior of the Cold War, Red Guardian uses his boldness and military tactics to steal positive effects from enemies and grant them to his allies.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound",
         "AnnihilationWave"
       ],
@@ -10193,6 +10196,7 @@ playable   = {
       "description": "A charismatic leader who generates ability energy for allies and distracts enemies.",
       "eventTraits": [
         "KnowhereHeist",
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "StarLord",
@@ -10480,7 +10484,6 @@ playable   = {
     {
       "description": "The hot-headed Sunspot possesses the ability to absorb and redirect the sun's power, letting him deal massive damage and grant ability energy to his X-Men allies.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Sunspot",
@@ -11374,6 +11377,7 @@ playable   = {
       "eventTraits": [
         "WebSlinger",
         "Couples",
+        "ChaosTeam",
         "AnnihilationWave"
       ],
       "id": "UltSpiderMan",
@@ -11448,7 +11452,6 @@ playable   = {
     {
       "description": "Mikhail Ursus's mutant power turned him into an immense bear man. He uses his immense strength and durability to protect mother nature from those who would do it harm.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound",
         "AnnihilationWave"
       ],
@@ -11770,7 +11773,6 @@ playable   = {
     {
       "description": "A techno-organic lifeform befriended by the New Mutants, Warlock uses his shapeshifting abilities to siphon positive effects from enemies to allies.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Warlock",
@@ -11943,7 +11945,6 @@ playable   = {
     {
       "description": "Rahne Sinclair, always on the prowl for the perfect strike, leverages her keen senses and lycanthropic strength to deal long-lasting damage to enemies.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound"
       ],
       "id": "Wolfsbane",
@@ -12117,7 +12118,6 @@ playable   = {
     {
       "description": "Yelena Belova's training in Russia's \"Red Room\" allows her to strike with deadly precision, dealing bonus Crit damage to her enemies.",
       "eventTraits": [
-        "ChaosTeam",
         "Stormbound",
         "AnnihilationWave"
       ],
@@ -12442,13 +12442,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "ce515175e4e806fd19c6",
-      "chars": "020aeff57028dc88636a",
-      "drops": "14053f4ebd16d2aff732",
-      "events": "b594cfb4280bb0691d44",
-      "locs": "af88623ae6a04765ec10",
-      "nodes": "1e1bf4e8d80f9f34a670",
-      "other": "e892718641f9778413ff"
+      "all": "93d95b608d9372f132d3",
+      "chars": "381769800615dbb0fd48",
+      "drops": "1e50047bde2fbf40f068",
+      "events": "88b8dbd8fa733994ca1a",
+      "locs": "007d712c5c9c6e892d0a",
+      "nodes": "e5a0c42eda0fe271480e",
+      "other": "be88612ef63a4eb3f84e"
     },
     "perTotal": 357,
     "version": 1
@@ -13288,13 +13288,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "ce515175e4e806fd19c6",
-      "chars": "020aeff57028dc88636a",
-      "drops": "14053f4ebd16d2aff732",
-      "events": "b594cfb4280bb0691d44",
-      "locs": "af88623ae6a04765ec10",
-      "nodes": "1e1bf4e8d80f9f34a670",
-      "other": "e892718641f9778413ff"
+      "all": "78431d6e7bebb633664a",
+      "chars": "381769800615dbb0fd48",
+      "drops": "1e50047bde2fbf40f068",
+      "events": "21a6e3193033a66c21ff",
+      "locs": "007d712c5c9c6e892d0a",
+      "nodes": "e5a0c42eda0fe271480e",
+      "other": "be88612ef63a4eb3f84e"
     },
     "perTotal": 43,
     "version": 1

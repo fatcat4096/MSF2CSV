@@ -35,10 +35,10 @@ def main(alliance_name, table_format, log_file=None):
 	# Build a default path and filename for writing output
 	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'reports' + os.sep + remove_tags(alliance_info['name']) + '-'
 
-	output         = table_format.get('output')
-	external_table = table_format.get('external_table')
-	output_format  = table_format.get('output_format','tabbed')
-	valid_output   = list(tables)+['roster_analysis','alliance_info','by_char']
+	output        = table_format.get('output')
+	custom_table  = table_format.get('custom_table')
+	output_format = table_format.get('output_format','tabbed')
+	valid_output  = list(tables)+['roster_analysis','alliance_info','by_char']
 
 	# Don't print the path if external request
 	print_path = alliance_info != alliance_name
@@ -48,9 +48,9 @@ def main(alliance_name, table_format, log_file=None):
 		 return write_file(pathname+f'{datetime.datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info), print_path=print_path)
 
 	# Output only a specific report.
-	elif external_table or output:
+	elif custom_table or output:
 
-		if external_table or output in valid_output:
+		if custom_table or output in valid_output:
 		
 			try:
 				# If requesting tabbed output, this is our destination.
@@ -58,7 +58,7 @@ def main(alliance_name, table_format, log_file=None):
 					html_files = {output+'.html': generate_tabbed_html(alliance_info, tables.get(output), table_format)}
 				# Otherwise, we need to generate the one page.
 				else:
-					html_files = generate_html(alliance_info, external_table or tables.get(output), table_format)
+					html_files = generate_html(alliance_info, custom_table or tables.get(output), table_format)
 			except Exception as exc:
 				dirname = os.path.dirname(__file__) + os.sep
 				Console().print_exception(theme='github-dark', extra_lines=4, suppress=[f'{dirname}log_utils.py', f'{dirname}msf2csv.py'])
