@@ -48,11 +48,13 @@ IMMORTAL   = ['Iron Fist','Iron Fist (WWII)','Lady Bullseye','Steel Serpent','Sw
 INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture']
 HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
 NIGHTSTALK = ['Agatha Harkness', 'Blade', 'Man-Thing', 'Moon Knight', 'Oath']
+NEWMUTANT  = ['Magik', 'Sunspot', 'Cannonball', 'Warlock', 'Wolfsbane']
 SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
 TBOLTS     = ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand']
 UNCANNY    = ['Hercules','Falcon','Jean Grey','Beast','Storm']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
 VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
+WINTERGUARD= ['Darkstar', 'Omega Red', 'Red Guardian', 'Ursa Major', 'Yelena Belova']
 
 # Meta Heroes for use in Thunderstrike Raid
 tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
@@ -75,8 +77,11 @@ tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
 																		{'meta': HELLFIRE,   'label':'Hellfire Club<br>(Conquerors)'},
 																		{'meta': ['Blastaar'], 'label':'Blastaar<br>(Conquerors)'}]},
 							{'traits': ['Stormbound'], 'subsections':[	{'meta': BRIMSTONE,  'label':'Brimstone<br>(Stormbound)', 'inc_avail': True},
-																		{'meta': IMMORTAL,  'label':'Immortal<br>Weapons<br>(Stormbound)'},
-																		{'meta': ['Thunderstrike'], 'label':'Thunderstrike<br>(Stormbound)'}]},
+																		{'meta': IMMORTAL,   'label':'Immortal<br>Weapons<br>(Stormbound)'},
+																		{'meta': ['Thunderstrike'], 'label':'Thunderstrike<br>(Stormbound)'},{},
+																		{'meta': NEWMUTANT,  'label':'New Mutants<br>(Stormbound)', 'inc_avail': True},
+																		{'meta': WINTERGUARD,'label':'Winter Guard<br>(Stormbound)'},
+																		]},
 							] ]
 					}
 
@@ -88,7 +93,7 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['AlphaFlight'],    'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+							{'traits': ['AlphaFlight'],    'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar'] + CHAMPIONS},
 							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
 							] ]
 					}
@@ -292,7 +297,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['MercsForMoney']},
 							{'traits': ['MightyAvenger'], 'meta': ['Hercules','Scarlet Witch','Invisible Woman','Vision','Falcon']},
 							{'traits': ['NewAvenger']},
-							{'traits': ['NewMutant'], 'meta': ['Magik', 'Sunspot', 'Cannonball', 'Warlock', 'Wolfsbane']},
+							{'traits': ['NewMutant'], 'meta': NEWMUTANT},
 #							{'traits': ['NewWarrior']},
 							{'traits': ['Nightstalkers'], 'meta': NIGHTSTALK},
 							{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
@@ -317,7 +322,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Vigilante'], 'meta': VIGILANTE}, 
 							{'traits': ['WarDog']},
 #							{'traits': ['WeaponX'], 'meta': ['Omega Red', 'Sabretooth', 'Silver Samurai', 'Wolverine', 'X-23']},
-							{'traits': ['Winter Guard'], 'meta': ['Darkstar', 'Omega Red', 'Red Guardian', 'Ursa Major', 'Yelena Belova']},
+							{'traits': ['Winter Guard'], 'meta': WINTERGUARD},
 							{'traits': ['XTreme']},
 #							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
 							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power','yel','red'], 'max_others':0},
