@@ -154,21 +154,31 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# Pre-calculate key ranges for each character
 	for hist_date in hist_list:
 
-		# Only profile first table for non-historical data
-		profile_fields = {} if hist_date or table_format['profile'].get('val') else {'yel','red','lvl','tier','iso'}
-		PROFILE = table_format['profile'].setdefault('val', {key:{*()} for key in profile_fields})
+		showing_players = {player for player in sum(strike_teams,[]) if player != '----'}
+		showing_all_mem = showing_players == set(player_list)
+
+		# Only profile non-historical data
+		profile_keys = {} if hist_date else {'yel','red','lvl','tier','iso'}
+
+		# Create space to store profiled values
+		PROFILE = table_format['profile'].setdefault('val', {key:{*()} for key in profile_keys})
+
+		# Which are usable as is, which need to be done separately?
+		profile_during = {key for key in profile_keys if showing_all_mem and key in keys}
+		profile_after  = {key for key in profile_keys if key not in profile_during}
 
 		for char_name in using_chars:
 			key_ranges = alliance_info.setdefault('key_ranges',{}).setdefault(hist_date,{}).setdefault(char_name,{})
 			for key in keys:
 				key_ranges[key] = [find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list]
 
-				if key in profile_fields:
+				# Just use this info if all are being shown
+				if key in profile_during:
 					PROFILE[key] |= set(key_ranges[key])
 
 			# Profile the other fields as well
-			for key in [field for field in profile_fields if field not in keys]:
-				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list}
+			for key in profile_after:
+				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in showing_players}
 
 	# Auto-calc the best value for line wrap length if an explicit value not defined
 	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=calculate_line_wrap(using_chars)) 
