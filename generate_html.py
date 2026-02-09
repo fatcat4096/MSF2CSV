@@ -66,6 +66,9 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 			# More than one requested? Not base case, gang these up as requested.
 			if len(only_members) > 1:
 
+				# Will need to merge multiple PROFILES entries into the primary one
+				PROFILE = table_format.setdefault('profile',{})
+
 				# Use a copy of the table_format for recursive calls
 				table_format_copy = copy.deepcopy(table_format)
 				
@@ -74,6 +77,8 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 
 				# Iterate through the list, looking for valid entries in increments of num_per_image
 				while len(html_files) != 4 and only_members:
+				
+					PROFILE_COPY = table_format_copy.setdefault('profile',{})
 
 					# Get the next member from the list
 					MEMBER_NAME = only_members.pop()
@@ -101,7 +106,16 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 							
 							# Include the footer/header and add it to the list
 							html_files[html_name] = add_css_header(table_name, html_cache, html_file, lane_name)
-		
+
+					# Do we have Profile information to merge into table_format?
+					for key in PROFILE_COPY:
+						
+						if key == 'val' and PROFILE.get(key):
+							for val in PROFILE_COPY[key]:
+								PROFILE[key][val] |= PROFILE_COPY[key][val]
+						else:
+							PROFILE[key] = PROFILE_COPY[key]
+
 				# Tell it to keep rendering using the 'render_sections' flag
 				if only_members:
 					table_format['render_sections'] = True
