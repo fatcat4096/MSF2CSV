@@ -231,8 +231,8 @@ def filter_on_traits(section, traits_req='any', char_list=None):
 	# Get extracted_traits from alliance_info
 	extracted_traits = get_cached('traits')
 
-	excluded_traits = [trait[4:] for trait in traits if trait[:4] == 'Non-']
-	included_traits = [trait     for trait in traits if trait[:4] != 'Non-']
+	excluded_traits = [trait[4:] for trait in traits if     trait.startswith('Non-')]
+	included_traits = [trait     for trait in traits if not trait.startswith('Non-')]
 
 	for char in char_list[:]:
 
@@ -249,16 +249,16 @@ def filter_on_traits(section, traits_req='any', char_list=None):
 		for trait in included_traits:
 
 			# any == additive (include if any trait is valid)
-			if traits_req == 'any' and char in extracted_traits.get(trait,[]):
+			if traits_req == 'any' and char in extracted_traits.get(trait, ()):
 				break
 
 			# all == reductive (must have all traits for inclusion)
-			if traits_req == 'all' and char not in extracted_traits.get(trait,[]):
+			if traits_req == 'all' and char not in extracted_traits.get(trait, ()):
 				break
 
 		# If char isn't in the final trait examined, remove it.
-		if trait and char not in extracted_traits.get(trait,[]):
-			char_list.remove(char)			
+		if trait and char not in extracted_traits.get(trait, ()):
+			char_list.remove(char)
 
 		# Final check, does this character have any EXCLUDED traits?
 		for trait in excluded_traits:
