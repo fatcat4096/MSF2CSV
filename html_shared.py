@@ -20,25 +20,6 @@ def get_tab_header(content):
 
 
 
-@timed
-def extract_color(alliance_name):
-	alt_color = ''
-
-	check_for_color = ''.join(alliance_name.split()).lower()
-
-	# If we have a color, clean it up and extract it.
-	if '<color=' in check_for_color:
-			color_name = check_for_color.split('<color=')[1].split('>')[0].replace('#','')
-
-			# Is this a hex number or a named color?
-			hex_or_named = ['','#'][all(char in string.hexdigits for char in color_name)]
-
-			alt_color=' style="color:%s%s";' % (hex_or_named, color_name)
-
-	return alt_color
-
-
-
 # Translate value to a color from the Heat Map gradient.
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, color_set=False, darken_amt=0):
 
@@ -139,7 +120,7 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		color = get_scaled_value(min_val, mid_val, max_val, value, hist_date)
 	
 	# Dim values slightly if under the minimum specified for the report.
-	if under_min:# and not hist_date:
+	if under_min:
 		color = darken(color)
 	elif darken_amt:
 		color = darken(color,darken_amt)
