@@ -21,11 +21,16 @@ def get_tab_header(content):
 
 
 # Translate value to a color from the Heat Map gradient.
+@timed(level=4)
 def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, color_set=False, darken_amt=0):
 
 	# Base case. Return 'xx' if 0.
 	if not val_range or not value:
 		return 'xx'
+
+	# Shortcut everything if we've precalculated the color
+	if type(val_range) is dict and value in val_range:
+		return finalize_color(val_range[value], html_cache, stale_data, under_min, darken_amt)
 	
 	# Even distribution of color
 	elif color_set=='set' or hist_date:
@@ -37,25 +42,16 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 
 		# For historical data, there's always room to grow.
 		if hist_date:
-			new_range.append(new_range[-1]+1)
+			new_range.append(10**10)
 
 		# Base case, avoid div by zero error
 		if len(new_range) == 1:
 			value = 1000
+		# Should not happen -- DOES IT EVER?
 		elif value not in new_range:
 			value = -1
 		else:
 			value = 1+1000/(len(new_range)-1)*(new_range.index(value))
-
-	# Weighted distribution, skews higher
-	elif color_set == 'list':
-		min_val = 0
-		max_val = 1000
-		new_range = sorted(val_range, reverse=True)
-		if value not in new_range:
-			value = -1
-		else:
-			value = 1000/len(new_range)*(len(new_range)-new_range.index(value))
 
 	# Standard handling
 	else:
@@ -72,8 +68,13 @@ def get_value_color(val_range, value, html_cache, stale_data, stat='power', unde
 
 
 
+@timed(level=4)
 def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=None, darken_amt=0):
 	
+	# Special treatment for the '0' fields. 
+	if not value:
+		return 'xx'
+
 	# If we've specified an inverted range, flip the calculation on its head.
 	if min_val > max_val:
 		min_val, max_val = max_val, min_val
@@ -82,43 +83,80 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 		if value:
 			value = (max_val - value) + 1
 
+	color = get_color(min_val, max_val, value, stat, hist_date)
+
+	return finalize_color(color, html_cache, stale_data, under_min, darken_amt)
+
+
+
+# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
+@timed(level=4)
+def get_color(min_val, max_val, value, stat='power', hist_date=None):
+
 	# Special treatment for the '0' fields. 
 	if not value:
 		return 'xx'
 
-	# Tweak gradients for Tier, ISO, Level, and Red/Yellow stars.
-
-	# Force Historical Data to use generic handling
+	# Force Historical Data to use slightly different handling
 	if hist_date:
-		mid_val = (((max_val-min_val)*0.5)+min_val)
-		color = get_scaled_value(min_val, mid_val, max_val, value, hist_date)
+		return get_scaled_value(min_val, min_val, max_val, value, yellow_point=0.2)
+	elif stat == 'power':
+		return get_scaled_value(min_val, (max_val + min_val) / 2, max_val, value)
 	# ISO Coloring is special: green, blue, purple depending on ISO tier
 	elif stat == 'iso':
-		color = iso_color_scale[value-1]
-	elif stat == 'tier':
-		mid_val = max(0,max_val-3)
-		color = get_scaled_value(0, mid_val, max_val, value, hist_date)
+		return iso_color_scale[value-1]
 	elif stat == 'lvl':
-		mid_val = max(0,max_val-10)
-		color = get_scaled_value(0, mid_val, max_val, value, hist_date)
+		return get_scaled_value(0, max(0, max_val-10), max_val, value)
+	elif stat == 'tier':
+		return get_scaled_value(0, max(0, max_val-3), max_val, value)
 	#elif stat in ('op'):
-	#	color = get_scaled_value(0, 9, 11, value, hist_date)
-	elif stat in ('bas','spc','ult','pas'):
-		mid_val = max(0,max_val-1)
-		color = get_scaled_value(0, mid_val, max_val, value, hist_date)
-	elif stat in ('yel'):
-		color = get_scaled_value(0, 5, 7, value, hist_date)
-	elif stat in ('red'):
-		color = get_scaled_value(0, 6, 10, value, hist_date)
+	#	color = get_scaled_value(0, 9, 11, value)
+	elif stat == 'yel':
+		return get_scaled_value(0, 5, 7, value)
+	elif stat == 'red':
+		return get_scaled_value(0, 6, 10, value)
 	elif stat == 'rank':
-		color = get_scaled_value(1, 13, 25, (25-value), hist_date)
+		return get_scaled_value(1, 13, 25, (25-value))
 	elif stat == 'avail':
-		color = get_scaled_value(0, 5, 15, value, hist_date)
+		return get_scaled_value(0, 5, 15, value)
+	elif stat in ('bas','spc','ult','pas'):
+		return get_scaled_value(0, max(0, max_val-1), max_val, value)
+
 	# Everything else, generic handling.
+	return get_scaled_value(min_val, (max_val + min_val) / 2, max_val, value)
+
+
+
+# Do the ugly calculations here.
+@timed(level=4)
+def get_scaled_value(min_val, mid_val, max_val, value, yellow_point=0.5):
+
+	# If we're in the lower "half" of our range, calculate the spread from red to yellow
+	if value < mid_val:
+		scaled_value = ((value-min_val)/max(1,mid_val-min_val)) * yellow_point
+	# Top "half" is yellow to green.
 	else:
-		mid_val = (((max_val-min_val)*0.5)+min_val)
-		color = get_scaled_value(min_val, mid_val, max_val, value, hist_date)
+		scaled_value = ((value-mid_val)/max(1,max_val-mid_val)) * (1-yellow_point) + yellow_point 
+
+	# Ensure the scaled_value is between 0% and 100%
+	scaled_value = min(1, max(0, scaled_value))
+
+	# Translate the scaled_value into a color from the color_scale list.
+	max_colors   = len(color_scale)-1
+	scaled_value = int(scaled_value * max_colors)
 	
+	return color_scale[scaled_value]
+
+
+
+# Do any final shift or formatting if the calculated color based on table requirements
+@timed(level=4)
+def finalize_color(color, html_cache, stale_data=False, under_min=False, darken_amt=0):
+
+	# Special treatment for the '0' fields. 
+	if not color:
+		return 'xx'
+		
 	# Dim values slightly if under the minimum specified for the report.
 	if under_min:
 		color = darken(color)
@@ -134,38 +172,8 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 
 
 
-# Do the ugly calculations here.
-def get_scaled_value(min_val, mid_val, max_val, value, hist_date=None):
-
-	# If Hist Date, any growth is a positive. Start with bottom value as orange and go to top of range as green
-	if hist_date:
-		mid_val = min_val
-		yellow_point = 0.2
-
-	# Define midpoint once, in case we'd like to skew it.
-	else:
-		yellow_point = 0.5
-	
-	# If we're in the lower "half" of our range, calculate the spread from red to yellow
-	if value < mid_val:
-		scaled_value = ((value-min_val)/max(1,mid_val-min_val)) * yellow_point
-	# Top "half" is yellow to green.
-	else:
-		scaled_value = ((value-mid_val)/max(1,max_val-mid_val)) * (1-yellow_point) + yellow_point 
-
-	# Ensure the scaled_value is between 0% and 100%
-	scaled_value = max(0, scaled_value)		# min of 0%
-	scaled_value = min(1, scaled_value)		# max of 100%
-
-	# Translate the scaled_value into a color from the color_scale list.
-	max_colors   = len(color_scale)-1
-	scaled_value = int(scaled_value * max_colors)
-	
-	return color_scale[scaled_value]
-
-
-
 # Format large Power values using K and M
+@timed(level=4)
 def get_field_value(value, hist_date):
 	if value:
 		if abs(value) > 10**6:
@@ -182,6 +190,7 @@ def get_field_value(value, hist_date):
 
 
 # Generate Labels for each section from either label info or trait names.
+@timed(level=4)
 def get_section_label(section):
 	
 	# If a label specified, use it.
@@ -194,6 +203,7 @@ def get_section_label(section):
 
 
 # Quick and dirty translation to shorter or better names.
+@timed(level=4)
 def translate_name(value):
 	TRANSLATE_NAME = {	"City Hero": "City<br>Hero",
 						"City Villain": "City<br>Villain",
