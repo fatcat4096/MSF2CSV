@@ -150,7 +150,7 @@ def parse_roster_api(response, processed_chars, other_data):
 			continue
 
 		char_info = processed_chars.setdefault(char_name,{})
-		
+
 		char_info['lvl']   = entry.get('level',0)
 		char_info['power'] = entry.get('power',0)
 		char_info['yel']   = entry.get('activeYellow',0)
@@ -162,12 +162,12 @@ def parse_roster_api(response, processed_chars, other_data):
 		char_info['tier']  = entry.get('gearTier',0)
 		char_info['op']    = entry.get('overpower',0)
 
-		bas = str(entry.get('basic',0))
-		spc = str(entry.get('special',0))
-		ult = str(entry.get('ultimate',0))
-		pas = str(entry.get('passive',0))
+		bas = entry.get('basic',0)
+		spc = entry.get('special',0)
+		ult = entry.get('ultimate',0)
+		pas = entry.get('passive',0)
 
-		char_info['abil'] = int(bas+spc+ult+pas)
+		char_info['abil'] = int(f'{bas}{spc}{ult}{pas}')
 
 		iso_entry = entry.get('iso8').split(',')
 		iso_class = iso_entry[6] if len(iso_entry) > 6 else None
