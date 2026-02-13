@@ -190,7 +190,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 			else:
 				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
 		else:
-			time_color = get_value_color_ext(0, 1, 0, html_cache)
+			time_color = 'xx'
 			time_value = 'ROSTER NOT SHARED<br><i>Set to <b>ALLIANCE ONLY</b></i>'
 		
 		html_file += f'  <td class="{time_color}" style="font-size:18px;white-space:nowrap">{time_value}</td>\n'
