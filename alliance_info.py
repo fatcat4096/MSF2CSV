@@ -667,7 +667,7 @@ def find_cached_and_merge(alliance_info, old_alliance_name=None):
 
 	# Copy over extra information into freshly downloaded alliance_info.
 	for key in cached_info:
-		if key not in alliance_info:
+		if key not in alliance_info and key != 'key_ranges':
 			alliance_info[key] = cached_info[key]
 	
 	# Also copy over additional information inside the member definitions. 
