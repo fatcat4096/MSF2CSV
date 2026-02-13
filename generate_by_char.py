@@ -43,7 +43,7 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 	hist_date = get_hist_date(alliance_info, table_format)
 
 	# Get keys using the lookup. If undefined, 
-	table_format['inc_keys']  = ['power','lvl','iso','tier','yel','red','abil']
+	table_format['inc_keys']  = ['power','lvl','iso','tier','yel','red','abil','op']
 	table_format['inc_class'] = True
 	
 	#if not sort_by specified
