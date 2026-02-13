@@ -38,6 +38,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		name_alt_dim  = 'ngaltd'
 		button_hover  = 'blkb'
 
+	# Define this once
+	key_lbls = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
+
 	# Sort player list if requested.
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
 
@@ -107,7 +110,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 	# Dim Image if under_min but still included
 	img_list  = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)
-	dim_image = [char for char in using_chars if char not in img_list]
+	dim_image = {char for char in using_chars if char not in img_list}
 
 	# Generate a table ID to allow sorting. 
 	
@@ -131,7 +134,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# If the Section Name starts with a Character, use that toon's image for the background.
 		if table_lbl.startswith(char_name.upper()+':<BR>'):
 			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
-			table_lbl = table_lbl.removeprefix(char_name.upper()+':<BR>').upper().replace(" (","<BR>(").replace('-','&#8209;')
+			table_lbl = table_lbl.removeprefix(f'{char_name.upper()}:<BR>').upper().replace(" (","<BR>(").replace('-','&#8209;')
 
 			table_lbl = f'<div class="img cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{table_lbl}</div>'
 			break
@@ -150,7 +153,6 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	if inline_hist:
 		hist_list.append(inline_hist)
 
-
 	# Pre-calculate key ranges for each character
 	for hist_date in hist_list:
 
@@ -168,15 +170,26 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		profile_after  = {key for key in profile_keys if key not in profile_during}
 
 		for char_name in using_chars:
-			key_ranges = alliance_info.setdefault('key_ranges',{}).setdefault(hist_date,{}).setdefault(char_name,{})
-			for key in keys:
-				key_ranges[key] = [find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list]
+			key_ranges = table_format.setdefault('key_ranges',{}).setdefault(hist_date,{}).setdefault(char_name,{})
+			pre_ranges = alliance_info.setdefault('key_ranges',{}).setdefault(char_name,{})
 
-				# Just use this info if all are being shown
+			for key in keys:
+				# Have we already cached this range in table_format?
+				if key not in key_ranges:
+
+					# If pre-calculated, cached ranges are available, use them
+					if key in pre_ranges:
+						key_ranges[key] = pre_ranges[key]
+
+					# Otherwise, gotta compile them from scratch
+					else:
+						key_ranges[key] = [find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list]
+
+				# Just use this info for PROFILE if all users are being shown
 				if key in profile_during:
 					PROFILE[key] |= set(key_ranges[key])
 
-			# Profile the other fields as well
+			# Add the other fields to PROFILE as well
 			for key in profile_after:
 				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in showing_players}
 
@@ -187,7 +200,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	row_idx = 1
 
 	# Let's get this party started!
-	html_file = '   <table id="%s">\n' % (table_id)
+	html_file = [f'   <table id="{table_id}">']
 	
 	while using_chars:
 		line_chars, using_chars = using_chars[:line_wrap],using_chars[line_wrap:]
@@ -199,8 +212,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		#
 
 		# WRITE THE IMAGES ROW. #############################################
-		html_file += '    <tr class="%s">\n' % (title_cell) 
-		html_file += '     <td class="tlbl">%s</td>\n' % (table_lbl)
+		html_file.append(f'    <tr class="{title_cell}">')
+		html_file.append(f'     <td class="tlbl">{table_lbl}</td>')
 
 		# Include Available, Include Position, and Include ISO Class flags
 		# Get value from table_format/table, with defaults if necessary
@@ -213,11 +226,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		# Include a column for "# Pos" info if requested.
 		if inc_rank:
-			html_file += '     <td></td>\n'
+			html_file.append(f'     <td></td>')
 
 		# Include a column for "# Avail" info if requested.
 		if inc_avail:
-			html_file += '     <td></td>\n'
+			html_file.append(f'     <td></td>')
 
 		# Number of columns under each Character entry.
 		num_cols = len(keys) + inc_class
@@ -234,15 +247,15 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					if char.startswith(char_name+':'):
 					
 						url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
-						section_name = char.removeprefix(char_name+':').upper().replace(" (","<br>(").replace('-','&#8209;')
+						section_name = char.removeprefix(f'{char_name}:').upper().replace(' (','<br>(').replace('-','&#8209;')
 
-						html_file += f'     <td class="img" colspan="{num_cols}"><div class="cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{section_name}</div></td>\n'
+						html_file.append(f'     <td class="img" colspan="{num_cols}"><div class="cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{section_name}</div></td>')
 						break
 
 				# If we never found a match, just include the formatted Section name as a header.
 				if not char.startswith(char_name+':'):
 					section_name = translate_name(char).upper().replace(" (","<br>(").replace('-','&#8209;')
-					html_file += f'     <td colspan="{num_cols}"><div class="summ">{section_name}</div></td>\n'
+					html_file.append(f'     <td colspan="{num_cols}"><div class="summ">{section_name}</div></td>')
 				
 			else:
 				url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char]}.png'
@@ -253,33 +266,33 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# We are doing a ByChar table in a tabbed file, link back to the report tabs.
 				if linked_hist and anchor:
 					# Finally, connect back to the info in the raid.
-					onclick =  ' onclick="toTable(this,\'%s\')"' % (anchor.get('from')) 
+					onclick =  f' onclick="toTable(this,\'{anchor.get("from")}\')"' 
 
 				# If we don't have linked_hist, then we're on the reports tab.
 				elif not linked_hist:
 
 					# Create new anchor entry to link Report and Bychar tabs. 
 					anchor = make_next_anchor_id(html_cache, char, table_id)
-					onclick = ' onclick="toTable(this,\'%s\')"' % (anchor.get('to')) 
+					onclick = f' onclick="toTable(this,\'{anchor.get("to")}\')"' 
 
 				# Control background color of Character image if Spec Ops report
-				background_color = ' '+spec_ops_background(section, char, player_list, html_cache) if spec_ops else ''
+				bg_color = ' '+spec_ops_bg(section, char, player_list, html_cache) if spec_ops else ''
 
 				# Dim image if under_min
-				background_color += ' dim_img' if char in dim_image else ''
+				bg_color += ' dim_img' if char in dim_image else ''
 
-				html_file += '     <td class="img" colspan="%s"%s><div class="cont%s"><div class="%s"><img src="%s" alt="" width="100"></div><div class="cent">%s</div></div></td>\n' % (num_cols, onclick, background_color, ['','zoom'][not hist_date], url, translate_name(char))
+				html_file.append(f'     <td class="img" colspan="{num_cols}"{onclick}><div class="cont{bg_color}"><div class="{"" if hist_date else "zoom"}"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(char)}</div></div></td>')
 
 		# Include an image of the completion reward if provided.
 		if team_power_summary and inc_comp:
 			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[inc_comp]}.png'
-			html_file += f'     <td class="img"><div class="cont"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(inc_comp)}</div></td>\n'
+			html_file.append(f'     <td class="img"><div class="cont"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(inc_comp)}</div></td>')
 
 		# Include a Team Power column if we have more than one.
 		if len(char_list)>1:
-			html_file += '     <td></td>\n'
+			html_file.append('     <td></td>')
 
-		html_file += '    </tr>\n'
+		html_file.append('    </tr>')
 		# DONE WITH THE IMAGES ROW. #########################################
 
 
@@ -303,7 +316,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				avail_range[player] = len(avail_set)
 			
-			# Once total avaialble found, we can sort players properly.
+			# Once total available found, we can sort players properly.
 			if sort_by == 'avail':
 				player_list = sorted(player_list, key=lambda x : f'{avail_range[x]:03}{alliance_info["members"][x].get("tcp",0):012}', reverse=True)
 
@@ -329,7 +342,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			# number of lines when clicking on table headers. 
 			
 			st_rows = 0
-			st_html = ''
+			st_html = []
 
 			# Last minute sort if proscribed by the table format.
 			if sort_by:
@@ -401,25 +414,29 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						rowspan = '" rowspan="2'
 
 					# Player Name, then relevant stats for each character.
-					st_html += '    <tr%s>\n' % [' class="xx"',''][not use_hist_date]
+					st_html.append(f"    <tr{' class="xx"' if use_hist_date else ''}>")
 
 					inline_hist_row = inline_hist and use_hist_date
 
 					# Skip this cell if on Inline Hist line.
 					if not inline_hist_row:
-						st_html += '     <td class="%s">%s</td>\n' % ([name_cell, name_alt, name_cell_dim, name_alt_dim][alt_color+2*not_ready]+rowspan, name_field)
+						if alt_color:	field_color = name_alt_dim  if not_ready else name_alt
+						else:			field_color = name_cell_dim if not_ready else name_cell
+						st_html.append(f'     <td class="{field_color}{rowspan}">{name_field}</td>')
 
 					# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output.
 					stale_data = alliance_info['members'][player_name].get('is_stale', False)
 
 					# Include "# Pos" info if requested.
 					if inc_rank and not inline_hist_row:
-						rank_num = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color_ext(25, 1, rank_num, html_cache, stale_data)+rowspan, rank_num)
+						rank_num    = get_player_list(alliance_info, sort_by='stp', stp_list=stp_list).index(player_name)+1
+						field_color = get_value_color_ext(25, 1, rank_num, html_cache, stale_data)
+						st_html.append(f'     <td class="bd {field_color}{rowspan}">{rank_num}</td>')
 
 					# Include "# Avail" info if requested.
 					if inc_avail and not inline_hist_row:
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(avail_range.values(), -1 if not_ready and not team_power_summary else num_avail, html_cache, stale_data)+rowspan, num_avail)
+						field_color = get_value_color(avail_range.values(), -1 if not_ready and not team_power_summary else num_avail, html_cache, stale_data)
+						st_html.append(f'     <td class="bd {field_color}{rowspan}">{num_avail}</td>')
 
 					# Write the stat values for each character.
 					for char_name in line_chars:
@@ -436,7 +453,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 							# Get the range of values for this character for all rosters.
 							# If historical, we want the diff between the current values and the values in the oldest record
-							key_range = alliance_info['key_ranges'][use_hist_date][char_name][key]
+							key_range = table_format['key_ranges'][use_hist_date][char_name][key]
 
 							# Only look up the key_val if we have a roster.
 							key_val = 0
@@ -458,7 +475,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							else:
 								# Note: We are using the T class to get black text on fields in the Hist tab.
 								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, use_hist_date)
-								style = ' class="%s%s"' % (field_color, ['', ' T'][need_tt or use_hist_date is not None])    
+								style = f' class="{field_color}{' T' if need_tt or use_hist_date is not None else ''}"'
 
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 							if key=='red' and key_val>7 and not use_hist_date:
@@ -468,7 +485,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							else:
 								field_value = get_field_value(key_val, use_hist_date)
 
-							st_html += '     <td%s>%s%s</td>\n' % (style, field_value, ['',other_diffs][need_tt])
+							st_html.append(f'     <td{style}>{field_value}{other_diffs if need_tt else ""}</td>')
 
 						# Include ISO class information if requested
 						if inc_class and not inline_hist_row:
@@ -477,7 +494,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							iso_code  = alliance_info['members'][player_name].get('other_data',{}).get(char_name,0)%6
 							
 							# Translate it to a code to specify the correct CSS URI.
-							iso_class = ['','fort','healer','skirm','raider','striker'][iso_code]
+							iso_class = ('','fort','healer','skirm','raider','striker')[iso_code]
+
+							#
+							# THIS IS SUUUUUUUUUPER INEFFICIENT
+							#
 							
 							# Do a quick tally of all the ISO Classes in use. Remove the '0' entries from consideration.
 							all_iso_codes = [alliance_info['members'][player].get('other_data',{}).get(char_name,0)%6 for player in player_list]
@@ -492,9 +513,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							if iso_class:
 								field_color = get_value_color_ext(0, 100, iso_conf, html_cache, stale_data, under_min=under_min)
 								tool_tip = f'<span class="TT">{iso_class.title()}:<br>{iso_conf}%</span>'
-								st_html += f'     <td class="{iso_class[:4]} T {field_color+rowspan}">{tool_tip}</td>\n'
+								st_html.append(f'     <td class="{iso_class[:4]} T {field_color+rowspan}">{tool_tip}</td>')
 							else:
-								st_html += f'     <td class="xx{rowspan}">-</td>\n'
+								st_html.append(f'     <td class="xx{rowspan}">-</td>')
 
 					# Dark Dimension Completed Column
 					
@@ -511,8 +532,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						# Red X indicates not completed.
 						else:
 							field_val = '&#x274C;'		# Red X
-							#field_val = '&#x1f534;'	# Red Dot
-						st_html += f'     <td class="xx">{field_val}</td>\n'
+						st_html.append(f'     <td class="xx">{field_val}</td>')
 
 					# STP/TCP Column
 
@@ -526,18 +546,24 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
 						field_value = get_field_value(player_tcp, use_hist_date)
+						
+						# Determine the field color
+						field_color = get_value_color(tcp_range, player_tcp, html_cache, stale_data, color_set='set')
 	
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(tcp_range, player_tcp, html_cache, stale_data, color_set='set'), field_value)
+						st_html.append(f'     <td class="bd {field_color}">{field_value}</td>') 
 					
 					elif len(char_list)>1:
 						player_stp = stp_list.get(use_hist_date,{}).get(player_name,0)
 
 						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
 						field_value = get_field_value(player_stp, use_hist_date)
+						
+						# Determine the field color
+						field_color = get_value_color(stp_range, player_stp, html_cache, stale_data)
 	
-						st_html += '     <td class="bd %s">%s</td>\n' % (get_value_color(stp_range, player_stp, html_cache, stale_data), field_value)
+						st_html.append(f'     <td class="bd {field_color}">{field_value}</td>')
 					
-					st_html += '    </tr>\n'
+					st_html.append('    </tr>')
 					
 					# Increment the count of data rows by one.
 					st_rows += 1
@@ -550,54 +576,54 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			#
 
 			# FINALLY WRITE THE HEADING ROW AND PUT IT ALL TOGETHER #########
-			html_file += '    <tr class="%s">\n' % table_header
+			html_file.append(f'    <tr class="{table_header}">') 
 
 			# Simplify inclusion of the sort function code
 			if linked_hist:
-				sort_func = 'onclick="sortl(%s,\'%s\',%s,%s,\'%s\')"' % ('%s', table_id, row_idx, st_rows, linked_id)
+				sort_func = f'onclick="sortl(%s,\'{table_id}\',{row_idx},{st_rows},\'{linked_id}\')"'
 			else:
-				sort_func = 'onclick="sortx(%s,\'%s\',%s,%s)"' % ('%s', table_id, row_idx, st_rows)
+				sort_func = f'onclick="sortx(%s,\'{table_id}\',{row_idx},{st_rows})"'
 
 			if len(strike_teams)>1:
-				html_file += f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>\n'
+				html_file.append(f'     <td class="{button_hover}" {sort_func % 0}>STRIKE TEAM {team_num}</td>')
 			else:
-				html_file += f'     <td class="{button_hover}" {sort_func % 0}>Member</td>\n'
+				html_file.append(f'     <td class="{button_hover}" {sort_func % 0}>Member</td>')
 
 			col_idx = 1
 
 			# Include header if "# Pos" info requested.
 			if inc_rank:
-				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Rank</td>\n'
+				html_file.append(f'     <td class="{button_hover}" {sort_func % col_idx}>Rank</td>')
 				col_idx += 1
 
 			# Include header if "# Avail" info requested.
 			if inc_avail:
-				html_file += f'     <td class="{button_hover}" {sort_func % col_idx}>Avail</td>\n'
+				html_file.append(f'     <td class="{button_hover}" {sort_func % col_idx}>Avail</td>')
 				col_idx += 1
 
 			# Insert stat headings for each included Character.
 			for char in line_chars:
 				for key in keys:
 					width = 'p' if key == 'power' else ''
-					html_file += f'     <td class="{button_hover}{width}" %s>%s</td>\n' % (sort_func % col_idx, {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}.get(key,key.title()))
+					html_file.append(f'     <td class="{button_hover}{width}" {sort_func % col_idx}>{key_lbls.get(key, key.title())}</td>')
 					col_idx += 1
 
 				# Include a header for ISO Class info if requested.
 				if inc_class:
-					html_file += '     <td>Cls</td>\n'
+					html_file.append('     <td>Cls</td>')
 					col_idx += 1
 	
 			# Insert the Completed column for Dark Dimension Team Power Summaries.
 			if team_power_summary and inc_comp:
-				html_file += '     <td>Complete?</td>\n'
+				html_file.append('     <td>Complete?</td>')
 	
 			# Insert the Team Power column.
 			if team_power_summary:
-				html_file += f'     <td class="redb" {sort_func % col_idx}>TCP</td>\n'
+				html_file.append(f'     <td class="redb" {sort_func % col_idx}>TCP</td>')
 			elif len(char_list)>1:
-				html_file += f'     <td class="redb" {sort_func % col_idx}>STP</td>\n'
+				html_file.append(f'     <td class="redb" {sort_func % col_idx}>STP</td>')
 
-			html_file += '    </tr>\n'
+			html_file.append('    </tr>')
 			
 			row_idx += 1
 			# DONE WITH THE HEADING ROW FOR THIS STRIKE TEAM ################
@@ -609,9 +635,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			row_idx   += st_rows
 
 	# Close the Table, we are done with this chunk.
-	html_file += '   </table>\n'
+	html_file.append('   </table>')
 
-	return html_file
+	return '\n'.join(html_file)
 
 
 
@@ -659,7 +685,7 @@ def calculate_line_wrap(using_chars):
 
 
 # Hide the messy calculations behind Spec Ops background colors
-def spec_ops_background(section, char, player_list, html_cache):
+def spec_ops_bg(section, char, player_list, html_cache):
 
 	# Find num above mins for this toon
 	avail_count = 24-sum([section.get('under_min',{}).get(player,{}).get(char,False) for player in player_list])
