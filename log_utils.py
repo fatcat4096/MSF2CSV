@@ -257,7 +257,7 @@ def log_repr(val):
 
 # Utility function used by decorator to log and track function calls/returns
 # --------------------------------------------------------------------------
-def log_leave(log, LOG_CALL, ret, **kwarg):
+def log_leave(log, LOG_CALL, result, **kwarg):
 
 	logger = log['logger']
 	stack  = log['stack']
@@ -283,8 +283,10 @@ def log_leave(log, LOG_CALL, ret, **kwarg):
 	new_func = new_top['func']
 
 	if reporting_level > 2:
+
 		# Update the list of functions called and time_in statistic
 		if called:
+
 			# If we haven't called func from this level before, 
 			# initialize it with time_in and call count.
 			if func not in called:
@@ -294,12 +296,14 @@ def log_leave(log, LOG_CALL, ret, **kwarg):
 			else:					
 				called[func][0] += time_in
 				called[func][1] += 1
+
 			# Update the total time in statistic.
 			called['time_in'] += time_in
 		else:
 			called = {func:[time_in,1],'time_in':time_in}
 
 		new_called = new_top.get('called')
+
 		# If the stat dict doesn't exist. This is the first function 
 		# we've called from this level. Initialize it with called.
 		if new_called is None:
@@ -326,23 +330,19 @@ def log_leave(log, LOG_CALL, ret, **kwarg):
 		# If we've hit the bottom, we want to report *all* the calls for every iteration
 		# and then clean up the call stack so we can start again anew. 
 		if len(stack) == 1:
-			called = new_top.get('called')
-			if called:
-				del new_top['called']
+			called = new_top.pop('called', None)
 
 	if not func or not LOG_CALL:
 		return
 
-	level  = len(stack)
-
-	level = "   "*(level-1)
+	level = "   "*(len(stack)-1)
 
 	if reporting_level > 1 and called.get('time_in'):
-		log_buffer = [f"INF{level}    Generating report...\n\n========================================  =======  =========  ==========  ======"]
+		log_buffer = [f"INF{level}    Generating report...\n========================================  =======  =========  ==========  ======"]
 		if reporting_level > 2 and called and called.get('time_in') > reporting_threshold:
-			log_buffer.append(f"Report for: {func:<28}  # Calls  Time/Call  Total Time  % Time")
+			log_buffer.append(f"Report for: {func:28}  # Calls  Time/Call  Total Time  % Time")
 			log_buffer.append("----------------------------------------  -------  ---------  ----------  ------")
-			log_buffer.append('%-40s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%' % (func,'n/a',called[func][0],called['time_in'],100*called[func][0]/called['time_in']) )
+			log_buffer.append(f'{func:40}  {'n/a':>5} {called[func][0]:>10.3f} s {called['time_in']:>9.3f} s {100*called[func][0]/called['time_in']:>6.1f}%')
 
 			if len(called) > 2:
 				log_buffer.append("-----------Calls-by-Subroutine----------  -------  ---------  ----------  ------")
@@ -350,14 +350,14 @@ def log_leave(log, LOG_CALL, ret, **kwarg):
 
 				for item in sorted(report_list, key=lambda x: -called[x][0]):
 					call = called[item]
-					log_buffer.append('%-40s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%' % (item,call[1],call[0]/call[1],call[0],100*call[0]/called['time_in']))
+					log_buffer.append(f'{item:40}  {call[1]:>5} {call[0]/call[1]:>10.3f} s {call[0]:>9.3f} s {100*call[0]/called['time_in']:>6.1f}%')
 			log_buffer.append(f"========================================  =======  =========  ==========  ======")
 		else:
-			log_buffer.append('Report for: %-28s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%\n========================================  =======  =========  ==========  ======\n' % (func,1,time_in,time_in,100))
+			log_buffer.append(f'Report for: {func:28}  {1:>5} {time_in:>10.3f} s {time_in:>9.3f} s {100:>6.1f}%\n========================================  =======  =========  ==========  ======')
 
 		logger.info('\n'.join(log_buffer))
 
-	logger.info(f'<<<{level}    Leaving {func}(), return value = {log_repr(ret)}')
+	logger.info(f'<<<{level}    Leaving {func}(), return value = {log_repr(result)}')
 	logger.info(f'<<<{level} Now in {new_func}()')
 
 	# If we're back to 0, the call is over
