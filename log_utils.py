@@ -53,11 +53,14 @@ def timed(func_=None, level=4, init=False, handoff=False):
 
 			log_file = None
 
+			LOG_CALL = level<=reporting_level
+
 			# See if we've been passed a log_file from async code. Use a log_file if we are explicitly passed it.
 			if 'log_file' in kwargs and kwargs['log_file']:
 				log_file = kwargs['log_file']
-			# Only continue looking if we are supposed to be logging.
-			elif level<=reporting_level:
+
+			# Look for a log file if reporting_level > 0.
+			elif reporting_level:
 
 				# If INIT flag hasn't been set, lets look for a log_file
 				if not init: 
@@ -68,30 +71,39 @@ def timed(func_=None, level=4, init=False, handoff=False):
 				if not log_file and init:
 					log_file = log_init(func.__name__)
 
-			# If we have a valid logger, log the call
-			if log_file and level<=reporting_level:
-				log_call(log_file, func.__name__, *args, **kwargs)
+			# If we have a valid logger, tally and log the call
+			if log_file:
+
+				# Tally the call
+				log_file['stack'].append({'func':func.__name__, 'time_in':time.time()})
+
+				# Only output to logs if under reporting_threshold
+				if LOG_CALL:
+					log_call(log_file, *args, **kwargs)
 
 			# Get the result from the wrapped function call
-			ret = func(*args, **kwargs)
+			result = func(*args, **kwargs)
 
-			# If we have a valid logger, log the return
-			if log_file and level<=reporting_level:
-				log_leave(log_file, ret)
+			# If we have a valid logger, log the result
+			if log_file:
+				log_leave(log_file, LOG_CALL, result)
 			
 			# Return the result to whoever called this.
-			return ret
+			return result
 
 		@wraps(func)
 		async def wrapped_func_async(*args: Any, **kwargs: Any) -> Any:
 		
 			log_file = None
 
+			LOG_CALL = level<=reporting_level
+
 			# See if we've been passed a log_file from async code. Use a log_file if we are explicitly passed it.
 			if 'log_file' in kwargs and kwargs['log_file']:
 				log_file = kwargs['log_file']
-			# Only continue looking if we are supposed to be logging.
-			elif level<=reporting_level:
+
+			# Look for a log file if reporting_level > 0.
+			elif reporting_level:
 			
 				# If INIT flag hasn't been set, lets look for a log_file
 				if not init: 
@@ -111,20 +123,26 @@ def timed(func_=None, level=4, init=False, handoff=False):
 
 					# Initialize the log_file
 					log_file = log_init(func.__name__, context=context)
+
+			# If we have a valid logger, tally and log the call
+			if log_file:
+
+				# Tally the call
+				log_file['stack'].append({'func':func.__name__, 'time_in':time.time()})
+
+				# Only output to logs if under reporting_threshold
+				if LOG_CALL:
+					log_call(log_file, *args, **kwargs)
 					
-			# If we have a valid logger, log the call
-			if log_file and level<=reporting_level:
-				log_call(log_file, func.__name__, *args, **kwargs)
-
 			# Get the result from the wrapped function call
-			ret = await func(*args, **kwargs)
+			result = await func(*args, **kwargs)
 
-			# If we have a valid logger, log the return
-			if log_file and level<=reporting_level:
-				log_leave(log_file, ret)
+			# If we have a valid logger, log the result
+			if log_file:
+				log_leave(log_file, LOG_CALL, result)
 
 			# Return the result to whoever called this.
-			return ret
+			return result
 
 		return wrapped_func_async if asyncio.iscoroutinefunction(func) else wrapped_func
 
@@ -205,20 +223,16 @@ def find_var(var='log_file', idx=2):
 	
 # Utility function used by decorator to log and track function calls/returns
 # --------------------------------------------------------------------------
-def log_call(log, call_to_func, *i_arg, **kwarg):
+def log_call(log, *i_arg, **kwarg):
 
 	# Pull out the pieces to work with.
 	logger = log['logger']
 	stack  = log['stack']
 
-	# Note the calling func from the top of the stack.
-	call_from_func = stack[-1]['func']
-	stack.append({'func':call_to_func, 'time_in':time.time()})
-
 	level = "   "*(len(stack)-2)
 	
-	logger.info(f">>>{level} Calling {call_to_func}({','.join(map(log_repr,i_arg))}) from {call_from_func}()")
-	logger.info(f">>>{level}    Now in {call_to_func}")
+	logger.info(f">>>{level} Calling {stack[-1]['func']}({','.join(map(log_repr,i_arg))}) from {stack[-2]['func']}()")
+	logger.info(f">>>{level}    Now in {stack[-1]['func']}")
 
 	return
 
@@ -229,9 +243,9 @@ def log_repr(val):
 
 	# Is the item we're logging a familiar object?
 	if type(val) is dict:
-		if val.get('hist'):
+		if 'hist' in val:
 			return '{ALLIANCE_INFO}'
-		elif val.get('lanes'):
+		elif 'lanes' in val:
 			return '{TABLE}'
 
 	# Just truncate anything else at 100 chars.
@@ -240,11 +254,10 @@ def log_repr(val):
 
 
 # Really need to re-write this.
-# I don't think it's handling the final log_leave() call correctly.
 
 # Utility function used by decorator to log and track function calls/returns
 # --------------------------------------------------------------------------
-def log_leave(log, ret, **kwarg):
+def log_leave(log, LOG_CALL, ret, **kwarg):
 
 	logger = log['logger']
 	stack  = log['stack']
@@ -317,33 +330,32 @@ def log_leave(log, ret, **kwarg):
 			if called:
 				del new_top['called']
 
-	if not func:
+	if not func or not LOG_CALL:
 		return
 
 	level  = len(stack)
 
-	log_buffer = ''
 	level = "   "*(level-1)
 
 	if reporting_level > 1 and called.get('time_in'):
-		log_buffer += f"INF{level}    Generating report...\n\n========================================  =======  =========  ==========  ======\n"
+		log_buffer = [f"INF{level}    Generating report...\n\n========================================  =======  =========  ==========  ======"]
 		if reporting_level > 2 and called and called.get('time_in') > reporting_threshold:
-			log_buffer += f"Report for: {func:<28}  # Calls  Time/Call  Total Time  % Time\n"
-			log_buffer += "----------------------------------------  -------  ---------  ----------  ------\n"
-			log_buffer += '%-40s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%\n' % (func,'n/a',called[func][0],called['time_in'],100*called[func][0]/called['time_in'])
+			log_buffer.append(f"Report for: {func:<28}  # Calls  Time/Call  Total Time  % Time")
+			log_buffer.append("----------------------------------------  -------  ---------  ----------  ------")
+			log_buffer.append('%-40s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%' % (func,'n/a',called[func][0],called['time_in'],100*called[func][0]/called['time_in']) )
 
 			if len(called) > 2:
-				log_buffer += "-----------Calls-by-Subroutine----------  -------  ---------  ----------  ------\n"
+				log_buffer.append("-----------Calls-by-Subroutine----------  -------  ---------  ----------  ------")
 				report_list = [item for item in called if item not in ('time_in',func)]
 
 				for item in sorted(report_list, key=lambda x: -called[x][0]):
 					call = called[item]
-					log_buffer += '%-40s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%\n' % (item,call[1],call[0]/call[1],call[0],100*call[0]/called['time_in'])
-			log_buffer += f"========================================  =======  =========  ==========  ======\n"
+					log_buffer.append('%-40s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%' % (item,call[1],call[0]/call[1],call[0],100*call[0]/called['time_in']))
+			log_buffer.append(f"========================================  =======  =========  ==========  ======")
 		else:
-			log_buffer += 'Report for: %-28s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%\n========================================  =======  =========  ==========  ======\n' % (func,1,time_in,time_in,100)
+			log_buffer.append('Report for: %-28s  % 5s    % 7.3f s  % 8.3f s % 6.1f%%\n========================================  =======  =========  ==========  ======\n' % (func,1,time_in,time_in,100))
 
-		logger.info(log_buffer)
+		logger.info('\n'.join(log_buffer))
 
 	logger.info(f'<<<{level}    Leaving {func}(), return value = {log_repr(ret)}')
 	logger.info(f'<<<{level} Now in {new_func}()')
@@ -397,7 +409,7 @@ def print_exc(exc):
 
 
 def cleanup_old_files(local_path, age=7):
-	# Let catch all exceptions. Don't let a command fails
+	# Let catch all exceptions. Don't let a command fail
 	try:
 		if not os.path.isdir(local_path):
 			local_path = os.path.dirname(local_path)
