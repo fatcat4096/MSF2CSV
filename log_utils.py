@@ -172,7 +172,7 @@ def log_init(calling_func, context=None):
 	
 	file_handler = logging.FileHandler(filename=filename, encoding="utf-8", mode="w")
 	file_handler_formatter = logging.Formatter(
-		"[{asctime}] [{levelname:<8}]: {message}", "%Y-%m-%d %H:%M:%S", style="{"
+		"{asctime}  {levelname:<5}: {message}", "%m-%d %H:%M:%S", style="{"
 	)
 	file_handler.setFormatter(file_handler_formatter)
 
