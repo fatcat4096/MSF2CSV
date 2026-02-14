@@ -25,6 +25,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import quote, unquote
 from pathlib import Path
+from datetime import datetime
 
 
 
@@ -105,22 +106,19 @@ def write_file(pathname, file_content, print_path=True):
 @timed(level=3)
 def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=None):
 
+	start_time = datetime.now();x=0
+
 	# Handle base case of single file or URL
 	if type(html_files) == str:
 			html_files = [html_files]
 	
 	files_generated = []
-	
-	# Start by creating a Selenium driver.
-	options = webdriver.ChromeOptions()
-	options.add_argument('--headless=new')
-	service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
 
-	# For linux, explicitly specify the chromedriver to use
-	if os.name == 'posix':
-		service.path = '/usr/bin/chromedriver'
+	# Start by getting a Selenium driver
+	driver = get_driver()
 
-	driver  = webdriver.Chrome(service=service, options=options)
+	# THIS TOOK A SECOND
+	#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Got driver');x+=1
 
 	# The html_files list contains paths to the html files.
 	for file in html_files:
@@ -128,8 +126,12 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 		# Start by opening each file with our Selenium driver.
 		driver.get(file if 'http' in file else Path(file).as_uri())
 
+		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Before SLEEP');x+=1
+
 		# Give it just a moment to render the page.
 		time.sleep(render_wait)
+
+		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- After SLEEP');x+=1
 
 		# Set the height/width of the window accordingly
 		height = driver.execute_script('return document.documentElement.scrollHeight')
@@ -147,6 +149,8 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 
 		driver.set_window_size(min_width+40, height+450)
 
+		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Window size set');x+=1
+
 		if output_path:
 			png_filename = output_path + os.path.basename(file) +'.png'
 		else:
@@ -161,6 +165,8 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 		body.screenshot(png_filename)
 		files_generated.append(png_filename)
 
+		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Image GENERATED!');x+=1
+
 		"""# Finally, clean up the original files. 
 		try:
 			os.remove(file)
@@ -168,8 +174,8 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 			print (f"EXCEPTION: {type(exc).__name__}: {exc}")
 		"""
 
-	# Close the driver to prevent memory leaks.
-	driver.close()
+	# Put the driver back in the avail_pool for reuse
+	release_driver(driver)
 
 	return files_generated
 
@@ -433,7 +439,137 @@ def check_import_path(alliance_name):
 			importlib.reload(raids_and_lanes)
 			add_formats_for_lanes(raids_and_lanes.tables)
 			tables = raids_and_lanes.tables
+
+
+
+#888888b.  8888888b.  8888888 888     888 8888888888 8888888b.       8888888b.   .d88888b.   .d88888b.  888
+#88  "Y88b 888   Y88b   888   888     888 888        888   Y88b      888   Y88b d88P" "Y88b d88P" "Y88b 888
+#88    888 888    888   888   888     888 888        888    888      888    888 888     888 888     888 888
+#88    888 888   d88P   888   Y88b   d88P 8888888    888   d88P      888   d88P 888     888 888     888 888
+#88    888 8888888P"    888    Y88b d88P  888        8888888P"       8888888P"  888     888 888     888 888
+#88    888 888 T88b     888     Y88o88P   888        888 T88b        888        888     888 888     888 888
+#88  .d88P 888  T88b    888      Y888P    888        888  T88b       888        Y88b. .d88P Y88b. .d88P 888
+#888888P"  888   T88b 8888888     Y8P     8888888888 888   T88b      888         "Y88888P"   "Y88888P"  88888888
+
+
+
+driver_pool = {}
+
+# Keep drivers open and allow them to be re-used.
+@timed(level=3)
+def get_driver():
+	global driver_pool
+
+	# Create the two pools
+	active_pool = driver_pool.setdefault('active',{})
+	avail_pool  = driver_pool.setdefault('avail',{})
+
+	#print (f'\nSTART STATE OF DRIVER POOLS:')
+	#print (f'{len(active_pool)=} {active_pool.keys()=}')
+	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
+
+	driver = None
+
+	# Do a little maintenance before we get started
+
+	# Key in active_pool is job start_time. If older than 15 seconds, assume failure and remove from pool.
+	for start_time in sorted(active_pool):
+		# These are oldest first, once we find a valid job, stop
+		if (datetime.now() - start_time).total_seconds() < 15:
+			break
+			
+		#print (f'{start_time=} {(datetime.now() - start_time).total_seconds()}s since job started')
+		try:
+			active_pool[start_time].close()
+		except:
+			print ("driver close generated an exception")
+			pass
+			
+		# Delete the entry to release the driver
+		del active_pool[start_time]
+
+	# Could also keep track of how many times a driver has been used and purge entries from the avail_pool after a certain number of calls
+
+	# There's a driver available already, provide the existing driver.
+	if avail_pool:
+		job_start = datetime.now()
+
+		# Move the driver from the available pool to active. Key in active pool is the job start time.
+		driver = active_pool[job_start] = avail_pool.pop(list(avail_pool)[0])
+
+		# Update info inside the driver
+		driver.job_start   = job_start
+		driver.times_used += 1
+
+		#print (f'using existing driver for {job_start}....{driver.creation_date} been used {driver.times_used} times!')
+
+	# Otherwise, an alliance is requesting fresh for a roster refresh. We need to create a fresh driver.
+	else:
+		#print ('no driver available....making a NEW one!')
+
+		# Start by creating a Selenium driver.
+		options = webdriver.ChromeOptions()
+		options.add_argument('--headless=new')
+		options.add_argument('--no-sandbox')
+		options.add_argument('--disable-dev-shm-usage')
+		options.add_argument('--disable-gpu')
+		options.add_argument('--disable-extensions')
+		service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
+
+		# For linux, explicitly specify the chromedriver to use
+		if os.name == 'posix':
+			service.path = '/usr/bin/chromedriver'
+
+		driver = webdriver.Chrome(service=service, options=options)
+
+		# Store info in the driver for future reference
+		creation_date = datetime.now()
+		
+		# Set internal info on driver with initial values
+		driver.creation_date = creation_date
+		driver.job_start     = creation_date
+		driver.times_used    = 1
+
+		active_pool[creation_date] = driver
+
+	#print (f'\nFINAL STATE OF DRIVER POOLS:')
+	#print (f'{len(active_pool)=} {active_pool.keys()=}')
+	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
+
+	return driver
+
+
+
+# Check driver in at the end of use.
+@timed(level=3)
+def release_driver(driver):
+	global driver_pool
+
+	# If no driver was issued, nothing to do.
+	if not driver:
+		return
+
+	active_pool = driver_pool.setdefault('active',{})
+	avail_pool  = driver_pool.setdefault('avail',{})
+
+	creation_date = driver.creation_date
+	job_start     = driver.job_start
+
+	#print (f'{job_start} is COMPLETE! Moving driver {creation_date} from active to avail pool!')
 	
+	#print (f'\nSTART STATE OF DRIVER POOLS:')
+	#print (f'{len(active_pool)=} {active_pool.keys()=}')
+	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
+
+	# If there's no driver available in the avail_pool, just check this one in.
+	avail_pool[creation_date] = active_pool.pop(job_start)
+			
+	#print (f'\nFINAL STATE OF DRIVER POOLS:')
+	#print (f'{len(active_pool)=} {active_pool.keys()=}')
+	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
+	
+	return
+
 
 
 # Insert the local directory at the front of path to override packaged versions.
