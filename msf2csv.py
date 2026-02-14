@@ -13,9 +13,9 @@ from process_website import *             # Routines to get Roster data from web
 from file_io         import *             # Routines to read and write files to disk.
 from generate_html   import *             # Routines to generate the finished tables.
 from generate_csv    import generate_csv  # Routines to generate the original csv files.
+from datetime        import datetime
 from rich.console    import Console
 
-import datetime
 
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
@@ -45,7 +45,7 @@ def main(alliance_name, table_format, log_file=None):
 
 	# Generate CSV?
 	if output == 'csv':
-		 return write_file(pathname+f'{datetime.datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info), print_path=print_path)
+		 return write_file(pathname+f'{datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info), print_path=print_path)
 
 	# Output only a specific report.
 	elif custom_table or output:

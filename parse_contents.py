@@ -8,11 +8,12 @@ Returns in easy to use dicts for inclusion in tables.
 
 from log_utils import *
 
-import datetime
 import re
 
-from file_io import *
-from cached_info          import get_cached
+from file_io     import *
+from datetime    import datetime
+from cached_info import get_cached
+
 
 @timed(level=3)
 def parse_alliance_api(alliance_data, alliance_members):
@@ -108,7 +109,7 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 	calc_pwr = sum([processed_chars[char]['power'] for char in processed_chars])
 	if  member_info.get('tot_power') != calc_pwr:
 		member_info['tot_power']      = calc_pwr
-		member_info['last_update']    = datetime.datetime.now()
+		member_info['last_update']    = datetime.now()
 
 	# Add the 'clean' parsed data to our list of processed players.
 	member_info['processed_chars'] = processed_chars

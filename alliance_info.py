@@ -6,14 +6,15 @@ Routines used to work with alliance_info, to pull information out or maintain th
 
 from log_utils import *
 
-import datetime
 import string
 import copy
 import re
 
+from datetime    import date, datetime
 from file_io     import find_cached_data
 from parse_cache import update_parse_cache
 from cached_info import get_cached
+
 
 @timed(level=3)
 def get_hist_date(alliance_info, table_format):
@@ -514,7 +515,7 @@ def update_history(alliance_info):
 	hist = alliance_info.setdefault('hist',{})
 
 	# Overwrite any existing info for today.
-	today      = datetime.date.today()
+	today      = date.today()
 	today_info = hist.setdefault(today,{})
 
 	for member in alliance_members:
@@ -623,7 +624,7 @@ def is_stale(alliance_info, member_name):
 	percent_growth = member_info.get('tot_power',0)/member_info.get('tcp',1)
 
 	# Time since last roster sync 
-	last_update = 'last_update' in member_info and (datetime.datetime.now() - member_info['last_update']).total_seconds()
+	last_update = 'last_update' in member_info and (datetime.now() - member_info['last_update']).total_seconds()
 	
 	# If either is true, flag it as stale.
 	return percent_growth < (1-(max_growth/100)) or last_update > 60*60*24*max_age

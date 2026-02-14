@@ -7,8 +7,6 @@ Logs into website and updates data from Alliance Information if not
 
 from log_utils import *
 
-import datetime
-
 import importlib
 import inspect
 import json
@@ -20,6 +18,7 @@ from file_io              import *
 from alliance_info        import *
 from cached_info          import get_cached, set_cached
 from msf_api              import *
+from datetime             import datetime
 
 
 # Process rosters for every member in alliance_info.
@@ -38,7 +37,7 @@ def process_rosters(alliance_info, only_process, AUTH, log_file, logger=print):
 	# Let's iterate through the member names in alliance_info.
 	for member in list(members):
 
-		start_time = datetime.datetime.now()
+		start_time = datetime.now()
 
 		# If only_process and this member isn't in the list, skip.
 		if only_process and member not in only_process:
@@ -72,7 +71,7 @@ def process_rosters(alliance_info, only_process, AUTH, log_file, logger=print):
 
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
-		time_now    = datetime.datetime.now()
+		time_now    = datetime.now()
 		
 		updated     = last_update and last_update >= start_time and last_update <= time_now
 
@@ -162,7 +161,7 @@ def roster_results(alliance_info, start_time, rosters_output, only_summary=False
 		OLD = f'**NO UPDATED INFO**'
 
 	SUMMARY = ", ".join([x for x in (NEW, UPD, OLD) if x])
-	REQ = (datetime.datetime.now()-start_time).seconds
+	REQ = (datetime.now()-start_time).seconds
 
 	# Summarize the results of processing
 	summary = [f'Found {SUMMARY} in {REQ}s']

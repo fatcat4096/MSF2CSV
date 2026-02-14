@@ -6,8 +6,7 @@ Generate the tab for Alliance Info output.
 
 from log_utils import timed
 
-import datetime
-
+from datetime    import datetime
 from file_io     import remove_tags
 from html_cache  import make_next_table_id
 from html_shared import *
@@ -182,7 +181,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 
 		# Last Update formatting
 		if 'last_update' in member_stats:
-			last_update = datetime.datetime.now() - member_stats['last_update']
+			last_update = datetime.now() - member_stats['last_update']
 			time_color  = get_value_color_ext(4*86400, 0, last_update.total_seconds(), html_cache, stale_data)
 			
 			if stale_data:
