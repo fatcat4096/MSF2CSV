@@ -48,7 +48,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	player_list = get_player_list(alliance_info, sort_by, stp_list, section, char_list)
 
 	# If there are no players in this table, don't generate a table.
-	using_players = [player for player in sum(strike_teams, []) if player in player_list]
+	using_players = {player for player in sum(strike_teams, []) if player in player_list}
 	if not using_players:
 		return ''
 
@@ -153,11 +153,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	if inline_hist:
 		hist_list.append(inline_hist)
 
+	# Are we displaying everyone or just a subset?
+	inc_all_players = using_players == set(player_list)
+
 	# Pre-calculate key ranges for each character
 	for hist_date in hist_list:
-
-		showing_players = {player for player in sum(strike_teams,[]) if player != '----'}
-		showing_all_mem = showing_players == set(player_list)
 
 		# Only profile non-historical data
 		profile_keys = {} if hist_date else {'yel','red','lvl','tier','iso'}
@@ -166,7 +166,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		PROFILE = table_format['profile'].setdefault('val', {key:{*()} for key in profile_keys})
 
 		# Which are usable as is, which need to be done separately?
-		profile_during = {key for key in profile_keys if showing_all_mem and key in keys}
+		profile_during = {key for key in profile_keys if inc_all_players and key in keys}
 		profile_after  = {key for key in profile_keys if key not in profile_during}
 
 		for char_name in using_chars:
@@ -191,7 +191,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Add the other fields to PROFILE as well
 			for key in profile_after:
-				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in showing_players}
+				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in using_players}
 
 	# Auto-calc the best value for line wrap length if an explicit value not defined
 	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=calculate_line_wrap(using_chars)) 
