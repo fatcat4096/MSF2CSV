@@ -37,7 +37,7 @@ if not os.path.exists(log_file_path):
 # 'reporting_threshold' controls how long a call has to take before we start reporting time required.
 # ----------------------------------------------------
 reporting_level     = 3		# Level 0 = no logging, 1 = basic logs, 2 = basic reporting, 3 = detailed reporting, 4 = task/dossier info
-reporting_threshold = 2.00
+reporting_threshold = 1.00
 
 
 # Decorator that implements all logging and keeps track of call stats.
@@ -363,9 +363,9 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 						log_buffer.append(f'{item:40}  {call[1]:>5} {call[0]/call[1]:>10.3f} s {call[0]:>9.3f} s {100*call[0]/called['time_in']:>6.1f}%')
 			log_buffer.append("========================================  =======  =========  ==========  ======")
 		else:
-			log_buffer.append("========================================  =======  =========  ==========  ======")
-			log_buffer.append(f'Report for: {func:28}  {1:>5} {time_in:>10.3f} s {time_in:>9.3f} s {100:>6.1f}%')
-			log_buffer.append("========================================  =======  =========  ==========  ======")
+			log_buffer.append("========================================  =========")
+			log_buffer.append(f'Report for: {func:28} {time_in:>8.3f} s')
+			log_buffer.append("========================================  =========")
 
 		logger.info('\n'.join(log_buffer))
 

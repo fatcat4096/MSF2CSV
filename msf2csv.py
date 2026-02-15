@@ -24,30 +24,28 @@ def main(alliance_name, table_format):
 	# Load roster info from cached data
 	alliance_info = find_cached_data(alliance_name)
 
-	return render_report(alliance_info, table_format)
+	return render_report(alliance_info, table_format, print_path=True)
 
 
 
-def render_report(alliance_info, table_format, log_file=None):
+@timed
+def render_report(alliance_info, table_format, log_file=None, print_path=False):
 
 	# If we failed to retrieve alliance info, we've already explained. Just exit.
 	if not alliance_info:
 		return
 
 	# Build a default path and filename for writing output
-	pathname = os.path.dirname(alliance_info['file_path']) + os.sep + 'reports' + os.sep + remove_tags(alliance_info['name']) + '-'
+	pathname = f"{os.path.dirname(alliance_info['file_path'])}{os.sep}reports{os.sep}{remove_tags(alliance_info['name'])}-"
 
 	output        = table_format.get('output')
 	custom_table  = table_format.get('custom_table')
 	output_format = table_format.get('output_format','tabbed')
 	valid_output  = list(tables)+['roster_analysis','alliance_info','by_char']
-
-	# Don't print the path if external request
-	print_path = alliance_info != alliance_name
-
+	
 	# Generate CSV?
 	if output == 'csv':
-		 return write_file(pathname+f'{datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info), print_path=print_path)
+		 return write_file(f'{pathname}{datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info), print_path)
 
 	# Output only a specific report.
 	elif custom_table or output:
@@ -203,5 +201,5 @@ if __name__ == '__main__':
 					'sort_char_by'  : args.sort_char_by,
 					'span'          : args.span}
 	
-	main(args.alliance_name, table_format) # Just run myself
+	render_report(args.alliance_name, table_format) # Just run myself
 	
