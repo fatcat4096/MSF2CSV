@@ -361,7 +361,6 @@ def generate_tabbed_html(alliance_info, table, table_format):
 
 
 # If we're doing a single lane format and we have history, let's generate a historical data tab. 
-@timed(level=3)
 def get_hist_tab(hist_date, table_format, lanes: list=None, tabbed=False):
 
 	# Default it to empty.

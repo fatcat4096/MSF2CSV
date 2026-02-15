@@ -315,7 +315,6 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 
 
 # Return the correct strike_team definitions, depending on formatting flags.
-@timed(level=3)
 def get_strike_teams(alliance_info, table, table_format):
 	# If only_members specified, use this list instead of previously defined Strike Teams.
 	only_members = get_table_value(table_format, table, key='only_members')
@@ -358,7 +357,6 @@ def get_strike_teams(alliance_info, table, table_format):
 
 
 # Insert dividers based on the type of team. 
-@timed
 def insert_dividers(strike_teams, raid_type):
 
 	# Start with a copy, just to be safe.
@@ -610,7 +608,6 @@ def update_history(alliance_info):
 
 
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
-@timed(level=3)
 def is_stale(alliance_info, member_name):
 
 	# Load thresholds, if they're explicitly defined.

@@ -14,9 +14,8 @@ from gradients import *
 
 
 # Just hide the messiness.
-@timed(level=3)
 def get_tab_header(content):
-	return '<table>\n<tr><td class="tlnk" style="width:100%;">'+content+'</td></tr>\n</table>\n'
+	return f'<table>\n<tr><td class="tlnk" style="width:100%;">{content}</td></tr>\n</table>\n'
 
 
 
@@ -173,7 +172,6 @@ def finalize_color(color, html_cache, stale_data=False, under_min=False, darken_
 
 
 # Format large Power values using K and M
-@timed(level=4)
 def get_field_value(value, hist_date):
 	if value:
 		if abs(value) > 10**6:
@@ -190,7 +188,6 @@ def get_field_value(value, hist_date):
 
 
 # Generate Labels for each section from either label info or trait names.
-@timed(level=4)
 def get_section_label(section):
 	
 	# If a label specified, use it.
@@ -203,7 +200,6 @@ def get_section_label(section):
 
 
 # Quick and dirty translation to shorter or better names.
-@timed(level=4)
 def translate_name(value):
 	TRANSLATE_NAME = {	"City Hero": "City<br>Hero",
 						"City Villain": "City<br>Villain",

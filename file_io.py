@@ -54,7 +54,6 @@ def remove_tags(text):
 	
 
 
-@timed(level=3)
 def get_local_path():
 	# If not frozen, work in the same directory as this script.
 	path = os.path.dirname(__file__)
@@ -239,7 +238,6 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 
 
 # Load a pickled cache file from cached_data directory
-@timed(level=3)
 def load_cached_file(file):
 	data={}
 
@@ -254,7 +252,6 @@ def load_cached_file(file):
 
 
 # Load a pickled cache file from cached_data directory
-@timed(level=3)
 def write_cached_file(data, file):
 
 	# Ensure the enclosing directory exists.
@@ -268,7 +265,6 @@ def write_cached_file(data, file):
 
 
 # Has it been less than 24 hours since last update of cached_data?
-@timed(level=3)
 def fresh_enough(alliance_or_file):
 
 	last_refresh = age_of_cached_data(alliance_or_file)
@@ -305,7 +301,6 @@ def age_of_cached_data(alliance_or_file):
 
 
 # Handle the file list cleanly.
-@timed(level=3)
 def retire_cached_data(file_or_alliance=''):
 
 	# Find the original file based on the alliance_name provided
