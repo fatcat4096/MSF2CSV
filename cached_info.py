@@ -14,7 +14,6 @@ from file_io import load_cached_file, write_cached_file
 cached_info = {}
 
 # Just return a value from the global
-@timed(level=3)
 def get_cached(key, refresh=False):
 	global cached_info
 
@@ -27,7 +26,6 @@ def get_cached(key, refresh=False):
 
 
 # Update the global with a deepcopy of any value passed in and write to disk.
-@timed(level=3)
 def set_cached(key,value):
 	global cached_info
 	
