@@ -337,10 +337,13 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 
 	level = "   "*(len(stack)-1)
 
-	# Skip report if no reporting or less than .001s spent in routine
-	if reporting_level > 1 and called.get('time_in') and called['time_in'] > 0.001:
+	# If we're back to 0, the call is over
+	LAST_CALL = not level
+
+	# Skip report if no reporting or less than .001s spent in routine, always include if final call
+	if reporting_level > 1 and called.get('time_in') and (called['time_in'] > 0.001 or LAST_CALL):
 		log_buffer = [f"INF{level}    Generating report...]"]
-		if reporting_level > 2 and called and called.get('time_in') > reporting_threshold:
+		if reporting_level > 2 and (called['time_in'] > reporting_threshold or LAST_CALL):
 			log_buffer.append("========================================  =======  =========  ==========  ======")
 			log_buffer.append(f"Report for: {func:28}  # Calls  Time/Call  Total Time  % Time")
 			log_buffer.append("----------------------------------------  -------  ---------  ----------  ------")
@@ -350,10 +353,13 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 				log_buffer.append("-----------Calls-by-Subroutine----------  -------  ---------  ----------  ------")
 				report_list = [item for item in called if item not in ('time_in',func)]
 
+				# No threshold if last call
+				THRESHOLD = 0 if LAST_CALL else 0.001 * called['time_in']
+
 				for item in sorted(report_list, key=lambda x: -called[x][0]):
 					call = called[item]
 					# Don't log if shows 0.00% of time
-					if call[0]/called['time_in'] > 0.001:
+					if call[0] > THRESHOLD:
 						log_buffer.append(f'{item:40}  {call[1]:>5} {call[0]/call[1]:>10.3f} s {call[0]:>9.3f} s {100*call[0]/called['time_in']:>6.1f}%')
 			log_buffer.append("========================================  =======  =========  ==========  ======")
 		else:
@@ -366,10 +372,8 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 	logger.info(f'<<<{level}    Leaving {func}(), return value = {log_repr(result)}')
 	logger.info(f'<<<{level} Now in {new_func}()')
 
-	# If we're back to 0, the call is over
-	if not level:
-
-		# Tidy up so that log files can be removed
+	# Tidy up so that log files can be removed
+	if LAST_CALL:
 		for handler in logger.handlers[:]:
 			logger.removeHandler(handler)
 			handler.close()
