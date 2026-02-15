@@ -337,9 +337,11 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 
 	level = "   "*(len(stack)-1)
 
-	if reporting_level > 1 and called.get('time_in'):
-		log_buffer = [f"INF{level}    Generating report...\n========================================  =======  =========  ==========  ======"]
+	# Skip report if no reporting or less than .001s spent in routine
+	if reporting_level > 1 and called.get('time_in') and called['time_in'] > 0.001:
+		log_buffer = [f"INF{level}    Generating report...]"]
 		if reporting_level > 2 and called and called.get('time_in') > reporting_threshold:
+			log_buffer.append("========================================  =======  =========  ==========  ======")
 			log_buffer.append(f"Report for: {func:28}  # Calls  Time/Call  Total Time  % Time")
 			log_buffer.append("----------------------------------------  -------  ---------  ----------  ------")
 			log_buffer.append(f'{func:40}  {'n/a':>5} {called[func][0]:>10.3f} s {called['time_in']:>9.3f} s {100*called[func][0]/called['time_in']:>6.1f}%')
@@ -350,10 +352,14 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 
 				for item in sorted(report_list, key=lambda x: -called[x][0]):
 					call = called[item]
-					log_buffer.append(f'{item:40}  {call[1]:>5} {call[0]/call[1]:>10.3f} s {call[0]:>9.3f} s {100*call[0]/called['time_in']:>6.1f}%')
-			log_buffer.append(f"========================================  =======  =========  ==========  ======")
+					# Don't log if shows 0.00% of time
+					if call[0]/called['time_in'] > 0.001:
+						log_buffer.append(f'{item:40}  {call[1]:>5} {call[0]/call[1]:>10.3f} s {call[0]:>9.3f} s {100*call[0]/called['time_in']:>6.1f}%')
+			log_buffer.append("========================================  =======  =========  ==========  ======")
 		else:
-			log_buffer.append(f'Report for: {func:28}  {1:>5} {time_in:>10.3f} s {time_in:>9.3f} s {100:>6.1f}%\n========================================  =======  =========  ==========  ======')
+			log_buffer.append("========================================  =======  =========  ==========  ======")
+			log_buffer.append(f'Report for: {func:28}  {1:>5} {time_in:>10.3f} s {time_in:>9.3f} s {100:>6.1f}%')
+			log_buffer.append("========================================  =======  =========  ==========  ======")
 
 		logger.info('\n'.join(log_buffer))
 
