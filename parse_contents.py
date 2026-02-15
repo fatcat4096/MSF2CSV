@@ -15,7 +15,6 @@ from datetime    import datetime
 from cached_info import get_cached
 
 
-@timed(level=3)
 def parse_alliance_api(alliance_data, alliance_members):
 
 	alliance = {}
@@ -57,7 +56,6 @@ def parse_alliance_api(alliance_data, alliance_members):
 
 
 # Parse the Member data directly from the API call
-@timed(level=3)
 def parse_info_api(alliance_members, alliance, captains, members):
 
 	# Iterate through each entry, building up a member dict with stats for each.

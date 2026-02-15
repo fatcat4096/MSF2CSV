@@ -24,7 +24,6 @@ REVOKE_ENDPOINT = 'https://hydra-public.prod.m3.scopelypv.com/oauth2/revoke'
 
 
 # Generate a Session ID and URL to link account
-@timed(level=3)
 def get_session_and_link(CLIENT_ID, SESSION_ID=None):
 
 	# Name of the slash command in MSF RosterBot
@@ -45,7 +44,6 @@ def get_session_and_link(CLIENT_ID, SESSION_ID=None):
 
 
 # Construct and encode our Client Token from MSF.gg app registration
-@timed(level=3)
 def construct_token(CLIENT_ID, CLIENT_SECRET):
 
 	# Base64 encode the combined Client ID and Secret
@@ -56,14 +54,12 @@ def construct_token(CLIENT_ID, CLIENT_SECRET):
 
 
 # Verify access_token is valid -- give ourselves a minute to complete workflow
-@timed(level=3)
 def auth_valid(AUTH):
 	return AUTH and AUTH.get('expires_at') and time.time() + 60 < AUTH['expires_at']
 
 
 
 # Headers used for POST requests
-@timed(level=3)
 def post_headers(CLIENT_TOKEN):
 
 	return {	'Content-Type' : 'application/x-www-form-urlencoded',
@@ -72,7 +68,6 @@ def post_headers(CLIENT_TOKEN):
 
 
 # Headers used for GET requests
-@timed(level=3)
 def get_headers(ACCESS_TOKEN):
 
 	# Extract the ACCESS_TOKEN if provided full AUTH
@@ -139,7 +134,6 @@ def refresh_auth(AUTH, CLIENT_TOKEN):
 
 
 # Update provided AUTH with info from Response
-@timed(level=3)
 def parse_auth(auth_token, AUTH):
 
 	token_data = auth_token.json()

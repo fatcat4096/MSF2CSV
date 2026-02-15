@@ -16,14 +16,15 @@ from parse_contents       import *
 from generate_local_files import *
 from file_io              import *
 from alliance_info        import *
-from cached_info          import get_cached, set_cached
 from msf_api              import *
+
+from cached_info          import get_cached, set_cached
 from datetime             import datetime
 
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(alliance_info, only_process, AUTH, log_file, logger=print):
+def process_rosters(alliance_info, only_process, AUTH, logger=print, log_file=None):
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
@@ -145,7 +146,6 @@ def process_rosters(alliance_info, only_process, AUTH, log_file, logger=print):
 
 
 	
-@timed(level=3)
 def roster_results(alliance_info, start_time, rosters_output, only_summary=False, logger=print):
 	
 	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
@@ -319,7 +319,6 @@ def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
-@timed(level=3)
 def update_strike_teams(alliance_info):
 
 	updated = False
@@ -345,7 +344,6 @@ def update_strike_teams(alliance_info):
 
 
 # Update strike teams if necessary
-@timed(level=3)
 def migrate_strike_teams(alliance_info):
 
 	updated = False
@@ -397,21 +395,18 @@ def migrate_strike_teams(alliance_info):
 
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
-@timed(level=3)
 def valid_strike_team(strike_team, alliance_info):
 	return similar_members(sum(strike_team,[]), alliance_info['members'])
 
 
 
 # Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
-@timed(level=3)
 def similar_members(member_list_1, member_list_2):
 	return len(set(member_list_1).intersection(member_list_2)) > len(member_list_2)*.5	
 
 
 
 # Before we take the strike_team.py definition as is, let's fix some common problems.
-@timed(level=3)
 def fix_strike_teams(strike_teams, alliance_info):
 
 	# Track whether anything has been changed.
@@ -435,7 +430,6 @@ def fix_strike_teams(strike_teams, alliance_info):
 
 
 
-@timed(level=3)
 def clean_strike_team(strike_team, MEMBER_LIST, members_used):
 
 	# Track whether anything has been changed.
@@ -464,7 +458,6 @@ def clean_strike_team(strike_team, MEMBER_LIST, members_used):
 
 
 
-@timed(level=3)
 def fill_strike_team(strike_team, MEMBER_LIST, members_used):
 	
 	# Track whether anything has been changed.
@@ -487,7 +480,6 @@ def fill_strike_team(strike_team, MEMBER_LIST, members_used):
 	
 
 # Calculate is_stale for each member and cache in alliance_info.
-@timed(level=3)
 def update_is_stale(alliance_info):
 	for member in alliance_info['members']:
 		alliance_info['members'][member]['is_stale'] = is_stale(alliance_info, member)

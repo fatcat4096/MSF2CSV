@@ -19,17 +19,11 @@ from rich.console    import Console
 
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
-def main(alliance_name, table_format):
+def render_report(alliance_info, table_format, print_path=False, log_file=None):
 
 	# Load roster info from cached data
-	alliance_info = find_cached_data(alliance_name)
-
-	return render_report(alliance_info, table_format, print_path=True)
-
-
-
-@timed
-def render_report(alliance_info, table_format, log_file=None, print_path=False):
+	if type(alliance_info) is str:
+		alliance_info = find_cached_data(alliance_name)
 
 	# If we failed to retrieve alliance info, we've already explained. Just exit.
 	if not alliance_info:

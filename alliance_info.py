@@ -653,7 +653,6 @@ def get_table_value(table_format, table, section: dict={}, key: str='', default=
 
 # Verify the fresh and old cached data are the same alliance 
 # Merge data if old info available
-@timed(level=3)
 def find_cached_and_merge(alliance_info, old_alliance_name=None):
 
 	# Look for an existing cached_data file with the old name (if provided) or the current one 
