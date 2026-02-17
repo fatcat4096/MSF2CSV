@@ -161,7 +161,7 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 
 
 def format_filename(filename):
-	return f'{ansi.cyan}{os.path.dirname(filename)}{os.sep}{ansi.bold}{os.path.basename(filename)}{ansi.reset}'
+	return f'{ansi.cyan}{os.path.dirname(filename)}{os.sep}{ansi.rst}{ansi.white}{os.path.basename(filename)}{ansi.rst}'
 
 
 

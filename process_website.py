@@ -68,7 +68,7 @@ def process_rosters(alliance_info, only_process, AUTH, logger=print, log_file=No
 
 			# If response was UNSUCCESSFUL note the error
 			elif not response or not response.ok:
-				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received{ansi.reset}")
+				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received{ansi.rst}")
 
 		# Did we find an updated roster? 
 		last_update = members[member].get('last_update')
@@ -140,7 +140,7 @@ def process_rosters(alliance_info, only_process, AUTH, logger=print, log_file=No
 		LAST_LINE =  rosters_output[-1]
 		index = 15 + (':' not in LAST_LINE)
 
-		logger(f'Found: {ansi.bold}{LAST_LINE[:index]}{ansi.reset}{FORMAT}{LAST_LINE[index:]}{ansi.reset}')
+		logger(f'Found: {ansi.white}{LAST_LINE[:index]}{ansi.rst}{FORMAT}{LAST_LINE[index:]}{ansi.rst}')
 
 	return rosters_output
 
@@ -167,7 +167,7 @@ def roster_results(alliance_info, start_time, rosters_output, only_summary=False
 	summary = [f'Found {SUMMARY} in {REQ}s']
 
 	# Make the log output pretty
-	logger (f'{ansi.ltcyan}Refresh complete!{ansi.reset} Found {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.reset} in {ansi.ltyel}{REQ}s{ansi.reset}')
+	logger (f'{ansi.ltcyan}Refresh complete!{ansi.rst} Found {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.rst} in {ansi.ltyel}{REQ}s{ansi.rst}')
 
 	# If roster_output included, generate Key for footer as well.
 	status_key = [] 
@@ -260,7 +260,7 @@ def get_alliance_api(AUTH):
 
 		# Note that we did have an issue with the API calls
 		else:
-			print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} Failed requesting updated character info.{ansi.reset}")
+			print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} Failed requesting updated character info.{ansi.rst}")
 
 	# Parse the provided responses into a base alliance_info
 	alliance_info = parse_alliance_api(alliance_data, alliance_members)

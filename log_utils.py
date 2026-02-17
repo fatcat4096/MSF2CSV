@@ -229,10 +229,10 @@ def log_call(log, *i_arg, **kwarg):
 	logger = log['logger']
 	stack  = log['stack']
 
-	level = "   "*(len(stack)-2)
+	level = " | "*(len(stack)-2)
 	
-	logger.info(f">>>{level} Calling {stack[-1]['func']}({','.join(map(log_repr,i_arg))}) from {stack[-2]['func']}()")
-	logger.info(f">>>{level}    Now in {stack[-1]['func']}")
+	logger.info(f">>>{level} Calling {ansi.white}{stack[-1]['func']}{ansi.rst}{ansi.gray}({','.join(map(log_repr,i_arg))}){ansi.rst} {ansi.gray}from{ansi.rst} {ansi.white}{stack[-2]['func']}(){ansi.rst}")
+	logger.info(f">>>{level} |  Now in {ansi.white}{stack[-1]['func']}{ansi.rst}")
 
 	return
 
@@ -335,14 +335,14 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 	if not func or not LOG_CALL:
 		return
 
-	level = "   "*(len(stack)-1)
+	level = " | "*(len(stack)-1)
 
 	# If we're back to 0, the call is over
 	LAST_CALL = not level
 
 	# Skip report if no reporting or less than .001s spent in routine, always include if final call
 	if reporting_level > 1 and called.get('time_in') and (called['time_in'] > 0.001 or LAST_CALL):
-		log_buffer = [f"INF{level}    Generating report...]"]
+		log_buffer = [f"INF{level} |  {ansi.ltyel}Generating report...{ansi.rst}"]
 		if reporting_level > 2 and (called['time_in'] > reporting_threshold or LAST_CALL):
 			log_buffer.append("========================================  =======  =========  ==========  ======")
 			log_buffer.append(f"Report for: {func:28}  # Calls  Time/Call  Total Time  % Time")
@@ -369,8 +369,8 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 
 		logger.info('\n'.join(log_buffer))
 
-	logger.info(f'<<<{level}    Leaving {func}(), return value = {log_repr(result)}')
-	logger.info(f'<<<{level} Now in {new_func}()')
+	logger.info(f'<<<{level} |  Leaving {ansi.white}{func}(){ansi.rst}{ansi.gray}, return value = {log_repr(result)}{ansi.rst}')
+	logger.info(f'<<<{level} Now in {ansi.white}{new_func}(){ansi.rst}')
 
 	# Tidy up so that log files can be removed
 	if LAST_CALL:
@@ -390,6 +390,7 @@ class ansi():
 	blue    = "\x1b[34m"
 	magenta = "\x1b[35m"
 	cyan    = "\x1b[36m"
+	gray    = "\x1b[37m"
 	dkgray  = "\x1b[90m"
 
 	# These colors used when "bolded"
@@ -402,7 +403,7 @@ class ansi():
 	white   = "\x1b[97m"
 
 	# Styles
-	reset   = "\x1b[0m"
+	rst     = "\x1b[0m"
 	bold    = "\x1b[1m"
 	under   = "\x1b[4m"
 
@@ -414,7 +415,7 @@ def discord_ansi(msg):
 
 
 def print_exc(exc):
-	return f'{ansi.ltred}EXCEPTION:{ansi.reset} {type(exc).__name__}: {exc}'
+	return f'{ansi.ltred}EXCEPTION:{ansi.rst} {ansi.gray}{type(exc).__name__}: {exc}{ansi.rst}'
 
 
 
