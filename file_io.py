@@ -66,7 +66,7 @@ def get_local_path():
 
 
 
-@timed(level=3)
+@timed
 def write_file(pathname, file_content, print_path=True):
 
 	files_generated = []
@@ -102,10 +102,8 @@ def write_file(pathname, file_content, print_path=True):
 
 
 
-@timed(level=3)
+@timed
 def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=None):
-
-	start_time = datetime.now();x=0
 
 	# Handle base case of single file or URL
 	if type(html_files) == str:
@@ -116,21 +114,13 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 	# Start by getting a Selenium driver
 	driver = get_driver()
 
-	# THIS TOOK A SECOND
-	#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Got driver');x+=1
-
 	# The html_files list contains paths to the html files.
 	for file in html_files:
- 
 		# Start by opening each file with our Selenium driver.
 		driver.get(file if 'http' in file else Path(file).as_uri())
 
-		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Before SLEEP');x+=1
-
 		# Give it just a moment to render the page.
-		time.sleep(render_wait)
-
-		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- After SLEEP');x+=1
+		#time.sleep(render_wait)
 
 		# Set the height/width of the window accordingly
 		height = driver.execute_script('return document.documentElement.scrollHeight')
@@ -143,17 +133,9 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 		for table_idx, table in enumerate(tables):
 			min_width = max(table.rect['x']+table.rect['width'], min_width)
 
-			# Report table stats. 
-			#print ('Index:',table_idx, 'table:',table.rect, 'min_width:',min_width, 'width:',width)
-
 		driver.set_window_size(min_width+40, height+450)
 
-		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Window size set');x+=1
-
-		if output_path:
-			png_filename = output_path + os.path.basename(file) +'.png'
-		else:
-			png_filename = file[:-5]+'.png'
+		png_filename = f'{output_path}{os.path.basename(file)}.png' if output_path else f'{file[:-5]}.png'
 
 		# Report the file being written.
 		if print_path:
@@ -163,9 +145,7 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 		body = driver.find_element(By.TAG_NAME, "body")
 		body.screenshot(png_filename)
 		files_generated.append(png_filename)
-
-		#print (f'Check {x} -- Elapsed time: {(datetime.now() - start_time).total_seconds():0.5f} -- Image GENERATED!');x+=1
-
+		
 		"""# Finally, clean up the original files. 
 		try:
 			os.remove(file)
@@ -185,7 +165,7 @@ def format_filename(filename):
 
 
 
-@timed(level=3)
+@timed
 def write_cached_data(alliance_info, file_path='', timestamp='update', filename='', encode=True):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
@@ -323,7 +303,7 @@ def retire_cached_data(file_or_alliance=''):
 
 
 # Handle the file list cleanly.
-@timed(level=3)
+@timed
 def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
@@ -451,7 +431,7 @@ def check_import_path(alliance_name):
 driver_pool = {}
 
 # Keep drivers open and allow them to be re-used.
-@timed(level=3)
+@timed
 def get_driver():
 	global driver_pool
 
@@ -536,7 +516,7 @@ def get_driver():
 
 
 # Check driver in at the end of use.
-@timed(level=3)
+@timed
 def release_driver(driver):
 	global driver_pool
 
