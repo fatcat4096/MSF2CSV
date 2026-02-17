@@ -178,7 +178,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				if key not in key_ranges:
 
 					# If pre-calculated, cached ranges are available, use them
-					if key in pre_ranges:
+					if key in pre_ranges and not hist_date:
 						key_ranges[key] = pre_ranges[key]
 
 					# Otherwise, gotta compile them from scratch
@@ -220,7 +220,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False, profile=True) and 'OTHERS' not in table_lbl
 		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False, profile=True) and 'OTHERS' not in table_lbl and not team_power_summary
-		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not hist_date and not team_power_summary
+		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not team_power_summary
 		inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
 		spec_ops  = get_table_value(table_format, table, section, key='spec_ops')
 
