@@ -42,9 +42,9 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 	# Get the hist_date if historical information was requested.
 	hist_date = get_hist_date(alliance_info, table_format)
 
-	# Get keys using the lookup. If undefined, 
-	table_format['inc_keys']  = ['power','lvl','iso','tier','yel','red','abil','op']
-	table_format['inc_class'] = True
+	# Initialize inc_keys if necessary
+	table_format['inc_keys']  = table_format.get('inc_keys',  ['power','lvl','iso','tier','yel','red','abil','op'])
+	table_format['inc_class'] = table_format.get('inc_class', True)
 	
 	#if not sort_by specified
 	table_format['sort_by'] = 'stp'
