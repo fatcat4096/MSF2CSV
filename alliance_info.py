@@ -14,6 +14,7 @@ from datetime    import date, datetime
 from file_io     import find_cached_data
 from parse_cache import update_parse_cache
 from cached_info import get_cached
+from gradients   import color_scale
 
 
 @timed(level=3)
@@ -51,7 +52,7 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, section
 
 		for player in player_list:
 			inc_char = set([char for char in section.get('under_min',{}).get(player,{}) if not section.get('under_min',{}).get(player,{}).get(char)] + char_list)
-			pow_list = sorted([find_value_or_diff(alliance_info, player, char_name, 'power') for char_name in inc_char])
+			pow_list = sorted([find_roster_value(alliance_info, player, char_name, 'power') for char_name in inc_char])
 			local_stp[player] = sum(pow_list[-5:])
 
 		return sorted(player_list, key=lambda x: -len([char for char in section.get('under_min',{}).get(x,{}) if not section.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
@@ -80,7 +81,7 @@ def get_stp_list(alliance_info, char_list, hist_date=None):
 		for player_name in player_list:
 
 			# Build a list of all character powers.
-			all_char_pwr = sorted([find_value_or_diff(alliance_info, player_name, char_name, 'power', date_to_use) for char_name in char_list])
+			all_char_pwr = sorted([find_roster_value(alliance_info, player_name, char_name, 'power', date_to_use) for char_name in char_list])
 
 			# And sum up the Top 5 power entries for STP.
 			stp_list.setdefault(date_to_use,{})[player_name] = sum(all_char_pwr[-5:])
@@ -115,7 +116,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	other_chars = filter_on_traits(section, traits_req, other_chars)
 
 	# Filter out any characters which no one has summoned
-	other_chars = [char for char in other_chars if sum([find_value_or_diff(alliance_info, player, char, 'power') for player in player_list])]
+	other_chars = [char for char in other_chars if sum([find_roster_value(alliance_info, player, char, 'power') for player in player_list])]
 
 	# Set aside a list of the other_chars prior to filtering for minimums
 	before_filter = other_chars[:]
@@ -160,10 +161,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		hist_date = get_hist_date(alliance_info, table_format)
 
 		# Number of people who have summoned a character.
-		dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) != 0 for player in player_list]) for char in other_chars}
+		dict_count = {char:sum([find_roster_value(alliance_info, player, char, 'power', hist_date) != 0 for player in player_list]) for char in other_chars}
 
 		# Average power of this char across all rosters who have summoned.
-		dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) for player in player_list])/max(dict_count[char],1)) for char in other_chars}
+		dict_power = {char:int(sum([find_roster_value(alliance_info, player, char, 'power', hist_date) for player in player_list])/max(dict_count[char],1)) for char in other_chars}
 
 		# Sort by character availability -- how many have been leveled, tie breaker is power across alliance.
 		# If we have min_iso/min_tier criteria, also use this to sort/filter the character list.
@@ -190,10 +191,10 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 			before_filter = [char for char in before_filter if char not in other_chars]
 			
 			# Number of people who have summoned a character
-			dict_count = {char:sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) != 0 for player in player_list]) for char in before_filter}
+			dict_count = {char:sum([find_roster_value(alliance_info, player, char, 'power', hist_date) != 0 for player in player_list]) for char in before_filter}
 
 			# Calc average power for these toons
-			dict_power = {char:int(sum([find_value_or_diff(alliance_info, player, char, 'power', hist_date) for player in player_list])/max(dict_count[char],1)) for char in before_filter}
+			dict_power = {char:int(sum([find_roster_value(alliance_info, player, char, 'power', hist_date) for player in player_list])/max(dict_count[char],1)) for char in before_filter}
 
 			# Calculate a score for these toons
 			dict_score = {f'{dict_power[char]:010}':char for char in before_filter}
@@ -295,10 +296,41 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 	if under_min is not None:
 		return under_min
 
+	player_info = section.setdefault('under_min',{}).setdefault(player_name,{})
+
 	# Not summoned is under_min
-	if find_value_or_diff(alliance_info, player_name, char_name, 'power') == 0:
-		section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
+	if find_roster_value(alliance_info, player_name, char_name, 'power') == 0:
+		player_info[char_name] = True
 		return True
+
+	# Audit or under min? If Audit, under_min is irrelevant
+	AUDIT = table_format.get('audit')
+	if AUDIT == 'abil':
+		# Get a little closer to our work
+		KEY_RANGES = alliance_info.get('key_ranges', {}).get(char_name, {})
+
+		for key in ('bas','spc','ult','pas'):
+
+			# Awakened value depends upon the key type
+			awakened = 6 if key=='pas' else 8
+			
+			# If this is an awakened ability, look closer
+			if KEY_RANGES.get(key) and max(KEY_RANGES.get(key)) >= awakened:
+
+				player_val = find_roster_value(alliance_info, player_name, char_name, key)
+
+				# If any ability is under_min, return the OPPOSITE
+				# We are auditing, so HIGHLIGHTING deficiencies
+				if player_val < awakened:
+					player_info[char_name] = False
+
+					# Make this field value RED for all
+					KEY_RANGES[key][player_val] = color_scale[0]
+					
+		# Again, since passed Audit, no need to highlight.
+		# Call this 'under_min' to not focus on it
+		player_info[char_name] = player_info. 	get(char_name, True)
+		return player_info[char_name]
 
 	PROFILE = table_format.setdefault('profile', {}).setdefault('min', {})
 
@@ -306,11 +338,11 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 	for key in ('lvl','tier','iso','yel','red'):
 		min_val = PROFILE[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
 
-		if min_val and find_value_or_diff(alliance_info, player_name, char_name, key) < min_val:
-			section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = True
+		if min_val and find_roster_value(alliance_info, player_name, char_name, key) < min_val:
+			player_info[char_name] = True
 			return True
 
-	section.setdefault('under_min',{}).setdefault(player_name,{})[char_name] = False
+	player_info[char_name] = False
 
 
 
@@ -402,7 +434,7 @@ def insert_dividers(strike_teams, raid_type):
 	
 
 # Find this member's oldest entry in our historical entries.
-def find_value_or_diff(alliance_info, player_name, char_name, key, hist_date=None, null=0, other_info=''):
+def find_roster_value(alliance_info, player_name, char_name, key, hist_date=None, null=0, other_info=''):
 
 	# Find the current value. 
 	char_info = alliance_info['members'][player_name].get('processed_chars',{}).get(char_name,{})

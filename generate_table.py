@@ -83,14 +83,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					for player in using_players:
 
 						# Get current power for this toon.
-						curr_power = find_value_or_diff(alliance_info, player, char, 'power')
+						curr_power = find_roster_value(alliance_info, player, char, 'power')
 
 						# If not summoned yet, move on to next player.
 						if not curr_power:
 							continue
 
 						# Get historical power for this toon.
-						hist_diff = find_value_or_diff(alliance_info, player, char, 'power', hist_date=inline_hist)
+						hist_diff = find_roster_value(alliance_info, player, char, 'power', hist_date=inline_hist)
 						
 						# If relevant growth, include and move to next char
 						if abs(hist_diff/curr_power) > min_change_filter:
@@ -183,7 +183,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 					# Otherwise, gotta compile them from scratch
 					else:
-						key_ranges[key] = [find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list]
+						key_ranges[key] = [find_roster_value(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list]
 
 				# Just use this info for PROFILE if all users are being shown
 				if key in profile_during:
@@ -191,7 +191,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Add the other fields to PROFILE as well
 			for key in profile_after:
-				PROFILE[key] |= {find_value_or_diff(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in using_players}
+				PROFILE[key] |= {find_roster_value(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in using_players}
 
 	# Auto-calc the best value for line wrap length if an explicit value not defined
 	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=calculate_line_wrap(using_chars)) 
@@ -312,7 +312,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# char_list == teams/sections
 				avail_set = {*()}
 				for sect in char_list:
-					avail_set.update(find_value_or_diff(alliance_info, player, sect, 'avail', False, {*()}))
+					avail_set.update(find_roster_value(alliance_info, player, sect, 'avail', False, {*()}))
 
 				avail_range[player] = len(avail_set)
 			
@@ -388,7 +388,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# Include not_completed because if they've completed it, they're OBVIOUSLY ready
 				if team_power_summary:
 					not_completed = not get_summary_comp(alliance_info, player_name, inc_comp)
-					not_ready = not_completed and min_count and any([len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', False, {*()})) < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
+					not_ready = not_completed and min_count and any([len(find_roster_value(alliance_info, player_name, char_name, 'avail', False, {*()})) < min_count - (DD7 and char_name=='Mythic') for char_name in char_list])
 
 				# If Strike Teams are in use, this is raid output -- verify all team members are available.
 				elif len(strike_teams)>1:
@@ -445,7 +445,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 						# TEAM POWER SUMMARY: Calculate under_min for a team/section so that the Power/Avail/Rank is dimmed if not 5 toons are available yet.
 						if team_power_summary:
-							under_min = not_completed and min_count and len(find_value_or_diff(alliance_info, player_name, char_name, 'avail', use_hist_date, {*()})) < min_count - (DD7 and char_name=='Mythic')
+							under_min = not_completed and min_count and len(find_roster_value(alliance_info, player_name, char_name, 'avail', use_hist_date, {*()})) < min_count - (DD7 and char_name=='Mythic')
 						else:
 							under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
 
@@ -462,7 +462,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							
 								# Standard lookup. Get the key_val for this character stat from this player's roster.
 								# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
-								key_val, other_diffs = find_value_or_diff(alliance_info, player_name, char_name, key, use_hist_date, other_info=True)
+								key_val, other_diffs = find_roster_value(alliance_info, player_name, char_name, key, use_hist_date, other_info=True)
 
 							need_tt = key=='power' and key_val != 0 and not linked_hist
 
@@ -700,4 +700,4 @@ def spec_ops_bg(section, char, player_list, html_cache):
 
 # Return the # of Yellow Stars on the completion reward if specified.
 def get_summary_comp(alliance_info, player_name, inc_comp):
-	return find_value_or_diff(alliance_info, player_name, inc_comp, 'yel') if inc_comp else None
+	return find_roster_value(alliance_info, player_name, inc_comp, 'yel') if inc_comp else None
