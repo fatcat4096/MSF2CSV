@@ -66,7 +66,7 @@ def get_local_path():
 
 
 
-@timed
+@timed(level=3)
 def write_file(pathname, file_content, print_path=True):
 
 	files_generated = []
@@ -102,7 +102,7 @@ def write_file(pathname, file_content, print_path=True):
 
 
 
-@timed
+@timed(level=3)
 def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=None):
 
 	# Handle base case of single file or URL
@@ -165,7 +165,7 @@ def format_filename(filename):
 
 
 
-@timed
+@timed(level=3)
 def write_cached_data(alliance_info, file_path='', timestamp='update', filename='', encode=True):
 	
 	# If no file_path, provided get one out of alliance_info or use local dir as default.
@@ -303,7 +303,7 @@ def retire_cached_data(file_or_alliance=''):
 
 
 # Handle the file list cleanly.
-@timed
+@timed(level=3)
 def find_cached_data(file_or_alliance=''):
 
 	alliance_info = {}
@@ -431,7 +431,7 @@ def check_import_path(alliance_name):
 driver_pool = {}
 
 # Keep drivers open and allow them to be re-used.
-@timed
+@timed(level=3)
 def get_driver():
 	global driver_pool
 
@@ -516,7 +516,7 @@ def get_driver():
 
 
 # Check driver in at the end of use.
-@timed
+@timed(level=3)
 def release_driver(driver):
 	global driver_pool
 

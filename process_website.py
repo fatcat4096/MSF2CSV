@@ -167,7 +167,7 @@ def roster_results(alliance_info, start_time, rosters_output, only_summary=False
 	summary = [f'Found {SUMMARY} in {REQ}s']
 
 	# Make the log output pretty
-	logger (f'{ansi.ltcyan}Refresh complete!{ansi.rst} Found {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.rst} in {ansi.ltyel}{REQ}s{ansi.rst}')
+	logger (f'{ansi.ltcyan}Refresh complete!{ansi.rst} {ansi.gray}Found{ansi.rst} {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.rst} {ansi.gray}in{ansi.rst} {ansi.ltyel}{REQ}s{ansi.rst}')
 
 	# If roster_output included, generate Key for footer as well.
 	status_key = [] 
@@ -202,7 +202,6 @@ def roster_results(alliance_info, start_time, rosters_output, only_summary=False
 
 
 # Find out who we are
-@timed(level=3)
 def get_username_api(AUTH):
 
 	response = request_player_info(AUTH)
