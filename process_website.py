@@ -24,7 +24,7 @@ from datetime             import datetime
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(alliance_info, only_process, AUTH, logger=print, log_file=None):
+def process_rosters(alliance_info, only_process, AUTH, print=print, log_file=None):
 
 	# Let's get a little closer to our work.
 	members = alliance_info['members']
@@ -140,13 +140,13 @@ def process_rosters(alliance_info, only_process, AUTH, logger=print, log_file=No
 		LAST_LINE =  rosters_output[-1]
 		index = 15 + (':' not in LAST_LINE)
 
-		logger(f'Found: {ansi.white}{LAST_LINE[:index]}{ansi.rst}{FORMAT}{LAST_LINE[index:]}{ansi.rst}')
+		print(f'{ansi.white}{LAST_LINE[:index]}{ansi.rst}{FORMAT}{LAST_LINE[index:]}{ansi.rst}')
 
 	return rosters_output
 
 
 	
-def roster_results(alliance_info, start_time, rosters_output, only_summary=False, logger=print):
+def roster_results(alliance_info, start_time, rosters_output, only_summary=False, print=print):
 	
 	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
 	UPD = len([x for x in rosters_output if 'UPD' in x[15:]])
@@ -167,7 +167,7 @@ def roster_results(alliance_info, start_time, rosters_output, only_summary=False
 	summary = [f'Found {SUMMARY} in {REQ}s']
 
 	# Make the log output pretty
-	logger (f'{ansi.ltcyan}Refresh complete!{ansi.rst} {ansi.gray}Found{ansi.rst} {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.rst} {ansi.gray}in{ansi.rst} {ansi.ltyel}{REQ}s{ansi.rst}')
+	print (f'{ansi.ltcyan}Refresh complete!{ansi.rst} {ansi.gray}Found{ansi.rst} {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.rst} {ansi.gray}in{ansi.rst} {ansi.ltyel}{REQ}s{ansi.rst}')
 
 	# If roster_output included, generate Key for footer as well.
 	status_key = [] 
