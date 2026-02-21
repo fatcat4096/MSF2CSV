@@ -325,7 +325,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Winter Guard'], 'meta': WINTERGUARD},
 							{'traits': ['XTreme']},
 #							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
-							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power','yel','red'], 'max_others':0},
+#							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power','yel','red'], 'max_others':0},
 							] ]
 					}
 
