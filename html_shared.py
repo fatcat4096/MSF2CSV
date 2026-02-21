@@ -107,13 +107,13 @@ def get_color(min_val, max_val, value, stat='power', hist_date=None):
 	elif stat == 'lvl':
 		return get_scaled_value(0, max(0, max_val-10), max_val, value)
 	elif stat == 'tier':
-		return get_scaled_value(0, max(0, max_val-3), max_val, value)
+		return get_scaled_value(0, max(0, max_val-2), max_val, value)
 	#elif stat in ('op'):
 	#	color = get_scaled_value(0, 9, 11, value)
 	elif stat == 'yel':
 		return get_scaled_value(0, 5, 7, value)
 	elif stat == 'red':
-		return get_scaled_value(0, 6, 10, value)
+		return get_scaled_value(0, 7, 12, value)
 	elif stat == 'rank':
 		return get_scaled_value(1, 13, 25, (25-value))
 	elif stat == 'avail':
