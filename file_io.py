@@ -67,7 +67,7 @@ def get_local_path():
 
 
 @timed(level=3)
-def write_file(pathname, file_content, print_path=True):
+def write_file(pathname, file_content, print_path=False):
 
 	files_generated = []
 
@@ -103,7 +103,7 @@ def write_file(pathname, file_content, print_path=True):
 
 
 @timed(level=3)
-def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=None):
+def html_to_images(html_files, proc_name='msf2csv', print_path=False, render_wait=0.1, output_path=None):
 
 	# Handle base case of single file or URL
 	if type(html_files) == str:
@@ -112,7 +112,7 @@ def html_to_images(html_files, print_path=False, render_wait=0.1, output_path=No
 	files_generated = []
 
 	# Start by getting a Selenium driver
-	driver = get_driver()
+	driver = get_driver(proc_name)
 
 	# The html_files list contains paths to the html files.
 	for file in html_files:
@@ -432,16 +432,12 @@ driver_pool = {}
 
 # Keep drivers open and allow them to be re-used.
 @timed(level=3)
-def get_driver():
+def get_driver(proc_name=''):
 	global driver_pool
 
 	# Create the two pools
 	active_pool = driver_pool.setdefault('active',{})
 	avail_pool  = driver_pool.setdefault('avail',{})
-
-	#print (f'\nSTART STATE OF DRIVER POOLS:')
-	#print (f'{len(active_pool)=} {active_pool.keys()=}')
-	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
 
 	driver = None
 
@@ -449,11 +445,11 @@ def get_driver():
 
 	# Key in active_pool is job start_time. If older than 15 seconds, assume failure and remove from pool.
 	for start_time in sorted(active_pool):
+
 		# These are oldest first, once we find a valid job, stop
 		if (datetime.now() - start_time).total_seconds() < 15:
 			break
 			
-		#print (f'{start_time=} {(datetime.now() - start_time).total_seconds()}s since job started')
 		try:
 			active_pool[start_time].close()
 		except:
@@ -476,12 +472,8 @@ def get_driver():
 		driver.job_start   = job_start
 		driver.times_used += 1
 
-		#print (f'using existing driver for {job_start}....{driver.creation_date} been used {driver.times_used} times!')
-
 	# Otherwise, an alliance is requesting fresh for a roster refresh. We need to create a fresh driver.
 	else:
-		#print ('no driver available....making a NEW one!')
-
 		# Start by creating a Selenium driver.
 		options = webdriver.ChromeOptions()
 		options.add_argument('--headless=new')
@@ -490,6 +482,9 @@ def get_driver():
 		options.add_argument('--disable-gpu')
 		options.add_argument('--disable-extensions')
 		service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
+
+		# Indicate which process launched this driver
+		options.add_argument(f'--window-name="{proc_name}"')
 
 		# For linux, explicitly specify the chromedriver to use
 		if os.name == 'posix':
@@ -506,10 +501,6 @@ def get_driver():
 		driver.times_used    = 1
 
 		active_pool[creation_date] = driver
-
-	#print (f'\nFINAL STATE OF DRIVER POOLS:')
-	#print (f'{len(active_pool)=} {active_pool.keys()=}')
-	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
 
 	return driver
 
@@ -530,19 +521,9 @@ def release_driver(driver):
 	creation_date = driver.creation_date
 	job_start     = driver.job_start
 
-	#print (f'{job_start} is COMPLETE! Moving driver {creation_date} from active to avail pool!')
-	
-	#print (f'\nSTART STATE OF DRIVER POOLS:')
-	#print (f'{len(active_pool)=} {active_pool.keys()=}')
-	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
-
 	# If there's no driver available in the avail_pool, just check this one in.
 	avail_pool[creation_date] = active_pool.pop(job_start)
 			
-	#print (f'\nFINAL STATE OF DRIVER POOLS:')
-	#print (f'{len(active_pool)=} {active_pool.keys()=}')
-	#print (f'{len(avail_pool)=}  {avail_pool.keys()=}')
-	
 	return
 
 

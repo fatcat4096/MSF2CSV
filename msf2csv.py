@@ -19,7 +19,7 @@ from rich.console    import Console
 
 # If no name specified, default to the alliance for the Login player
 @timed(level=3, init=True)
-def render_report(alliance_info, table_format, print_path=False, log_file=None):
+def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=None):
 
 	# Load roster info from cached data
 	if type(alliance_info) is str:
@@ -39,7 +39,7 @@ def render_report(alliance_info, table_format, print_path=False, log_file=None):
 	
 	# Generate CSV?
 	if output == 'csv':
-		 return write_file(f'{pathname}{datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info), print_path)
+		 return write_file(f'{pathname}{datetime.now().strftime("%Y.%m.%d-%H%M%S")}.csv', generate_csv(alliance_info))
 
 	# Output only a specific report.
 	elif custom_table or output:
@@ -60,11 +60,11 @@ def render_report(alliance_info, table_format, print_path=False, log_file=None):
 
 			# If 'image' was requested, we need to convert the HTML files to PNG images.
 			if output_format == 'image':
-				html_files = write_file(pathname, html_files, print_path)
-				html_files = html_to_images(html_files, print_path)
+				html_files = write_file(pathname, html_files)
+				html_files = html_to_images(html_files, proc_name)
 			# If not, just need write the html files out.
 			else:
-				html_files = write_file(pathname, html_files, print_path)
+				html_files = write_file(pathname, html_files)
 
 			# Do a bit of housekeeping. Purge anything over a day old.
 			cleanup_old_files(pathname, 1)
