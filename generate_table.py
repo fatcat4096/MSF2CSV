@@ -11,6 +11,8 @@ from html_cache    import *
 from html_shared   import *
 
 from cached_info import get_cached
+from file_io     import local_img_cache
+
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
@@ -58,7 +60,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# Find out whether inline history has been requested for this report.
 	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
 
-	min_others = get_table_value(table_format, table, section, key='min_others')
+	# Is there a MINIMUM number of toons we should be displaying?
+	min_others  = get_table_value(table_format, table, section, key='min_others')
+
+	# Note whether HTML output has been requested
+	req_html = table_format.get('output_format') in ('html','tabbed')
 
 	# Pare any missing heroes if these aren't Meta entries.
 	if 'META' not in table_lbl and len(using_chars) > 5 and not team_power_summary and not min_others:
@@ -133,7 +139,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		# If the Section Name starts with a Character, use that toon's image for the background.
 		if table_lbl.startswith(char_name.upper()+':<BR>'):
-			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
+			url = local_img_cache(portraits[char_name], req_html)
 			table_lbl = table_lbl.removeprefix(f'{char_name.upper()}:<BR>').upper().replace(" (","<BR>(").replace('-','&#8209;')
 
 			table_lbl = f'<div class="img cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{table_lbl}</div>'
@@ -246,7 +252,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					# If the Section Name starts with a Character, use that toon's image for the background.
 					if char.startswith(char_name+':'):
 					
-						url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char_name]}.png'
+						url = local_img_cache(portraits[char_name], req_html)
 						section_name = char.removeprefix(f'{char_name}:').upper().replace(' (','<br>(').replace('-','&#8209;')
 
 						html_file.append(f'     <td class="img" colspan="{num_cols}"><div class="cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{section_name}</div></td>')
@@ -258,7 +264,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					html_file.append(f'     <td colspan="{num_cols}"><div class="summ">{section_name}</div></td>')
 				
 			else:
-				url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[char]}.png'
+				url = local_img_cache(portraits[char], req_html)
 
 				# Default value to start
 				onclick = ''
@@ -285,7 +291,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		# Include an image of the completion reward if provided.
 		if team_power_summary and inc_comp:
-			url = f'https://assets.marvelstrikeforce.com/imgs/Portrait_{portraits[inc_comp]}.png'
+			url = local_img_cache(portraits[inc_comp], req_html)
 			html_file.append(f'     <td class="img"><div class="cont"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(inc_comp)}</div></td>')
 
 		# Include a Team Power column if we have more than one.
