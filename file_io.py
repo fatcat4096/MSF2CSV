@@ -14,6 +14,7 @@ import pickle
 import importlib
 import copy
 import glob
+import requests
 
 try:	import strike_teams as strike_temp
 except:	pass
@@ -525,6 +526,45 @@ def release_driver(driver):
 	avail_pool[creation_date] = active_pool.pop(job_start)
 			
 	return
+
+
+
+# Where should assets be downloaded to for local caching?
+asset_cache = f'{os.path.dirname(__file__)}{os.sep}cached_data{os.sep}reports{os.sep}assets{os.sep}'
+if not os.path.exists(asset_cache):
+	os.makedirs(asset_cache)
+
+
+
+# Cache file if not already, return rel path to local cache
+def local_img_cache(url, html_req=False):
+
+	file_path = f'{asset_cache}{Path(url).name}'
+	
+	if not os.path.exists(file_path):
+		try:
+			response = requests.get(url, stream=True)
+			response.raise_for_status()  # Raises an HTTPError for bad responses
+			with open(file_path, 'wb') as file:
+				for chunk in response.iter_content(chunk_size=8192):
+					file.write(chunk)
+
+			print (f'{ansi.ltyel}Caching locally:{ansi.rst} {ansi.gray}{url=} => ./assets/{ansi.rst}{ansi.white}{Path(url).name}{ansi.rst}')
+
+		# If download fails, delete any partial file and return url instead
+		except requests.exceptions.RequestException as e:
+
+			# Notify of failure
+			print(f"{ansi.ltred}Error downloading file:{ansi.rst} {ansi.white}{e}{ansi.rst}")
+
+			# Clean up any partial file
+			if os.path.exists(file_path):
+				os.remove(file_path)
+
+			# Advise use of URL instead
+			return url
+
+	return url if html_req else f'./assets/{Path(url).name}'
 
 
 
