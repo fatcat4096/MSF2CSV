@@ -206,10 +206,13 @@ def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 		
 		# Build char_lookup (for name translation)
 		char_lookup[char_id] = char_name
-		
+
 		# Build portrait lookup -- only accept first definition to avoid being overwritten by Unplayable chars
-		portraits.setdefault(char_name, char['portrait'].split('Portrait_')[-1][:-4])
-		
+		portraits.setdefault(char_name, char['portrait'])
+
+		# If we don't have the portrait in /assets, download image now
+		local_img_cache(portraits[char_name])
+
 		# Only include playable toons in char_list and traits
 		if PLAYABLE:
 			char_list.append(char_name)
