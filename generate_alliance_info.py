@@ -44,8 +44,11 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	html_file += ' <td colspan="8" class="alliance_name">%s</td>\n' % (remove_tags(alliance_info.get('name','').upper()))
 	
 	# Frame and Image for Alliance
-	html_file += ' <td colspan="2"><div class="lrg_img" style="background-image:url(https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png);">\n' % (alliance_info.get('image','EMBLEM_6_dd63d11b'))
-	html_file += '  <div class="lrg_rel"><img class="lrg_rel" src="https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_%s.png" alt=""/></div>\n' % (alliance_info.get('frame','FRAME_15_174f8048'))
+	EMBLEM_URL = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('image','EMBLEM_6_dd63d11b')}.png"
+	FRAME_URL  = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('frame','FRAME_15_174f8048')}.png"
+
+	html_file += f' <td colspan="2"><div class="lrg_img" style="background-image:url({EMBLEM_URL});">\n'
+	html_file += f'  <div class="lrg_rel"><img class="lrg_rel" src="{FRAME_URL}" alt=""/></div>\n'
 	html_file += ' </div></td>\n'
 	
 	html_file += '</tr>\n'
@@ -159,7 +162,9 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		IMG_URL = member_stats.get('image','ShieldDmg_Defense_3dea00f7')+'.png'
 		IMG_URL = IMG_URL if 'https' in IMG_URL else f'https://assets.marvelstrikeforce.com/imgs/Portrait_{IMG_URL}'
 		
-		html_file += f'  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url(https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_%s.png);">\n' % (member_stats.get('frame','0_ab6f69b8'))
+		FRAME_URL = f"https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_{member_stats.get('frame','0_ab6f69b8')}.png"
+		
+		html_file += f'  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url({FRAME_URL});">\n'
 		html_file += f'   <div class="sml_rel"><img height="45" class="sml_rel" src="{IMG_URL}" alt=""/></div>\n'
 		html_file += f'  </div></td>\n'
 
