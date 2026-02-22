@@ -234,32 +234,9 @@ def get_alliance_api(AUTH):
 	# Extract the alliance_members from response.
 	alliance_members = response.json()['data']
 	
-	# Extract the current char meta hashtag from response
-	char_meta = response.json()['meta']['hashes']['chars']
-
 	# If char meta hashtag has changed, download fresh char info
-	if char_meta != get_cached('char_meta'):
-
-		# Grab the list of PLAYABLE chars
-		response = request_char_info(AUTH)
-		PLAYABLE = response.json() if response and response.ok else None
-	
-		# Grab the list of UNPLAYABLE chars
-		response = request_char_info(AUTH, PLAYABLE=False)
-		UNPLAYABLE = response.json() if response and response.ok else None
-	
-		# Only process responses if both requests successful
-		if PLAYABLE and UNPLAYABLE:
-
-			# Write these json structures out and update all cached char info
-			update_cached_char_info(PLAYABLE, UNPLAYABLE)
-
-			# Update the cached char meta to current hashtag value
-			set_cached('char_meta', char_meta)
-
-		# Note that we did have an issue with the API calls
-		else:
-			print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} Failed requesting updated character info.{ansi.rst}")
+	if response.json()['meta']['hashes']['chars'] != get_cached('char_meta'):
+		update_cached_char_info(AUTH)
 
 	# Parse the provided responses into a base alliance_info
 	alliance_info = parse_alliance_api(alliance_data, alliance_members)
@@ -270,27 +247,31 @@ def get_alliance_api(AUTH):
 
 # Rebuild fresh cached character info
 @timed(level=3)
-def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
+def update_cached_char_info(AUTH):
 
-	# If we got API response passed in, start by writing
-	if PLAYABLE:
+	# Grab the list of PLAYABLE chars
+	response = request_char_info(AUTH)
+	PLAYABLE = response.json() if response and response.ok else None
 
-		# Combine the json response sent by the API into a single file and dump it to disk
-		PLAYABLE   = json.dumps(PLAYABLE,   indent=2, sort_keys=True)
-		UNPLAYABLE = json.dumps(UNPLAYABLE, indent=2, sort_keys=True)
-		
-		CHAR_INFO  = f'# Defs to allow JSONs to process as dicts\ntrue  = True\nfalse = False\nnull  = None\n\n'
-		CHAR_INFO += f'playable   = {PLAYABLE}\nunplayable = {UNPLAYABLE}' 
+	# Grab the list of UNPLAYABLE chars
+	response = request_char_info(AUTH, PLAYABLE=False)
+	UNPLAYABLE = response.json() if response and response.ok else None
 
-		# Write the new module to disk
-		write_file(inspect.getfile(char_info), CHAR_INFO)
+	# Only process responses if both requests successful
+	if not (PLAYABLE and UNPLAYABLE):
+		return print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} Failed to update character info.{ansi.rst}")
 
-		# Refresh the sourced definition
-		importlib.reload(char_info)
+	# Extract the char meta hashtag from the last response
+	char_meta = response.json()['meta']['hashes']['chars']
 
-	# Combine the data sections from the sourced API responses.
-	CHAR_DATA = char_info.playable['data'] + char_info.unplayable['data']
-	
+	# Combine the json response sent by the API into a single file and dump it to disk
+	CHAR_INFO  = [f'# Defs to allow JSONs to process as dicts\ntrue  = True\nfalse = False\nnull  = None\n']
+	CHAR_INFO.append(f'playable   = {json.dumps(PLAYABLE,   indent=2, sort_keys=True)}')
+	CHAR_INFO.append(f'unplayable = {json.dumps(UNPLAYABLE, indent=2, sort_keys=True)}')
+
+	# Write the updated module to disk
+	write_file(inspect.getfile(char_info), '\n'.join(CHAR_INFO))
+
 	# Let's build the cached char files
 	char_list   = []
 	char_lookup = {}
@@ -298,11 +279,11 @@ def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 	traits      = {}
 
 	# Process the character dictionary
-	parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits)
+	parse_char_data(PLAYABLE['data']+UNPLAYABLE['data'], char_list, char_lookup, portraits, traits)
 
 	# Write the portraits
 	set_cached('portraits', portraits)
-
+	
 	# Write char_list for MSF RosterBot use
 	set_cached('char_list', sorted(char_list))
 
@@ -314,6 +295,9 @@ def update_cached_char_info(PLAYABLE=None, UNPLAYABLE=None):
 
 	# Finally, cache the value of char_lookup
 	set_cached('char_lookup', char_lookup)
+
+	# After everything up to date, update char_meta to current hash
+	set_cached('char_meta', char_meta)
 
 
 
