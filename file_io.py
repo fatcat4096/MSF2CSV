@@ -537,7 +537,7 @@ if not os.path.exists(asset_cache):
 
 
 # Cache file if not already, return rel path to local cache
-def local_img_cache(url, html_req=False):
+def local_img_cache(url, req_html=False):
 
 	file_path = f'{asset_cache}{Path(url).name}'
 	
@@ -564,7 +564,7 @@ def local_img_cache(url, html_req=False):
 			# Advise use of URL instead
 			return url
 
-	return url if html_req else f'./assets/{Path(url).name}'
+	return url if req_html else f'./assets/{Path(url).name}'
 
 
 
