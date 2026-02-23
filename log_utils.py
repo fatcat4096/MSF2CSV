@@ -36,7 +36,7 @@ if not os.path.exists(log_file_path):
 # 'reporting_level' controls whether we log at all. Set to 0 to disable logging.
 # 'reporting_threshold' controls how long a call has to take before we start reporting time required.
 # ----------------------------------------------------
-reporting_level     = 3		# Level 0 = no logging, 1 = basic logs, 2 = basic reporting, 3 = detailed reporting, 4 = task/dossier info
+reporting_level     = 0		# Level 0 = no logging, 1 = basic logs, 2 = basic reporting, 3 = detailed reporting, 4 = task/dossier info
 reporting_threshold = 1.00
 
 
