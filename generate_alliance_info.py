@@ -35,7 +35,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
-	html_file += '<table id="%s" style="background:#222";>\n' % (table_id)
+	html_file += f'<table id="{table_id}" style="background:#222";>\n'
 
 	html_file += '<tr>\n</tr>\n'
 

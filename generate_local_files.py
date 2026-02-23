@@ -80,15 +80,20 @@ strike_teams = {}
 # Take the strike_team variable and create the text for the team definition in strike_teams.py
 def generate_strike_team(type,strike_team,desc):
 
-	team_def  = '\n# %s\n' % desc
-	team_def += 'strike_teams["%s"] = [\n' % type
+	team_def  = f'\n# {desc}\n'
+	team_def += f'strike_teams["{type}"] = [\n'
 	
 	for team_num in range(len(strike_team)): 
-		team_def += '[### Strike team %i ###]\n' % (team_num+1)
+		team_def += f'[### Strike team {team_num+1} ###]\n'
 		
 		for member in strike_team[team_num]:
-			team_def += '\t"%s",\n' % member
+			team_def += f'\t"{member}",\n'
 		
-		team_def += ['],\n',']]\n'][team_num == len(strike_team)-1]
+		# Last line?
+		if team_num == len(strike_team)-1:
+			team_def += ']]\n'
+		# More to go
+		else:
+			team_def += '],\n'
 
 	return team_def

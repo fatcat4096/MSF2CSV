@@ -21,6 +21,8 @@ from generate_by_char         import *
 from generate_table           import *
 from generate_summary         import *
 
+
+
 # Build specific tab output for use in generating PNG graphics.
 @timed(level=3)
 def generate_html(alliance_info, table, table_format, html_cache=None, only_body=False):
@@ -170,11 +172,14 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 				sections_per = len(lane)
 
 			# If there's only one lane because of only_lanes, specify the correct lane number.
-			lane_num = [only_lane, lane_idx+1][not only_lane]
-			file_num = [f'-{lane_num:02}', ''][len_lanes == 1]
+			lane_num = only_lane if only_lane else lane_idx+1
+			file_num = '' if len_lanes==1 else f'-{lane_num:02}'
 
 			# If there are multiple lanes, specify which lane. If not, just call it Roster Info
-			tab_name = [f'{lane_name.upper()} {lane_num}', 'ROSTER INFO'][len(lanes) == 1 and not only_lane]
+			if len(lanes)==1 and not only_lane:
+				tab_name = 'ROSTER INFO'
+			else:
+				tab_name = f'{lane_name.upper()} {lane_num}'
 
 			# Include the table name if it exists.
 			if table_name:
@@ -257,7 +262,7 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 				if only_body:
 					return html_file
 
-				html_files[output+'%s%s.html' % (file_num, section_num)] = html_file
+				html_files[f'{output}{file_num}{section_num}.html'] = html_file
 
 			# Manually resetting the loop.
 			start_section = 0
@@ -369,7 +374,7 @@ def get_hist_tab(hist_date, table_format, lanes: list=None, tabbed=False):
 	# If this format qualifies for History and it's being requested, generate the tab label.
 	if hist_date:
 		if (tabbed and lanes and len(lanes) == 1) or (not tabbed and table_format.get('only_section') or table_format.get('sections_per') == 1):
-			hist_tab = "CHANGES SINCE %s" % hist_date
+			hist_tab = f"CHANGES SINCE {hist_date}" 
 
 	return hist_tab
 
@@ -396,7 +401,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_d
 		
 		# Only include Dividers if using as part of a multi-tab document
 		if using_tabs:
-			html_file += '<div id="%s" class="tcon">\n' % (divider_id)
+			html_file += f'<div id="{divider_id}" class="tcon">\n'
 
 		# Insert the team_power_summary at the top if requested.
 		# Only use if using_tabs because generate_lanes() is called MULTIPLE TIMES if not in a tabbed environment
