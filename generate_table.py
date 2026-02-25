@@ -455,7 +455,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						else:
 							under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
 
-						for key in keys:
+						for key in ('power','iso','lvl','tier','yel','red','bas','spc','ult','pas','op'):
+							
+							# Only include requested info
+							if key not in keys:
+								continue
 
 							# Get the range of values for this character for all rosters.
 							# If historical, we want the diff between the current values and the values in the oldest record
