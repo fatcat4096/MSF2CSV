@@ -40,8 +40,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		name_alt_dim  = 'ngaltd'
 		button_hover  = 'blkb'
 
-	# Define this once
-	key_lbls = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
+	# Define these once
+	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
+	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op')
 
 	# Sort player list if requested.
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
@@ -455,12 +456,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						else:
 							under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
 
-						for key in ('power','iso','lvl','tier','yel','red','bas','spc','ult','pas','op'):
+						# Include requested info in specific order
+						for key in [x for x in key_order if x in keys]:
 							
-							# Only include requested info
-							if key not in keys:
-								continue
-
 							# Get the range of values for this character for all rosters.
 							# If historical, we want the diff between the current values and the values in the oldest record
 							key_range = table_format['key_ranges'][use_hist_date][char_name][key]
@@ -613,9 +611,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Insert stat headings for each included Character.
 			for char in line_chars:
-				for key in keys:
+				for key in [x for x in key_order if x in keys]:
 					width = 'p' if key == 'power' else ''
-					html_file.append(f'     <td class="{button_hover}{width}" {sort_func % col_idx}>{key_lbls.get(key, key.title())}</td>')
+					html_file.append(f'     <td class="{button_hover}{width}" {sort_func % col_idx}>{key_labels.get(key, key.title())}</td>')
 					col_idx += 1
 
 				# Include a header for ISO Class info if requested.
