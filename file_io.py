@@ -433,76 +433,67 @@ driver_pool = {}
 
 # Keep drivers open and allow them to be re-used.
 @timed(level=3)
-def get_driver(proc_name=''):
+def get_driver(proc_name='', force_new=False):
 	global driver_pool
 
-	# Create the two pools
+	# Create the active and avail pools if necessary
 	active_pool = driver_pool.setdefault('active',{})
 	avail_pool  = driver_pool.setdefault('avail',{})
 
 	driver = None
 
-	# Do a little maintenance before we get started
+	# There's a driver available already, provide the existing driver
+	if avail_pool and not force_new:
+		
+		# Grab the available driver, don't fail if we miss
+		driver = avail_pool.pop(list(avail_pool)[0], None)
 
-	# Key in active_pool is job start_time. If older than 15 seconds, assume failure and remove from pool.
-	for start_time in sorted(active_pool):
+	# If we didn't find an available driver, create a new one
+	if not driver:
+		driver = create_new_driver(proc_name)
 
-		# These are oldest first, once we find a valid job, stop
-		if (datetime.now() - start_time).total_seconds() < 15:
-			break
-			
-		try:
-			active_pool[start_time].close()
-		except:
-			print ("driver close generated an exception")
-			pass
-			
-		# Delete the entry to release the driver
-		del active_pool[start_time]
-
-	# Could also keep track of how many times a driver has been used and purge entries from the avail_pool after a certain number of calls
-
-	# There's a driver available already, provide the existing driver.
-	if avail_pool:
-		job_start = datetime.now()
-
-		# Move the driver from the available pool to active. Key in active pool is the job start time.
-		driver = active_pool[job_start] = avail_pool.pop(list(avail_pool)[0])
-
-		# Update info inside the driver
-		driver.job_start   = job_start
+	# If we have a driver...
+	if driver:
+		# Add one to its body count
 		driver.times_used += 1
 
-	# Otherwise, an alliance is requesting fresh for a roster refresh. We need to create a fresh driver.
-	else:
-		# Start by creating a Selenium driver.
-		options = webdriver.ChromeOptions()
-		options.add_argument('--headless=new')
-		options.add_argument('--no-sandbox')
-		options.add_argument('--disable-dev-shm-usage')
-		options.add_argument('--disable-gpu')
-		options.add_argument('--disable-extensions')
-		service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
-
-		# Indicate which process launched this driver
-		options.add_argument(f'--window-name="{proc_name}"')
-
-		# For linux, explicitly specify the chromedriver to use
-		if os.name == 'posix':
-			service.path = '/usr/bin/chromedriver'
-
-		driver = webdriver.Chrome(service=service, options=options)
-
-		# Store info in the driver for future reference
-		creation_date = datetime.now()
+		# Note job start time in the driver
+		driver.last_used = datetime.now()
 		
-		# Set internal info on driver with initial values
-		driver.creation_date = creation_date
-		driver.job_start     = creation_date
-		driver.times_used    = 1
+		# Use job start time as key in the active pool
+		active_pool[driver.last_used] = driver
 
-		active_pool[creation_date] = driver
+	return driver
 
+
+
+# Create a Selenium driver if requested
+def create_new_driver(proc_name):
+	options = webdriver.ChromeOptions()
+
+	# Indicate which process launched this driver
+	options.add_argument(f'--window-name="{proc_name}"')
+
+	# Add all the important options
+	options.add_argument('--headless=new')
+	options.add_argument('--no-sandbox')
+	options.add_argument('--disable-dev-shm-usage')
+	options.add_argument('--disable-gpu')
+	options.add_argument('--disable-extensions')
+	service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
+
+	# For linux, explicitly specify the chromedriver to use
+	if os.name == 'posix':
+		service.path = '/usr/bin/chromedriver'
+
+	# Actually create the driver
+	driver = webdriver.Chrome(service=service, options=options)
+
+	# Set internal info on driver with initial values
+	driver.pid        = driver.service.process.pid
+	driver.last_used  = driver.creation_date = datetime.now()
+	driver.times_used = 0
+	
 	return driver
 
 
@@ -516,14 +507,15 @@ def release_driver(driver):
 	if not driver:
 		return
 
+	# Create the active and avail pools if necessary
 	active_pool = driver_pool.setdefault('active',{})
 	avail_pool  = driver_pool.setdefault('avail',{})
 
 	creation_date = driver.creation_date
-	job_start     = driver.job_start
+	last_used     = driver.last_used
 
 	# If there's no driver available in the avail_pool, just check this one in.
-	avail_pool[creation_date] = active_pool.pop(job_start)
+	avail_pool[creation_date] = active_pool.pop(last_used)
 			
 	return
 
