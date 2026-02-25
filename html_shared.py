@@ -108,8 +108,8 @@ def get_color(min_val, max_val, value, stat='power', hist_date=None):
 		return get_scaled_value(0, max(0, max_val-10), max_val, value)
 	elif stat == 'tier':
 		return get_scaled_value(0, max(0, max_val-2), max_val, value)
-	#elif stat in ('op'):
-	#	color = get_scaled_value(0, 9, 11, value)
+	elif stat in ('op'):
+		return get_scaled_value(0, max(0, max_val-2), max_val, value)
 	elif stat == 'yel':
 		return get_scaled_value(0, 5, 7, value)
 	elif stat == 'red':
