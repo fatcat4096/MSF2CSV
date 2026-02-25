@@ -2007,7 +2007,8 @@ playable   = {
         "Bio",
         "Brawler",
         "Defender",
-        "Shadowland"
+        "Shadowland",
+        "DaringWarrior"
       ],
       "unlockStars": 2
     },
@@ -2610,6 +2611,37 @@ playable   = {
         "Skill",
         "Brawler",
         "YoungAvenger"
+      ],
+      "unlockStars": 3
+    },
+    {
+      "description": "Maria Marquez was an intrepid archaeologist who had dedicated her life to finding a lost temple to the Mayan Moon goddess, Ixchel. When she finally found it, the goddess chose her as an avatar. Now, as Eclipse, she defends her heritage and protects her people from those who would desecrate and exploit their sacred past.",
+      "id": "Eclipse",
+      "mission": false,
+      "name": "Eclipse",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Eclipse_4eec43b9.png",
+      "starItems": [
+        "SHARD_ECLIPSE",
+        "RS_ECLIPSE_1",
+        "RS_ECLIPSE_2",
+        "RS_ECLIPSE_3",
+        "RS_ECLIPSE_4",
+        "RS_ECLIPSE_5",
+        "RS_ECLIPSE_6",
+        "RS_ECLIPSE_7",
+        "PD_ECLIPSE_1",
+        "PD_ECLIPSE_2",
+        "PD_ECLIPSE_3",
+        "PD_ECLIPSE_4",
+        "PD_ECLIPSE_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Mystic",
+        "Protector",
+        "DaringWarrior"
       ],
       "unlockStars": 3
     },
@@ -4873,7 +4905,8 @@ playable   = {
         "Bio",
         "Controller",
         "Defender",
-        "AForce"
+        "AForce",
+        "DaringWarrior"
       ],
       "unlockStars": 1
     },
@@ -7247,6 +7280,37 @@ playable   = {
         "Shadowland"
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "Dwayne Taylor is a fierce vigilante who shreds through enemies with the precision of a pro skater, grinding the line between justice and chaos with high-tech gear and relentless determination.",
+      "id": "NightThrasher",
+      "mission": false,
+      "name": "Night Thrasher",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_NightThrasher_1b1d9ebf.png",
+      "starItems": [
+        "SHARD_NIGHTTHRASHER",
+        "RS_NIGHTTHRASHER_1",
+        "RS_NIGHTTHRASHER_2",
+        "RS_NIGHTTHRASHER_3",
+        "RS_NIGHTTHRASHER_4",
+        "RS_NIGHTTHRASHER_5",
+        "RS_NIGHTTHRASHER_6",
+        "RS_NIGHTTHRASHER_7",
+        "PD_NIGHTTHRASHER_1",
+        "PD_NIGHTTHRASHER_2",
+        "PD_NIGHTTHRASHER_3",
+        "PD_NIGHTTHRASHER_4",
+        "PD_NIGHTTHRASHER_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "City",
+        "Tech",
+        "Controller",
+        "DaringWarrior"
+      ],
+      "unlockStars": 3
     },
     {
       "description": "The ultimate Sentinel from the future, Nimrod uses his adaptive technology to hunts Mutants using Stealth and Critical Damage.",
@@ -9801,6 +9865,37 @@ playable   = {
         "Bio",
         "Blaster",
         "Thunderbolt"
+      ],
+      "unlockStars": 3
+    },
+    {
+      "description": "Robert Baldwin is a kinetic energy-powered hero who bounces into battle with agility and explosive bursts, using his boundless energy to devastate foes.",
+      "id": "Speedball",
+      "mission": false,
+      "name": "Speedball",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Speedball_be6ed422.png",
+      "starItems": [
+        "SHARD_SPEEDBALL",
+        "RS_SPEEDBALL_1",
+        "RS_SPEEDBALL_2",
+        "RS_SPEEDBALL_3",
+        "RS_SPEEDBALL_4",
+        "RS_SPEEDBALL_5",
+        "RS_SPEEDBALL_6",
+        "RS_SPEEDBALL_7",
+        "PD_SPEEDBALL_1",
+        "PD_SPEEDBALL_2",
+        "PD_SPEEDBALL_3",
+        "PD_SPEEDBALL_4",
+        "PD_SPEEDBALL_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Bio",
+        "Brawler",
+        "DaringWarrior"
       ],
       "unlockStars": 3
     },
@@ -12442,15 +12537,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "14d4235ad2d69c9394fe",
-      "chars": "1714cecf74d10b29cac4",
-      "drops": "011be8a4641271ce5d84",
-      "events": "dc49b05422c273000e52",
-      "locs": "424b93da7816f7e85510",
-      "nodes": "ad20ec2c1084511617e0",
-      "other": "672b52db2b1737c6624c"
+      "all": "d20e5252b2291856163d",
+      "chars": "e716fd03b5b7f32acbf6",
+      "drops": "721d73ef9b7b0cb42bca",
+      "events": "5b1c1cc76ab26511ad75",
+      "locs": "a02d27a647531f42f29c",
+      "nodes": "105d6dca42d0533709bb",
+      "other": "3ff058072868affcaed7"
     },
-    "perTotal": 357,
+    "perTotal": 360,
     "version": 1
   }
 }
@@ -13288,13 +13383,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "14d4235ad2d69c9394fe",
-      "chars": "1714cecf74d10b29cac4",
-      "drops": "011be8a4641271ce5d84",
-      "events": "dc49b05422c273000e52",
-      "locs": "424b93da7816f7e85510",
-      "nodes": "ad20ec2c1084511617e0",
-      "other": "672b52db2b1737c6624c"
+      "all": "d20e5252b2291856163d",
+      "chars": "e716fd03b5b7f32acbf6",
+      "drops": "721d73ef9b7b0cb42bca",
+      "events": "5b1c1cc76ab26511ad75",
+      "locs": "a02d27a647531f42f29c",
+      "nodes": "105d6dca42d0533709bb",
+      "other": "3ff058072868affcaed7"
     },
     "perTotal": 43,
     "version": 1
