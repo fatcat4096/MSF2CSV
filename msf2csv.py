@@ -66,7 +66,7 @@ def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=Non
 			else:
 				html_files = write_file(pathname, html_files)
 
-			# Do a bit of housekeeping. Purge anything over a day old.
+			# Do a bit of housekeeping. Purge HTML, PNG, and CSV over a day old.
 			cleanup_old_files(pathname, 1)
 
 			return html_files

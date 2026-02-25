@@ -10,9 +10,11 @@ import os
 import sys
 import asyncio
 
-from functools import wraps
-from pathlib   import Path
-from typing    import Callable, Any
+from functools  import wraps
+from pathlib    import Path
+from typing     import Callable, Any
+from datetime   import datetime
+from contextlib import contextmanager
 
 import logging
 
@@ -38,6 +40,26 @@ if not os.path.exists(log_file_path):
 # ----------------------------------------------------
 reporting_level     = 0		# Level 0 = no logging, 1 = basic logs, 2 = basic reporting, 3 = detailed reporting, 4 = task/dossier info
 reporting_threshold = 1.00
+
+
+
+@contextmanager
+def timing(self=None, task=''):
+	timing_start = datetime.now()
+	
+	logging = self.bot.logger.info if self else print
+	
+	try:
+		yield
+	finally:
+		if (datetime.now()-timing_start).total_seconds() > 0.0005:
+			logging(f"{f'>>> {ansi.ltcyan}{task.capitalize()}{ansi.rst}' if task else 'Timing'} complete. Total time {time_diff(timing_start)}")
+
+
+
+def time_diff(start_time):
+	return f'{ansi.bold}>>{ansi.rst} {ansi.ltyel}{(datetime.now()-start_time).total_seconds():0.3f}{ansi.rst} {ansi.white}<<{ansi.rst}'
+
 
 
 # Decorator that implements all logging and keeps track of call stats.
@@ -427,15 +449,11 @@ def cleanup_old_files(local_path, age=7):
 
 		cutoff_date = time.time() - age * 24 * 3600
 
-		for item in Path(local_path).expanduser().rglob('*'):
+		# Changed to just process files in local_path, no deeper
+		for item in Path(local_path).expanduser().glob('*'):
 			if item.is_file():
 				if os.stat(item).st_mtime < cutoff_date:
 					os.remove(item)
-
-		for item in Path(local_path).expanduser().rglob('*'):    
-			if item.is_dir():
-				if len(os.listdir(item)) == 0:
-					os.rmdir(item)
 	except Exception as exc:
 		print (f"{print_exc(exc)}")
 
