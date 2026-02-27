@@ -15,6 +15,7 @@ from file_io     import find_cached_data
 from parse_cache import update_parse_cache
 from cached_info import get_cached
 from gradients   import color_scale
+from html_shared import get_color
 
 
 @timed(level=3)
@@ -113,7 +114,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	traits_req = get_table_value(table_format, table, section, key='traits_req', default='any')
 
 	# Apply filters to other_char list.
-	other_chars = filter_on_traits(section, traits_req, other_chars)
+	other_chars = filter_by_traits(section, traits_req, other_chars)
 
 	# Filter out any characters which no one has summoned
 	other_chars = [char for char in other_chars if sum([find_roster_value(alliance_info, player, char, 'power') for player in player_list])]
@@ -216,14 +217,17 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 
 
-def filter_on_traits(section, traits_req='any', char_list=None):
+def filter_by_traits(traits, traits_req='any', char_list=None):
 
-	# Only use trait filters for other_chars.
-	traits = section.get('traits',[])
+	# If section provided pull traits from tag
+	if type(traits) is dict:
+		traits = traits.get('traits')
+
+	# Normalize input into an iterable
 	if type(traits) is str:
 		traits = [traits]
 
-	# If no traits specified, no chars will be included.
+	# If no traits specified, no chars will be returned
 	if not traits:
 		return []
 
@@ -239,10 +243,10 @@ def filter_on_traits(section, traits_req='any', char_list=None):
 	for char in char_list[:]:
 
 		# All is All
-		if 'All' in included_traits:
+		if [x in included_traits for x in ('All', 'All Chars')]:
 			continue
 
-		# Skip explicitly named characters.
+		# Always include explicitly named characters
 		if char in included_traits:
 			continue
 
@@ -306,6 +310,11 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 	# Audit or under min? If Audit, under_min is irrelevant
 	AUDIT = table_format.get('audit')
 	if AUDIT == 'abil':
+		
+		if 'key_ranges' not in alliance_info:
+			with timing('generate_key_ranges'):
+				generate_key_ranges(alliance_info)
+		
 		# Get a little closer to our work
 		KEY_RANGES = alliance_info.get('key_ranges', {}).get(char_name, {})
 
@@ -343,6 +352,42 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 			return True
 
 	player_info[char_name] = False
+
+
+
+# Pre-calculate key range information and standard colors for every stat, every toon, every player
+def generate_key_ranges(alliance_info):
+
+	# Double check
+	key_ranges      = alliance_info.setdefault('key_ranges',{})
+	if key_ranges:
+		return
+
+	processed_chars = [alliance_info['members'][member].get('processed_chars',{}) for member in alliance_info['members']]
+	char_list       = get_cached('char_list')
+
+	# Two passes -- first calculate the key_range, then convert to a dict with a calculated color
+	for char in char_list:
+		for key in ('power','lvl','yel','tier','iso','op'):
+			key_ranges.setdefault(char,{})[key] = {entry.get(char,{}).get(key,0) for entry in processed_chars if entry}
+		
+		key_ranges[char]['red'] = {entry.get(char,{}).get('red',0)+entry.get(char,{}).get('dmd',0) for entry in processed_chars if entry}
+
+		for abil in {entry.get(char,{}).get('abil',0) for entry in processed_chars if entry}:
+			bas,abil = divmod(abil, 1000)
+			spc,abil = divmod(abil, 100)
+			ult,pas  = divmod(abil, 10)
+			key_ranges[char].setdefault('bas',set()).add(bas)
+			key_ranges[char].setdefault('spc',set()).add(spc)
+			key_ranges[char].setdefault('ult',set()).add(ult)
+			key_ranges[char].setdefault('pas',set()).add(pas)
+
+	# Second pass, convert each set of keys into a dict with calculated color for the values
+	for char in char_list:
+		for key in key_ranges[char]:
+			min_val = min(key_ranges[char][key])
+			max_val = max(key_ranges[char][key])
+			key_ranges[char][key] = {value:get_color(min_val, max_val, value, key) for value in key_ranges[char][key]}
 
 
 
