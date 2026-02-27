@@ -15,6 +15,7 @@ import importlib
 import copy
 import glob
 import requests
+import psutil
 
 try:	import strike_teams as strike_temp
 except:	pass
@@ -22,11 +23,11 @@ except:	pass
 try:	import raids_and_lanes
 except:	pass
 
+from datetime import datetime
+from pathlib  import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import quote, unquote
-from pathlib import Path
-from datetime import datetime
 
 
 
@@ -103,68 +104,21 @@ def write_file(pathname, file_content, print_path=False):
 
 
 
-@timed(level=3)
-def html_to_images(html_files, proc_name='msf2csv', print_path=False, render_wait=0.1, output_path=None):
-
-	# Handle base case of single file or URL
-	if type(html_files) == str:
-			html_files = [html_files]
-	
-	files_generated = []
-
-	# Start by getting a Selenium driver
-	driver = get_driver(proc_name)
-
-	# The html_files list contains paths to the html files.
-	for file in html_files:
-		# Start by opening each file with our Selenium driver.
-		driver.get(file if 'http' in file else Path(file).as_uri())
-
-		# Give it just a moment to render the page.
-		#time.sleep(render_wait)
-
-		# Set the height/width of the window accordingly
-		height = driver.execute_script('return document.documentElement.scrollHeight')
-		width  = driver.execute_script('return document.documentElement.scrollWidth')
-
-		# Look for the farthest right element.
-		tables = driver.find_elements(By.TAG_NAME, "table")
-		
-		min_width = 360
-		for table_idx, table in enumerate(tables):
-			min_width = max(table.rect['x']+table.rect['width'], min_width)
-
-		driver.set_window_size(min_width+40, height+450)
-
-		png_filename = f'{output_path}{os.path.basename(file)}.png' if output_path else f'{file[:-5]}.png'
-
-		# Report the file being written.
-		if print_path:
-			print (f"Writing {format_filename(png_filename)}")
-
-		# Then use Selenium to render these pages to disk as images. 
-		body = driver.find_element(By.TAG_NAME, "body")
-		body.screenshot(png_filename)
-		files_generated.append(png_filename)
-		
-		"""# Finally, clean up the original files. 
-		try:
-			os.remove(file)
-		except Exception as exc:
-			print (f"EXCEPTION: {type(exc).__name__}: {exc}")
-		"""
-
-	# Put the driver back in the avail_pool for reuse
-	release_driver(driver)
-
-	return files_generated
-
-
-
 def format_filename(filename):
 	return f'{ansi.cyan}{os.path.dirname(filename)}{os.sep}{ansi.rst}{ansi.white}{os.path.basename(filename)}{ansi.rst}'
 
 
+
+  #8888b.        d8888  .d8888b.  888    888 8888888888 8888888b.       8888888b.        d8888 88888888888     d8888 
+#88P  Y88b      d88888 d88P  Y88b 888    888 888        888  "Y88b      888  "Y88b      d88888     888        d88888 
+#88    888     d88P888 888    888 888    888 888        888    888      888    888     d88P888     888       d88P888 
+#88           d88P 888 888        8888888888 8888888    888    888      888    888    d88P 888     888      d88P 888 
+#88          d88P  888 888        888    888 888        888    888      888    888   d88P  888     888     d88P  888 
+#88    888  d88P   888 888    888 888    888 888        888    888      888    888  d88P   888     888    d88P   888 
+#88b  d88P d8888888888 Y88b  d88P 888    888 888        888  .d88P      888  .d88P d8888888888     888   d8888888888 
+ #Y8888P" d88P     888  "Y8888P"  888    888 8888888888 8888888P"       8888888P" d88P     888     888  d88P     888 
+ 
+ 
 
 @timed(level=3)
 def write_cached_data(alliance_info, file_path='', timestamp='update', filename='', encode=True):
@@ -418,109 +372,6 @@ def check_import_path(alliance_name):
 
 
 
-#888888b.  8888888b.  8888888 888     888 8888888888 8888888b.       8888888b.   .d88888b.   .d88888b.  888
-#88  "Y88b 888   Y88b   888   888     888 888        888   Y88b      888   Y88b d88P" "Y88b d88P" "Y88b 888
-#88    888 888    888   888   888     888 888        888    888      888    888 888     888 888     888 888
-#88    888 888   d88P   888   Y88b   d88P 8888888    888   d88P      888   d88P 888     888 888     888 888
-#88    888 8888888P"    888    Y88b d88P  888        8888888P"       8888888P"  888     888 888     888 888
-#88    888 888 T88b     888     Y88o88P   888        888 T88b        888        888     888 888     888 888
-#88  .d88P 888  T88b    888      Y888P    888        888  T88b       888        Y88b. .d88P Y88b. .d88P 888
-#888888P"  888   T88b 8888888     Y8P     8888888888 888   T88b      888         "Y88888P"   "Y88888P"  88888888
-
-
-
-driver_pool = {}
-
-# Keep drivers open and allow them to be re-used.
-@timed(level=3)
-def get_driver(proc_name='', force_new=False):
-	global driver_pool
-
-	# Create the active and avail pools if necessary
-	active_pool = driver_pool.setdefault('active',{})
-	avail_pool  = driver_pool.setdefault('avail',{})
-
-	driver = None
-
-	# There's a driver available already, provide the existing driver
-	if avail_pool and not force_new:
-		
-		# Grab the available driver, don't fail if we miss
-		driver = avail_pool.pop(list(avail_pool)[0], None)
-
-	# If we didn't find an available driver, create a new one
-	if not driver:
-		driver = create_new_driver(proc_name)
-
-	# If we have a driver...
-	if driver:
-		# Add one to its body count
-		driver.times_used += 1
-
-		# Note job start time in the driver
-		driver.last_used = datetime.now()
-		
-		# Use job start time as key in the active pool
-		active_pool[driver.last_used] = driver
-
-	return driver
-
-
-
-# Create a Selenium driver if requested
-def create_new_driver(proc_name):
-	options = webdriver.ChromeOptions()
-
-	# Indicate which process launched this driver
-	options.add_argument(f'--window-name="{proc_name}"')
-
-	# Add all the important options
-	options.add_argument('--headless=new')
-	options.add_argument('--no-sandbox')
-	options.add_argument('--disable-dev-shm-usage')
-	options.add_argument('--disable-gpu')
-	options.add_argument('--disable-extensions')
-	service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
-
-	# For linux, explicitly specify the chromedriver to use
-	if os.name == 'posix':
-		service.path = '/usr/bin/chromedriver'
-
-	# Actually create the driver
-	driver = webdriver.Chrome(service=service, options=options)
-
-	# Set internal info on driver with initial values
-	driver.pid        = driver.service.process.pid
-	driver.last_used  = driver.creation_date = datetime.now()
-	driver.times_used = 0
-	
-	return driver
-
-
-
-# Check driver in at the end of use.
-@timed(level=3)
-def release_driver(driver):
-	global driver_pool
-
-	# If no driver was issued, nothing to do.
-	if not driver:
-		return
-
-	# Create the active and avail pools if necessary
-	active_pool = driver_pool.setdefault('active',{})
-	avail_pool  = driver_pool.setdefault('avail',{})
-
-	creation_date = driver.creation_date
-	last_used     = driver.last_used
-
-	# If there's no driver available in the avail_pool, just check this one in.
-	avail_pool[creation_date] = active_pool.pop(last_used)
-			
-	return
-
-
-
 #88      .d88888b.   .d8888b.        d8888 888           8888888 888b     d888  .d8888b.        .d8888b.        d8888  .d8888b.  888    888 8888888888 
 #88     d88P" "Y88b d88P  Y88b      d88888 888             888   8888b   d8888 d88P  Y88b      d88P  Y88b      d88888 d88P  Y88b 888    888 888        
 #88     888     888 888    888     d88P888 888             888   88888b.d88888 888    888      888    888     d88P888 888    888 888    888 888        
@@ -568,7 +419,277 @@ def local_img_cache(url, req_html=False):
 			return url
 
 	return url if req_html else f'./assets/{Path(url).name}'
+	
 
+
+#88    888 88888888888 888b     d888 888           88888888888 .d88888b.       8888888 888b     d888        d8888  .d8888b.  8888888888 .d8888b.  
+#88    888     888     8888b   d8888 888               888    d88P" "Y88b        888   8888b   d8888       d88888 d88P  Y88b 888       d88P  Y88b 
+#88    888     888     88888b.d88888 888               888    888     888        888   88888b.d88888      d88P888 888    888 888       Y88b.      
+#888888888     888     888Y88888P888 888               888    888     888        888   888Y88888P888     d88P 888 888        8888888    "Y888b.   
+#88    888     888     888 Y888P 888 888               888    888     888        888   888 Y888P 888    d88P  888 888  88888 888           "Y88b. 
+#88    888     888     888  Y8P  888 888               888    888     888        888   888  Y8P  888   d88P   888 888    888 888             "888 
+#88    888     888     888   "   888 888               888    Y88b. .d88P        888   888   "   888  d8888888888 Y88b  d88P 888       Y88b  d88P 
+#88    888     888     888       888 88888888          888     "Y88888P"       8888888 888       888 d88P     888  "Y8888P88 8888888888 "Y8888P"  
+
+
+
+@timed(level=3)
+def html_to_images(html_files, proc_name='msf2csv', print_path=False, render_wait=0.1, output_path=None):
+
+	# Handle base case of single file or URL
+	if type(html_files) == str:
+			html_files = [html_files]
+	
+	files_generated = []
+
+	# Start by getting a Selenium driver
+	driver = get_driver(proc_name)
+
+	failed_drivers = []
+
+	# The html_files list contains paths to the html files.
+	for file in html_files:
+		
+		# If we have any issues, try again until we hit 3 failures
+		while len(failed_drivers) < 3:
+			try:
+				show_driver_pool('before html_to_images')
+				
+				# Start by opening each file with our Selenium driver.
+				driver.get(file if 'http' in file else Path(file).as_uri())
+	
+				#print (f'Generating image with Driver PID: {driver.pid:>5}')
+	
+				# Give it just a moment to render the page.
+				#time.sleep(render_wait)
+
+				# Set the height/width of the window accordingly
+				height = driver.execute_script('return document.documentElement.scrollHeight')
+				width  = driver.execute_script('return document.documentElement.scrollWidth')
+
+				# Look for the farthest right element.
+				tables = driver.find_elements(By.TAG_NAME, "table")
+				
+				min_width = 360
+				for table_idx, table in enumerate(tables):
+					min_width = max(table.rect['x']+table.rect['width'], min_width)
+
+				driver.set_window_size(min_width+40, height+450)
+
+				png_filename = f'{output_path}{os.path.basename(file)}.png' if output_path else f'{file[:-5]}.png'
+
+				# Report the file being written.
+				if print_path:
+					print (f"Writing {format_filename(png_filename)}")
+
+				# Then use Selenium to render these pages to disk as images. 
+				body = driver.find_element(By.TAG_NAME, "body")
+				body.screenshot(png_filename)
+				files_generated.append(png_filename)
+		
+				# Increment the image_count
+				driver.times_used += 1
+		
+				break
+			except Exception as exc:
+				
+				print (f'EXCEPTION: {exc}')
+				
+				# Take note of any driver issues, will kill at the end
+				failed_drivers.append(driver)
+					
+				# Get another driver and try it again
+				driver = None if len(failed_drivers) == 3 else get_driver(proc_name)
+
+	# If any failures, kill their process trees
+	kill_process_tree([x.pid for x in failed_drivers])
+	
+	# Put the driver back in the avail_pool for reuse
+	release_driver(driver, failed_drivers)
+
+	# no driver == failed 3x, raise exception
+	if not driver:
+		raise
+
+	return files_generated
+
+
+
+#888888b.  8888888b.  8888888 888     888 8888888888 8888888b.       8888888b.   .d88888b.   .d88888b.  888
+#88  "Y88b 888   Y88b   888   888     888 888        888   Y88b      888   Y88b d88P" "Y88b d88P" "Y88b 888
+#88    888 888    888   888   888     888 888        888    888      888    888 888     888 888     888 888
+#88    888 888   d88P   888   Y88b   d88P 8888888    888   d88P      888   d88P 888     888 888     888 888
+#88    888 8888888P"    888    Y88b d88P  888        8888888P"       8888888P"  888     888 888     888 888
+#88    888 888 T88b     888     Y88o88P   888        888 T88b        888        888     888 888     888 888
+#88  .d88P 888  T88b    888      Y888P    888        888  T88b       888        Y88b. .d88P Y88b. .d88P 888
+#888888P"  888   T88b 8888888     Y8P     8888888888 888   T88b      888         "Y88888P"   "Y88888P"  88888888
+
+
+
+driver_pool = {}
+
+
+
+# Keep drivers open and allow them to be re-used.
+@timed(level=3)
+def get_driver(proc_name='', force_new=False):
+	global driver_pool
+
+	# Create the active and avail pools if necessary
+	active_pool = driver_pool.setdefault('active',{})
+	avail_pool  = driver_pool.setdefault('avail',{})
+
+	show_driver_pool('before get_driver')
+
+	driver = None
+
+	# If a driver is available already, provide the existing driver
+	if avail_pool and not force_new:
+		
+		# Grab the available driver, don't fail if we miss
+		driver = avail_pool.pop(list(avail_pool)[0], None)
+
+	# If we didn't find an available driver, create a new one
+	if not driver:
+		driver = create_new_driver(proc_name)
+
+	# If we have a driver...
+	if driver:
+		# Note job start time in the driver
+		driver.last_used = datetime.now()
+		
+		# Use job start time as key in the active pool
+		active_pool[driver.last_used] = driver
+
+	show_driver_pool('after get_driver')
+
+	return driver
+
+
+
+# Create a Selenium driver if requested
+def create_new_driver(proc_name):
+	options = webdriver.ChromeOptions()
+
+	# Indicate which process launched this driver
+	options.add_argument(f'--window-name="{proc_name}"')
+
+	# Add all the important options
+	options.add_argument('--headless=new')
+	options.add_argument('--no-sandbox')
+	options.add_argument('--disable-dev-shm-usage')
+	options.add_argument('--disable-gpu')
+	options.add_argument('--disable-extensions')
+	service = webdriver.ChromeService(service_args=["--enable-chrome-logs"])
+
+	# For linux, explicitly specify the chromedriver to use
+	if os.name == 'posix':
+		service.path = '/usr/bin/chromedriver'
+
+	# Actually create the driver
+	driver = webdriver.Chrome(service=service, options=options)
+
+	# Set internal info on driver with initial values
+	driver.pid        = driver.service.process.pid
+	driver.last_used  = driver.creation_date = datetime.now()
+	driver.times_used = 0
+
+	# print (f'Created NEW driver: {driver.pid:>5}')
+	
+	return driver
+
+
+
+# Check driver in at the end of use.
+@timed(level=3)
+def release_driver(driver, also_release=None):
+	global driver_pool
+
+	# Create the active and avail pools if necessary
+	active_pool = driver_pool.setdefault('active',{})
+	avail_pool  = driver_pool.setdefault('avail',{})
+
+	# Initialize the mutables
+	if also_release is None:
+		also_release = []
+
+	show_driver_pool('before release_driver')
+
+	# If returning driver, add to avail_pool - key is creation_date
+	if driver:
+		avail_pool[driver.creation_date] = driver
+
+		# Add driver to list to release from active pool
+		also_release.append(driver)
+
+	# Clean up active_pool
+	for driver in also_release:
+		active_pool.pop(driver.last_used, None)
+	
+	show_driver_pool('after release_driver')
+	
+	return
+
+
+
+# Walk and kill process tree for old, failed, or abandoned web drivers
+def kill_process_tree(pid_list, logger=print):
+
+	show_driver_pool('before kill_process_tree')
+
+	driver_count = proc_count = 0
+
+	for pid in pid_list:
+
+		try:
+			proc = psutil.Process(pid)
+			child_procs = []
+
+			# Kill off all the child processes first
+			for child_proc in proc.children(recursive=True):
+				child_proc.kill()
+
+				# Keep track of how many children processes we found
+				child_procs.append(child_proc.pid)
+
+			# Log info before killing the process
+			children = f"{', '.join([f'{ansi.bold}{x:>5}{ansi.rst}' for x in sorted(child_procs)])}"
+			logger (f'{ansi.ltred}Killed process{ansi.rst} {proc.name()} PID: {ansi.ltyel}{proc.pid:>5}{ansi.rst}' + (f' and {len(child_procs)} children: {children}' if child_procs else ''))
+
+			# Finally, kill the top process from the PID list
+			proc.kill()
+
+			# What's our body count?
+			driver_count += 1
+			proc_count   += 1 + len(child_procs)
+
+		# Ignore issues with accessing process information
+		except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+			pass
+
+	if driver_count or proc_count:
+		logger (f'Terminated {ansi.ltyel}{driver_count} web drivers{ansi.rst}, {proc_count} total processes killed')
+
+	show_driver_pool('after kill_process_tree')
+
+	return driver_count
+
+
+
+def show_driver_pool(task = ''):
+	global driver_pool
+
+	"""# Create the active and avail pools if necessary
+	active_pool = driver_pool.setdefault('active',{})
+	avail_pool  = driver_pool.setdefault('avail',{})
+
+	active_used = ',  '.join([f'PID: {ansi.ltyel}{active_pool[driver].pid:>5}{ansi.rst} Used: {active_pool[driver].times_used}' for driver in active_pool])+(2*(len(active_pool)-1)*' ') if active_pool else f'{ansi.dkgray}{'empty':^18}{ansi.rst}'
+	avail_used  = ',  '.join([f'PID: {ansi.ltyel}{ avail_pool[driver].pid:>5}{ansi.rst} Used: { avail_pool[driver].times_used}' for driver in  avail_pool]) if  avail_pool else f'{ansi.dkgray}{'empty':^18}{ansi.rst}'
+
+	if active_pool|avail_pool:
+		task = f' after {ansi.ltcyan}{task[6:]}{ansi.rst}' if task.startswith('after') else task
+		task = f'before {ansi.ltcyan}{task[7:]}{ansi.rst}' if task.startswith('before') else task
+		print (f'{'DRIVERS':>10} {task:35}{ansi.white}ACTIVE:{ansi.rst}  {active_used:50} {ansi.white}AVAIL:{ansi.rst}  {avail_used:75}')"""
 
 
 # Insert the local directory at the front of path to override packaged versions.
