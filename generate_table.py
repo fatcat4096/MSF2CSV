@@ -40,10 +40,6 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		name_alt_dim  = 'ngaltd'
 		button_hover  = 'blkb'
 
-	# Define these once
-	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
-	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op')
-
 	# Sort player list if requested.
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
 
@@ -146,6 +142,12 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			table_lbl = f'<div class="img cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{table_lbl}</div>'
 			break
 
+	# Define these once
+	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
+
+	# Standard order for these columns
+	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op')
+
 	# Get keys from table_format/table, with defaults if necessary.
 	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','tier','iso'], profile=True)
 
@@ -153,6 +155,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	if 'abil' in keys:
 		idx = keys.index('abil')
 		keys = keys[:idx] + ['bas', 'spc', 'ult', 'pas'] + keys[idx+1:]
+
+	# Set the key_order based on the keys requested and presented
+	key_order = keys if team_power_summary else [x for x in key_order if x in keys]
 
 	# If inline_hist is requested, we will loop through this code twice for each user.
 	# First pass will generate normal output and second one will generate historical data. 
@@ -457,7 +462,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
 
 						# Include requested info in specific order
-						for key in [x for x in key_order if x in keys]:
+						for key in key_order:
 							
 							# Get the range of values for this character for all rosters.
 							# If historical, we want the diff between the current values and the values in the oldest record
@@ -611,7 +616,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Insert stat headings for each included Character.
 			for char in line_chars:
-				for key in [x for x in key_order if x in keys]:
+				for key in key_order:
 					width = 'p' if key == 'power' else ''
 					html_file.append(f'     <td class="{button_hover}{width}" {sort_func % col_idx}>{key_labels.get(key, key.title())}</td>')
 					col_idx += 1
