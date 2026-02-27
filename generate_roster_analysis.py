@@ -34,7 +34,7 @@ def generate_roster_analysis(alliance_info, html_cache, hist_date, table_format=
 	INC_VIEWS = table_format.get('which_views', 2)
 
 	# What Characters should be included in Analysis
-	FILTER_BY = table_format.get('trait_name', 'All Chars')
+	FILTER_BY = table_format.get('filter_by', 'All Chars')
 
 	html_file = []
 
@@ -173,7 +173,7 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	if MAX_YEL:
 		for idx in range(4):
 			LABEL = f'{idx + MAX_YEL-3}' + ('+' if idx!=3 and not ACTUALS else '')
-			html_file.append(f' <td {sort_func % (BASE_COLS+idx)}{LABEL}</td>')
+			html_file.append(f' <td {sort_func % (BASE_COLS+idx)}>{LABEL}</td>')
 		BASE_COLS += 5
 	
 	# Red Stars
@@ -252,7 +252,6 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 
 	# Pull formatting info from table_format
 	INC_KEYS  = table_format.get('inc_keys')
-	COLOR_SET = table_format.get('color_set', 'set')
 
 	# Pull max values for each type
 	MAX_YEL  = stats.get('MAX_YEL')
@@ -287,62 +286,62 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 		html_file.append(f' <td class="{field_color} urlb"><a style="text-decoration:none; color:black;{member_url}>{member_info.get('display_name',member)}</a></td>')
 		
 		for stat in ['tcp','stp','tcc']:
-			html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat)
+			html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat)
 		html_file.append(' <td></td>') 											# Vertical Divider
 
 		# Averages
 		AVG_COLS = [key for key in INC_KEYS if key != 'abil']
 		if AVG_COLS:
 			for stat in AVG_COLS:
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, f'avg_{stat}')
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, f'avg_{stat}')
 			html_file.append(' <td></td>') 										# Vertical Divider
 		
 		# Yellow Stars
 		if MAX_YEL:
 			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'yel', key + MAX_YEL-3)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'yel', key + MAX_YEL-3)
 			html_file.append(' <td></td>') 										# Vertical Divider
 
 		# Red Stars
 		if MAX_RED:
 			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'red', key + MAX_RED-3)
 			html_file.append(' <td></td>') 										# Vertical Divider
 
 		# Diamonds are dependent on Red Stars
 		if MAX_DMD:
 			for key in range(MAX_DMD):
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'dmd', key+1)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'dmd', key+1)
 			html_file.append(' <td></td>') 										# Vertical Divider
 
 		# Level Ranges
 		if MAX_LVL:
 			for key in get_lvl_cols(MAX_LVL, stats['DETAILS']):
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'lvl', key)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'lvl', key)
 			html_file.append(' <td></td>') 										# Vertical Divider
 
 		# ISO Levels                                                                                                       
 		if MAX_ISO:
 			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'iso', key + MAX_ISO-3)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'iso', key + MAX_ISO-3)
 			html_file.append(' <td></td>') 										# Vertical Divider
 
 		# Gear Tiers
 		if MAX_TIER:
 			for key in range(5):
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'tier', key + MAX_TIER-4)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'tier', key + MAX_TIER-4)
 			html_file.append(' <td></td>') 										# Vertical Divider
 
 		# T4 Abilities
 		if 'abil' in INC_KEYS:
 			for stat in ['bas','spc','ult','pas']:
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, stat, 7)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat, 7)
 			html_file.append(' <td></td>') 										# Vertical Divider
 
 		# OP Ranges
 		if MAX_OP:
 			for key in range(4):
-				html_file += get_member_stat(member_stats, stats_range, COLOR_SET, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
+				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
 
 		html_file.append('</tr>')
 
@@ -352,7 +351,7 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 
 
 
-def get_member_stat(member_stats, stats_range, color_set, html_cache, stale_data, hist_date, stat, key=None):
+def get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat, key=None):
 
 	if key is None:
 		member_stat = member_stats.get(stat,0)
@@ -371,7 +370,7 @@ def get_member_stat(member_stats, stats_range, color_set, html_cache, stale_data
 		field_value = f"{member_stat:+.2f}" if hist_date else f"{member_stat:.2f}"
 
 	# Force hist_date to none -- makes more sense than historical coloration
-	field_color = get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=None, color_set=color_set)
+	field_color = get_value_color(stat_range, member_stat, html_cache, stale_data, hist_date=None, color_set='set')
 
 	return [f' <td class="{field_color}">{field_value}</td>']
 
@@ -504,7 +503,7 @@ def analyze_rosters(alliance_info, table_format, stat_type, rosters_to_analyze):
 	rosters_to_analyze = copy.deepcopy(rosters_to_analyze)
 
 	# Which Characters should be included in Analysis
-	FILTER_BY = table_format.get('trait_name', 'All Chars')
+	FILTER_BY = table_format.get('filter_by', 'All Chars')
 	filtered_chars = filter_by_traits(FILTER_BY)
 
 	# Find MAX_LVL if Levels included in output
