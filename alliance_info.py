@@ -219,7 +219,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 def filter_by_traits(traits, traits_req='any', char_list=None):
 
-	# If section provided pull traits from tag
+	# If Section provided, pull traits from tag
 	if type(traits) is dict:
 		traits = traits.get('traits')
 
@@ -243,7 +243,7 @@ def filter_by_traits(traits, traits_req='any', char_list=None):
 	for char in char_list[:]:
 
 		# All is All
-		if [x in included_traits for x in ('All', 'All Chars')]:
+		if 'All' in included_traits or 'All Chars' in included_traits:
 			continue
 
 		# Always include explicitly named characters
