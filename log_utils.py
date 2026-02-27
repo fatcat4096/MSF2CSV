@@ -44,7 +44,7 @@ reporting_threshold = 1.00
 
 
 @contextmanager
-def timing(self=None, task=''):
+def timing(task='', self=None):
 	timing_start = datetime.now()
 	
 	logging = self.bot.logger.info if self else print
