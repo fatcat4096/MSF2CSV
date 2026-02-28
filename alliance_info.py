@@ -224,7 +224,7 @@ def filter_by_traits(traits, traits_req='any', char_list=None):
 		traits = traits.get('traits')
 
 	# Normalize input into an iterable
-	if type(traits) is str:
+	if isinstance(traits, str):
 		traits = [traits]
 
 	# If no traits specified, no chars will be returned
