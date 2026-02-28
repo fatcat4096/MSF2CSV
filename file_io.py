@@ -384,7 +384,7 @@ def check_import_path(alliance_name):
 
 
 # Where should assets be downloaded to for local caching?
-asset_cache = f'{os.path.dirname(__file__)}{os.sep}cached_data{os.sep}reports{os.sep}assets{os.sep}'
+asset_cache = f'{os.path.dirname(__file__)}{os.sep}cached_data{os.sep}assets{os.sep}'
 if not os.path.exists(asset_cache):
 	os.makedirs(asset_cache)
 
@@ -403,7 +403,7 @@ def local_img_cache(url, req_html=False):
 				for chunk in response.iter_content(chunk_size=8192):
 					file.write(chunk)
 
-			print (f'{ansi.ltyel}Caching locally:{ansi.rst} {ansi.gray}{url=} => ./assets/{ansi.rst}{ansi.white}{Path(url).name}{ansi.rst}')
+			print (f'{ansi.ltyel}Caching locally:{ansi.rst} {ansi.gray}{url=} => ../assets/{ansi.rst}{ansi.white}{Path(url).name}{ansi.rst}')
 
 		# If download fails, delete any partial file and return url instead
 		except requests.exceptions.RequestException as e:
@@ -418,7 +418,7 @@ def local_img_cache(url, req_html=False):
 			# Advise use of URL instead
 			return url
 
-	return url if req_html else f'./assets/{Path(url).name}'
+	return url if req_html else f'../assets/{Path(url).name}'
 	
 
 
