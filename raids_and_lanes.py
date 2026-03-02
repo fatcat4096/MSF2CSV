@@ -93,7 +93,8 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power','lvl','tier','iso'],
 					'lanes':[ [
-							{'traits': ['AlphaFlight'],    'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar'] + CHAMPIONS},
+							{'traits': ['AlphaFlight'],    'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+							{'traits': ['Champions'],      'meta': CHAMPIONS},
 							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
 							] ]
 					}
