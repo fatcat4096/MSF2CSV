@@ -54,53 +54,12 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# See if we need to pare the included characters even further.
 	using_chars = char_list[:]
 
-	# Find out whether inline history has been requested for this report.
-	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
-
-	# Is there a MINIMUM number of toons we should be displaying?
-	min_others  = get_table_value(table_format, table, section, key='min_others')
-
 	# Note whether HTML output has been requested
 	req_html = table_format.get('output_format') in ('html','tabbed')
 
-	# Pare any missing heroes if these aren't Meta entries.
-	if 'META' not in table_lbl and len(using_chars) > 5 and not team_power_summary and not min_others:
-
-		using_chars = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)			
-
-		# if inline_hist, only want heroes that have actually been changed.
-		if inline_hist:
-
-			# min_change_filter specifies how much change is required to be considered 'intentionally built'. 
-			min_change_filter = get_table_value(table_format, table, section, key='min_change_filter', default=0)
-
-			# If a value is specified, strip any character that hasn't been built at least that amount over time.
-			if min_change_filter:
-				filtered_chars = []
-
-				# If passed as True, then ANY change should be registered
-				if type(min_change_filter) is bool:
-					min_change_filter = 0
-
-				for char in using_chars:
-					for player in using_players:
-
-						# Get current power for this toon.
-						curr_power = find_roster_value(alliance_info, player, char, 'power')
-
-						# If not summoned yet, move on to next player.
-						if not curr_power:
-							continue
-
-						# Get historical power for this toon.
-						hist_diff = find_roster_value(alliance_info, player, char, 'power', hist_date=inline_hist)
-						
-						# If relevant growth, include and move to next char
-						if abs(hist_diff/curr_power) > min_change_filter:
-							filtered_chars.append(char)
-							break
-
-				using_chars = filtered_chars
+	# Is this the OTHER CHARS section? If so, reduce the entries based on min/max others
+	if 'META' not in table_lbl and len(using_chars) > 5 and not team_power_summary:
+		using_chars = sort_and_filter_others(alliance_info, table, section, table_format, using_players, using_chars)
 
 	# If there are no characters in this table, don't generate a table.
 	if not using_chars:
@@ -159,17 +118,18 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	# Set the key_order based on the keys requested and presented
 	key_order = keys if team_power_summary else [x for x in key_order if x in keys]
 
+	# Find out whether inline history has been requested for this report.
+	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
+
 	# If inline_hist is requested, we will loop through this code twice for each user.
 	# First pass will generate normal output and second one will generate historical data. 
-	hist_list = [hist_date]
-	if inline_hist:
-		hist_list.append(inline_hist)
+	date_list = [hist_date, inline_hist] if inline_hist else [hist_date]
 
 	# Are we displaying everyone or just a subset?
 	inc_all_players = using_players == set(player_list)
 
 	# Pre-calculate key ranges for each character
-	for hist_date in hist_list:
+	for hist_date in date_list:
 
 		# Only profile non-historical data
 		profile_keys = {} if hist_date else {'yel','red','lvl','tier','iso'}
@@ -206,7 +166,8 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				PROFILE[key] |= {find_roster_value(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in using_players}
 
 	# Auto-calc the best value for line wrap length if an explicit value not defined
-	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=calculate_line_wrap(using_chars)) 
+	line_wrap = calculate_line_wrap(using_chars, len(using_players) != len(player_list))
+	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=line_wrap) 
 
 	# Initialize the row count. Will add to it with each strike_team section.
 	row_idx = 1
@@ -410,25 +371,25 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					not_ready = num_avail < min_count and len(char_list) >= min_count 
 
 				# Hist List has two entries if Inline Hist is included
-				for use_hist_date in hist_list:
+				for hist_date in date_list:
 
 					# Find min/max for meta/strongest team power in the Alliance
 					# This will be used for color calculation for the Team Power column.
-					stp_range = [stp_list[use_hist_date][player_name] for player_name in player_list]
+					stp_range = [stp_list[hist_date][player_name] for player_name in player_list]
 
 					# Standard Name field content. 
 					name_field = alliance_info['members'][player_name].get('display_name',player_name).replace('Commander','Cmdr.')
 
 					# If inline_hist was requested, add content to the Name field for the second line and make this and several other fields span both lines.
 					rowspan = ''
-					if inline_hist and not use_hist_date:
+					if inline_hist and not hist_date:
 						name_field = f'{name_field}<br><span style="font-weight:normal;"><i>(since {inline_hist.strftime("%m/%d/%y")})</i></span>'
 						rowspan = '" rowspan="2'
 
 					# Player Name, then relevant stats for each character.
-					st_html.append(f"    <tr{' class="xx"' if use_hist_date else ''}>")
+					st_html.append(f"    <tr{' class="xx"' if hist_date else ''}>")
 
-					inline_hist_row = inline_hist and use_hist_date
+					inline_hist_row = inline_hist and hist_date
 
 					# Skip this cell if on Inline Hist line.
 					if not inline_hist_row:
@@ -457,7 +418,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 						# TEAM POWER SUMMARY: Calculate under_min for a team/section so that the Power/Avail/Rank is dimmed if not 5 toons are available yet.
 						if team_power_summary:
-							under_min = not_completed and min_count and len(find_roster_value(alliance_info, player_name, char_name, 'avail', use_hist_date, {*()})) < min_count - (DD7 and char_name=='Mythic')
+							under_min = not_completed and min_count and len(find_roster_value(alliance_info, player_name, char_name, 'avail', hist_date, {*()})) < min_count - (DD7 and char_name=='Mythic')
 						else:
 							under_min = section.get('under_min',{}).get(player_name,{}).get(char_name)
 
@@ -466,7 +427,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							
 							# Get the range of values for this character for all rosters.
 							# If historical, we want the diff between the current values and the values in the oldest record
-							key_range = table_format['key_ranges'][use_hist_date][char_name][key]
+							key_range = table_format['key_ranges'][hist_date][char_name][key]
 
 							# Only look up the key_val if we have a roster.
 							key_val = 0
@@ -475,7 +436,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							
 								# Standard lookup. Get the key_val for this character stat from this player's roster.
 								# If historical, we look for the first time this member appears in the History, and then display the difference between the stat in that record and this one.
-								key_val, other_diffs = find_roster_value(alliance_info, player_name, char_name, key, use_hist_date, other_info=True)
+								key_val, other_diffs = find_roster_value(alliance_info, player_name, char_name, key, hist_date, other_info=True)
 
 							need_tt = key=='power' and key_val != 0 and not linked_hist
 
@@ -483,20 +444,20 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							if type(key_val) is set:
 								key_val = len(key_val)
 
-							if key_val == 0 and use_hist_date:
+							if key_val == 0 and hist_date:
 								style = ''
 							else:
 								# Note: We are using the T class to get black text on fields in the Hist tab.
-								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, use_hist_date)
-								style = f' class="{field_color}{' T' if need_tt or use_hist_date is not None else ''}"'
+								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, hist_date)
+								style = f' class="{field_color}{' T' if need_tt or hist_date is not None else ''}"'
 
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
-							if key=='red' and key_val>7 and not use_hist_date:
+							if key=='red' and key_val>7 and not hist_date:
 								field_value = f'<span class="dmd">{key_val-7}&#x1F48E;</span>'
-							elif key=='iso' and key_val and not use_hist_date:
+							elif key=='iso' and key_val and not hist_date:
 								field_value = f'{(key_val+4)%5+1}'
 							else:
-								field_value = get_field_value(key_val, use_hist_date)
+								field_value = get_field_value(key_val, hist_date)
 
 							st_html.append(f'     <td{style}>{field_value}{other_diffs if need_tt else ""}</td>')
 
@@ -558,7 +519,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						tcp_range = [alliance_info['members'][player_name].get('tcp',0) for player_name in strike_team]
 
 						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
-						field_value = get_field_value(player_tcp, use_hist_date)
+						field_value = get_field_value(player_tcp, hist_date)
 						
 						# Determine the field color
 						field_color = get_value_color(tcp_range, player_tcp, html_cache, stale_data, color_set='set')
@@ -566,10 +527,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						st_html.append(f'     <td class="bd {field_color}">{field_value}</td>') 
 					
 					elif len(char_list)>1:
-						player_stp = stp_list.get(use_hist_date,{}).get(player_name,0)
+						player_stp = stp_list.get(hist_date,{}).get(player_name,0)
 
 						# Determine what value should be displayed in STP field. Add + if historical data, use '-' if empty value.
-						field_value = get_field_value(player_stp, use_hist_date)
+						field_value = get_field_value(player_stp, hist_date)
 						
 						# Determine the field color
 						field_color = get_value_color(stp_range, player_stp, html_cache, stale_data)
@@ -682,15 +643,15 @@ def get_min_reqs(table_format, table, section):
 
 
 # Automate the line_wrap selection and hide the messy calcs
-def calculate_line_wrap(using_chars):
-
-	wrap_after = 12
-	lines_used  = 1
+def calculate_line_wrap(using_chars, less_players):
+	wrap_after = 6    if less_players else 12
+	ratio_used = 1.25 if less_players else 1.333
+	lines_used = 1
 
 	# Calculate an optimal number of lines to wrap to.
 	while len(using_chars) > wrap_after * lines_used:
 		lines_used += 1
-		wrap_after = int( (wrap_after * 4 / 3) + 0.49)
+		wrap_after = int( (wrap_after * ratio_used) + 0.49)
 
 	# Calculate the line_wrap to best fill this number of lines
 	return round(len(using_chars)/lines_used + 0.49)

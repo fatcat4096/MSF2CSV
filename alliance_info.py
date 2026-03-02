@@ -100,7 +100,6 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Meta Chars not subject to min requirements. Filter out only uncollected heroes
 	meta_chars   = section.get('meta',[])
-	sort_char_by = None if '---' in meta_chars else 'alpha'
 	
 	meta_chars = [char for char in meta_chars if char in char_list]
 
@@ -119,12 +118,6 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	# Filter out any characters which no one has summoned
 	other_chars = [char for char in other_chars if sum([find_roster_value(alliance_info, player, char, 'power') for player in player_list])]
 
-	# Set aside a list of the other_chars prior to filtering for minimums
-	before_filter = other_chars[:]
-
-	# Filter out anyone less than the min_iso / min_tier
-	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
-
 	# Calculate info for an under_min section, hide it in table for later use. 
 	section['under_min'] = {}
 
@@ -135,25 +128,90 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 
 	# Start by pulling value from table_format or table
 	max_others  = get_table_value(table_format, table, section, key='max_others', default=len(other_chars))
-	min_others  = get_table_value(table_format, table, section, key='min_others', default=0)
-	
-	# Set min_others to max_others if both are defined
-	min_others  = max_others if min_others and max_others else min_others
 
 	# If span format requested, override max_others if necessary.
-	if table_format.get('span') or table.get('span'):
-		if meta_chars:
-			max_others = 0
-		elif max_others > 5:
-			max_others = 5
+	if table_format.get('span') or table.get('span') and meta_chars:
+		max_others = 0
 
 	# No means no.
 	if meta_chars and max_others == 0:
 		other_chars = []
 
+	# If only meta specified, just move it to others -- only have to generate one table
+	if meta_chars and not other_chars:
+		other_chars, meta_chars = meta_chars, other_chars
+
+	return meta_chars, other_chars
+
+
+
+# Separate this and call it ONLY AT THE END
+def sort_and_filter_others(alliance_info, table, section, table_format, player_list, other_chars):
+
+	# Set aside a list of the other_chars prior to filtering for minimums
+	before_filter = other_chars[:]
+
+	# Filter out anyone less than the min_iso / min_tier
+	other_chars = remove_min_iso_tier(alliance_info, table_format, table, section, player_list, other_chars)
+
+	#
+	# FILTERING SPECIFIC TO inline_hist -- ONLY INCLUDE HEROES THAT HAVE CHANGED A SPECIFIC AMOUNT
+	#
+
+	# Find out whether inline history has been requested for this report.
+	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
+
+	# if inline_hist, only want heroes that have actually been changed.
+	if inline_hist:
+
+		# min_change_filter specifies how much change is required to be considered 'intentionally built'. 
+		min_change_filter = get_table_value(table_format, table, section, key='min_change_filter', default=0)
+
+		# If a value is specified, strip any character that hasn't been built at least that amount over time.
+		if min_change_filter:
+			filtered_chars = []
+
+			# If passed as True, then ANY change should be registered
+			if type(min_change_filter) is bool:
+				min_change_filter = 0
+
+			for char in other_chars:
+				for player in player_list:
+
+					# Get current power for this toon.
+					curr_power = find_roster_value(alliance_info, player, char, 'power')
+
+					# If not summoned yet, move on to next player.
+					if not curr_power:
+						continue
+
+					# Get historical power for this toon.
+					hist_diff = find_roster_value(alliance_info, player, char, 'power', hist_date=inline_hist)
+					
+					# If relevant growth, include and move to next char
+					if abs(hist_diff/curr_power) > min_change_filter:
+						filtered_chars.append(char)
+						break
+
+			other_chars = filtered_chars
+
+	#
+	# THIS ENFORCES max_others AND SORTS BY THE INDICATED CRITERIA
+	#
+
+	# Start by pulling value from table_format or table
+	max_others  = get_table_value(table_format, table, section, key='max_others', default=len(other_chars))
+	min_others  = get_table_value(table_format, table, section, key='min_others', default=0)
+	
+	# If span format requested, override max_others if necessary.
+	if table_format.get('span') or table.get('span'):
+		max_others = 5
+
+	# Set min_others to max_others if both are defined
+	min_others  = max_others if min_others and max_others else min_others
+
 	# Default sort is still 'alpha'.
-	if sort_char_by:
-		sort_char_by = get_table_value(table_format, table, section, key='sort_char_by', default=sort_char_by)
+	sort_char_by = get_table_value(table_format, table, section, key='sort_char_by', default='alpha')
 
 	# This section sorts other_chars by power or availability, not by name.
 	# If max_others, this order is also used to select which we keep. 
@@ -185,8 +243,12 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 		if max_others:
 			other_chars = other_chars[:max_others]
 
+		#
+		# ALL THIS IS ENFORCING min_others
+		#
+
 		# If we're forcing a min number of entries to be displayed, ensure we have at least that many
-		if min_others and min_others > len(other_chars):
+		if min_others and len(other_chars) < min_others:
 
 			# Omit any we're already including, need to sort the rest by power
 			before_filter = [char for char in before_filter if char not in other_chars]
@@ -209,11 +271,7 @@ def get_meta_other_chars(alliance_info, table, section, table_format):
 	elif sort_char_by == 'alpha':
 		other_chars.sort()
 
-	# If only meta specified, just move it to others so we don't have to do anything special.
-	if meta_chars and not other_chars:
-		other_chars, meta_chars = meta_chars, other_chars
-
-	return meta_chars, other_chars
+	return other_chars
 
 
 
