@@ -644,8 +644,8 @@ def get_min_reqs(table_format, table, section):
 
 # Automate the line_wrap selection and hide the messy calcs
 def calculate_line_wrap(using_chars, less_players):
-	wrap_after = 6    if less_players else 12
-	ratio_used = 1.25 if less_players else 1.333
+	wrap_after = 10  if less_players else 12
+	ratio_used = 1.1 if less_players else 1.333
 	lines_used = 1
 
 	# Calculate an optimal number of lines to wrap to.
