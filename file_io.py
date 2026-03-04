@@ -654,7 +654,7 @@ def kill_process_tree(pid_list, logger=print):
 
 			# Log info before killing the process
 			children = f"{', '.join([f'{ansi.bold}{x:>5}{ansi.rst}' for x in sorted(child_procs)])}"
-			logger (f'{ansi.ltred}Killed process{ansi.rst} {proc.name()} PID: {ansi.ltyel}{proc.pid:>5}{ansi.rst}' + (f' and {len(child_procs)} children: {children}' if child_procs else ''))
+			logger (f'{ansi.ltred}Killed{ansi.rst} process {ansi.ltyel}{proc.name()}{ansi.rst} PID: {ansi.ltyel}{proc.pid:>5}{ansi.rst}' + (f' and {len(child_procs)} child procs: {children}' if child_procs else ''))
 
 			# Finally, kill the top process from the PID list
 			proc.kill()
