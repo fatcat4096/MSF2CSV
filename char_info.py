@@ -1106,7 +1106,8 @@ playable   = {
         "Bio",
         "Blaster",
         "GalacticCouncil",
-        "Legendary"
+        "Legendary",
+        "DARK_PROMOTION"
       ],
       "unlockStars": 4
     },
@@ -5895,6 +5896,30 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Ruthless, unstoppable, and from an alternate universe far in the future, Maestro is a version of Hulk that uses his awesome intelligence to slay his adversaries and collect trophies from the fallen.",
+      "id": "Maestro",
+      "mission": false,
+      "name": "Maestro",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Maestro_bd8714ac.png",
+      "starItems": [
+        "SHARD_MAESTRO",
+        "RS_MAESTRO_1",
+        "RS_MAESTRO_2",
+        "RS_MAESTRO_3",
+        "RS_MAESTRO_4",
+        "RS_MAESTRO_5",
+        "RS_MAESTRO_6",
+        "RS_MAESTRO_7",
+        "PD_MAESTRO_1",
+        "PD_MAESTRO_2",
+        "PD_MAESTRO_3",
+        "PD_MAESTRO_4",
+        "PD_MAESTRO_5"
+      ],
+      "status": "playable",
+      "unlockStars": 5
+    },
+    {
       "description": "Magik uses dark sorcery to charge up her allies and her mutant teleportation power to get the drop on enemies. As the demonic Darkchylde, she can inflict heavy damage.",
       "eventTraits": [
         "Stormbound"
@@ -7551,7 +7576,8 @@ playable   = {
         "Mystic",
         "Blaster",
         "Asgard",
-        "Mythic"
+        "Mythic",
+        "DARK_PROMOTION"
       ],
       "unlockStars": 5
     },
@@ -8278,7 +8304,8 @@ playable   = {
         "Mystic",
         "Brawler",
         "GalacticCouncil",
-        "Legendary"
+        "Legendary",
+        "DARK_PROMOTION"
       ],
       "unlockStars": 4
     },
@@ -12537,15 +12564,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "eabf9ddf57325aad0709",
-      "chars": "eaa167c2f6c25e55f2b1",
-      "drops": "173a77bc73d666797841",
-      "events": "d25757390612e81005c7",
-      "locs": "446c6731a9184614df6d",
-      "nodes": "0dd677705b68abcd9152",
-      "other": "c99c0f45bd7273c4c405"
+      "all": "6567377c41d778864afe",
+      "chars": "a268d01612974f58c75d",
+      "drops": "1770dd731a066a305db9",
+      "events": "2f94789699d89fdab338",
+      "locs": "a3f73bac018e6b4ba5c5",
+      "nodes": "c016ace2f36b51a97d67",
+      "other": "2746c0a5b04026308532"
     },
-    "perTotal": 360,
+    "perTotal": 361,
     "version": 1
   }
 }
@@ -13383,13 +13410,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "eabf9ddf57325aad0709",
-      "chars": "eaa167c2f6c25e55f2b1",
-      "drops": "173a77bc73d666797841",
-      "events": "d25757390612e81005c7",
-      "locs": "446c6731a9184614df6d",
-      "nodes": "0dd677705b68abcd9152",
-      "other": "c99c0f45bd7273c4c405"
+      "all": "6567377c41d778864afe",
+      "chars": "a268d01612974f58c75d",
+      "drops": "1770dd731a066a305db9",
+      "events": "2f94789699d89fdab338",
+      "locs": "a3f73bac018e6b4ba5c5",
+      "nodes": "c016ace2f36b51a97d67",
+      "other": "2746c0a5b04026308532"
     },
     "perTotal": 43,
     "version": 1

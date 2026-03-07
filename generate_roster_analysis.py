@@ -283,7 +283,7 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 			member_url = f' href="https://marvelstrikeforce.com/en/member/{member_info.get("url")}/characters" target="_blank"'
 	
 		field_color = 'ngra' if stale_data else 'nblu'
-		html_file.append(f' <td class="{field_color} urlb"><a style="text-decoration:none; color:black;{member_url}>{member_info.get('display_name',member)}</a></td>')
+		html_file.append(f' <td class="{field_color} urlb"><a style="text-decoration:none; color:black;"{member_url}>{member_info.get('display_name',member)}</a></td>')
 		
 		for stat in ['tcp','stp','tcc']:
 			html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat)
@@ -516,7 +516,7 @@ def analyze_rosters(alliance_info, table_format, stat_type, rosters_to_analyze):
 
 		# Detailed levels trigger if a number of criteria met
 		# * More than one level is present
-		# * All levels are within range MAX_LVL-5 to MAX_LVL
+		# * All player levels are within range MAX_LVL-5 to MAX_LVL
 
 		stats['DETAILS'] = DETAILS = len(levels) > 1 and all(level in range(MAX_LVL-5, MAX_LVL+1) for level in levels)
 
