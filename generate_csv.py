@@ -4,9 +4,11 @@
 Takes the processed alliance / roster data and generates original format .csv files.  
 """
 
-from alliance_info import get_player_list
-from cached_info   import get_cached
+
 from copy import deepcopy
+
+from .alliance_info import get_player_list
+from .cached_info   import get_cached
 
 
 # Including this here for expedience.

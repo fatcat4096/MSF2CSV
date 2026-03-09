@@ -4,12 +4,12 @@
 Generate the tab for By Character output.
 """
 
-from log_utils import *
 
-from alliance_info  import *
-from cached_info    import get_cached
-from html_shared    import *
-from generate_table import *
+from .log_utils      import *
+from .alliance_info  import *
+from .cached_info    import get_cached
+from .html_shared    import *
+from .generate_table import *
 
 
 # By_Char data should use same hist_date as provided in inc_hist or inline_hist

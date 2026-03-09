@@ -6,13 +6,13 @@ Scrapes the alliance.html (Alliance display page) and characters.html file (Rost
 Returns in easy to use dicts for inclusion in tables.
 """
 
-from log_utils import *
+from .log_utils import *
 
 import re
 
-from file_io     import *
+from .file_io     import *
 from datetime    import datetime
-from cached_info import get_cached
+from .cached_info import get_cached
 
 
 def parse_alliance_api(alliance_data, alliance_members):

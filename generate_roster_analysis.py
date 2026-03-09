@@ -4,14 +4,15 @@
 Generate the tab for Roster Analysis output.  
 """
 
-from log_utils import timed
 
 import copy
 
-from alliance_info import filter_by_traits
-from cached_info   import get_cached
-from html_cache    import make_next_table_id
-from html_shared   import *
+from .log_utils     import timed
+from .alliance_info import filter_by_traits
+from .cached_info   import get_cached
+from .html_cache    import make_next_table_id
+from .html_shared   import *
+
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
@@ -283,7 +284,7 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 			member_url = f' href="https://marvelstrikeforce.com/en/member/{member_info.get("url")}/characters" target="_blank"'
 	
 		field_color = 'ngra' if stale_data else 'nblu'
-		html_file.append(f' <td class="{field_color} urlb"><a style="text-decoration:none; color:black;"{member_url}>{member_info.get('display_name',member)}</a></td>')
+		html_file.append(f' <td class="{field_color} urlb"><a style="text-decoration:none; color:black;"{member_url}>{member_info.get("display_name",member)}</a></td>')
 		
 		for stat in ['tcp','stp','tcc']:
 			html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat)

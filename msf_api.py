@@ -5,7 +5,7 @@ Basic implementation of MSF API
 """
 
 
-from log_utils import timed
+from .log_utils import timed
 
 from urllib.parse import quote_plus
 import base64

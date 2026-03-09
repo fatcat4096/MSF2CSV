@@ -5,20 +5,21 @@ Returns cached_data information if still fresh
 Logs into website and updates data from Alliance Information if not
 """
 
-from log_utils import *
+from .log_utils import *
 
 import importlib
 import inspect
 import json
-import char_info
 
-from parse_contents       import *
-from generate_local_files import *
-from file_io              import *
-from alliance_info        import *
-from msf_api              import *
+import .char_info
 
-from cached_info          import get_cached, set_cached
+from .parse_contents       import *
+from .generate_local_files import *
+from .file_io              import *
+from .alliance_info        import *
+from .msf_api              import *
+
+from .cached_info          import get_cached, set_cached
 from datetime             import datetime
 
 

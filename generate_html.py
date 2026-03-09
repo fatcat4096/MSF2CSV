@@ -4,23 +4,22 @@
 Takes the processed alliance / roster data and generate readable output to spec.  
 """
 
-from log_utils import *
 
 import copy
 
 # Supporting routines
-from alliance_info import *
-from generate_css  import *
-from html_cache    import *
-from html_shared   import *
+from .log_utils     import *
+from .alliance_info import *
+from .generate_css  import *
+from .html_cache    import *
+from .html_shared   import *
 
 # Routines to create html files.
-from generate_alliance_info   import *
-from generate_roster_analysis import *
-from generate_by_char         import *
-from generate_table           import *
-from generate_summary         import *
-
+from .generate_alliance_info   import *
+from .generate_roster_analysis import *
+from .generate_by_char         import *
+from .generate_table           import *
+from .generate_summary         import *
 
 
 # Build specific tab output for use in generating PNG graphics.

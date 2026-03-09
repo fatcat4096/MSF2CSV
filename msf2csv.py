@@ -4,15 +4,15 @@
 Transform stats from MSF.gg into readable tables with heatmaps.
 """
 
-from log_utils import *
+from .log_utils import *
 
 import os, sys
 import argparse
 
-from process_website import *             # Routines to get Roster data from website.
-from file_io         import *             # Routines to read and write files to disk.
-from generate_html   import *             # Routines to generate the finished tables.
-from generate_csv    import generate_csv  # Routines to generate the original csv files.
+from .process_website import *             # Routines to get Roster data from website.
+from .file_io         import *             # Routines to read and write files to disk.
+from .generate_html   import *             # Routines to generate the finished tables.
+from .generate_csv    import generate_csv  # Routines to generate the original csv files.
 from datetime        import datetime
 from rich.console    import Console
 

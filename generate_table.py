@@ -4,15 +4,15 @@
 Generate one table of roster information per requested specifications.
 """
 
-from log_utils import *
 
-from alliance_info import *
-from html_cache    import *
-from html_shared   import *
+from .log_utils     import *
 
-from cached_info import get_cached
-from file_io     import local_img_cache
+from .alliance_info import *
+from .html_cache    import *
+from .html_shared   import *
 
+from .cached_info   import get_cached
+from .file_io       import local_img_cache
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
@@ -386,8 +386,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						name_field = f'{name_field}<br><span style="font-weight:normal;"><i>(since {inline_hist.strftime("%m/%d/%y")})</i></span>'
 						rowspan = '" rowspan="2'
 
-					# Player Name, then relevant stats for each character.
-					st_html.append(f"    <tr{' class="xx"' if hist_date else ''}>")
+					# Player Name, then relevant stats for each character
+					style = ' class="xx"' if hist_date else ''
+					st_html.append(f'    <tr{style}>')
 
 					inline_hist_row = inline_hist and hist_date
 
@@ -449,7 +450,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 							else:
 								# Note: We are using the T class to get black text on fields in the Hist tab.
 								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, hist_date)
-								style = f' class="{field_color}{' T' if need_tt or hist_date is not None else ''}"'
+								style = f' class="{field_color}{" T" if need_tt or hist_date is not None else ""}"'
 
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 							if key=='red' and key_val>7 and not hist_date:

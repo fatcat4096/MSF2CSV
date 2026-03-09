@@ -369,7 +369,7 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 			log_buffer.append("========================================  =======  =========  ==========  ======")
 			log_buffer.append(f"Report for: {func:28}  # Calls  Time/Call  Total Time  % Time")
 			log_buffer.append("----------------------------------------  -------  ---------  ----------  ------")
-			log_buffer.append(f'{func:40}  {'n/a':>5} {called[func][0]:>10.3f} s {called['time_in']:>9.3f} s {100*called[func][0]/called['time_in']:>6.1f}%')
+			log_buffer.append(f"{func:40}  {'n/a':>5} {called[func][0]:>10.3f} s {called['time_in']:>9.3f} s {100*called[func][0]/called['time_in']:>6.1f}%")
 
 			if len(called) > 2:
 				log_buffer.append("-----------Calls-by-Subroutine----------  -------  ---------  ----------  ------")
@@ -382,7 +382,7 @@ def log_leave(log, LOG_CALL, result, **kwarg):
 					call = called[item]
 					# Don't log if shows 0.00% of time
 					if call[0] > THRESHOLD:
-						log_buffer.append(f'{item:40}  {call[1]:>5} {call[0]/call[1]:>10.3f} s {call[0]:>9.3f} s {100*call[0]/called['time_in']:>6.1f}%')
+						log_buffer.append(f"{item:40}  {call[1]:>5} {call[0]/call[1]:>10.3f} s {call[0]:>9.3f} s {100*call[0]/called['time_in']:>6.1f}%")
 			log_buffer.append("========================================  =======  =========  ==========  ======")
 		else:
 			log_buffer.append("========================================  =========")

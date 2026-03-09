@@ -4,13 +4,14 @@
 Summarize STP, Rank, and Available chars for each section included in a lane.  
 """
 
-from log_utils import *
 
 import copy
 
 # Supporting routines
-from html_shared    import *
-from generate_table import *
+from .log_utils      import *
+from .html_shared    import *
+from .generate_table import *
+
 
 @timed(level=3)
 def generate_summary(alliance_info, table, lanes, table_format, team_list, strike_teams, hist_date, html_cache):

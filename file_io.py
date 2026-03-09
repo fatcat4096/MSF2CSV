@@ -4,7 +4,7 @@
 Routines for reading/writing files and cached_data to disk.
 """
 
-from log_utils import *
+from .log_utils import *
 
 import os
 import sys
@@ -17,10 +17,10 @@ import glob
 import requests
 import psutil
 
-try:	import strike_teams as strike_temp
+try:	from . import strike_teams as strike_temp
 except:	pass
 
-try:	import raids_and_lanes
+try:	from . import raids_and_lanes
 except:	pass
 
 from datetime import datetime

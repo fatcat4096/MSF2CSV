@@ -4,12 +4,12 @@
 Routines used by one or more of the html generation routines in msf2csv.py.
 """
 
-from log_utils import timed
 
 import string
 
-from html_cache import make_next_color_id
-from gradients import *
+from .log_utils  import timed
+from .html_cache import make_next_color_id
+from .gradients  import *
 
 
 

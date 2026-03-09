@@ -3,11 +3,12 @@
 """cached_info.py
 Create a global cached_info structure.  
 """
-from log_utils import *
+
 
 from copy import copy, deepcopy
 
-from file_io import load_cached_file, write_cached_file
+from .log_utils import *
+from .file_io   import load_cached_file, write_cached_file
 
 
 # Load up the cached_info global at launch.

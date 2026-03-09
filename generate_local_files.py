@@ -6,15 +6,17 @@ Builds a new strike_teams.py if a valid file isn't present in the folder.
 Builds a new raids_and_lanes.py if a valid file isn't present in the folder.
 """
 
-from file_io import *
+
+from .file_io import *
+
 
 # If file is invalid/deleted, generate a new one after alliance_info loaded.
-try:	from strike_teams import *
+try:	from .strike_teams import *
 except:	print ("Missing strike_teams.py...will be regenerated after alliance_members are known.")
 
 # If raids_and_lanes is invalid, no longer auto-generate.
 try:
-	from raids_and_lanes import *
+	from .raids_and_lanes import *
 	add_formats_for_lanes(tables)
 except:
 	print ("Missing raids_and_lanes.py...need to download a new copy before continuing.")
