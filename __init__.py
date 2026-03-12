@@ -40,8 +40,6 @@ from .process_website import valid_strike_team
 from .process_website import fix_strike_teams
 from .process_website import similar_members
 
-from .generate_local_files import generate_strike_teams
-
 from .msf_api import construct_token
 from .msf_api import request_auth
 from .msf_api import parse_auth
@@ -52,5 +50,8 @@ from .msf_api import get_session_and_link
 
 from .gradients import color_scale
 
+from .raids_and_lanes import tables
+
+from .html_shared import get_scaled_value
 from .html_shared import get_section_label
 from .html_shared import translate_name
