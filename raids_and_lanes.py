@@ -35,6 +35,7 @@
 #		Meta characters aren't subject to filters. And if Meta characters are specified
 #		and the trait indicated doesn't exist, trait will simply be used as a label
 
+
 # Active tables are the files which will be generated.
 tables = {}
 
@@ -389,3 +390,22 @@ tables['all_chars'] = { 'name': 'All Characters',
 							] ]
 					}
 
+
+
+import copy
+
+
+
+# Explicitly define extra formats for each lane 
+for format in list(tables):
+	if len(tables[format].get('lanes',[])) > 1:
+
+		# What is each Lane called? Lane X, Zone X, etc?
+		lane_name = tables[format].get('lane_name', 'Lane')
+
+		# Customize key, name, and lane definition
+		for idx,lane in enumerate(tables[format]['lanes']):
+			table_key = f'{format}_{lane_name.lower()}{idx+1}'
+			tables[table_key] = copy.deepcopy(tables[format])
+			tables[table_key]['name']  = f"{tables[format]['name']} {lane_name.title()} {idx+1}"
+			tables[table_key]['lanes'] = [lane]

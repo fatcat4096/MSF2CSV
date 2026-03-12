@@ -4,8 +4,6 @@
 Routines for reading/writing files and cached_data to disk.
 """
 
-from .log_utils import *
-
 import os
 import sys
 import time
@@ -17,18 +15,14 @@ import glob
 import requests
 import psutil
 
-try:	from . import strike_teams as strike_temp
-except:	pass
-
-try:	from . import raids_and_lanes
-except:	pass
-
 from datetime import datetime
 from pathlib  import Path
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import quote, unquote
 
+try:	from .log_utils import *
+except:	from  log_utils import *
 
 
 TAG_RE = re.compile(r'<[^>]+>')
@@ -172,33 +166,6 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	
 
 
-# Load a pickled cache file from cached_data directory
-def load_cached_file(file):
-	data={}
-
-	# Load the requested information if it exists
-	file_path = get_local_path() + f'cached_data{os.sep}defaults{os.sep}cached_{file}'
-
-	if os.path.exists(file_path):
-		data = pickle.load(open(file_path,'rb'))
-
-	return data
-
-
-
-# Load a pickled cache file from cached_data directory
-def write_cached_file(data, file):
-
-	# Ensure the enclosing directory exists.
-	cached_path = get_local_path() + f'cached_data{os.sep}defaults{os.sep}'
-
-	if not os.path.exists(cached_path):
-		os.makedirs(cached_path)	
-
-	pickle.dump(data, open(cached_path + f'cached_{file}', 'wb'))
-
-
-
 # Has it been less than 24 hours since last update of cached_data?
 def fresh_enough(alliance_or_file):
 
@@ -221,7 +188,7 @@ def age_of_cached_data(alliance_or_file):
 	
 	# Couldn't find a matching cached_data for this alliance, asking about a file instead?
 	else:
-		cached_file = get_local_path() + f'cached_data{os.sep}cached_{alliance_or_file}' 
+		cached_file = f'{get_local_path()}cached_data{os.sep}cached_{alliance_or_file}' 
 
 		# Not a file either, return False.
 		if not os.path.exists(cached_file):
@@ -304,7 +271,7 @@ def find_cached_data(file_or_alliance=''):
 
 	# No value passed in, check local directory for single cached_data.msf file
 	else:
-		file_list = glob.glob(os.path.join(get_local_path,'cached_data-*.msf'))
+		file_list = glob.glob(os.path.join(get_local_path(),'cached_data-*.msf'))
 
 	# If a single MSF file was found, use it, otherwise search was ambiguous.
 	if len(file_list) == 1:
@@ -313,62 +280,8 @@ def find_cached_data(file_or_alliance=''):
 		# Stash the path away inside alliance_info for later use. 
 		if type(alliance_info) is dict:
 			alliance_info['file_path'] = os.path.realpath(file_list[0])
-		
-		# Update file paths if we're using entry from a subdirectory named for alliance
-		if f'{os.sep+file_or_alliance+os.sep}' in file_list[0]:
-			check_import_path(file_or_alliance)
 
 	return alliance_info
-
-
-
-# Define extra formats implicitly for each lane 
-def add_formats_for_lanes(tables):
-	
-	# Check each format for multiple defined lanes.
-	for format in list(tables):
-		if len(tables[format].get('lanes',[])) > 1:
-
-			# What is each Lane called? Lane X, Zone X, etc?
-			lane_name = tables[format].get('lane_name', 'Lane')
-
-			# Customize key, name, and lane definition
-			for idx,lane in enumerate(tables[format]['lanes']):
-				table_key = f'{format}_{lane_name.lower()}{idx+1}'
-				tables[table_key] = copy.deepcopy(tables[format])
-				tables[table_key]['name']  = f"{tables[format]['name']} {lane_name.title()} {idx+1}"
-				tables[table_key]['lanes'] = [lane]
-
-
-
-# Check to see if a subdirectory exists with this alliance_name and if it contains valid python files.
-# If so, change the import path to include this directory and source the files to use their definitions.
-@timed(level=3)
-def check_import_path(alliance_name):
-	
-	global strike_teams
-	global tables
-	
-	local_path = get_local_path()
-	
-	# Check to see if a subdirectory exists with this alliance_name and if it contains valid python files 
-	if os.path.isfile(local_path+alliance_name+os.sep+'strike_teams.py') or os.path.isfile(local_path+alliance_name+os.sep+'raids_and_lanes.py'):
-
-		# If so, change the import path to this path
-		# For clarity, this entry was set by us (below) to force use of local strike_teams.py and raids_and_lanes.py when using a frozen executable. 
-		# This change just points our extra / added path entry to the correct location for alliance-specific files.
-		sys.path[0] = local_path+alliance_name
-
-		# Pull Strike Team definitions from a subdirectory if available.
-		if 'strike_temp' in globals():
-			importlib.reload(strike_temp)
-			strike_teams = strike_temp.strike_teams
-
-		# Pull Raid and Lane (table) definitions from a subdirectory if available.
-		if 'raids_and_lanes' in globals():
-			importlib.reload(raids_and_lanes)
-			add_formats_for_lanes(raids_and_lanes.tables)
-			tables = raids_and_lanes.tables
 
 
 
@@ -384,7 +297,7 @@ def check_import_path(alliance_name):
 
 
 # Where should assets be downloaded to for local caching?
-asset_cache = f'{os.path.dirname(__file__)}{os.sep}cached_data{os.sep}assets{os.sep}'
+asset_cache = f'{get_local_path()}cached_data{os.sep}assets{os.sep}'
 if not os.path.exists(asset_cache):
 	os.makedirs(asset_cache)
 
