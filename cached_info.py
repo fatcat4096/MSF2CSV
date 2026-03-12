@@ -5,14 +5,46 @@ Create a global cached_info structure.
 """
 
 
+import os
+import pickle
+
+
 from copy import copy, deepcopy
 
-from .log_utils import *
-from .file_io   import load_cached_file, write_cached_file
+
+try:	from .file_io   import get_local_path
+except:	from  file_io   import get_local_path
 
 
 # Load up the cached_info global at launch.
 cached_info = {}
+
+# Load a pickled cache file from cached_data directory
+def load_cached_file(file):
+	data={}
+
+	# Load the requested information if it exists
+	file_path = f'{get_local_path()}cached_data{os.sep}defaults{os.sep}cached_{file}'
+
+	if os.path.exists(file_path):
+		data = pickle.load(open(file_path,'rb'))
+
+	return data
+
+
+
+# Load a pickled cache file from cached_data directory
+def write_cached_file(data, file):
+
+	# Ensure the enclosing directory exists.
+	cached_path = f'{get_local_path()}cached_data{os.sep}defaults{os.sep}'
+
+	if not os.path.exists(cached_path):
+		os.makedirs(cached_path)	
+
+	pickle.dump(data, open(f'{cached_path}cached_{file}', 'wb'))
+
+
 
 # Just return a value from the global
 def get_cached(key, refresh=False):
