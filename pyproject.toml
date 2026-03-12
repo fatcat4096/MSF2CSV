@@ -1,0 +1,29 @@
+[project]
+name = "msf2csv"
+version = "1.0.6"
+authors = [
+	{ name = "Michael Baker", email = "michael@uw.edu" },
+]
+description = "Analyze Marvel Strike Force roster info and output colorful charts showing player/character stats"
+readme = "README.md"
+requires-python = ">=3.11, <4.0"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "AGPL-3.0-only"
+license-files = ["LICENSE*"]
+dependencies = [
+  "psutil>=7.2.2",
+  "Requests>=2.32.5",
+  "rich>=14.3.3",
+  "selenium>=4.41.0",
+]
+
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project.urls]
+Homepage = "https://github.com/fatcat4096/MSF2CSV"
+Issues = "https://github.com/fatcat4096/MSF2CSV/issues"
