@@ -5,22 +5,26 @@ Returns cached_data information if still fresh
 Logs into website and updates data from Alliance Information if not
 """
 
-from .log_utils import *
 
 import importlib
-import inspect
 import json
 
-import .char_info
+from datetime import datetime
 
-from .parse_contents       import *
-from .generate_local_files import *
-from .file_io              import *
-from .alliance_info        import *
-from .msf_api              import *
-
-from .cached_info          import get_cached, set_cached
-from datetime             import datetime
+try:
+	from .log_utils      import *
+	from .parse_contents import *
+	from .file_io        import *
+	from .alliance_info  import *
+	from .msf_api        import *
+	from .cached_info    import get_cached, set_cached
+except:
+	from  log_utils      import *
+	from  parse_contents import *
+	from  file_io        import *
+	from  alliance_info  import *
+	from  msf_api        import *
+	from  cached_info    import get_cached, set_cached
 
 
 # Process rosters for every member in alliance_info.
@@ -271,7 +275,7 @@ def update_cached_char_info(AUTH):
 	CHAR_INFO.append(f'unplayable = {json.dumps(UNPLAYABLE, indent=2, sort_keys=True)}')
 
 	# Write the updated module to disk
-	write_file(inspect.getfile(char_info), '\n'.join(CHAR_INFO))
+	write_file(get_local_path()+'char_info.py', '\n'.join(CHAR_INFO))
 
 	# Let's build the cached char files
 	char_list   = []
@@ -311,7 +315,7 @@ def update_strike_teams(alliance_info):
 	for raid_type in ('spotlight','annihilation','thunderstrike'):
 
 		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
-		if 'strike_teams' in alliance_info and raid_type in alliance_info['strike_teams'] and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
+		if raid_type in alliance_info.get('strike_teams', []) and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
 	
 			# Fix any issues. We will just update this info in cached_data
 			updated = fix_strike_teams(alliance_info['strike_teams'][raid_type], alliance_info) or updated
@@ -331,25 +335,6 @@ def update_strike_teams(alliance_info):
 def migrate_strike_teams(alliance_info):
 
 	updated = False
-
-	# Update old format strike team definitions.
-	if 'strike_teams' in globals():
-		
-		# Chaos defined, but no Annihilation yet?
-		if 'chaos' in strike_teams and 'annihilation' not in strike_teams:
-			strike_teams['annihilation'] = strike_teams['chaos']
-			updated = True
-
-		# Annihilation defined, but no Thunderstrike yet?
-		if 'annihilation' in strike_teams and 'thunderstrike' not in strike_teams:
-			strike_teams['thunderstrike'] = strike_teams['annihilation']
-			updated = True
-
-		# Look for outdated strike_team definitions
-		for raid_type in ('chaos','orchis','incur','gamma'):
-			if raid_type in strike_teams:
-				del strike_teams[raid_type]
-				updated = True
 
 	# Update the alliance_info structure as well, just in case it's all we've got.
 	if 'strike_teams' in alliance_info:
@@ -378,31 +363,31 @@ def migrate_strike_teams(alliance_info):
 		
 
 
-# Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
+# Returns true if at least half of the people in the Alliance are actually in the Strike Teams presented
 def valid_strike_team(strike_team, alliance_info):
 	return similar_members(sum(strike_team,[]), alliance_info['members'])
 
 
 
-# Returns true if at least 2/3 people of the people in the Alliance are actually in the Strike Teams presented.
+# Returns true if at least half of the people in first list are present in the second list presented
 def similar_members(member_list_1, member_list_2):
 	return len(set(member_list_1).intersection(member_list_2)) > len(member_list_2)*.5	
 
 
 
-# Before we take the strike_team.py definition as is, let's fix some common problems.
+# Before we take the strike_team.py definition as is, let's fix some common problems
 def fix_strike_teams(strike_teams, alliance_info):
 
-	# Track whether anything has been changed.
+	# Track whether anything has been changed
 	updated = False
 
-	# Track which members have been used.
+	# Track which members have been used
 	members_used = set()
 
-	# Get a working list of valid member names.
+	# Get a working list of valid member names
 	MEMBER_LIST = sorted(alliance_info.get('members',[]), key=str.lower)
 	
-	# Start by removing invalid entries or duplicates. 
+	# Start by removing invalid entries or duplicates
 	for strike_team in strike_teams:
 		updated = clean_strike_team(strike_team, MEMBER_LIST, members_used) or updated
 	
