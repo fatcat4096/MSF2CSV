@@ -7,10 +7,15 @@ Summarize STP, Rank, and Available chars for each section included in a lane.
 
 import copy
 
-# Supporting routines
-from .log_utils      import *
-from .html_shared    import *
-from .generate_table import *
+
+try:
+	from .log_utils      import *
+	from .html_shared    import *
+	from .generate_table import *
+except:
+	from  log_utils      import *
+	from  html_shared    import *
+	from  generate_table import *
 
 
 @timed(level=3)

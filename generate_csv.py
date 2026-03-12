@@ -7,8 +7,12 @@ Takes the processed alliance / roster data and generates original format .csv fi
 
 from copy import deepcopy
 
-from .alliance_info import get_player_list
-from .cached_info   import get_cached
+try:
+	from .alliance_info import get_player_list
+	from .cached_info   import get_cached
+except:
+	from  alliance_info import get_player_list
+	from  cached_info   import get_cached
 
 
 # Including this here for expedience.

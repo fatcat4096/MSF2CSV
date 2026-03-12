@@ -5,13 +5,16 @@ Basic implementation of MSF API
 """
 
 
-from .log_utils import timed
-
 from urllib.parse import quote_plus
 import base64
 import requests
 import secrets
 import time
+
+
+try:	from .log_utils import timed
+except:	from  log_utils import timed
+
 
 # Redirect URI for Enroll-a-Bot
 REDIRECT_URI = 'https://enroll-a-bot.netlify.app/enroll.html'

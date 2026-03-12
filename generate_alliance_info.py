@@ -7,10 +7,16 @@ Generate the tab for Alliance Info output.
 
 from datetime     import datetime
 
-from .log_utils   import timed
-from .file_io     import remove_tags
-from .html_cache  import make_next_table_id
-from .html_shared import *
+try:
+	from .log_utils   import timed
+	from .file_io     import remove_tags
+	from .html_cache  import make_next_table_id
+	from .html_shared import *
+except:
+	from  log_utils   import timed
+	from  file_io     import remove_tags
+	from  html_cache  import make_next_table_id
+	from  html_shared import *
 
 
 # Generate just the Alliance Tab contents.

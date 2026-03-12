@@ -7,12 +7,19 @@ Generate the tab for Roster Analysis output.
 
 import copy
 
-from .log_utils     import timed
-from .alliance_info import filter_by_traits
-from .cached_info   import get_cached
-from .html_cache    import make_next_table_id
-from .html_shared   import *
-
+try:
+	from .log_utils     import timed
+	from .alliance_info import filter_by_traits
+	from .cached_info   import get_cached
+	from .html_cache    import make_next_table_id
+	from .html_shared   import *
+except:
+	from  log_utils     import timed
+	from  alliance_info import filter_by_traits
+	from  cached_info   import get_cached
+	from  html_cache    import make_next_table_id
+	from  html_shared   import *
+	
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)

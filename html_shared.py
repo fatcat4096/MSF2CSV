@@ -7,10 +7,14 @@ Routines used by one or more of the html generation routines in msf2csv.py.
 
 import string
 
-from .log_utils  import timed
-from .html_cache import make_next_color_id
-from .gradients  import *
-
+try:
+	from .log_utils  import timed
+	from .html_cache import make_next_color_id
+	from .gradients  import *
+except:
+	from  log_utils  import timed
+	from  html_cache import make_next_color_id
+	from  gradients  import *
 
 
 # Just hide the messiness.

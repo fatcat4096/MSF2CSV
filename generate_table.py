@@ -5,14 +5,20 @@ Generate one table of roster information per requested specifications.
 """
 
 
-from .log_utils     import *
-
-from .alliance_info import *
-from .html_cache    import *
-from .html_shared   import *
-
-from .cached_info   import get_cached
-from .file_io       import local_img_cache
+try:
+	from .log_utils     import *
+	from .alliance_info import *
+	from .html_cache    import *
+	from .html_shared   import *
+	from .cached_info   import get_cached
+	from .file_io       import local_img_cache
+except:
+	from  log_utils     import *
+	from  alliance_info import *
+	from  html_cache    import *
+	from  html_shared   import *
+	from  cached_info   import get_cached
+	from  file_io       import local_img_cache
 
 
 # Generate individual tables for Meta/Other chars for each raid section.
