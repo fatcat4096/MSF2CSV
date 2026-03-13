@@ -3,6 +3,7 @@ from .msf2csv import render_report
 from . import log_utils
 
 from .file_io import get_local_path
+from .file_io import set_local_path
 from .file_io import encode_tags
 from .file_io import decode_tags
 from .file_io import remove_tags
@@ -13,11 +14,12 @@ from .file_io import retire_cached_data
 from .file_io import write_cached_data
 from .file_io import age_of_cached_data
 from .file_io import fresh_enough
-from .file_io import driver_pool
-from .file_io import kill_process_tree
-from .file_io import get_driver
-from .file_io import release_driver
-from .file_io import show_driver_pool
+
+from .driver_pool import driver_pool
+from .driver_pool import kill_process_tree
+from .driver_pool import get_driver
+from .driver_pool import release_driver
+from .driver_pool import show_driver_pool
 
 from .cached_info import get_cached
 from .cached_info import set_cached
@@ -55,3 +57,11 @@ from .raids_and_lanes import tables
 from .html_shared import get_scaled_value
 from .html_shared import get_section_label
 from .html_shared import translate_name
+
+from . import log_utils
+
+from .log_utils import ansi
+from .log_utils import timed
+from .log_utils import timing
+from .log_utils import find_log_file
+from .log_utils import cleanup_old_files

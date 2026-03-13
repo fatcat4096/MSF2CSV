@@ -20,13 +20,13 @@ import logging
 
 import __main__
 
-# Default value, use the local file path.
+# Default value, use the local file path
 log_file_path = os.path.dirname(__file__)
 
-# If frozen, work in the same directory as the executable.
+# If frozen, work in the same directory as the executable
 if getattr(sys, 'frozen', False):
 	log_file_path = os.path.dirname(sys.executable)
-# If imported, work in the same directory as the importing file.
+# If imported, work in the same directory as the importing file
 elif hasattr(__main__, '__file__'):
 	log_file_path = os.path.dirname(os.path.abspath(__main__.__file__))
 
@@ -431,11 +431,6 @@ class ansi():
 
 
 
-def print_exc(exc):
-	return f'{ansi.ltred}EXCEPTION:{ansi.rst} {ansi.gray}{type(exc).__name__}: {exc}{ansi.rst}'
-
-
-
 def cleanup_old_files(local_path, age=7):
 	# Let catch all exceptions. Don't let a command fail
 	try:
@@ -450,7 +445,7 @@ def cleanup_old_files(local_path, age=7):
 				if os.stat(item).st_mtime < cutoff_date:
 					os.remove(item)
 	except Exception as exc:
-		print (f"{print_exc(exc)}")
+		print (f'{ansi.ltred}EXCEPTION:{ansi.rst} {ansi.gray}{type(exc).__name__}: {exc}{ansi.rst}')
 
 
 

@@ -40,7 +40,7 @@ def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=Non
 		return
 
 	# Build a default path and filename for writing output
-	pathname = f"{os.path.dirname(alliance_info['file_path'])}{os.sep}reports{os.sep}{remove_tags(alliance_info['name'])}-"
+	pathname = f"{get_local_path()}reports{os.sep}{remove_tags(alliance_info['name'])}-"
 
 	output        = table_format.get('output')
 	custom_table  = table_format.get('custom_table')
@@ -206,4 +206,3 @@ if __name__ == '__main__':
 					'span'          : args.span}
 	
 	render_report(args.alliance_name, table_format) # Just run myself
-	
