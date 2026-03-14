@@ -221,7 +221,7 @@ def get_username_api(AUTH):
 # Make multiple API requests to build up a base alliance_info (no roster info).
 # Also, if char meta hashtag has changed, save responses and rebuild cached char files
 @timed(level=3)
-def get_alliance_api(AUTH):
+async def get_alliance_api(AUTH):
 
 	# Get the general ALLIANCE information
 	response = request_alliance_info(AUTH)
@@ -241,7 +241,7 @@ def get_alliance_api(AUTH):
 	
 	# If char meta hashtag has changed, download fresh char info
 	if response.json()['meta']['hashes']['chars'] != get_cached('char_meta'):
-		update_cached_char_info(AUTH)
+		await update_cached_char_info(AUTH)
 
 	# Parse the provided responses into a base alliance_info
 	alliance_info = parse_alliance_api(alliance_data, alliance_members)
@@ -252,7 +252,7 @@ def get_alliance_api(AUTH):
 
 # Rebuild fresh cached character info
 @timed(level=3)
-def update_cached_char_info(AUTH):
+async def update_cached_char_info(AUTH):
 
 	# Grab the list of PLAYABLE chars
 	response = request_char_info(AUTH)
@@ -284,7 +284,7 @@ def update_cached_char_info(AUTH):
 	traits      = {}
 
 	# Process the character dictionary
-	parse_char_data(PLAYABLE['data']+UNPLAYABLE['data'], char_list, char_lookup, portraits, traits)
+	await parse_char_data(PLAYABLE['data']+UNPLAYABLE['data'], char_list, char_lookup, portraits, traits)
 
 	# Write the portraits
 	set_cached('portraits', portraits)

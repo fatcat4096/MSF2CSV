@@ -8,6 +8,7 @@ Returns in easy to use dicts for inclusion in tables.
 
 
 import re
+import asyncio
 
 from datetime    import datetime
 
@@ -19,6 +20,7 @@ except:
 	from  log_utils   import *
 	from  file_io     import *
 	from  cached_info import get_cached
+
 
 def parse_alliance_api(alliance_data, alliance_members):
 
@@ -196,7 +198,7 @@ def parse_roster_api(response, processed_chars, other_data):
 
 # Parse character names, traits, portraits all out of API character call
 @timed(level=3)
-def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
+async def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 
 	for char in CHAR_DATA:
 
@@ -216,7 +218,7 @@ def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 		portraits.setdefault(char_name, char['portrait'])
 
 		# If we don't have the portrait in /assets, download image now
-		local_img_cache(portraits[char_name])
+		await asyncio.get_event_loop().run_in_executor(None, local_img_cache, portraits[char_name])
 
 		# Only include playable toons in char_list and traits
 		if PLAYABLE:
