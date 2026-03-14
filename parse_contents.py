@@ -40,13 +40,16 @@ def parse_alliance_api(alliance_data, alliance_members):
 	alliance['frame']      = alliance_data['frame'].split('ALLIANCEICON_')[-1][:-4]
 	
 	# Parse the Alliance stats
-	alliance['trophies']   = alliance_data.get('warTrophies','')
+	alliance['type']       = alliance_data.get('type','')
+	alliance['style']      = alliance_data.get('style') or 'Casual'
 	alliance['tot_power']  = alliance_data.get('tcp','')
 	alliance['avg_power']  = alliance_data.get('avgTcp','')
-	alliance['war_zone']   = alliance_data.get('warZone','')
-	alliance['war_league'] = alliance_data.get('warLeague','')
-	alliance['war_rank']   = alliance_data.get('warRank','')
+	
 	alliance['raid_rank']  = alliance_data.get('raidRank','')
+	alliance['war_rank']   = alliance_data.get('warRank','')
+	alliance['war_zone']   = alliance_data.get('warZone','')
+	alliance['war_league'] = alliance_data.get('warLeague',{})
+	alliance['trophies']   = alliance_data.get('warTrophies','')
 
 	members  = {}
 	captains = []

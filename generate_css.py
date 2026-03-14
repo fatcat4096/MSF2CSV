@@ -15,6 +15,8 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   color       : black;
 }
 .alliance_name {
+  overflow    : visible;
+  white-space : nowrap;
   font-weight : 700;
   font-size   : 48pt;
 }
@@ -23,12 +25,24 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   min-width : 130px;
   max-width : 130px;
 }
+/* Alliance Info Black */
+.ablk {
+  font-weight : 700;
+  font-size   : 14px;
+  color       : white;
+  background  : #222;
+}
+/* Alliance Info Values */
+.aval {
+  font-weight : 900;
+  font-size   : 24px;
+}
 /* Title Black */
 .tblk {
   font-weight : 700;
   font-size   : 14pt;
   color       : white;
-  background  : #202020;
+  background  : #222;
 }
 /* Title Gray */
 .tgra {

@@ -47,14 +47,14 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	html_file += '<tr>\n</tr>\n'
 
 	html_file += '<tr style="font-size:18px;color:white;">\n'
-	html_file += ' <td colspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
-	html_file += ' <td colspan="8" class="alliance_name">%s</td>\n' % (remove_tags(alliance_info.get('name','').upper()))
+	html_file += ' <td colspan="2" rowspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
+	html_file += ' <td colspan="9" class="alliance_name">%s</td>\n' % (remove_tags(alliance_info.get('name','').upper()))
 	
 	# Frame and Image for Alliance
 	EMBLEM_URL = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('image','EMBLEM_6_dd63d11b')}.png"
 	FRAME_URL  = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('frame','FRAME_15_174f8048')}.png"
 
-	html_file += f' <td colspan="2"><div class="lrg_img" style="background-image:url({EMBLEM_URL});">\n'
+	html_file += f' <td rowspan="2"><div class="lrg_img" style="background-image:url({EMBLEM_URL});">\n'
 	html_file += f'  <div class="lrg_rel"><img class="lrg_rel" src="{FRAME_URL}" alt=""/></div>\n'
 	html_file += ' </div></td>\n'
 	
@@ -65,6 +65,27 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	w110 = 'style="min-width:110px;"'
 	w215 = 'style="min-width:215px;"'
 
+	# Nicely format our power stats
+	TOT_POWER = format_power(alliance_info.get('tot_power',0))
+	AVG_POWER = format_power(alliance_info.get('avg_power',0))
+
+	# Figure out what League and Level we're in
+	LEAGUE,mid,LEVEL = alliance_info.get('war_league',{}).get('name','').partition(' ')
+	WAR_LEAGUE = f'{LEAGUE[:4].title()} {LEVEL}' if LEAGUE else 'UNKNOWN'
+	
+	# Create a row for the Alliance Info
+	html_file += '<tr class="ablk" style="font-size:12px">\n'
+	html_file += f' <td {w110}>TYPE<br><span class="aval">{alliance_info.get("type","").title() or "N/A"}</span></td>\n'
+	html_file += f' <td {w110}>STYLE<br><span class="aval">{alliance_info.get("style","").title() or "Casual"}</span></td>\n'
+	html_file += f' <td {w110}>TOT POWER<br><span class="aval">{TOT_POWER}</span></td>\n'
+	html_file += f' <td {w110}>AVG POWER<br><span class="aval">{AVG_POWER}</span></td>\n'
+	html_file += f' <td {w070}>RAID RANK<br><span class="aval">{alliance_info.get("raid_rank") or "N/A"}</span></td>\n'
+	html_file += f' <td {w070}>WAR RANK<br><span class="aval">{alliance_info.get("war_rank") or "N/A"}</span></td>\n'
+	html_file += f' <td {w070}>ZONE<br><span class="aval">{alliance_info.get("war_zone") or "N/A"}</span></td>\n'
+	html_file += f' <td {w070}>LEAGUE<br><span class="aval">{WAR_LEAGUE}</span></td>\n'
+	html_file += f' <td {w070}>TROPHIES<br><span class="aval">{alliance_info.get("trophies") or "N/A"}</span></td>\n'
+	html_file += '</tr>\n'
+
 	# Simplify inclusion of the sort function code
 	sort_func = 'class="%s" onclick="sort(%s,\'%s\',3)"' % ("blub", '%s', table_id)
 
@@ -72,11 +93,11 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	html_file += '<tr class="hblu" style="font-size:14pt;position:relative;">\n'
 	html_file += f' <td {w070}></td>\n'
 	html_file += f' <td {sort_func % 1} {w215}>Name</td>\n'            
-	html_file += f' <td {sort_func % 2} {w070}>Level</td>\n'
+	html_file += f' <td {sort_func % 2} {w110}>Level</td>\n'
 	html_file += f' <td {sort_func % 3} {w110}>Role</td>\n'
 	html_file += f' <td {sort_func % 4} {w110}>Collection<br>Power</td>\n'
 	html_file += f' <td {sort_func % 5} {w110}>Strongest<br>Team</td>\n'
-	html_file += f' <td {sort_func % 6} {w110}>Total<br>Collected</td>\n'
+	html_file += f' <td {sort_func % 6} {w070}>Total<br>Collected</td>\n'
 	html_file += f' <td {sort_func % 7} {w070}>Max<br>Stars</td>\n'
 	html_file += f' <td {sort_func % 8} {w070}>War<br>MVP</td>\n'
 	html_file += f' <td {sort_func % 9} {w070}>Total<br>Stars</td>\n'
@@ -233,4 +254,22 @@ def alliance_info_cell(value_range, key, member_stats, hist_calcs, html_cache, s
 	return f'  <td class="{field_color}">{curr_value:,}{diff_value}</td>\n'
 
 
+
+def format_power(value):
+
+	# Determine the extension to add
+	ext = ''
+	if   value >= 1e12:	ext = 'T'
+	elif value >= 1e9:	ext = 'B'
+	elif value >= 1e6:	ext = 'M'
+	elif value >= 1e3:	ext = 'K'
+
+	# Get it down to 4 digits
+	val_len = len(str(value))
+	div,mod = divmod(val_len-1,3)
+	divisor = (div*3) + mod - 3
+	div,mod = divmod(int(value/(10**divisor)),10**(3-mod))
+	mod = str(mod).zfill(4-len(str(div)))
+
+	return f'{div}.{mod}{ext}'
 
