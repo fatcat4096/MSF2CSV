@@ -295,7 +295,7 @@ def find_cached_data(file_or_alliance):
 				# Look for name with encoding, without encoding, and do a reverse search ignoring tags and encoding
 				for file_list in [
 									glob.glob(os.path.join(local_path,f'{data_type}-{encode_tags(file_or_alliance)}.msf')),
-									[x for x in glob.iglob(os.path.join(local_path,f'{data_type}-*.msf')) if remove_tags(decode_tags(x)).lower().endswith(f'{os.sep}{data_type}-{file_or_alliance}.msf')],
+									[x for x in glob.iglob(os.path.join(local_path,f'{data_type}-*.msf')) if remove_tags(decode_tags(os.path.basename(x)[len(data_type)+1:])).lower() == f'{file_or_alliance}.msf'],
 									glob.glob(os.path.join(local_path,f'{data_type}-{file_or_alliance}.msf')),
 								  ]:
 					if len(file_list) == 1:
