@@ -1,7 +1,5 @@
 from .msf2csv import render_report
 
-from . import log_utils
-
 from .file_io import get_local_path
 from .file_io import set_local_path
 from .file_io import encode_tags
@@ -14,6 +12,7 @@ from .file_io import retire_cached_data
 from .file_io import write_cached_data
 from .file_io import age_of_cached_data
 from .file_io import fresh_enough
+from .file_io import cleanup_old_files
 
 from .driver_pool import driver_pool
 from .driver_pool import kill_process_tree
@@ -64,4 +63,3 @@ from .log_utils import ansi
 from .log_utils import timed
 from .log_utils import timing
 from .log_utils import find_log_file
-from .log_utils import cleanup_old_files

@@ -43,14 +43,21 @@ local_path = os.path.dirname(__file__)
 # If frozen, work in the same directory as the executable
 if getattr(sys, 'frozen', False):
 	local_path = os.path.dirname(sys.executable)
+# If running from the Python interpreter, use the current working dir
+elif hasattr(sys, 'ps1'):
+	local_path = os.getcwd()
 # If imported, work in the same directory as the importing file
 elif hasattr(__main__, '__file__'):
 	local_path = os.path.dirname(os.path.abspath(__main__.__file__))
 
+
+
 # Provide a consistent base path for output
 def get_local_path():
 	global local_path
+	
 	return os.path.realpath(local_path) + os.sep
+
 
 
 # Provide a consistent base path for output
@@ -103,7 +110,7 @@ def write_file(pathname, file_content, print_path=False):
 	if type(file_content) is str:
 		file_content = {'':file_content}
 
-	for filename in file_content:
+	for filename, content in file_content.items():
 
 		# Get the actual path and filename (sanitize this path)
 		path,file = os.path.split(remove_tags(pathname+filename))
@@ -112,7 +119,7 @@ def write_file(pathname, file_content, print_path=False):
 		file = encode_tags(file)
 
 		if print_path:
-			print (f'Writing {format_filename(os.path.join(path,file))}')
+			print (f'Writing {format_filename(path,file)}')
 
 		# Verify enclosing directory exists, if not, create it.
 		if not os.path.exists(path):
@@ -120,10 +127,10 @@ def write_file(pathname, file_content, print_path=False):
 
 		# Default output is UTF-8. Attempt to use it as it's more compatible.
 		try:
-			open(os.path.join(path,file), 'w', encoding='utf-8').write(file_content[filename])
+			open(os.path.join(path,file), 'w', encoding='utf-8').write(content)
 		# UTF-16 takes up twice the space. Only use it as a fallback option if errors generated during write.
 		except:
-			open(os.path.join(path,file), 'w', encoding='utf-16').write(file_content[filename])	
+			open(os.path.join(path,file), 'w', encoding='utf-16').write(content)	
 
 		files_generated.append(os.path.join(path,file))
 		
@@ -131,8 +138,8 @@ def write_file(pathname, file_content, print_path=False):
 
 
 
-def format_filename(filename):
-	return f'{ansi.cyan}{os.path.dirname(filename)}{os.sep}{ansi.rst}{ansi.white}{os.path.basename(filename)}{ansi.rst}'
+def format_filename(path,file):
+	return f'{ansi.cyan}{path}{os.sep}{ansi.rst}{ansi.white}{file}{ansi.rst}'
 
 
 
@@ -157,8 +164,7 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	# Remove the file_path temporarily, before we write to disk.
 	# Also permanently remove 'traits', 'trait_file', 'scripts', and 'portraits'.
 	for key in ('file_path','traits','portraits','scripts','trait_file'):
-		if key in alliance_info:
-			del alliance_info[key]
+		alliance_info.pop(key, None)
 
 	# Ensure we are just using the path name
 	if os.path.isfile(file_path):
@@ -173,7 +179,7 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	if encode:
 		file_name = encode_tags(file_name)
 		
-	file_path += os.sep + 'cached_data-' + file_name + '.msf'
+	file_path += f'{os.sep}cached_data-{file_name}.msf'
 	
 	# If we don't want to indicate this file has changed, save the current timestamp.
 	if timestamp != 'update':
@@ -259,7 +265,7 @@ def retire_cached_data(file_or_alliance=''):
 
 # Handle the file list cleanly.
 @timed(level=3)
-def find_cached_data(file_or_alliance=''):
+def find_cached_data(file_or_alliance):
 
 	alliance_info = {}
 
@@ -275,36 +281,27 @@ def find_cached_data(file_or_alliance=''):
 	elif file_or_alliance:
 
 		# Check the local directory for something named exactly this
-		path, file = os.path.split(file_or_alliance)
-
-		for file_list in [glob.glob(os.path.join(path,file)),
-						  glob.glob(os.path.join(path,encode_tags(file)))]:
-			if len(file_list) == 1:
-				break
+		file_list = glob.glob(file_or_alliance)
 		
 		# Check local directories and deeper
 		if len(file_list) != 1:
 		
 			# Look in local directory, subdirectory named for alliance, and cached_data directory
-			for local_path in [get_local_path(), get_local_path()+os.sep+file_or_alliance, get_local_path()+os.sep+'cached_data']:
+			local_path = f'{get_local_path()}cached_data'
 
-				# Find file even if marked retired
-				for data_type in ['cached_data', 'OLD_DATA']:
+			# Find file even if marked retired
+			for data_type in ['cached_data', 'OLD_DATA']:
 
-					# Look for name with encoding, without encoding, and do a reverse search ignoring tags and encoding
-					for file_list in [glob.glob(os.path.join(local_path,f'{data_type}-{file_or_alliance}.msf')),
-									  glob.glob(os.path.join(local_path,f'{data_type}-{encode_tags(file_or_alliance)}.msf')),
-									  [x for x in glob.iglob(os.path.join(local_path,f'{data_type}-*.msf')) if remove_tags(decode_tags(x)).lower().endswith(f'{os.sep}{data_type}-{file_or_alliance}.msf')]]:
-						if len(file_list) == 1:
-							break
+				# Look for name with encoding, without encoding, and do a reverse search ignoring tags and encoding
+				for file_list in [
+									glob.glob(os.path.join(local_path,f'{data_type}-{encode_tags(file_or_alliance)}.msf')),
+									[x for x in glob.iglob(os.path.join(local_path,f'{data_type}-*.msf')) if remove_tags(decode_tags(x)).lower().endswith(f'{os.sep}{data_type}-{file_or_alliance}.msf')],
+									glob.glob(os.path.join(local_path,f'{data_type}-{file_or_alliance}.msf')),
+								  ]:
 					if len(file_list) == 1:
 						break
 				if len(file_list) == 1:
 					break
-
-	# No value passed in, check local directory for single cached_data.msf file
-	else:
-		file_list = glob.glob(os.path.join(get_local_path(),'cached_data-*.msf'))
 
 	# If a single MSF file was found, use it, otherwise search was ambiguous.
 	if len(file_list) == 1:
@@ -333,7 +330,7 @@ def find_cached_data(file_or_alliance=''):
 def local_img_cache(url, req_html=False):
 
 	# Where should assets be downloaded to for local caching?
-	asset_cache = f'{get_local_path()}cached_data{os.sep}assets{os.sep}'
+	asset_cache = f'{get_local_path()}images{os.sep}assets{os.sep}'
 	if not os.path.exists(asset_cache):
 		os.makedirs(asset_cache)
 
@@ -347,7 +344,7 @@ def local_img_cache(url, req_html=False):
 				for chunk in response.iter_content(chunk_size=8192):
 					file.write(chunk)
 
-			print (f'{ansi.ltyel}Caching locally:{ansi.rst} {ansi.gray}{url=} => ../cached_data/assets/{ansi.rst}{ansi.white}{Path(url).name}{ansi.rst}')
+			print (f'{ansi.ltyel}Caching locally:{ansi.rst} {ansi.gray}{url=:90} => ../images/assets/{ansi.rst}{ansi.white}{Path(url).name}{ansi.rst}')
 
 		# If download fails, delete any partial file and return url instead
 		except requests.exceptions.RequestException as e:
@@ -362,7 +359,7 @@ def local_img_cache(url, req_html=False):
 			# Advise use of URL instead
 			return url
 
-	return url if req_html else f'../cached_data/assets/{Path(url).name}'
+	return url if req_html else f'../images/assets/{Path(url).name}'
 	
 
 
@@ -456,3 +453,37 @@ def html_to_images(html_files, proc_name='msf2csv', print_path=False, render_wai
 		raise
 
 	return files_generated
+
+
+
+  #8888b.  888      8888888888        d8888 888b    888 888     888 8888888b.        .d88888b.  888      8888888b.       8888888888 8888888 888      8888888888 .d8888b.  
+#88P  Y88b 888      888              d88888 8888b   888 888     888 888   Y88b      d88P" "Y88b 888      888  "Y88b      888          888   888      888       d88P  Y88b 
+#88    888 888      888             d88P888 88888b  888 888     888 888    888      888     888 888      888    888      888          888   888      888       Y88b.      
+#88        888      8888888        d88P 888 888Y88b 888 888     888 888   d88P      888     888 888      888    888      8888888      888   888      8888888    "Y888b.   
+#88        888      888           d88P  888 888 Y88b888 888     888 8888888P"       888     888 888      888    888      888          888   888      888           "Y88b. 
+#88    888 888      888          d88P   888 888  Y88888 888     888 888             888     888 888      888    888      888          888   888      888             "888 
+#88b  d88P 888      888         d8888888888 888   Y8888 Y88b. .d88P 888             Y88b. .d88P 888      888  .d88P      888          888   888      888       Y88b  d88P 
+  #8888P"  88888888 8888888888 d88P     888 888    Y888  "Y88888P"  888              "Y88888P"  88888888 8888888P"       888        8888888 88888888 8888888888 "Y8888P"  
+
+
+
+# Default cleanup is any files older than 24 hours
+def cleanup_old_files(local_path, age=1, ext=''):
+	try:
+		# Get just the base path if a filename has been passed in
+		if not os.path.isdir(local_path):
+			local_path = os.path.dirname(local_path)
+
+		# Age in days
+		cutoff_date = time.time() - age * 24 * 3600
+
+		# Process files just in explicit path, no dirs and no deeper
+		for item in Path(local_path).expanduser().glob(f'*{ext}'):
+			if item.is_file():
+				if os.stat(item).st_mtime < cutoff_date:
+					#print (f'{ansi.bold}Deleting:{ansi.rst} {item}')
+					os.remove(item)
+
+	# Catch all exceptions. Don't let this be a reason for failure
+	except Exception as exc:
+		print (f'{ansi.ltred}EXCEPTION:{ansi.rst} {ansi.gray}{type(exc).__name__}: {exc}{ansi.rst}')

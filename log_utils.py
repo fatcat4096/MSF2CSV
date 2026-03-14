@@ -10,14 +10,14 @@ import os
 import sys
 import asyncio
 
+
 from functools  import wraps
-from pathlib    import Path
-from typing     import Callable, Any
+from typing     import Any
 from datetime   import datetime
 from contextlib import contextmanager
 
-import logging
 
+import logging
 import __main__
 
 # Default value, use the local file path
@@ -428,26 +428,3 @@ class ansi():
 	rst     = "\x1b[0m"
 	bold    = "\x1b[1m"
 	under   = "\x1b[4m"
-
-
-
-def cleanup_old_files(local_path, age=7):
-	# Let catch all exceptions. Don't let a command fail
-	try:
-		if not os.path.isdir(local_path):
-			local_path = os.path.dirname(local_path)
-
-		cutoff_date = time.time() - age * 24 * 3600
-
-		# Changed to just process files in local_path, no deeper
-		for item in Path(local_path).expanduser().glob('*'):
-			if item.is_file():
-				if os.stat(item).st_mtime < cutoff_date:
-					os.remove(item)
-	except Exception as exc:
-		print (f'{ansi.ltred}EXCEPTION:{ansi.rst} {ansi.gray}{type(exc).__name__}: {exc}{ansi.rst}')
-
-
-
-# Clean up old files at launch.
-cleanup_old_files(log_file_path)
