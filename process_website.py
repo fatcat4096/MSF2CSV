@@ -275,7 +275,7 @@ async def update_cached_char_info(AUTH):
 	CHAR_INFO.append(f'unplayable = {json.dumps(UNPLAYABLE, indent=2, sort_keys=True)}')
 
 	# Write the updated module to disk
-	write_file(get_local_path()+'char_info.py', '\n'.join(CHAR_INFO))
+	write_file(f'{os.path.dirname(__file__)}{os.sep}char_info.py', '\n'.join(CHAR_INFO))
 
 	# Let's build the cached char files
 	char_list   = []

@@ -64,7 +64,7 @@ def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=Non
 				else:
 					html_files = generate_html(alliance_info, custom_table or tables.get(output), table_format)
 			except Exception as exc:
-				dirname = os.path.dirname(__file__) + os.sep
+				dirname = f'{os.path.dirname(__file__)}{os.sep}'
 				Console().print_exception(theme='github-dark', extra_lines=4, suppress=[f'{dirname}log_utils.py', f'{dirname}msf2csv.py'])
 				return {}
 
@@ -86,7 +86,7 @@ def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=Non
 	# Default: If no output specified, generate tabbed html output for every defined format.
 	else:
 		for output in tables:
-			write_file(pathname+output+'.html', generate_tabbed_html(alliance_info, tables.get(output), table_format))
+			write_file(f'{pathname}{output}.html', generate_tabbed_html(alliance_info, tables.get(output), table_format))
 
 	# If running Frozen executable, stop here before dismissing dialog box. 
 	if getattr(sys, 'frozen', False):
