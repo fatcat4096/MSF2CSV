@@ -376,7 +376,7 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 
 	# Audit or under min? If Audit, under_min is irrelevant
 	AUDIT = table_format.get('audit')
-	if AUDIT == 'abil':
+	if AUDIT:
 		
 		if 'key_ranges' not in alliance_info:
 			with timing('generate_key_ranges'):
@@ -385,27 +385,47 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 		# Get a little closer to our work
 		KEY_RANGES = alliance_info.get('key_ranges', {}).get(char_name, {})
 
-		for key in ('bas','spc','ult','pas'):
+		# If we're focusing on Abilities...
+		if AUDIT == 'abil':
+			for key in ('bas','spc','ult','pas'):
 
-			# Awakened value depends upon the key type
-			awakened = 6 if key=='pas' else 8
-			
-			# If this is an awakened ability, look closer
-			if KEY_RANGES.get(key) and max(KEY_RANGES.get(key)) >= awakened:
+				# Awakened value depends upon the key type
+				awakened = 6 if key=='pas' else 8
+				
+				# If this is an awakened ability, look closer
+				if KEY_RANGES.get(key) and max(KEY_RANGES.get(key)) >= awakened:
 
+					player_val = find_roster_value(alliance_info, player_name, char_name, key)
+
+					# If any ability is under_min, return the OPPOSITE
+					# We are auditing, so HIGHLIGHTING deficiencies
+					if player_val < awakened:
+						player_info[char_name] = False
+
+						# Make this field value RED for all
+						KEY_RANGES[key][player_val] = color_scale[0]
+		
+		# If we're focusing on primary stats
+		elif AUDIT == 'min':
+			for key in ('lvl','tier','iso','yel','red'):
+
+				# See if a minimum value has been set
+				min_val = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
+				
+				# If this is an awakened ability, look closer
 				player_val = find_roster_value(alliance_info, player_name, char_name, key)
 
-				# If any ability is under_min, return the OPPOSITE
+				# If any stat is under_min, return the OPPOSITE
 				# We are auditing, so HIGHLIGHTING deficiencies
-				if player_val < awakened:
+				if player_val < min_val:
 					player_info[char_name] = False
 
 					# Make this field value RED for all
 					KEY_RANGES[key][player_val] = color_scale[0]
-					
+		
 		# Again, since passed Audit, no need to highlight.
 		# Call this 'under_min' to not focus on it
-		player_info[char_name] = player_info. 	get(char_name, True)
+		player_info[char_name] = player_info.get(char_name, True)
 		return player_info[char_name]
 
 	PROFILE = table_format.setdefault('profile', {}).setdefault('min', {})

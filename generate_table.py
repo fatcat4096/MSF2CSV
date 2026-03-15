@@ -114,7 +114,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op')
 
 	# Get keys from table_format/table, with defaults if necessary.
-	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','tier','iso'], profile=True)
+	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','lvl','tier','iso'], profile=True)
 
 	# Treat 'abil' as 4 separate entries.
 	if 'abil' in keys:
