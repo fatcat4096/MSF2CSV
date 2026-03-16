@@ -375,7 +375,7 @@ tables['battleworld'] = { 'name': 'Battleworld',
 tables['all_chars'] = { 'name': 'All Characters',
 					'max_others': 0,
 					'sort_by': 'tcp',
-					'inc_keys': ['power','tier','iso'],
+					'inc_keys': ['power','lvl','tier','iso'],
 					'inc_class': True,
 					'lanes':[ [
 							{'traits': ['All'], 'label':'All Chars'},

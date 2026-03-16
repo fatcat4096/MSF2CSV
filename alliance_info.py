@@ -284,7 +284,7 @@ def sort_and_filter_others(alliance_info, table, section, table_format, player_l
 
 
 
-def filter_by_traits(traits, traits_req='any', char_list=None):
+def filter_by_traits(traits, traits_req='any', other_chars=None):
 
 	# If Section provided, pull traits from tag
 	if type(traits) is dict:
@@ -298,8 +298,7 @@ def filter_by_traits(traits, traits_req='any', char_list=None):
 	if not traits:
 		return []
 
-	if char_list is None:
-		char_list = get_cached('char_list')[:]
+	char_list = other_chars[:] if other_chars else get_cached('char_list')[:]
 
 	# Get extracted_traits from alliance_info
 	extracted_traits = get_cached('traits')
@@ -340,6 +339,10 @@ def filter_by_traits(traits, traits_req='any', char_list=None):
 			if char in extracted_traits.get(trait,[]) and char in char_list:
 				char_list.remove(char)
 
+	# If applied filters result in no matches, call again with 'any' instead
+	if traits_req == 'all' and not char_list:
+		return filter_by_traits(traits, 'any', other_chars)
+
 	return char_list
 
 
@@ -369,6 +372,11 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 
 	player_info = section.setdefault('under_min',{}).setdefault(player_name,{})
 
+	# Make sure mins get recorded.
+	PROFILE = table_format.setdefault('profile', {}).setdefault('min', {})
+	for key in ('lvl','tier','iso','yel','red'):
+		PROFILE[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
+
 	# Not summoned is under_min
 	if find_roster_value(alliance_info, player_name, char_name, 'power') == 0:
 		player_info[char_name] = True
@@ -379,8 +387,7 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 	if AUDIT:
 		
 		if 'key_ranges' not in alliance_info:
-			with timing('generate_key_ranges'):
-				generate_key_ranges(alliance_info)
+			generate_key_ranges(alliance_info)
 		
 		# Get a little closer to our work
 		KEY_RANGES = alliance_info.get('key_ranges', {}).get(char_name, {})
@@ -428,11 +435,9 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 		player_info[char_name] = player_info.get(char_name, True)
 		return player_info[char_name]
 
-	PROFILE = table_format.setdefault('profile', {}).setdefault('min', {})
-
 	# Calculate whether entry is under the min requirements for use in this raid/mode.
 	for key in ('lvl','tier','iso','yel','red'):
-		min_val = PROFILE[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
+		min_val = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
 
 		if min_val and find_roster_value(alliance_info, player_name, char_name, key) < min_val:
 			player_info[char_name] = True
