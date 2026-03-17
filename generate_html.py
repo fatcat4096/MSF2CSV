@@ -292,7 +292,7 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 
 		# ...or Alliance Info. Don't use the tab labels for Alliance Info
 		elif output == 'alliance_info':
-			html_file += generate_alliance_tab(alliance_info, html_cache, hist_date)
+			html_file += generate_alliance_tab(alliance_info, html_cache, hist_date, table_format=table_format)
 
 		# ...or By Char, generate one entry for each character included in the main report
 		elif output == 'by_char':
@@ -366,7 +366,7 @@ def generate_tabbed_html(alliance_info, table, table_format):
 
 	# After all Lanes are added, add the Roster Analysis, Alliance Info, and ByChars tabs.
 	html_file += generate_roster_analysis(alliance_info, html_cache, hist_date or side_hist, using_tabs=True)
-	html_file += generate_alliance_tab   (alliance_info, html_cache, hist_date or side_hist, using_tabs=True)
+	html_file += generate_alliance_tab   (alliance_info, html_cache, hist_date or side_hist, using_tabs=True, table_format=table_format)
 	html_file += generate_by_char_tab    (alliance_info, html_cache, hist_date or True,      using_tabs=True)
 
 	# Optimize if large? Remove white space and carriage returns from center section.

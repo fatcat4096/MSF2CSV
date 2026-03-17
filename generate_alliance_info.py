@@ -21,7 +21,7 @@ except:
 
 # Generate just the Alliance Tab contents.
 @timed(level=3)
-def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False):
+def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False, table_format={}):
 
 	html_file = ''
 	
@@ -30,10 +30,19 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	
 	# Build up the list of Alliance Members in the order we will present them.
 	member_list =  []
-	if alliance_info.get('leader'):
-		member_list = [alliance_info.get('leader')]
-	
-	member_list += [member for member in alliance_order if member in alliance_info.get('captains',[])]
+
+	# Sort list by role?
+	sort_by = table_format.get('sort_by')
+	if sort_by == 'role':
+
+		# Start with Leader
+		if alliance_info.get('leader'):
+			member_list = [alliance_info.get('leader')]
+
+		# Continue with Captains
+		member_list += [member for member in alliance_order if member in alliance_info.get('captains',[])]
+
+	# Add the rest in order of TCP
 	member_list += [member for member in alliance_order if member not in member_list]
 
 	# Only include Dividers if using as part of a multi-tab document
@@ -141,15 +150,19 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output
 		stale_data = member_stats['is_stale']
 		
-		member_color = ['#B0E0E6','#DCDCDC'][stale_data]
+		member_color = '#DCDCDC' if stale_data else '#B0E0E6'
+		member_role  = 'Member'
 
 		if member in alliance_info.get('leader',[]):
 			member_role = '<a> Leader </a>'
+			
+			# Change color slightly if not sorting by Role
+			if sort_by != 'role':
+				member_color = '#A9A9A9' if stale_data else '#00BFFF'
+
 		elif member in alliance_info.get('captains',[]):
-			member_role = 'Captain'
-			member_color = ['#00BFFF','#A9A9A9'][stale_data]		
-		else:
-			member_role = 'Member'
+			member_role  = 'Captain'
+			member_color = '#A9A9A9' if stale_data else '#00BFFF'
 
 		member_url = ''
 		if member_stats.get('avail'):

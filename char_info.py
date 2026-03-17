@@ -2617,6 +2617,9 @@ playable   = {
     },
     {
       "description": "Maria Marquez was an intrepid archaeologist who had dedicated her life to finding a lost temple to the Mayan Moon goddess, Ixchel. When she finally found it, the goddess chose her as an avatar. Now, as Eclipse, she defends her heritage and protects her people from those who would desecrate and exploit their sacred past.",
+      "eventTraits": [
+        "MSFOriginal"
+      ],
       "id": "Eclipse",
       "mission": false,
       "name": "Eclipse",
@@ -2644,7 +2647,7 @@ playable   = {
         "Protector",
         "DaringWarrior"
       ],
-      "unlockStars": 3
+      "unlockStars": 1
     },
     {
       "description": "Electro uses her rage and voltage to unleash massive damage on the Sinister Six's most vulnerable enemies.",
@@ -12564,13 +12567,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "0c08b35bd2470da5fd44",
-      "chars": "025f362286fcbae06ecf",
-      "drops": "251a75a13322f246c957",
-      "events": "11c662e82b4cd881c25c",
-      "locs": "08dd63cf79c486b356ab",
-      "nodes": "55db5fa3b23fc18f29fc",
-      "other": "1917a7b03498d30ebc82"
+      "all": "4276f9f33829cfcc4204",
+      "chars": "f9fdae5cfd0c1591b41c",
+      "drops": "9bf7933f18f9ee1e4a39",
+      "events": "025d77eabc31f951ea5c",
+      "locs": "bde891b927bdecfe191e",
+      "nodes": "7e96fc6c68da637127e6",
+      "other": "c0feaa5aaf3839e09fde"
     },
     "perTotal": 361,
     "version": 1
@@ -13410,13 +13413,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "0c08b35bd2470da5fd44",
-      "chars": "025f362286fcbae06ecf",
-      "drops": "251a75a13322f246c957",
-      "events": "11c662e82b4cd881c25c",
-      "locs": "08dd63cf79c486b356ab",
-      "nodes": "55db5fa3b23fc18f29fc",
-      "other": "1917a7b03498d30ebc82"
+      "all": "4276f9f33829cfcc4204",
+      "chars": "f9fdae5cfd0c1591b41c",
+      "drops": "9bf7933f18f9ee1e4a39",
+      "events": "025d77eabc31f951ea5c",
+      "locs": "bde891b927bdecfe191e",
+      "nodes": "7e96fc6c68da637127e6",
+      "other": "c0feaa5aaf3839e09fde"
     },
     "perTotal": 43,
     "version": 1
