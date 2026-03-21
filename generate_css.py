@@ -37,6 +37,19 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   font-weight : 900;
   font-size   : 24px;
 }
+/* ISO Class Title */
+.isot {
+  font-size   : 12pt;
+  line-height : 150%;
+  color       : #DB4;
+}
+/* ISO Class Column */
+.isoc {
+  font-size   : 12pt;
+  font-weight : 400;
+  color       : black;
+  line-height : 98%;
+}
 /* Title Black */
 .tblk {
   font-weight : 700;

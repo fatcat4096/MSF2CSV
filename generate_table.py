@@ -25,7 +25,8 @@ except:
 @timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache, hist_date=None, linked_hist=None, team_power_summary=False):
 
-	portraits = get_cached('portraits')
+	portraits   = get_cached('portraits')
+	iso_classes = get_cached('iso_classes')
 
 	# Pick a color scheme.
 	if 'OTHERS' not in table_lbl:
@@ -199,7 +200,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False, profile=True) and 'OTHERS' not in table_lbl
 		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False, profile=True) and 'OTHERS' not in table_lbl and not team_power_summary
-		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not team_power_summary
+		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not (team_power_summary or (hist_date and linked_hist))
 		inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
 		spec_ops  = get_table_value(table_format, table, section, key='spec_ops')
 
@@ -210,9 +211,6 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# Include a column for "# Avail" info if requested.
 		if inc_avail:
 			html_file.append(f'     <td></td>')
-
-		# Number of columns under each Character entry.
-		num_cols = len(keys) + inc_class
 
 		# Include Images for each of the Characters.
 		for char in line_chars:
@@ -228,13 +226,13 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						url = local_img_cache(portraits[char_name], req_html)
 						section_name = char.removeprefix(f'{char_name}:').upper().replace(' (','<br>(').replace('-','&#8209;')
 
-						html_file.append(f'     <td class="img" colspan="{num_cols}"><div class="cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{section_name}</div></td>')
+						html_file.append(f'     <td class="img" colspan="{len(keys)}"><div class="cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{section_name}</div></td>')
 						break
 
 				# If we never found a match, just include the formatted Section name as a header.
 				if not char.startswith(char_name+':'):
 					section_name = translate_name(char).upper().replace(" (","<br>(").replace('-','&#8209;')
-					html_file.append(f'     <td colspan="{num_cols}"><div class="summ">{section_name}</div></td>')
+					html_file.append(f'     <td colspan="{len(keys)}"><div class="summ">{section_name}</div></td>')
 				
 			else:
 				url = local_img_cache(portraits[char], req_html)
@@ -260,7 +258,38 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				# Dim image if under_min
 				bg_color += ' dim_img' if char in dim_image else ''
 
+				# Number of columns under each Character entry.
+				num_cols = len(keys)
+				
+				# Do we have ISO information for this character yet?
+				iso_char = iso_classes.get(char)
+				
+				# Adjust the width of the ISO Class Info based on the width of the char info
+				if inc_class and iso_char:
+					class_cols = 0 if num_cols < 4 else 1 if num_cols == 4 else 2
+					num_cols += inc_class - class_cols
+
 				html_file.append(f'     <td class="img" colspan="{num_cols}"{onclick}><div class="cont{bg_color}"><div class="{"" if hist_date else "zoom"}"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(char)}</div></div></td>')
+
+				# If we had room for ISO info, let's add a title and the ISO info now
+				if inc_class and iso_char and class_cols:
+
+					# If we had room for two columns, add a title/header
+					if class_cols == 2:
+						html_file.append(f'     <td class="isot">J<br>A<br>R<br>V<br>I<br>S</td>')
+
+					iso_column = []
+
+					# And finally, add the actual ISO adoption rates in order from the MSF API
+					for iso in sorted(iso_char, key=lambda x: iso_char[x], reverse=True):
+
+						# Determine color for each sub-cell
+						iso_color = get_value_color(iso_char.values(), iso_char[iso], html_cache, color_set='set')
+
+						# Include the sub-cell definition
+						iso_column.append(f'<div class="{iso_color}{bg_color} isoc">{round(iso_char[iso])}%<br><span class="{iso[:4]}">{"&nbsp;"*4}</span></div>')
+
+					html_file.append(f"     <td>{''.join(iso_column)}</td>")
 
 		# Include an image of the completion reward if provided.
 		if team_power_summary and inc_comp:
