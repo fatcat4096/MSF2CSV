@@ -275,3 +275,58 @@ def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
 	return response
 
 
+
+# Request gear tier info -- used for calculating gear tier costs for a character
+@timed(level=3)
+def request_char_details(ACCESS_TOKEN, char_name):
+
+	# Attempt up to three times
+	for x in range(3):
+
+		# Send request for Character Info
+		response = requests.get(
+			headers =  get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/game/v1/characters/{char_name}',
+			params  = {
+						'statsFormat':'csv',
+						'charInfo':'none',
+						'costumes':'none',
+						'abilityKits':'none',
+						'pieceInfo':'none',
+						'pieceDirectCost':'part',
+						'subPieceInfo':'none',
+						'charAdoption':'full',
+					  },
+		)
+
+		# Exit loop if we got a successful response
+		if response.ok:
+			break
+
+		#print ('API request -- request_char_info() failed, retrying...')
+
+	return response
+
+
+
+# Request XP required for each Player Level -- use to translate to gold cost to level up
+@timed(level=3)
+def request_upgrade_info(ACCESS_TOKEN, fieldId='characterLevelTotalXp'):
+
+	# Attempt up to three times
+	for x in range(3):
+
+		# Send request for Character Info
+		response = requests.get(
+			headers =  get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/game/v1/upgradeData/{fieldId}',
+		)
+
+		# Exit loop if we got a successful response
+		if response.ok:
+			break
+
+		#print ('API request -- request_char_info() failed, retrying...')
+
+	return response
+

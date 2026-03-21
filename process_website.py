@@ -6,6 +6,7 @@ Logs into website and updates data from Alliance Information if not
 """
 
 
+import asyncio
 import importlib
 import json
 
@@ -305,6 +306,92 @@ async def update_cached_char_info(AUTH):
 	set_cached('char_meta', char_meta)
 
 
+
+# Rebuild fresh cached character info
+@timed(level=3)
+async def update_cached_cost_info(AUTH):
+
+	# Get cached data
+	char_list   = get_cached('char_lookup')
+	level_costs = get_cached('level_costs')
+	gear_costs  = get_cached('gear_costs')
+	iso_classes = get_cached('iso_classes')
+
+	# Initialize variables
+	loop = asyncio.get_event_loop()
+
+	# Get info about the cost to update to each level
+	await loop.run_in_executor(None, get_level_cost_info, AUTH, level_costs)
+	
+	# Get the cached list of characters
+	for char_name in char_list:
+		await loop.run_in_executor(None, get_gear_and_iso_info, AUTH, char_name, gear_costs, iso_classes)
+
+	# Finally, cache the value of char_lookup
+	set_cached('level_costs', level_costs)
+	set_cached('gear_costs',  gear_costs)
+	set_cached('iso_classes', iso_classes)
+
+
+
+def get_level_cost_info(AUTH, level_costs):
+	
+	# Make the API call
+	response = request_upgrade_info(AUTH, 'characterLevelTotalXp')
+
+	# Go straight to the data if present
+	xp_req = response.json().get('data',{}) if response and response.ok else {}
+
+	# Temp, for visibility
+	if response:	print (f'Parsing level upgrade costs')
+
+	for lvl, xp_tot in enumerate(xp_req):
+		xp_diff = xp_tot - xp_req[lvl-1] if lvl and xp_tot else 0
+		level_costs[lvl-1] = int(xp_diff * 6.25)
+
+
+
+def get_gear_and_iso_info(AUTH, char_name, gear_costs, iso_classes):
+	
+	# Make the API call
+	response = request_char_details(AUTH, char_name)
+
+	# Go straight to the data if present
+	response = response.json().get('data',{}) if response and response.ok else {}
+
+	# Translate to common name
+	char_name = get_cached('char_lookup').get(char_name)
+
+	# Temp, for visibility
+	if response:	print (f'Parsing:  {char_name}')
+	else:			print (f'Skipping: {char_name}')
+
+	# Look deeper into the response
+	gear_info = response.get('gearTiers', {})
+	iso_info  = response.get('iso8ClassAdoption',{})
+
+	# Get a little closer to our work
+	gear_cost =  gear_costs.setdefault(char_name,{})
+	iso_class = iso_classes.setdefault(char_name,{})
+
+	# Process gear tier cost info if provided
+	for tier in gear_info:
+
+		# Initialize tier cost
+		gear_cost[int(tier)] = 0
+
+		# Iterate through each slot
+		for slot in gear_info[tier].get('slots',[]):
+
+			# Search the subpieces for gold pricing info
+			for subpiece in slot.get('piece').get('directCost',[]):
+				if subpiece.get('item').get('id') == 'SC':
+					gear_cost[int(tier)] += subpiece.get('quantity')
+
+	# Process iso class adoption rates if available
+	iso_class.update(iso_info)
+
+	
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
 def update_strike_teams(alliance_info):
