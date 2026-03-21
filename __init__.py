@@ -33,6 +33,7 @@ from .alliance_info import update_history
 from .process_website import get_alliance_api
 from .process_website import get_username_api
 from .process_website import update_cached_char_info
+from .process_website import update_cached_cost_info
 from .process_website import process_rosters
 from .process_website import roster_results
 from .process_website import update_is_stale
