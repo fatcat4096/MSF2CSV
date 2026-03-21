@@ -100,7 +100,8 @@ def parse_info_api(alliance_members, alliance, captains, members):
 		member['mvp']   = member_card.get('warMvp',0)
 		member['tcc']   = member_card.get('charactersCollected')
 		member['avail'] = member_card.get('rosterShare')
-
+		member['joined']= member_card.get('daysInAlliance',0)
+		
 		# Store the finished member info.
 		members[member_name] = member
 		
