@@ -17,14 +17,14 @@ try:
 	from .parse_cache import update_parse_cache
 	from .cached_info import get_cached
 	from .gradients   import color_scale
-	from .html_shared import get_color
+	from .html_shared import get_color, format_power
 except:
 	from  log_utils   import *
 	from  file_io     import find_cached_data
 	from  parse_cache import update_parse_cache
 	from  cached_info import get_cached
 	from  gradients   import color_scale
-	from  html_shared import get_color
+	from  html_shared import get_color, format_power
 
 
 @timed(level=3)
@@ -298,6 +298,12 @@ def filter_by_traits(traits, traits_req='any', other_chars=None):
 	if not traits:
 		return []
 
+	# Bundled traits should be processed AT END and evaluated as AND
+	bundled_traits = [x for x in traits if isinstance(x, list)]
+
+	# Remove the bundled traits
+	traits = [x for x in traits if isinstance(x, str)]
+
 	char_list = other_chars[:] if other_chars else get_cached('char_list')[:]
 
 	# Get extracted_traits from alliance_info
@@ -339,7 +345,11 @@ def filter_by_traits(traits, traits_req='any', other_chars=None):
 			if char in extracted_traits.get(trait,[]) and char in char_list:
 				char_list.remove(char)
 
-	# If applied filters result in no matches, call again with 'any' instead
+	# Finally, process bundled traits, these are alway evaluated as 'ALL'
+	for bundle in bundled_traits:
+		char_list += filter_by_traits(bundle, 'all', other_chars)
+
+	# If applied filters result in no matches, call again with 'ANY' instead
 	if traits_req == 'all' and not char_list:
 		return filter_by_traits(traits, 'any', other_chars)
 
@@ -414,6 +424,12 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 		
 		# If we're focusing on primary stats
 		elif AUDIT == 'min':
+			
+			# Attempt to calculate required gold
+			req_gold = {'lvl':get_cached('level_costs'), 'tier':get_cached('gear_costs')}
+
+			gold = 0
+			
 			for key in ('lvl','tier','iso','yel','red'):
 
 				# See if a minimum value has been set
@@ -429,6 +445,12 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 
 					# Make this field value RED for all
 					KEY_RANGES[key][player_val] = color_scale[0]
+
+					if key in req_gold:
+						gold += sum([req_gold[key].get(char_name,req_gold[key]).get(x,0) for x in range(player_val, min_val)])
+
+			if gold:
+				print (f'{player_name}: {format_power(gold)} gold required -- {char_name}')
 		
 		# Again, since passed Audit, no need to highlight.
 		# Call this 'under_min' to not focus on it

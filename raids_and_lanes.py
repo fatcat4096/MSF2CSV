@@ -176,6 +176,26 @@ tables['profx'] = { 'name': 'Prof X Saga',
 							] ]
 					}
 
+# Meta Heroes for use in Dark Dimension 9
+tables['dd9'] = { 'name': 'Dark Dimension 9',
+					'min_tier': 21,
+					'max_others': 10,
+					'min_others': True,
+					'sort_by': 'avail',
+					'sort_char_by': 'avail',
+					'inc_avail': True,
+					'traits_req': 'all',
+					'summary_keys': ['stp','avail'],
+					'summary_comp': 'Annihilus',
+					'lanes':[ [
+							{'traits': ['City',   'Non-Legendary', 'Non-Mythic', 'Non-Epic'], 'label':'City'},
+							{'traits': ['Cosmic', 'Non-Legendary', 'Non-Mythic', 'Non-Epic'], 'label':'Cosmic'},
+							{'traits': ['Global', 'Non-Legendary', 'Non-Mythic', 'Non-Epic'], 'label':'Global'},
+							{'traits': [['Epic', 'Villain'], 'Legendary'],  'traits_req':'any',  'label':'Epic Villain<br>or Legendary'},
+							{'traits': [['Epic', 'Hero'],    'Mythic'],     'traits_req':'any',  'label':'Epic Hero<br>or Mythic'},
+							] ]
+					}
+
 # Meta Heroes for use in Dark Dimension 8
 tables['dd8'] = { 'name': 'Dark Dimension 8',
 					'min_iso': 13,
