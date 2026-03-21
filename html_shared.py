@@ -25,7 +25,7 @@ def get_tab_header(content):
 
 # Translate value to a color from the Heat Map gradient.
 @timed(level=4)
-def get_value_color(val_range, value, html_cache, stale_data, stat='power', under_min=False, hist_date=None, color_set=False, darken_amt=0):
+def get_value_color(val_range, value, html_cache, stale_data=False, stat='power', under_min=False, hist_date=None, color_set=False, darken_amt=0):
 
 	# Base case. Return 'xx' if 0.
 	if not val_range or not value:
@@ -188,6 +188,27 @@ def get_field_value(value, hist_date):
 		field_value = '-'
 
 	return field_value
+
+
+
+# Present value with exactly 4 digits of precision
+def format_power(value):
+
+	# Determine the extension to add
+	ext = ''
+	if   value >= 1e12:	ext = 'T'
+	elif value >= 1e9:	ext = 'B'
+	elif value >= 1e6:	ext = 'M'
+	elif value >= 1e3:	ext = 'K'
+
+	# Get it down to 4 digits
+	val_len = len(str(value))
+	div,mod = divmod(val_len-1,3)
+	divisor = (div*3) + mod - 3
+	div,mod = divmod(int(value/(10**divisor)),10**(3-mod))
+	mod = str(mod).zfill(4-len(str(div)))
+
+	return f'{div}.{mod}{ext}'
 
 
 

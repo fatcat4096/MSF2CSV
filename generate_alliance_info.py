@@ -266,23 +266,3 @@ def alliance_info_cell(value_range, key, member_stats, hist_calcs, html_cache, s
 	# Return the completed cell
 	return f'  <td class="{field_color}">{curr_value:,}{diff_value}</td>\n'
 
-
-
-def format_power(value):
-
-	# Determine the extension to add
-	ext = ''
-	if   value >= 1e12:	ext = 'T'
-	elif value >= 1e9:	ext = 'B'
-	elif value >= 1e6:	ext = 'M'
-	elif value >= 1e3:	ext = 'K'
-
-	# Get it down to 4 digits
-	val_len = len(str(value))
-	div,mod = divmod(val_len-1,3)
-	divisor = (div*3) + mod - 3
-	div,mod = divmod(int(value/(10**divisor)),10**(3-mod))
-	mod = str(mod).zfill(4-len(str(div)))
-
-	return f'{div}.{mod}{ext}'
-

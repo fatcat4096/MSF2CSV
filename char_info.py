@@ -5920,6 +5920,13 @@ playable   = {
         "PD_MAESTRO_5"
       ],
       "status": "playable",
+      "traits": [
+        "Villain",
+        "Global",
+        "Bio",
+        "Brawler",
+        "Gamma"
+      ],
       "unlockStars": 5
     },
     {
@@ -11461,6 +11468,9 @@ playable   = {
     {
       "description": "A powerful robotic tyrant that summons drones to eliminate any threat to his mechanical regime.",
       "id": "Ultron",
+      "invisibleTraits": [
+        "Ultron"
+      ],
       "mission": false,
       "name": "Ultron",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Ultron_6e1fbd4f.png",
@@ -11490,7 +11500,6 @@ playable   = {
         "Global",
         "Tech",
         "Blaster",
-        "Ultron",
         "MastersOfEvil",
         "Mythic",
         "DARK_PROMOTION"
@@ -12567,13 +12576,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "4276f9f33829cfcc4204",
-      "chars": "f9fdae5cfd0c1591b41c",
-      "drops": "9bf7933f18f9ee1e4a39",
-      "events": "025d77eabc31f951ea5c",
-      "locs": "bde891b927bdecfe191e",
-      "nodes": "7e96fc6c68da637127e6",
-      "other": "c0feaa5aaf3839e09fde"
+      "all": "327b3c09f3bd2ac29a02",
+      "chars": "6be8157588f289989dc8",
+      "drops": "370d9bd789f29477d3c6",
+      "events": "54c494ca7377d922ef64",
+      "locs": "0ac83e73dc134113cac4",
+      "nodes": "ad8c924842b78d69865d",
+      "other": "60797ab59daac8e15f98"
     },
     "perTotal": 361,
     "version": 1
@@ -12666,6 +12675,24 @@ unplayable = {
         "Mystic",
         "Controller",
         "Symbiote",
+        "Mythic"
+      ],
+      "unlockStars": 7
+    },
+    {
+      "id": "PVE_Boss_Maestro",
+      "invisibleTraits": [
+        "Boss"
+      ],
+      "mission": false,
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_PVE_Boss_Maestro_9560b33f.png",
+      "status": "unplayable",
+      "traits": [
+        "Villain",
+        "Global",
+        "Bio",
+        "Brawler",
+        "Gamma",
         "Mythic"
       ],
       "unlockStars": 7
@@ -13413,15 +13440,15 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "4276f9f33829cfcc4204",
-      "chars": "f9fdae5cfd0c1591b41c",
-      "drops": "9bf7933f18f9ee1e4a39",
-      "events": "025d77eabc31f951ea5c",
-      "locs": "bde891b927bdecfe191e",
-      "nodes": "7e96fc6c68da637127e6",
-      "other": "c0feaa5aaf3839e09fde"
+      "all": "327b3c09f3bd2ac29a02",
+      "chars": "6be8157588f289989dc8",
+      "drops": "370d9bd789f29477d3c6",
+      "events": "54c494ca7377d922ef64",
+      "locs": "0ac83e73dc134113cac4",
+      "nodes": "ad8c924842b78d69865d",
+      "other": "60797ab59daac8e15f98"
     },
-    "perTotal": 43,
+    "perTotal": 44,
     "version": 1
   }
 }
