@@ -37,6 +37,11 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   font-weight : 900;
   font-size   : 24px;
 }
+/* Alliance Info Dates */
+.adat {
+  font-size   : 18px;
+  white-space : nowrap;
+}
 /* ISO Class Title */
 .isot {
   font-size   : 12pt;

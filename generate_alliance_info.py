@@ -5,7 +5,7 @@ Generate the tab for Alliance Info output.
 """
 
 
-from datetime     import datetime
+from datetime     import datetime, timedelta
 
 try:
 	from .log_utils   import timed
@@ -24,15 +24,24 @@ except:
 def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False, table_format={}):
 
 	html_file = ''
+
+	# Options are Alpha, Role, or TCP
+	sort_by = table_format.get('sort_by')
 	
-	# Start by sorting members by TCP.
-	alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
+	# Simple alphabetic sort?
+	if sort_by == 'alpha':
+		alliance_order = sorted(alliance_info['members'], key = str.lower)
+	# Sorting by Role? Start by sorting members by TCP.
+	elif sort_by == 'role':
+		alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get('tcp',0), reverse=True)
+	# Otherwise sort by indicated key.
+	else:
+		alliance_order = sorted(alliance_info['members'], key = lambda x: alliance_info['members'][x].get(sort_by,0), reverse=True)
 	
 	# Build up the list of Alliance Members in the order we will present them.
 	member_list =  []
 
 	# Sort list by role?
-	sort_by = table_format.get('sort_by')
 	if sort_by == 'role':
 
 		# Start with Leader
@@ -42,7 +51,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		# Continue with Captains
 		member_list += [member for member in alliance_order if member in alliance_info.get('captains',[])]
 
-	# Add the rest in order of TCP
+	# Add the rest in specified order
 	member_list += [member for member in alliance_order if member not in member_list]
 
 	# Only include Dividers if using as part of a multi-tab document
@@ -63,7 +72,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	EMBLEM_URL = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('image','EMBLEM_6_dd63d11b')}.png"
 	FRAME_URL  = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('frame','FRAME_15_174f8048')}.png"
 
-	html_file += f' <td rowspan="2"><div class="lrg_img" style="background-image:url({EMBLEM_URL});">\n'
+	html_file += f' <td colspan="2" rowspan="2"><div class="lrg_img" style="background-image:url({EMBLEM_URL});">\n'
 	html_file += f'  <div class="lrg_rel"><img class="lrg_rel" src="{FRAME_URL}" alt=""/></div>\n'
 	html_file += ' </div></td>\n'
 	
@@ -96,7 +105,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	html_file += '</tr>\n'
 
 	# Simplify inclusion of the sort function code
-	sort_func = 'class="%s" onclick="sort(%s,\'%s\',3)"' % ("blub", '%s', table_id)
+	sort_func = 'class="%s" onclick="sort(%s,\'%s\',4)"' % ("blub", '%s', table_id)
 
 	# Create the headings for the Alliance Info table
 	html_file += '<tr class="hblu" style="font-size:14pt;position:relative;">\n'
@@ -111,17 +120,19 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	html_file += f' <td {sort_func % 8} {w070}>War<br>MVP</td>\n'
 	html_file += f' <td {sort_func % 9} {w070}>Total<br>Stars</td>\n'
 	html_file += f' <td {sort_func % 10} {w070}>Total<br>Red</td>\n'
-	html_file += f' <td {sort_func % 11} {w215}>Last Updated:</td>\n'
+	html_file += f' <td {w110}>Join<br>Date</td>\n'
+	html_file += f' <td {w110}>Last<br>Update</td>\n'
 	html_file += '</tr>\n'
 	
 	# Find ranges to use for color calculations
-	tcp_range   = [alliance_info['members'][member].get('tcp',0)   for member in member_list]
-	stp_range   = [alliance_info['members'][member].get('stp',0)   for member in member_list]
-	tcc_range   = [alliance_info['members'][member].get('tcc',0)   for member in member_list]
-	mvp_range   = [alliance_info['members'][member].get('mvp',0)   for member in member_list]
-	max_range   = [alliance_info['members'][member].get('max',0)   for member in member_list]
-	stars_range = [alliance_info['members'][member].get('stars',0) for member in member_list]
-	red_range   = [alliance_info['members'][member].get('red',0)   for member in member_list]
+	tcp_range   = [alliance_info['members'][member].get('tcp',0)    for member in member_list]
+	stp_range   = [alliance_info['members'][member].get('stp',0)    for member in member_list]
+	tcc_range   = [alliance_info['members'][member].get('tcc',0)    for member in member_list]
+	mvp_range   = [alliance_info['members'][member].get('mvp',0)    for member in member_list]
+	max_range   = [alliance_info['members'][member].get('max',0)    for member in member_list]
+	stars_range = [alliance_info['members'][member].get('stars',0)  for member in member_list]
+	red_range   = [alliance_info['members'][member].get('red',0)    for member in member_list]
+	join_range  = [alliance_info['members'][member].get('joined',0) for member in member_list]
 
 	for member in member_list:
 	
@@ -217,28 +228,44 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		html_file += f'  <td>{member_role}</td>\n'
 
 		# Member Stats
-		html_file += alliance_info_cell(tcp_range,   'tcp',   member_stats, hist_calcs, html_cache, stale_data)
-		html_file += alliance_info_cell(stp_range,   'stp',   member_stats, hist_calcs, html_cache, stale_data)
-		html_file += alliance_info_cell(tcc_range,   'tcc',   member_stats, hist_calcs, html_cache, stale_data)
-		html_file += alliance_info_cell(max_range,   'max',   member_stats, hist_calcs, html_cache, stale_data)
-		html_file += alliance_info_cell(mvp_range,   'mvp',   member_stats, hist_calcs, html_cache, stale_data)
-		html_file += alliance_info_cell(stars_range, 'stars', member_stats, hist_calcs, html_cache, stale_data)
-		html_file += alliance_info_cell(red_range,   'red',   member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(tcp_range,   'tcp',    member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(stp_range,   'stp',    member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(tcc_range,   'tcc',    member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(max_range,   'max',    member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(mvp_range,   'mvp',    member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(stars_range, 'stars',  member_stats, hist_calcs, html_cache, stale_data)
+		html_file += alliance_info_cell(red_range,   'red',    member_stats, hist_calcs, html_cache, stale_data)
 
-		# Last Update formatting
-		if 'last_update' in member_stats:
-			last_update = datetime.now() - member_stats['last_update']
-			time_color  = get_value_color_ext(4*86400, 0, last_update.total_seconds(), html_cache, stale_data)
-			
+
+		# Manually build Join Date info
+		last_update = member_stats.get('last_update')
+
+		# Join Date / Last Update formatting
+		if last_update:
+			# Manually build Join Date info
+			days_ago   = member_stats.get('joined',0)
+			join_date  = datetime.now() - timedelta(days=days_ago)
+			join_value = f"{join_date.strftime('%b %d %Y')}<br><i>({days_ago}d)</i>"
+			join_color = get_value_color(join_range, days_ago, html_cache, stale_data, color_set='set')
+
+			html_file += f'  <td class="{join_color} adat">{join_value}</td>\n'
+
+			time_diff   = datetime.now() - last_update
+			time_color  = get_value_color_ext(4*86400, 0, time_diff.total_seconds(), html_cache, stale_data)
+	
+			day, rest = divmod(int(time_diff.total_seconds()), 86400)
+			hrs, rest = divmod(rest, 3600)
+			min, sec  = divmod(rest, 60)
+	
 			if stale_data:
-				time_value = f'<b><i> {("Stale. Re-sync.","EMPTY. Please Sync.")[not member_stats.get("tot_power")]} </i></b><br>%s, {last_update.days}d ago' % (member_stats['last_update'].strftime('%b %d'), )
+				time_value = f'<b><i>Stale<br>No change in {time_diff.days}d</i></b>'
 			else:
-				time_value = '%s%s ago<br>%s' % (['',f'{last_update.days} days, '][not last_update.days], str(last_update).split('.')[0], member_stats['last_update'].strftime('%a, %b %d')) 
+				time_diff = f'{day}d {hrs}h' if day else f'{hrs}h {min}m' if hrs else f'{min}m {sec}s'
+				time_value = f"{last_update.strftime('%a, %b %d')}<br><i>({time_diff})</i>"
+			html_file += f'  <td class="{time_color} adat">{time_value}</td>\n'
 		else:
-			time_color = 'xx'
-			time_value = 'ROSTER NOT SHARED<br><i>Set to <b>ALLIANCE ONLY</b></i>'
+			html_file += f'  <td colspan="2" class="xx adat">ROSTER NOT SHARED<br><i>Set to <b>ALLIANCE ONLY</b></i></td>\n'
 		
-		html_file += f'  <td class="{time_color}" style="font-size:18px;white-space:nowrap">{time_value}</td>\n'
 		html_file += ' </tr>\n'
 
 	html_file += '</table>\n'
