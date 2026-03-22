@@ -109,10 +109,10 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			break
 
 	# Define these once
-	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
+	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP','gold':'$$$'}
 
 	# Standard order for these columns
-	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op')
+	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op','gold')
 
 	# Get keys from table_format/table, with defaults if necessary.
 	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','lvl','tier','iso'], profile=True)
@@ -484,7 +484,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 								style = ''
 							else:
 								# Note: We are using the T class to get black text on fields in the Hist tab.
-								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min, hist_date)
+								field_color = get_value_color(key_range, key_val, html_cache, stale_data, key, under_min and key != 'gold', hist_date)
 								style = f' class="{field_color}{" T" if need_tt or hist_date is not None else ""}"'
 
 							# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.

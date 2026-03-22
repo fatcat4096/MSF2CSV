@@ -108,6 +108,8 @@ def get_color(min_val, max_val, value, stat='power', hist_date=None):
 	# ISO Coloring is special: green, blue, purple depending on ISO tier
 	elif stat == 'iso':
 		return iso_color_scale[value-1]
+	elif stat == 'gold':
+		return get_scaled_value(min_val, (max_val + min_val) / 2, max_val, value, color_scale=gold_color_scale)
 	elif stat == 'lvl':
 		return get_scaled_value(0, max(0, max_val-10), max_val, value)
 	elif stat == 'tier':
@@ -132,7 +134,7 @@ def get_color(min_val, max_val, value, stat='power', hist_date=None):
 
 # Do the ugly calculations here.
 @timed(level=4)
-def get_scaled_value(min_val, mid_val, max_val, value, yellow_point=0.5):
+def get_scaled_value(min_val, mid_val, max_val, value, yellow_point=0.5, color_scale=color_scale):
 
 	# If we're in the lower "half" of our range, calculate the spread from red to yellow
 	if value < mid_val:
@@ -178,7 +180,9 @@ def finalize_color(color, html_cache, stale_data=False, under_min=False, darken_
 # Format large Power values using K and M
 def get_field_value(value, hist_date):
 	if value:
-		if abs(value) > 10**6:
+		if abs(value) > 10**7:
+			field_value = f'{value/10**6:+.0f}M' if hist_date else f'{value/10**6:.1f}M'
+		elif abs(value) > 10**6:
 			field_value = f'{value/10**6:+.1f}M' if hist_date else f'{value/10**6:.2f}M'
 		elif abs(value) > 1000:
 			field_value = f'{value/1000:+.0f}K'  if hist_date else f'{value/1000:.0f}K'

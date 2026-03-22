@@ -383,9 +383,20 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 	player_info = section.setdefault('under_min',{}).setdefault(player_name,{})
 
 	# Make sure mins get recorded.
-	PROFILE = table_format.setdefault('profile', {}).setdefault('min', {})
+	MIN = table_format.setdefault('profile', {}).setdefault('min', {})
 	for key in ('lvl','tier','iso','yel','red'):
-		PROFILE[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
+		MIN[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
+
+	# Calculate gold required for any keys in req_gold
+	char_info = alliance_info['members'][player_name].get('processed_chars',{}).setdefault(char_name,{})
+	char_info['gold'] = 0
+	for key in ('lvl', 'tier'):
+		if not MIN[key]:
+			continue
+		player_val = find_roster_value(alliance_info, player_name, char_name, key)
+		if player_val < MIN[key]:
+			req_gold = get_cached('level_costs' if key=='lvl' else 'gear_costs')
+			char_info['gold'] += sum([req_gold.get(char_name, req_gold).get(x,0) for x in range(player_val, MIN[key])])
 
 	# Not summoned is under_min
 	if find_roster_value(alliance_info, player_name, char_name, 'power') == 0:
@@ -425,33 +436,19 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 		# If we're focusing on primary stats
 		elif AUDIT == 'min':
 			
-			# Attempt to calculate required gold
-			req_gold = {'lvl':get_cached('level_costs'), 'tier':get_cached('gear_costs')}
-
-			gold = 0
-			
 			for key in ('lvl','tier','iso','yel','red'):
 
-				# See if a minimum value has been set
-				min_val = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
-				
 				# If this is an awakened ability, look closer
 				player_val = find_roster_value(alliance_info, player_name, char_name, key)
 
 				# If any stat is under_min, return the OPPOSITE
 				# We are auditing, so HIGHLIGHTING deficiencies
-				if player_val < min_val:
+				if player_val < MIN[key]:
 					player_info[char_name] = False
 
 					# Make this field value RED for all
 					KEY_RANGES[key][player_val] = color_scale[0]
 
-					if key in req_gold:
-						gold += sum([req_gold[key].get(char_name,req_gold[key]).get(x,0) for x in range(player_val, min_val)])
-
-			if gold:
-				print (f'{player_name}: {format_power(gold)} gold required -- {char_name}')
-		
 		# Again, since passed Audit, no need to highlight.
 		# Call this 'under_min' to not focus on it
 		player_info[char_name] = player_info.get(char_name, True)
@@ -459,9 +456,7 @@ def is_under_min(alliance_info, player_name, char_name, table_format, table, sec
 
 	# Calculate whether entry is under the min requirements for use in this raid/mode.
 	for key in ('lvl','tier','iso','yel','red'):
-		min_val = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
-
-		if min_val and find_roster_value(alliance_info, player_name, char_name, key) < min_val:
+		if MIN[key] and find_roster_value(alliance_info, player_name, char_name, key) < MIN[key]:
 			player_info[char_name] = True
 			return True
 
