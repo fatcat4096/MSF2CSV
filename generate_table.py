@@ -231,7 +231,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# If we never found a match, just include the formatted Section name as a header.
 				if not char.startswith(char_name+':'):
-					section_name = translate_name(char).upper().replace(" (","<br>(").replace('-','&#8209;')
+					section_name = translate_name(char).upper().replace(" OR ","<br>OR<br>").replace(" AND ","<br>AND<br>").replace(" (","<br>(").replace(", ",",<br>").replace('-','&#8209;')
 					html_file.append(f'     <td colspan="{len(keys)}"><div class="summ">{section_name}</div></td>')
 				
 			else:
