@@ -164,7 +164,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		member_color = '#DCDCDC' if stale_data else '#B0E0E6'
 		member_role  = 'Member'
 
-		if member in alliance_info.get('leader',[]):
+		if member == alliance_info.get('leader'):
 			member_role = '<a> Leader </a>'
 			
 			# Change color slightly if not sorting by Role
