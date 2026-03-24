@@ -265,7 +265,7 @@ def retire_cached_data(file_or_alliance=''):
 
 # Handle the file list cleanly.
 @timed(level=3)
-def find_cached_data(file_or_alliance):
+def find_cached_data(file_or_alliance='SIGMA Infamously Strange'):
 
 	alliance_info = {}
 
