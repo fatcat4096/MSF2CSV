@@ -41,6 +41,9 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 				# Force get_meta_other_chars to return ALL valid characters
 				section['max_others'] = 0
 
+				# Reset MINs for each section
+				table_format.get('profile', {}).pop('min', None)
+
 				# Filter down the character list to only those in this section
 				meta_chars,other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
 
