@@ -123,6 +123,23 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : Red;
   cursor      : pointer;  
 }
+/* Gold Button */
+.goldb {
+  font-weight : 700;
+  background  : #CCA500;
+  color       : white;
+  min-width   : 45px;
+  height      : 30px;
+  text-shadow: 
+    1px 1px 0 #000,
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000;
+}
+.goldb:hover {
+  background  : Gold;
+  cursor      : pointer;  
+}
 /* Black Button */
 .blkb {
   min-width   : 28px;
