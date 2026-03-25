@@ -180,10 +180,14 @@ def finalize_color(color, html_cache, stale_data=False, under_min=False, darken_
 
 
 # Format large Power values using K and M
-def get_field_value(value, hist_date):
+def get_field_value(value, hist_date=False):
 	if not value:
 		return '-'
-	if abs(value) > 9.995 * 10**6:
+	if abs(value) > 9.995 * 10**8:
+		return f'{value/10**9:+.1f}B' if hist_date else f'{value/10**9:.2f}B'
+	elif abs(value) > 9.995 * 10**7:
+		return f'{value/10**6:+.0f}M' if hist_date else f'{value/10**6:.0f}M'
+	elif abs(value) > 9.995 * 10**6:
 		return f'{value/10**6:+.0f}M' if hist_date else f'{value/10**6:.1f}M'
 	elif abs(value) > 9.995 * 10**5:
 		return f'{value/10**6:+.1f}M' if hist_date else f'{value/10**6:.2f}M'
