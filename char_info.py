@@ -7,6 +7,9 @@ playable   = {
   "data": [
     {
       "description": "Transformed into a hideous monster by Gamma radiation, the Abomination uses his strength and spines to tear into enemies and shred their defenses.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Abomination",
       "mission": false,
       "name": "Abomination",
@@ -38,6 +41,9 @@ playable   = {
     },
     {
       "description": "Given the ability to absorb the properties of any material he touches, Absorbing Man takes and flips his allies negative status effects while stealing his enemy's positive status effects.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "AbsorbingMan",
       "mission": false,
       "name": "Absorbing Man",
@@ -106,6 +112,9 @@ playable   = {
     },
     {
       "description": "One of the most powerful witches alive, Agatha Harkness is a centuries-old survivor of the Salem Witch Trials who uses her potent spells to debilitate her enemies.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "AgathaHarkness",
       "mission": false,
       "name": "Agatha Harkness",
@@ -138,6 +147,9 @@ playable   = {
     },
     {
       "description": "Disabled veteran Flash Thompson volunteered to be bonded with the Venom symbiote, combining his mastery of weaponry with symbiote savagery to deal massive damage to their enemies.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "AgentVenom",
       "mission": false,
       "name": "Agent Venom",
@@ -370,6 +382,9 @@ playable   = {
     },
     {
       "description": "America Chavez hits hard enough to punch through reality itself and is even stronger with Hero Brawler allies.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "AmericaChavez",
       "invisibleTraits": [
         "Avenger"
@@ -435,6 +450,9 @@ playable   = {
     },
     {
       "description": "An altered Venom Symbiote turned Eddie Brock into Anti-Venom, a Hero who heals rather than destroys.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "AntiVenom",
       "mission": false,
       "name": "Anti-Venom",
@@ -471,7 +489,8 @@ playable   = {
     {
       "description": "A master thief skilled at disabling powerful opponents with the help of his Pym Particle powered suit.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "AntMan",
       "mission": false,
@@ -541,6 +560,9 @@ playable   = {
     },
     {
       "description": "Formerly one of the five original X-Men, Angel was granted metal wings by Apocalypse and transformed into Archangel, the Horseman of Death.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Archangel",
       "mission": false,
       "name": "Archangel",
@@ -678,6 +700,9 @@ playable   = {
     },
     {
       "description": "Beast is a master of Mutant science who improves any X-Men team by healing and granting positive effects.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Beast",
       "invisibleTraits": [
         "Xmen",
@@ -751,6 +776,9 @@ playable   = {
     },
     {
       "description": "The Astonishing X-Men's Blaster from the future, Bishop uses his mutant energy powers to deliver devastating attacks.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Bishop",
       "invisibleTraits": [
         "Xmen",
@@ -822,6 +850,9 @@ playable   = {
     },
     {
       "description": "A master thief with nine lives and uncanny luck, Felicia Hardy's sticky fingers nab enemy buffs and distribute Charge to her allies.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "BlackCat",
       "invisibleTraits": [
         "Defender",
@@ -896,7 +927,8 @@ playable   = {
     {
       "description": "An agile, relentless hunter who shreds his enemies with rapid attacks.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "BlackPanther",
       "invisibleTraits": [
@@ -1004,6 +1036,9 @@ playable   = {
     },
     {
       "description": "A stealthy saboteur who steals enemy advantages and delivers disabling attacks.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "BlackWidow",
       "invisibleTraits": [
         "Avenger",
@@ -1113,6 +1148,9 @@ playable   = {
     },
     {
       "description": "Blob is a mutant Protector whose immense mass absorbs damage and Deflects attacks aimed at allies.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Blob",
       "mission": false,
       "name": "Blob",
@@ -1209,6 +1247,9 @@ playable   = {
     },
     {
       "description": "A ruthless mercenary who takes down single targets with focused damage and perfect accuracy.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Bullseye",
       "mission": false,
       "name": "Bullseye",
@@ -1240,6 +1281,9 @@ playable   = {
     },
     {
       "description": "A time-traveler from the future who can manipulate turn order and charge up attacks to blast his enemies. ",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Cable",
       "invisibleTraits": [
         "Chargeable",
@@ -1277,7 +1321,8 @@ playable   = {
     {
       "description": "When he isn't using his superhuman durability to deflect enemy attacks, Sam Guthrie delivers crushing blows that slow and stun the opposition.",
       "eventTraits": [
-        "Stormbound"
+        "Stormbound",
+        "BestMutantBuddies"
       ],
       "id": "Cannonball",
       "mission": false,
@@ -1312,7 +1357,8 @@ playable   = {
     {
       "description": "A resilient leader who provides energy to his team while blocking enemy attacks.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestBuddies"
       ],
       "id": "CaptainAmerica",
       "invisibleTraits": [
@@ -1485,6 +1531,10 @@ playable   = {
     },
     {
       "description": "An insane brawler that viciously tears through foes with negative effects, attacking more frequently as their health decreases.",
+      "eventTraits": [
+        "BestSpiderBuddies",
+        "BestVillainBuddies"
+      ],
       "id": "Carnage",
       "mission": false,
       "name": "Carnage",
@@ -1586,6 +1636,9 @@ playable   = {
     },
     {
       "description": "Colossus uses his organic steel skin to protect the X-Men and harm enemies who attack him.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Colossus",
       "invisibleTraits": [
         "Xmen",
@@ -1621,6 +1674,9 @@ playable   = {
     },
     {
       "description": "Corvus Glaive uses Stealth and Piercing to infiltrate and eliminate the Black Order's enemies.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "CorvusGlaive",
       "mission": false,
       "name": "Corvus Glaive",
@@ -1715,6 +1771,9 @@ playable   = {
     },
     {
       "description": "An agent of S.H.I.E.L.D. who defends the Helicarrier by clearing positive effects from invading teams.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Coulson",
       "mission": false,
       "name": "Agent Coulson",
@@ -1748,6 +1807,9 @@ playable   = {
     },
     {
       "description": "A vengeful, die hard bruiser with a devastating explosion attack.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Crossbones",
       "mission": false,
       "name": "Crossbones",
@@ -1813,6 +1875,9 @@ playable   = {
     },
     {
       "description": "Cull Obsidian is a Protector who guards the Black Order and retaliates against those who would defy Thanos.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "CullObsidian",
       "mission": false,
       "name": "Cull Obsidian",
@@ -1845,7 +1910,8 @@ playable   = {
     {
       "description": "Cyclops grants his teammates extra attacks and assails his enemies with optic blasts.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestMutantBuddies"
       ],
       "id": "Cyclops",
       "invisibleTraits": [
@@ -1950,6 +2016,9 @@ playable   = {
     },
     {
       "description": "After years of abuse, mistrust, and manipulation by his kidnappers, the son of Wolverine uses mutant senses, healing factor, and claws to viciously hunt down his enemies.",
+      "eventTraits": [
+        "BestBuddies"
+      ],
       "id": "Daken",
       "mission": false,
       "name": "Daken",
@@ -2146,6 +2215,9 @@ playable   = {
     },
     {
       "description": "International pop diva and super hero, Dazzler's mutant power to convert sound into energy creates light shows that can captivate audiences or protect her fellow X-Men in battle.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Dazzler",
       "invisibleTraits": [
         "Xmen",
@@ -2183,7 +2255,8 @@ playable   = {
       "description": "A magical unicorn who specializes in stab-shooting vulnerable targets.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "BestBuddies"
       ],
       "id": "Deadpool",
       "mission": false,
@@ -2219,6 +2292,9 @@ playable   = {
     },
     {
       "description": "A soldier reanimated with cybernetic technology, Deathlok eviscerates the enemy team with debilitating blasts and boosts Bionic Avenger allies.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Deathlok",
       "invisibleTraits": [
         "Avenger",
@@ -2294,7 +2370,8 @@ playable   = {
     {
       "description": "Genius, egomaniac, and mastermind, Doctor Octopus enhances Sinister Six allies and summons them to battle.",
       "eventTraits": [
-        "KnowhereHeist"
+        "KnowhereHeist",
+        "BestVillainBuddies"
       ],
       "id": "DoctorOctopus",
       "invisibleTraits": [
@@ -2411,6 +2488,9 @@ playable   = {
     },
     {
       "description": "Domino is X-Force's Controller whose Mutant luck lets her allies Dodge and deal deadlier Critical hits.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Domino",
       "mission": false,
       "name": "Domino",
@@ -2548,6 +2628,9 @@ playable   = {
     },
     {
       "description": "The Black Order's Support, Ebony Maw aids Thanos by granting positive effects to allies.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "EbonyMaw",
       "invisibleTraits": [
         "Chargeable"
@@ -2583,6 +2666,9 @@ playable   = {
     },
     {
       "description": "Born deaf, Maya Lopez possesses the ability to mimic the movements of others, using it to become the formidable warrior known as Echo.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Echo",
       "invisibleTraits": [
         "Avenger"
@@ -2651,6 +2737,9 @@ playable   = {
     },
     {
       "description": "Electro uses her rage and voltage to unleash massive damage on the Sinister Six's most vulnerable enemies.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Electro",
       "invisibleTraits": [
         "Chargeable"
@@ -2798,6 +2887,9 @@ playable   = {
     },
     {
       "description": "After surviving a terrible attack on the Mutant nation of Genosha, the former White Queen Emma Frost joined forces with her former enemies the X-Men to protect and mentor future Children of the Atom.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "EmmaFrostXMen",
       "mission": false,
       "name": "Emma Frost (X-Men)",
@@ -2830,6 +2922,9 @@ playable   = {
     },
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Falcon",
       "invisibleTraits": [
         "Avenger"
@@ -2897,6 +2992,9 @@ playable   = {
     },
     {
       "description": "An artificially engineered mutant with three brains and a removable nervous system named E.V.A., Fantomex rains bullets down on his enemies. Lots of bullets.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Fantomex",
       "invisibleTraits": [
         "Xmen",
@@ -2966,6 +3064,9 @@ playable   = {
     },
     {
       "description": "Forge uses his Mutant gift to make the impossible real and create amazing inventions that boost the power of his X-Men allies.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Forge",
       "invisibleTraits": [
         "Xmen",
@@ -3040,7 +3141,8 @@ playable   = {
     {
       "description": "With a dash of Cajun charm, Gambit fights alongside the X-Men using his mutant ability to charge objects with kinetic energy, transforming them into deadly explosives.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestMutantBuddies"
       ],
       "id": "Gambit",
       "invisibleTraits": [
@@ -3115,7 +3217,8 @@ playable   = {
       "description": "Originally trained by S.H.I.E.L.D. as a spy, Ghost now uses her Quantum phasing powers as an untraceable thief.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "BestVillainBuddies"
       ],
       "id": "Ghost",
       "mission": false,
@@ -3222,7 +3325,8 @@ playable   = {
       "description": "Ghost-Spider hails from a universe where Gwen Stacy was bitten by a radioactive spider. She's an agile Web-Warrior that can prevent enemies from using their abilities.",
       "eventTraits": [
         "WebSlinger",
-        "Couples"
+        "Couples",
+        "BestSpiderBuddies"
       ],
       "id": "GhostSpider",
       "mission": false,
@@ -3258,6 +3362,9 @@ playable   = {
     },
     {
       "description": "Superguardian of the Shi'ar Imperium, Gladiator uses his near limitless might and superhuman feats to protect his allies and the universe from the worst of the worst.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Gladiator",
       "mission": false,
       "name": "Gladiator",
@@ -3292,6 +3399,9 @@ playable   = {
     },
     {
       "description": "Following the death of his child, Gorr became The God Butcher, slaying countless gods with All-Black, the Necrosword. He controls the battle with powerful attacks that can clear Charged and Battlefield Effects.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Gorr",
       "invisibleTraits": [
         "Chargeable"
@@ -3459,6 +3569,9 @@ playable   = {
     },
     {
       "description": "Fueled by alien power, Gwen Stacy bonded with the Venom symbiote to become Gwenom, who uses deadly precision to lash out at her foes.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "Gwenom",
       "mission": false,
       "name": "Gwenom",
@@ -3691,6 +3804,9 @@ playable   = {
     },
     {
       "description": "Founding member of the Avengers and the original Ant-Man, Hank Pym uses his genius to change size, command armies of ants, and support his allies.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "HankPym",
       "mission": false,
       "name": "Hank Pym",
@@ -3724,6 +3840,9 @@ playable   = {
     },
     {
       "description": "Alex Summers was separated from his family at a young age. After reuniting with his brother Cyclops and their father, the space-pirate Corsair, Alex decided to use his mutant powers to take up the family business, leading the Starjammers as Havok!",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Havok",
       "mission": false,
       "name": "Havok",
@@ -3757,7 +3876,8 @@ playable   = {
     {
       "description": "An expert archer who delivers unavoidable attacks to disable his foes.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "Hawkeye",
       "invisibleTraits": [
@@ -3826,6 +3946,9 @@ playable   = {
     },
     {
       "description": "The Goddess of Death, Hela spreads negative effects to foes while aided by her Undead Asgardian.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Hela",
       "mission": false,
       "name": "Hela",
@@ -3932,6 +4055,9 @@ playable   = {
     },
     {
       "description": "With the strength of a demigod and the heart of a hero, Hercules charges into the fight using his immense power to control the battlefield.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Hercules",
       "invisibleTraits": [
         "Avenger"
@@ -4002,7 +4128,8 @@ playable   = {
     {
       "description": "After discovering and stealing Green Goblin's gear, Roderick Kingsley takes the mantle of Hobgoblin! Control the battlefield with his explosive pumpkin bombs.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "BestVillainBuddies"
       ],
       "id": "Hobgoblin",
       "mission": false,
@@ -4068,6 +4195,9 @@ playable   = {
     },
     {
       "description": "An incredibly tough taunter who gets stronger when damaged.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Hulk",
       "invisibleTraits": [
         "Avenger",
@@ -4105,6 +4235,9 @@ playable   = {
     },
     {
       "description": "One of Tony Stark's incredible Iron Man suits, the Hulkbuster is a colossal guardian for its team, generating barriers and drawing enemy attacks.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Hulkbuster",
       "invisibleTraits": [
         "Avenger"
@@ -4373,6 +4506,9 @@ playable   = {
     },
     {
       "description": "One of the original X-Men, Bobby Drake's mutant power to control cold allows him to slow and freeze his enemies.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Iceman",
       "invisibleTraits": [
         "Xmen"
@@ -4443,7 +4579,8 @@ playable   = {
       "description": "Invisible Woman is a Protector who grants Barrier to her teammates and reveals hidden enemies.",
       "eventTraits": [
         "KnowhereHeist",
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "InvisibleWoman",
       "invisibleTraits": [
@@ -4663,6 +4800,9 @@ playable   = {
     },
     {
       "description": "A versatile damage dealer with high armor and low health.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "IronMan",
       "invisibleTraits": [
         "Avenger",
@@ -4703,7 +4843,8 @@ playable   = {
     {
       "description": "Determined to save the Earth and those he loves, Tony Stark pulls out all the stops, granting positive Status Effects to his allies and dealing blows to those that would harm them.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "IronManInfinityWar",
       "mission": false,
@@ -4806,7 +4947,8 @@ playable   = {
     {
       "description": "An original member of the X-Men with unparalleled telepathic and telekinetic abilities, Jean Grey is a formidable ally with the power to protect her allies and Disrupt her enemies.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestMutantBuddies"
       ],
       "id": "JeanGrey",
       "invisibleTraits": [
@@ -4916,6 +5058,9 @@ playable   = {
     },
     {
       "description": "Half mallrat, half fireworks factory, Jubilee uses her explosive plasmoid powers to blind dweebs while her allies totally strike.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Jubilee",
       "invisibleTraits": [
         "Xmen"
@@ -5121,6 +5266,9 @@ playable   = {
     },
     {
       "description": "Kate Bishop's already impressive archery is made even more devastating with the addition of Hawkeye's Trick Arrows. Stubborn and a bit reckless, she's the perfect leader for the Young Avengers.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "KateBishop",
       "invisibleTraits": [
         "Avenger",
@@ -5192,6 +5340,9 @@ playable   = {
     },
     {
       "description": "A demanding crime boss who summons bodyguards and orders allies to attack.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Kingpin",
       "mission": false,
       "name": "Kingpin",
@@ -5228,7 +5379,8 @@ playable   = {
     {
       "description": "The heart of the X-Men, Kitty Pryde uses her power to phase through solid matter and her dragon pet, Lockheed, to disrupt enemies and protect allies.",
       "eventTraits": [
-        "KnowhereHeist"
+        "KnowhereHeist",
+        "BestMutantBuddies"
       ],
       "id": "KittyPryde",
       "invisibleTraits": [
@@ -5361,6 +5513,9 @@ playable   = {
     },
     {
       "description": "A relentlessly dedicated hunter, Kraven hunts only the most dangerous game, tearing through his enemies and breaking their will to fight.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "KravenTheHunter",
       "invisibleTraits": [
         "Chargeable"
@@ -5594,6 +5749,9 @@ playable   = {
     },
     {
       "description": "Lady Deathstrike uses her cybernetics to slice at enemies, applying Bleed and making them susceptible to negative effects that the rest of Weapon X can take advantage of.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "LadyDeathstrike",
       "mission": false,
       "name": "Lady Deathstrike",
@@ -5696,6 +5854,9 @@ playable   = {
     },
     {
       "description": "Hoping to create a regenerative serum using reptile DNA, Doctor Curtis Connors accidentally turns himself into the villain, Lizard, and uses his newfound abilities to shed negative Status Effects.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Lizard",
       "mission": false,
       "name": "Lizard",
@@ -5729,6 +5890,9 @@ playable   = {
     },
     {
       "description": "The Asgardian god of Mischief who misleads and confuses his foes.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Loki",
       "mission": false,
       "name": "Loki",
@@ -5932,7 +6096,8 @@ playable   = {
     {
       "description": "Magik uses dark sorcery to charge up her allies and her mutant teleportation power to get the drop on enemies. As the demonic Darkchylde, she can inflict heavy damage.",
       "eventTraits": [
-        "Stormbound"
+        "Stormbound",
+        "BestMutantBuddies"
       ],
       "id": "Magik",
       "invisibleTraits": [
@@ -6104,6 +6269,9 @@ playable   = {
     },
     {
       "description": "Maria Hill is the Secret Avengers' Support who backs up her allies by calling in S.H.I.E.L.D. care packages and special agents to take out high priority targets.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "MariaHill",
       "invisibleTraits": [
         "Avenger"
@@ -6445,7 +6613,8 @@ playable   = {
     {
       "description": "Bobbi Morse is an agent of S.H.I.E.L.D operative known as Mockingbird. She is a master undercover operative that can use her battle stave to lethal effectiveness.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "Mockingbird",
       "invisibleTraits": [
@@ -6628,6 +6797,9 @@ playable   = {
     },
     {
       "description": "A brilliant biochemist with an insatiable appetite for blood, Morbius uses his fangs and claws to expose enemy weaknesses, and heals himself with every attack.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "Morbius",
       "mission": false,
       "name": "Morbius",
@@ -6770,6 +6942,9 @@ playable   = {
     },
     {
       "description": "An underworld boss whose Darkforce abilities can flip enemies' positive effects, creating openings for his gang of Inner Demons' debilitating attacks.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "MrNegative",
       "mission": false,
       "name": "Mister Negative",
@@ -6840,7 +7015,8 @@ playable   = {
       "description": "A plucky Super Hero brawler who assists and generates ability energy for her allies.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "BestAvengerBuddies"
       ],
       "id": "MsMarvel",
       "invisibleTraits": [
@@ -6948,6 +7124,9 @@ playable   = {
     },
     {
       "description": "Mysterio is an enigmatic Controller who manipulates his enemies' status effects.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Mysterio",
       "invisibleTraits": [
         "Chargeable"
@@ -7119,6 +7298,9 @@ playable   = {
     },
     {
       "description": "Negasonic Teenage Warhead is a Mutant Blaster whose explosive hits are so hard, they knock positive effects off her target.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Negasonic",
       "mission": false,
       "name": "Negasonic",
@@ -7182,6 +7364,9 @@ playable   = {
     },
     {
       "description": "The legendary leader who spreads advantages to allies and summons S.H.I.E.L.D. agents.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "NickFury",
       "mission": false,
       "name": "Nick Fury",
@@ -7251,6 +7436,9 @@ playable   = {
     },
     {
       "description": "The swashbuckling blue Nightcrawler can teleport, sword-fight, and perform acrobatic feats to dazzle his enemies, all with a smile on his face.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Nightcrawler",
       "invisibleTraits": [
         "Xmen",
@@ -7349,6 +7537,9 @@ playable   = {
     },
     {
       "description": "The ultimate Sentinel from the future, Nimrod uses his adaptive technology to hunts Mutants using Stealth and Critical Damage.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Nimrod",
       "mission": false,
       "name": "Nimrod",
@@ -7665,7 +7856,8 @@ playable   = {
       "description": "Omega Red uses his Mutant Death Aura to apply the Trauma status to foes, preventing their negative effects from being removed or flipped.",
       "eventTraits": [
         "Stormbound",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "BestVillainBuddies"
       ],
       "id": "OmegaRed",
       "invisibleTraits": [
@@ -7867,6 +8059,9 @@ playable   = {
     },
     {
       "description": "Co-pilot of the SP//dr robot with her friend, a radioactive psychic spider, Peni Parker energizes her allies while granting them Barrier to cover their backs.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "PeniParker",
       "mission": false,
       "name": "Peni Parker",
@@ -7900,6 +8095,9 @@ playable   = {
     },
     {
       "description": "An amazing daddy-daughter duo, Peter B. Parker uses his experience to motivate his allies while baby Mayday unleashes pure infant chaos on her enemies!",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "PeterBParker",
       "mission": false,
       "name": "Peter B. Parker",
@@ -7966,7 +8164,8 @@ playable   = {
       "description": "Jean Grey absorbs her enemies negative status effects, being reborn as Dark Phoenix if she falls in battle.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "BestMutantBuddies"
       ],
       "id": "Phoenix",
       "invisibleTraits": [
@@ -8078,6 +8277,9 @@ playable   = {
     },
     {
       "description": "The daughter of Magneto, Polaris uses her magnetic Mutant powers to bolster ally barriers and prevents the enemy from recovering from their wounds.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Polaris",
       "invisibleTraits": [
         "Xmen"
@@ -8144,6 +8346,9 @@ playable   = {
     },
     {
       "description": "Psylocke's psychic abilities remove negative status effects from allies and place them on her foes.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Psylocke",
       "invisibleTraits": [
         "Xmen"
@@ -8362,7 +8567,8 @@ playable   = {
     {
       "description": "A powerful telepath and time-displaced mutant, Rachel Summers overwhelms her enemies by spreading negative status effects and a passive attack that targets any enemy who is stunned or moving too fast to think clearly.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "BestMutantBuddies"
       ],
       "id": "RachelSummers",
       "invisibleTraits": [
@@ -8510,6 +8716,10 @@ playable   = {
     },
     {
       "description": "Bonded with the Carnage symbiote, Norman Osborn became the deadly Red Goblin, a blood-thirsty villain who happily puts allies in harm's way so he can land massive hits.",
+      "eventTraits": [
+        "BestSpiderBuddies",
+        "BestVillainBuddies"
+      ],
       "id": "RedGoblin",
       "invisibleTraits": [
         "Chargeable"
@@ -8585,6 +8795,9 @@ playable   = {
     },
     {
       "description": "A gamma-charged Thaddeus \"Thunderbolt\" Ross, Red Hulk is a legendary Brawler who applies Trauma and destroys enemies with devastating blows.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "RedHulk",
       "invisibleTraits": [
         "Chargeable"
@@ -8695,6 +8908,9 @@ playable   = {
     },
     {
       "description": "Big, strong, and tough, the Rhino is a heavy hitter. Blinding him will only make him mad.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Rhino",
       "mission": false,
       "name": "Rhino",
@@ -8766,7 +8982,8 @@ playable   = {
     {
       "description": "A Southern belle with the mutant power to drain her enemies through physical touch, Rogue tears down her foes' defenses and protects her allies.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestMutantBuddies"
       ],
       "id": "Rogue",
       "invisibleTraits": [
@@ -8841,6 +9058,9 @@ playable   = {
     },
     {
       "description": "After Thanos' Snap took away his family, Clint Barton renounced his role as Hawkeye and became Ronin, hunting down criminals and evil-doers that he deemed unworthy to have survived.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Ronin",
       "invisibleTraits": [
         "Avenger"
@@ -8908,6 +9128,9 @@ playable   = {
     },
     {
       "description": "Taking up the mantle of Captain America, Sam Wilson uses his legendary shield to protect and inspire others, granting bonuses to Avenger and Skill allies.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "SamWilson",
       "invisibleTraits": [
         "Avenger"
@@ -9010,7 +9233,8 @@ playable   = {
     {
       "description": "Scarlet Spider, a clone of Peter Parker that goes by Ben Reilly, uses his spider powers to debilitate enemies and strip them of their defenses.",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "BestSpiderBuddies"
       ],
       "id": "ScarletSpider",
       "mission": false,
@@ -9045,7 +9269,8 @@ playable   = {
     {
       "description": "A mystical controller that prolongs negative effects and redistributes health across her teammates.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "ScarletWitch",
       "invisibleTraits": [
@@ -9224,6 +9449,9 @@ playable   = {
     },
     {
       "description": "A robot created for the purpose of hunting and exterminating Mutants, the Sentinel summons reinforcements to overwhelm their prey.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Sentinel",
       "mission": false,
       "name": "Sentinel",
@@ -9393,6 +9621,9 @@ playable   = {
     },
     {
       "description": "Niece of the legendary Peggy Carter, Sharon Carter uses her covert weapons training to disable the enemy through negative status effects.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "SharonCarter",
       "invisibleTraits": [
         "Avenger"
@@ -9667,7 +9898,8 @@ playable   = {
     {
       "description": "Shocker uses his Tech sonic bursts to damage entire teams and strengthen his Sinister Six allies.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "BestVillainBuddies"
       ],
       "id": "Shocker",
       "mission": false,
@@ -9772,7 +10004,8 @@ playable   = {
     {
       "description": "The leader of The Wild Pack, a team of mercenaries that track criminals across the globe, Silver Sable uses her father's training and weapons expertise to control the enemy team's statuses and help her allies fight with furious speed.",
       "eventTraits": [
-        "Harbingers"
+        "Harbingers",
+        "BestSpiderBuddies"
       ],
       "id": "SilverSable",
       "mission": false,
@@ -9939,7 +10172,8 @@ playable   = {
     {
       "description": "A quick attacker that weakens opponents and evades incoming attacks.",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "BestBuddies"
       ],
       "id": "SpiderMan",
       "mission": false,
@@ -9974,7 +10208,8 @@ playable   = {
     {
       "description": "Fighting crime in our time from the far-flung future, Miguel O'Hara uses his powers to exploit enemy weaknesses as the Spider-Man of tomorrow!",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "BestSpiderBuddies"
       ],
       "id": "SpiderMan2099",
       "mission": false,
@@ -10009,7 +10244,8 @@ playable   = {
     {
       "description": "While working at Horizon Labs, Peter Parker developed a new suit with a Stealth Mode, making him harder to hit, and an Anti-Sound Mode to catch his opponents unaware.",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "BestSpiderBuddies"
       ],
       "id": "SpiderManBigTime",
       "invisibleTraits": [
@@ -10048,7 +10284,8 @@ playable   = {
     {
       "description": "Spider-Man (Noir) is a stealthy, Tommy Gun-wielding hero that grants additional damage to his allies while laying down heavy fire.",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "BestSpiderBuddies"
       ],
       "id": "SpiderManNoir",
       "mission": false,
@@ -10084,6 +10321,9 @@ playable   = {
     },
     {
       "description": "The fabulously flashy Spider-Man of Mumbattan, Pavitr speeds up his allies with style and uses devastating chain attacks to slow down his enemies.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "SpiderManPavitr",
       "mission": false,
       "name": "Spider-Man (Pavitr)",
@@ -10118,7 +10358,8 @@ playable   = {
     {
       "description": "Spider-Punk is a spider-powered rock star who uses his electric guitar together with his web abilities to deal big damage and disable groups of bad guys.",
       "eventTraits": [
-        "WebSlinger"
+        "WebSlinger",
+        "BestSpiderBuddies"
       ],
       "id": "SpiderPunk",
       "mission": false,
@@ -10152,6 +10393,9 @@ playable   = {
     },
     {
       "description": "J. Jonah Jameson leaves his desk behind to operate the Spider-Slayer robot and trades hard-hitting investigative journalism for decimating blows against his more evasive enemies.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "SpiderSlayer",
       "mission": false,
       "name": "Spider-Slayer",
@@ -10187,7 +10431,8 @@ playable   = {
       "description": "A Navajo weaver, Ajei Benally was chosen to safeguard the Web of Life and Destiny, pulling the threads of fate to protect herself and her allies.",
       "eventTraits": [
         "MSFOriginal",
-        "WebSlinger"
+        "WebSlinger",
+        "BestSpiderBuddies"
       ],
       "id": "SpiderWeaver",
       "invisibleTraits": [
@@ -10224,6 +10469,9 @@ playable   = {
     },
     {
       "description": "Spider-Woman is a formidable Blaster that uses pheromone powers to sap her enemy's strength, leaving them open to devastating attacks.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "SpiderWoman",
       "mission": false,
       "name": "Spider-Woman",
@@ -10258,7 +10506,8 @@ playable   = {
       "description": "Squirrel Girl is a Young Avenger who uses her unbeatable squirrel powers to eat nuts and kick butts!",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "BestAvengerBuddies"
       ],
       "id": "SquirrelGirl",
       "invisibleTraits": [
@@ -10466,7 +10715,8 @@ playable   = {
     {
       "description": "A powerful weather controller that charges up devastating attacks to lead her mutant allies to victory.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestMutantBuddies"
       ],
       "id": "Storm",
       "invisibleTraits": [
@@ -10580,6 +10830,9 @@ playable   = {
     },
     {
       "description": "Powered by solar radiation, Sunfire channels powerful flames to unleash an explosive blow against the enemy team.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "Sunfire",
       "invisibleTraits": [
         "Xmen"
@@ -10616,7 +10869,8 @@ playable   = {
     {
       "description": "The hot-headed Sunspot possesses the ability to absorb and redirect the sun's power, letting him deal massive damage and grant ability energy to his X-Men allies.",
       "eventTraits": [
-        "Stormbound"
+        "Stormbound",
+        "BestMutantBuddies"
       ],
       "id": "Sunspot",
       "invisibleTraits": [
@@ -10655,7 +10909,8 @@ playable   = {
     {
       "description": "Otto Octavius takes over Spider-Man's body and becomes a more brutal and efficient hero, believing himself to be \"superior.\" Use his new tech to heal and apply positive status effects on allies.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "BestSpiderBuddies"
       ],
       "id": "SuperiorSpiderMan",
       "mission": false,
@@ -10764,7 +11019,8 @@ playable   = {
       "description": "Armed with the legendary Sword of Fu Xi, Lin Lie's mystical blade cleaves through all foes, leaving few swordsmen able to withstand his formidable skill.",
       "eventTraits": [
         "KnullChallengers",
-        "Stormbound"
+        "Stormbound",
+        "BestAvengerBuddies"
       ],
       "id": "SwordMaster",
       "mission": false,
@@ -10869,6 +11125,9 @@ playable   = {
     },
     {
       "description": "Formerly the heroic Silver Surfer, Void Knight attempts to satisfy the hunger of his symbiote by sapping the energy of his enemies, draining them like a black hole until they're no more.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "SymbioteSilverSurfer",
       "mission": false,
       "name": "Void Knight",
@@ -10905,6 +11164,9 @@ playable   = {
     },
     {
       "description": "Permanently bonded with the Venom symbiote, Spider-Man brutally takes down foes while powering up his Symbiote allies.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "SymbioteSpiderMan",
       "mission": false,
       "name": "Spider-Man (Symbiote)",
@@ -10942,7 +11204,8 @@ playable   = {
       "description": "A master of combat mimicry, Taskmaster uses his skill to steal positive effects from enemies.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "BestVillainBuddies"
       ],
       "id": "Taskmaster",
       "mission": false,
@@ -11009,6 +11272,9 @@ playable   = {
     },
     {
       "description": "A Titan Eternal who delivers crushing blows that drain his foes and taunt his enemies.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Thanos",
       "invisibleTraits": [
         "Thanos_BlackOrder"
@@ -11042,6 +11308,9 @@ playable   = {
     },
     {
       "description": "When the Avengers' Time Heist went awry, Thanos was shown a future of his purpose fulfilled. Armed with that knowledge, he stepped into the future to ensure his inevitable destiny.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "ThanosEndgame",
       "invisibleTraits": [
         "Exposed"
@@ -11148,7 +11417,8 @@ playable   = {
       "description": "The Thing is a rocky Brawler who deals massive damage to single targets.",
       "eventTraits": [
         "Harbingers",
-        "Conqueror"
+        "Conqueror",
+        "BestAvengerBuddies"
       ],
       "id": "Thing",
       "invisibleTraits": [
@@ -11187,7 +11457,8 @@ playable   = {
     {
       "description": "The God of Thunder who deals great damage and weakens multiple foes.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "Thor",
       "invisibleTraits": [
@@ -11226,6 +11497,9 @@ playable   = {
     },
     {
       "description": "Thor, the God of Thunder, wields Stormbreaker to face cosmic threats, dealing heavy damage and breaking down enemy Protectors.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Thor_InfinityWar",
       "mission": false,
       "name": "Thor (Infinity War)",
@@ -11301,6 +11575,9 @@ playable   = {
     },
     {
       "description": "Protector of the Cat People, Tigra ferociously defends her allies and uses her razor-sharp claws to rend her opponents.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "Tigra",
       "invisibleTraits": [
         "Avenger"
@@ -11397,6 +11674,9 @@ playable   = {
     },
     {
       "description": "A fierce villain who strips positive effects from his foes with fire and explosives.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "UltGreenGoblin",
       "mission": false,
       "name": "Green Goblin",
@@ -11467,6 +11747,9 @@ playable   = {
     },
     {
       "description": "A powerful robotic tyrant that summons drones to eliminate any threat to his mechanical regime.",
+      "eventTraits": [
+        "BestVillainBuddies"
+      ],
       "id": "Ultron",
       "invisibleTraits": [
         "Ultron"
@@ -11512,7 +11795,8 @@ playable   = {
         "WebSlinger",
         "Couples",
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "BestSpiderBuddies"
       ],
       "id": "UltSpiderMan",
       "invisibleTraits": [
@@ -11723,6 +12007,9 @@ playable   = {
     },
     {
       "description": "A symbiotic monstrosity that tears into opponents and spreads harmful effects.",
+      "eventTraits": [
+        "BestSpiderBuddies"
+      ],
       "id": "Venom",
       "mission": false,
       "name": "Venom",
@@ -11797,7 +12084,8 @@ playable   = {
     {
       "description": "A synthetic being that avoids enemy attacks and disables his foes.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "BestAvengerBuddies"
       ],
       "id": "Vision",
       "invisibleTraits": [
@@ -11834,6 +12122,9 @@ playable   = {
     },
     {
       "description": "Vision's synthetically created daughter, Viv bolsters her allied Bionic Avengers by generating Ability Energy and healing them so they can press the attack.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "VivVision",
       "invisibleTraits": [
         "Avenger"
@@ -11869,7 +12160,8 @@ playable   = {
     {
       "description": "Vulture preys on enemies with negative status effects while dealing extra damage to City Heroes.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "BestVillainBuddies"
       ],
       "id": "Vulture",
       "mission": false,
@@ -11907,7 +12199,8 @@ playable   = {
     {
       "description": "A techno-organic lifeform befriended by the New Mutants, Warlock uses his shapeshifting abilities to siphon positive effects from enemies to allies.",
       "eventTraits": [
-        "Stormbound"
+        "Stormbound",
+        "BestMutantBuddies"
       ],
       "id": "Warlock",
       "mission": false,
@@ -11941,6 +12234,9 @@ playable   = {
     },
     {
       "description": "An armored soldier who uses an arsenal of weapons to bombard his foes. More powerful in Alliance Wars.",
+      "eventTraits": [
+        "BestAvengerBuddies"
+      ],
       "id": "WarMachine",
       "mission": false,
       "name": "War Machine",
@@ -12079,7 +12375,8 @@ playable   = {
     {
       "description": "Rahne Sinclair, always on the prowl for the perfect strike, leverages her keen senses and lycanthropic strength to deal long-lasting damage to enemies.",
       "eventTraits": [
-        "Stormbound"
+        "Stormbound",
+        "BestMutantBuddies"
       ],
       "id": "Wolfsbane",
       "mission": false,
@@ -12113,6 +12410,9 @@ playable   = {
     },
     {
       "description": "A mutant armed with adamantium claws that ignore armor and tear through his opponents.",
+      "eventTraits": [
+        "BestBuddies"
+      ],
       "id": "Wolverine",
       "invisibleTraits": [
         "Xmen"
@@ -12183,6 +12483,9 @@ playable   = {
     },
     {
       "description": "X-23 is a savage Mutant Brawler who specializes in finishing off X-Force's wounded enemies.",
+      "eventTraits": [
+        "BestMutantBuddies"
+      ],
       "id": "X23",
       "mission": false,
       "name": "X-23",
@@ -12576,13 +12879,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "327b3c09f3bd2ac29a02",
-      "chars": "6be8157588f289989dc8",
-      "drops": "370d9bd789f29477d3c6",
-      "events": "54c494ca7377d922ef64",
-      "locs": "0ac83e73dc134113cac4",
-      "nodes": "ad8c924842b78d69865d",
-      "other": "60797ab59daac8e15f98"
+      "all": "e56eb1a4bafed5858301",
+      "chars": "1a5d75c674a047ecc674",
+      "drops": "cda3472ebe41d237fdb4",
+      "events": "be3ea8e184bb27671cc3",
+      "locs": "48333c242d43e088c51a",
+      "nodes": "344f18f41e0c31276ba1",
+      "other": "8de14b4d529d3f04a585"
     },
     "perTotal": 361,
     "version": 1
@@ -13440,13 +13743,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "327b3c09f3bd2ac29a02",
-      "chars": "6be8157588f289989dc8",
-      "drops": "370d9bd789f29477d3c6",
-      "events": "54c494ca7377d922ef64",
-      "locs": "0ac83e73dc134113cac4",
-      "nodes": "ad8c924842b78d69865d",
-      "other": "60797ab59daac8e15f98"
+      "all": "e56eb1a4bafed5858301",
+      "chars": "1a5d75c674a047ecc674",
+      "drops": "cda3472ebe41d237fdb4",
+      "events": "be3ea8e184bb27671cc3",
+      "locs": "48333c242d43e088c51a",
+      "nodes": "344f18f41e0c31276ba1",
+      "other": "8de14b4d529d3f04a585"
     },
     "perTotal": 44,
     "version": 1
