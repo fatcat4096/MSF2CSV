@@ -313,28 +313,26 @@ async def update_cached_cost_info(AUTH):
 
 	# Get cached data
 	char_list   = get_cached('char_lookup')
-	level_costs = get_cached('level_costs')
-	gear_costs  = get_cached('gear_costs')
+	gold_costs  = get_cached('gold_costs')
 	iso_classes = get_cached('iso_classes')
 
 	# Initialize variables
 	loop = asyncio.get_event_loop()
 
 	# Get info about the cost to update to each level
-	await loop.run_in_executor(None, get_level_cost_info, AUTH, level_costs)
+	await loop.run_in_executor(None, get_level_cost_info, AUTH, gold_costs)
 	
 	# Get the cached list of characters
 	for char_name in char_list:
-		await loop.run_in_executor(None, get_gear_and_iso_info, AUTH, char_name, gear_costs, iso_classes)
+		await loop.run_in_executor(None, get_gear_and_iso_info, AUTH, char_name, gold_costs, iso_classes)
 
 	# Finally, cache the value of char_lookup
-	set_cached('level_costs', level_costs)
-	set_cached('gear_costs',  gear_costs)
+	set_cached('gold_costs',  gold_costs)
 	set_cached('iso_classes', iso_classes)
 
 
 
-def get_level_cost_info(AUTH, level_costs):
+def get_level_cost_info(AUTH, gold_costs):
 	
 	# Make the API call
 	response = request_upgrade_info(AUTH, 'characterLevelTotalXp')
@@ -347,11 +345,11 @@ def get_level_cost_info(AUTH, level_costs):
 
 	for lvl, xp_tot in enumerate(xp_req):
 		xp_diff = xp_tot - xp_req[lvl-1] if lvl and xp_tot else 0
-		level_costs[lvl-1] = int(xp_diff * 6.25)
+		gold_costs.setdefault(None, {})[lvl-1] = int(xp_diff * 6.25)
 
 
 
-def get_gear_and_iso_info(AUTH, char_name, gear_costs, iso_classes):
+def get_gear_and_iso_info(AUTH, char_name, gold_costs, iso_classes):
 	
 	# Make the API call
 	response = request_char_details(AUTH, char_name)
@@ -371,7 +369,7 @@ def get_gear_and_iso_info(AUTH, char_name, gear_costs, iso_classes):
 	iso_info  = response.get('iso8ClassAdoption',{})
 
 	# Get a little closer to our work
-	gear_cost =  gear_costs.setdefault(char_name,{})
+	gear_cost =  gold_costs.setdefault(char_name,{})
 	iso_class = iso_classes.setdefault(char_name,{})
 
 	# Process gear tier cost info if provided
