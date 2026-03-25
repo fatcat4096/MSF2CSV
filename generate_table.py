@@ -21,6 +21,9 @@ except:
 	from  file_io       import local_img_cache
 
 
+cached_costs = {}
+
+
 # Generate individual tables for Meta/Other chars for each raid section.
 @timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache, hist_date=None, linked_hist=None, team_power_summary=False):
@@ -46,6 +49,11 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		name_alt      = 'ngalt'
 		name_alt_dim  = 'ngaltd'
 		button_hover  = 'blkb'
+
+	# Reset cached MINs before each table
+	MIN = table_format.setdefault('profile', {})['min'] = {}
+	for key in ('lvl','tier','iso','yel','red'):
+		MIN[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
 
 	# Sort player list if requested.
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
@@ -109,7 +117,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			break
 
 	# Define these once
-	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP','gold':'$$$'}
+	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
 
 	# Standard order for these columns
 	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op','gold')
@@ -121,6 +129,25 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	if 'abil' in keys:
 		idx = keys.index('abil')
 		keys = keys[:idx] + ['bas', 'spc', 'ult', 'pas'] + keys[idx+1:]
+
+	# No relevance to historical data -- remove completely if possible
+	if 'gold' in keys and hist_date and linked_hist:
+		keys.remove('gold')
+
+	# Calculate gold requirements at last minute and only as required
+	if 'gold' in keys:
+		gold_costs = get_cached('gold_costs')
+		for char in using_chars:
+			for player in using_players:
+				calculate_gold_cost(alliance_info, player, char, MIN, gold_costs)
+
+		#
+		# Add calculation of tot_gold variable here
+		#
+		tot_gold = {}
+		for player in using_players:
+			char_info = alliance_info['members'][player].get('processed_chars',{})
+			tot_gold[player] = sum([char_info.get(char,{}).get('gold',0) for char in using_chars])
 
 	# Set the key_order based on the keys requested and presented
 	key_order = keys if team_power_summary else [x for x in key_order if x in keys]
@@ -153,6 +180,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			pre_ranges = alliance_info.setdefault('key_ranges',{}).setdefault(char_name,{})
 
 			for key in keys:
+				
 				# Have we already cached this range in table_format?
 				if key not in key_ranges:
 
@@ -172,8 +200,19 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			for key in profile_after:
 				PROFILE[key] |= {find_roster_value(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in using_players}
 
+	# Include Available, Include Position, and Include ISO Class flags
+	# Get value from table_format/table, with defaults if necessary
+
+	inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False, profile=True) and 'OTHERS' not in table_lbl
+	inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False, profile=True) and 'OTHERS' not in table_lbl and not team_power_summary
+	inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not (team_power_summary or (hist_date and linked_hist))
+	inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
+	spec_ops  = get_table_value(table_format, table, section, key='spec_ops')
+
 	# Auto-calc the best value for line wrap length if an explicit value not defined
-	line_wrap = calculate_line_wrap(using_chars, len(using_players) != len(player_list))
+	less_players = len(using_players) != len(player_list)
+	more_keys    = len(key_order)+inc_class>6
+	line_wrap = calculate_line_wrap(using_chars, less_players, more_keys)
 	line_wrap = get_table_value(table_format, table, section, key='line_wrap', default=line_wrap) 
 
 	# Initialize the row count. Will add to it with each strike_team section.
@@ -194,15 +233,6 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		# WRITE THE IMAGES ROW. #############################################
 		html_file.append(f'    <tr class="{title_cell}">')
 		html_file.append(f'     <td class="tlbl">{table_lbl}</td>')
-
-		# Include Available, Include Position, and Include ISO Class flags
-		# Get value from table_format/table, with defaults if necessary
-
-		inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False, profile=True) and 'OTHERS' not in table_lbl
-		inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False, profile=True) and 'OTHERS' not in table_lbl and not team_power_summary
-		inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not (team_power_summary or (hist_date and linked_hist))
-		inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
-		spec_ops  = get_table_value(table_format, table, section, key='spec_ops')
 
 		# Include a column for "# Pos" info if requested.
 		if inc_rank:
@@ -284,7 +314,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					for iso in sorted(iso_char, key=lambda x: iso_char[x], reverse=True):
 
 						# Determine color for each sub-cell
-						iso_color = get_value_color(iso_char.values(), iso_char[iso], html_cache, color_set='set')
+						iso_color = get_value_color(iso_char.values(), iso_char[iso], html_cache, stat='class')
 
 						# Include the sub-cell definition
 						iso_column.append(f'<div class="{iso_color}{bg_color} isoc">{round(iso_char[iso])}%<br><span class="{iso[:4]}">{"&nbsp;"*4}</span></div>')
@@ -296,9 +326,13 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			url = local_img_cache(portraits[inc_comp], req_html)
 			html_file.append(f'     <td class="img"><div class="cont"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(inc_comp)}</div></td>')
 
-		# Include a Team Power column if we have more than one.
+		# Include a Team Power column if we have more than one character being displayed
 		if len(char_list)>1:
-			html_file.append('     <td></td>')
+			# Include a Tot Gold column for last two cols if gold is being displayed.
+			if 'gold' in keys:
+				html_file.append(f'    <td class="img" colspan="2"><div class="cont"><div><img src="../images/src/gold.png" alt="" width="90"></div></div></td>')
+			else:
+				html_file.append('     <td></td>')
 
 		html_file.append('    </tr>')
 		# DONE WITH THE IMAGES ROW. #########################################
@@ -562,6 +596,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	
 						st_html.append(f'     <td class="bd {field_color}">{field_value}</td>') 
 					
+					# Include STP and/or TOT GOLD only if there's more than one character displayed
 					elif len(char_list)>1:
 						player_stp = stp_list.get(hist_date,{}).get(player_name,0)
 
@@ -572,7 +607,19 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 						field_color = get_value_color(stp_range, player_stp, html_cache, stale_data)
 	
 						st_html.append(f'     <td class="bd {field_color}">{field_value}</td>')
-					
+
+						# TOT GOLD Column
+						if 'gold' in keys:
+				
+							# Determine what value should be displayed in Tot Gold field
+							field_value = get_field_value(tot_gold.get(player_name))
+
+							# Determine the field color
+							field_color = get_value_color(tot_gold.values(), tot_gold.get(player_name), html_cache, stale_data, stat='gold')
+
+							# Add the field
+							st_html.append(f'     <td class="bd {field_color}">{field_value}</td>') 
+						
 					st_html.append('    </tr>')
 					
 					# Increment the count of data rows by one.
@@ -630,8 +677,15 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			# Insert the Team Power column.
 			if team_power_summary:
 				html_file.append(f'     <td class="redb" {sort_func % col_idx}>TCP</td>')
+				col_idx += 1
+			# Include STP and TOT GOLD only if more than one character displayed
 			elif len(char_list)>1:
 				html_file.append(f'     <td class="redb" {sort_func % col_idx}>STP</td>')
+				col_idx += 1
+	
+				# Include Tot Gold column only if 'gold' is being displayed
+				if 'gold' in keys:
+					html_file.append(f'     <td class="goldb" {sort_func % col_idx}>Total<br>Gold</td>')
 
 			html_file.append('    </tr>')
 			
@@ -648,6 +702,33 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	html_file.append('   </table>')
 
 	return '\n'.join(html_file)
+
+
+
+# Calculate gold requirements at last minute and only when required
+def calculate_gold_cost(alliance_info, player, char_name, MIN, gold_costs):
+
+	global cached_costs
+
+	char_info = alliance_info['members'][player].get('processed_chars',{}).setdefault(char_name,{})
+	if char_info.get('gold') is None:
+		
+		# Initialize to zero, indicates we've calculated value
+		char_info['gold'] = 0
+		for key in ('lvl','tier'):
+
+			# Bail if no min
+			if not MIN[key]:
+				continue
+
+			# Bail if over min
+			val = find_roster_value(alliance_info, player, char_name, key)
+			if val >= MIN[key]:
+				continue
+
+			# Under min, how much gold will it cost to level up?	
+			char = None if key == 'lvl' else char_name
+			char_info['gold'] += cached_costs.setdefault((char, val, MIN[key]), sum([gold_costs.get(char,{}).get(x,0) for x in range(val, MIN[key])]))					
 
 
 
@@ -679,8 +760,11 @@ def get_min_reqs(table_format, table, section):
 
 
 # Automate the line_wrap selection and hide the messy calcs
-def calculate_line_wrap(using_chars, less_players):
-	wrap_after = 10  if less_players else 12
+def calculate_line_wrap(using_chars, less_players, more_keys):
+	if less_players:
+		wrap_after = 5 if more_keys else 10
+	else:
+		wrap_after = 6 if more_keys else 12
 	ratio_used = 1.1 if less_players else 1.333
 	lines_used = 1
 
