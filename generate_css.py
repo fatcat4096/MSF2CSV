@@ -503,6 +503,23 @@ function strip(html){
 	 return doc.body.textContent || "";
 }
 
+function convertStringToInt(str) {
+  if (!str || typeof str !== 'string') return NaN;
+  
+  const match = str.match(/^([\d.]+)([KkMmBb])?$/);
+  if (!match) return NaN;
+
+  const value = parseFloat(match[1]);
+  const unit = (match[2] || '').toUpperCase();
+
+  let multiplier = 1;
+  if (unit === 'M') multiplier = 1_000_000;
+  else if (unit === 'K') multiplier = 1_000;
+  else if (unit === 'B') multiplier = 1_000_000_000;
+
+  return Math.round(value * multiplier);
+}
+
 function sort(n,table_name,header_lines) {
 	sortx(n,table_name,header_lines,0);
 }
@@ -548,11 +565,11 @@ function sortl(n,table_name,header_lines,rows_to_sort,linked_name) {
 			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/K$/, "000").replace(/💎$/, "0");
 
 			// Deal with x.xM notation
-			if (x.slice(1,2) == "." && x.endsWith("M")) {
-				x = x.slice(0,1) + x.slice(2).replace(/M$/, "00000");
+			if (x.endsWith("B") || x.endsWith("K") || x.endsWith("M")) {
+				x = convertStringToInt(x);
 			}
-			if (y.slice(1,2) == "." && y.endsWith("M")) {
-				y = y.slice(0,1) + y.slice(2).replace(/M$/, "00000");
+			if (y.endsWith("B") || y.endsWith("K") || y.endsWith("M")) {
+				y = convertStringToInt(y);
 			}
 
 			/* Check if the two rows should switch place,
