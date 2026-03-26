@@ -94,5 +94,5 @@ iso_color_scale  += polylinear_gradient(['#B1DDFF','#0090FF'],5)['hex']
 iso_color_scale  += polylinear_gradient(['#C7A7FF','#A52EEA'],5)['hex']
 iso_color_scale = {x:y for x,y in enumerate(iso_color_scale)}
 
-gold_color_scale = polylinear_gradient(['#b8aa18','#fff700'],100)['hex'] 
+gold_color_scale = polylinear_gradient(['#b39200','#FFD700'],100)['hex'] 
 gold_color_scale = {x:y for x,y in enumerate(gold_color_scale)}

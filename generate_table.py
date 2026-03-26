@@ -662,7 +662,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 			for char in line_chars:
 				for key in key_order:
 					width = 'p' if key == 'power' else ''
-					html_file.append(f'     <td class="{button_hover}{width}" {sort_func % col_idx}>{key_labels.get(key, key.title())}</td>')
+					html_file.append(f'     <td class="{"goldb" if key=="gold" else button_hover}{width}" {sort_func % col_idx}>{key_labels.get(key, key.title())}</td>')
 					col_idx += 1
 
 				# Include a header for ISO Class info if requested.
