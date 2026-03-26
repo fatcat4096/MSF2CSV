@@ -503,7 +503,7 @@ function strip(html){
 	 return doc.body.textContent || "";
 }
 
-function convertStringToInt(str) {
+function translateNumber(str) {
   if (!str || typeof str !== 'string') return NaN;
   
   const match = str.match(/^([\d.]+)([KkMmBb])?$/);
@@ -517,7 +517,7 @@ function convertStringToInt(str) {
   else if (unit === 'K') multiplier = 1_000;
   else if (unit === 'B') multiplier = 1_000_000_000;
 
-  return Math.round(value * multiplier);
+  return Math.round(value * multiplier).toString();
 }
 
 function sort(n,table_name,header_lines) {
@@ -561,15 +561,15 @@ function sortl(n,table_name,header_lines,rows_to_sort,linked_name) {
 			one from current row and one from the next: */
 
 			// Removes commas and + from the numbers being compared, expand K to 000.
-			x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/K$/, "000").replace(/💎$/, "0");
-			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/K$/, "000").replace(/💎$/, "0");
+			x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/💎$/, "0");
+			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/💎$/, "0");
 
 			// Deal with x.xM notation
 			if (x.endsWith("B") || x.endsWith("K") || x.endsWith("M")) {
-				x = convertStringToInt(x);
+				x = translateNumber(x);
 			}
 			if (y.endsWith("B") || y.endsWith("K") || y.endsWith("M")) {
-				y = convertStringToInt(y);
+				y = translateNumber(y);
 			}
 
 			/* Check if the two rows should switch place,
