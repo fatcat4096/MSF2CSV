@@ -1,6 +1,6 @@
 [project]
 name = "msf2csv"
-version = "1.1.3"
+version = "1.1.4"
 authors = [
 	{ name = "Michael Baker", email = "michael@uw.edu" },
 ]
