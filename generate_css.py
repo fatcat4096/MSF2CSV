@@ -126,7 +126,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
 /* Gold Button */
 .goldb {
   font-weight : 700;
-  background  : #CCA500;
+  background  : #d9b800;
   color       : white;
   min-width   : 45px;
   height      : 30px;
@@ -134,7 +134,11 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
     1px 1px 0 #000,
     -1px -1px 0 #000,
     1px -1px 0 #000,
-    -1px 1px 0 #000;
+    -1px 1px 0 #000,
+    1px 0px 0 #000,
+    -1px 0px 0 #000,
+    0px -1px 0 #000,
+    0px 1px 0 #000;
 }
 .goldb:hover {
   background  : Gold;
