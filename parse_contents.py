@@ -115,9 +115,8 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 	member_info = alliance_info['members'].setdefault(member,{})
 	
 	# Update 'last_update' if the calculated tot_power has changed.
-	calc_pwr = sum([processed_chars[char]['power'] for char in processed_chars])
-	if  member_info.get('tot_power') != calc_pwr:
-		member_info['tot_power']      = calc_pwr
+	if  member_info.get('tot_power') != member_info.get('tcp'):
+		member_info['tot_power']      = member_info.get('tcp')
 		member_info['last_update']    = datetime.now()
 
 	# Add the 'clean' parsed data to our list of processed players.
@@ -127,19 +126,11 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 	# Do I really USE the display_name?
 	member_info['display_name']    = member
 
-	# Temporary fix. Calculate values if possible.
-	calc_lvl             = max([processed_chars[char_name].get('lvl',0) for char_name in processed_chars]) if processed_chars else 0
-	calc_stp             = sum(sorted([processed_chars[member]['power'] for member in processed_chars], reverse=True)[:5])
-	calc_tcc             = len([char for char in processed_chars if processed_chars[char]['power']])
+	# Calculate values as necessary
 	member_info['max']   = len([char for char in processed_chars if processed_chars[char]['yel']==7])
 	member_info['stars'] = sum([processed_chars[char]['yel'] for char in processed_chars])
 	member_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
 
-	# Only use calculated TCP, STP, and TCC if higher than the recorded values in Alliance Info.
-	member_info['level'] = max(calc_lvl, member_info.get('level',0))
-	member_info['tcp']   = max(calc_pwr, member_info.get('tcp',0))
-	member_info['stp']   = max(calc_stp, member_info.get('stp',0))
-	member_info['tcc']   = max(calc_tcc, member_info.get('tcc',0))
 
 
 	
