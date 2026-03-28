@@ -330,3 +330,58 @@ def request_upgrade_info(ACCESS_TOKEN, fieldId='characterLevelTotalXp'):
 
 	return response
 
+
+
+# Request XP required for each Player Level -- use to translate to gold cost to level up
+@timed(level=3)
+def request_recruit_info(ACCESS_TOKEN, style=None, tcp=None):
+	
+	params = {'perPage':100}
+	
+	if tcp:
+		params['tcp'] = tcp
+	if style:
+		params['style'] = style
+
+	# Attempt up to three times
+	for x in range(3):
+
+		# Send request for Character Info
+		response = requests.get(
+			headers =  get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/player/v1/applicant/applicants',
+			params  = params,
+		)
+
+		# Exit loop if we got a successful response
+		if response.ok:
+			break
+
+		#print ('API request -- request_char_info() failed, retrying...')
+
+	return response
+
+
+
+# Request XP required for each Player Level -- use to translate to gold cost to level up
+@timed(level=3)
+def request_recruit_roster(ACCESS_TOKEN, applicantId=None):
+	
+	print (f'{applicantId=}')
+	
+	# Attempt up to three times
+	for x in range(3):
+
+		# Send request for Character Info
+		response = requests.get(
+			headers =  get_headers(ACCESS_TOKEN),
+			url     = f'{API_ENDPOINT}/player/v1/applicant/applicants/{applicantId}',
+		)
+
+		# Exit loop if we got a successful response
+		if response.ok:
+			break
+
+		#print ('API request -- request_char_info() failed, retrying...')
+
+	return response

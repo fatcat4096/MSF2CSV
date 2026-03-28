@@ -49,6 +49,8 @@ from .msf_api import auth_valid
 from .msf_api import refresh_auth
 from .msf_api import request_alliance_info
 from .msf_api import get_session_and_link
+from .msf_api import request_recruit_info
+from .msf_api import request_recruit_roster
 
 from .gradients import color_scale
 
