@@ -30,64 +30,58 @@ except:
 
 # Process rosters for every member in alliance_info.
 @timed(level=3)
-def process_rosters(alliance_info, only_process, AUTH, print=print, log_file=None):
-
-	# Let's get a little closer to our work.
-	members = alliance_info['members']
+def process_rosters(alliance_info, to_process, AUTH, print=print, log_file=None):
 
 	# If we're being called from Discord, provide the truncated output.
 	rosters_output = []
 
-	# TEMP: Pull expected member order out of info.csv.
-	member_order = [member for member in alliance_info['members'] if alliance_info['members'][member].get('avail')]
-
 	# Let's iterate through the member names in alliance_info.
-	for member in list(members):
+	for member in to_process:
 
 		start_time = datetime.now()
 
-		# If only_process and this member isn't in the list, skip.
-		if only_process and member not in only_process:
-			continue
+		# Let's get a little closer to our work
+		member_info = alliance_info['members'].setdefault(member, {})
 
-		# Take note of the original TCP size.
-		tcp_start = members[member].get('tot_power',0)
+		# Take note of the original TCP size and whether anything has CHANGED
+		tcp_start = member_info.get('tot_power',0)
+		CHANGED   = member_info.get('tcp') != tcp_start
 
-		# Only process members who have available rosters
-		if members[member].get('avail'):
+		# Only process available rosters that have been CHANGED
+		if CHANGED and member_info.get('avail'):
 			processed_chars = {}
 			other_data      = {}
 
 			# Query the Char info, if successful, parse and update all the info
-			response = request_member_roster(AUTH['access_token'], memberid=members[member]['url'], asOf=members[member].get('asOf'))
+			response = request_member_roster(AUTH['access_token'], memberid=member_info['url'], asOf=member_info.get('asOf'))
 			
 			# If response was successful, parse the member_roster dict
 			if response and response.ok and response.status_code != 344:
 
 				parse_roster_api(response, processed_chars, other_data)
-				
+
 				# Merge the processed roster information into our Alliance Info
 				merge_roster(alliance_info, member, processed_chars, other_data)
 
 				# Update the asof tag
-				alliance_info['members'][member]['asOf'] = response.json()['meta']['asOf']
+				member_info['asOf'] = response.json()['meta']['asOf']
 
 			# If response was UNSUCCESSFUL note the error
 			elif not response or not response.ok:
 				print (f"{ansi.ltcyan}API ROSTER REQUEST:{ansi.ltred} No valid response received{ansi.rst}")
 
 		# Did we find an updated roster? 
-		last_update = members[member].get('last_update')
+		last_update = member_info.get('last_update')
 		time_now    = datetime.now()
 		
 		updated     = last_update and last_update >= start_time and last_update <= time_now
 
 		# Cache the IS_STALE info away for easier access later.
 		member_stale = is_stale(alliance_info, member)
-		members[member]['is_stale'] = member_stale
+		member_info['is_stale'] = member_stale
 
 		# Report changes to TCP.
-		tcp_end  = members[member].get('tot_power',0)
+		tcp_end  = member_info.get('tot_power',0)
 		tcp_diff = tcp_end - tcp_start
 
 		if   tcp_end > 10**6:	tcp_end  = f'{tcp_end/10**6:>6.1f}M'
@@ -108,11 +102,11 @@ def process_rosters(alliance_info, only_process, AUTH, print=print, log_file=Non
 				result = f'UPD:{tcp_diff}'
 				FORMAT = ansi.ltyel
 		# Roster not available on website.
-		elif not members[member].get('avail'):
+		elif not member_info.get('avail'):
 			result = 'NOT AVAIL'
 			FORMAT = ansi.ltred
 		# Never received Roster page to parse.
-		elif not (response and response.ok): 
+		elif CHANGED and not (response and response.ok): 
 			result = 'TIMEOUT'
 			FORMAT = ansi.ltred
 		# Not sure what happened here. Side stepping an odd error condition.
