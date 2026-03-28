@@ -53,7 +53,7 @@ def timing(task='', self=None):
 		yield
 	finally:
 		if (datetime.now()-timing_start).total_seconds() > 0.0005:
-			logging(f"{f'>>> {ansi.ltcyan}{task.capitalize()}{ansi.rst}' if task else 'Timing'} complete. Total time {time_diff(timing_start)}")
+			logging(f"{f'>>> {ansi.ltcyan}{task}{ansi.rst}' if task else 'Timing'} complete. Total time {time_diff(timing_start)}")
 
 
 
