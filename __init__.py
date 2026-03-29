@@ -35,7 +35,6 @@ from .process_website import get_username_api
 from .process_website import update_cached_char_info
 from .process_website import update_cached_cost_info
 from .process_website import process_rosters
-from .process_website import roster_results
 from .process_website import update_is_stale
 from .process_website import update_strike_teams
 from .process_website import valid_strike_team

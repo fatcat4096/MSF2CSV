@@ -146,61 +146,6 @@ def process_rosters(alliance_info, to_process, AUTH, print=print, log_file=None)
 
 
 	
-def roster_results(alliance_info, start_time, rosters_output, only_summary=False, print=print):
-	
-	NEW = len([x for x in rosters_output if 'NEW' in x[15:]])
-	UPD = len([x for x in rosters_output if 'UPD' in x[15:]])
-	OLD = len([x for x in rosters_output if 'OLD' in x[15:]])
-
-	NEW = f'**{NEW}** new'     if NEW else ''
-	UPD = f'**{UPD}** updated' if UPD else ''
-	OLD = f'**{OLD}** old'     if OLD else ''
-
-	# Change OLD output if nothing was updated.
-	if not (NEW or UPD):
-		OLD = f'**NO UPDATED INFO**'
-
-	SUMMARY = ", ".join([x for x in (NEW, UPD, OLD) if x])
-	REQ = (datetime.now()-start_time).seconds
-
-	# Summarize the results of processing
-	summary = [f'Found {SUMMARY} in {REQ}s']
-
-	# Make the log output pretty
-	print (f'{ansi.ltcyan}Refresh complete!{ansi.rst} {ansi.gray}Found{ansi.rst} {ansi.ltyel}{SUMMARY.replace("**","")}{ansi.rst} {ansi.gray}in{ansi.rst} {ansi.ltyel}{REQ}s{ansi.rst}')
-
-	# If roster_output included, generate Key for footer as well.
-	status_key = [] 
-
-	NOT_AVAIL = [f'* *{x[:16].strip()}*' for x in rosters_output if 'NOT AVAIL' in x]
-	TIMEOUT   = [f'* {x[:16].strip()}' for x in rosters_output if 'TIMEOUT'   in x]
-
-	if only_summary:
-		if NOT_AVAIL:
-			status_key.append(f"**{len(NOT_AVAIL)}** not sharing")
-
-		if TIMEOUT:
-			status_key.append(f"**{len(TIMEOUT)}** timeouts")
-
-		if status_key:
-			summary += [f'Note: ' + ', '.join(status_key)]
-	else:
-		if NOT_AVAIL:
-			status_key.append(f"**{len(NOT_AVAIL)}** need roster shared w/ **ALLIANCE ONLY**:")
-			status_key += NOT_AVAIL
-			status_key.append(f"-# *(Learn how to fix this: **/help Not Shared**)*")
-
-		if TIMEOUT:
-			status_key.append('**TIMEOUT** API failed. Not updated:')
-			status_key += TIMEOUT
-
-		if status_key:
-			summary += [''] + status_key
-
-	return summary
-
-
-
 # Find out who we are
 def get_username_api(AUTH):
 
