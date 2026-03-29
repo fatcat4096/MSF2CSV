@@ -160,7 +160,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 
 		# If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, indicate it is STALE DATA via Grayscale output
 		stale_data = member_stats['is_stale']
-		
+
 		member_color = '#DCDCDC' if stale_data else '#B0E0E6'
 		member_role  = 'Member'
 
@@ -258,7 +258,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 			min, sec  = divmod(rest, 60)
 	
 			if stale_data:
-				time_value = f'<b><i>Stale<br>No change in {time_diff.days}d</i></b>'
+				time_value = f'<i><b>Stale - {time_diff.days}d</b><br>No Change</i>'
 			else:
 				time_diff = f'{day}d {hrs}h' if day else f'{hrs}h {min}m' if hrs else f'{min}m {sec}s'
 				time_value = f"{last_update.strftime('%a, %b %d')}<br><i>({time_diff})</i>"
