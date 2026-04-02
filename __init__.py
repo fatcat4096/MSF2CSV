@@ -30,11 +30,13 @@ from .alliance_info import generate_key_ranges
 from .alliance_info import find_cached_and_merge
 from .alliance_info import update_history
 
+from .parse_contents import merge_roster
+from .parse_contents import parse_roster_api
+
 from .process_website import get_alliance_api
 from .process_website import get_username_api
 from .process_website import update_cached_char_info
 from .process_website import update_cached_cost_info
-from .process_website import process_rosters
 from .process_website import update_is_stale
 from .process_website import update_strike_teams
 from .process_website import valid_strike_team
@@ -46,8 +48,11 @@ from .msf_api import request_auth
 from .msf_api import parse_auth
 from .msf_api import auth_valid
 from .msf_api import refresh_auth
+from .msf_api import construct_token
 from .msf_api import request_alliance_info
 from .msf_api import get_session_and_link
+from .msf_api import get_session
+from .msf_api import request_member_roster
 from .msf_api import request_recruit_info
 from .msf_api import request_recruit_roster
 
