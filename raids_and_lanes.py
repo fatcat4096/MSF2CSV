@@ -188,6 +188,7 @@ tables['dd9'] = { 'name': 'Dark Dimension 9',
 					'summary_keys': ['stp','avail'],
 					'summary_comp': 'Annihilus',
 					'lanes':[ [
+							{'traits': ['All'], 'label':'Any<br>GT21'},
 							{'traits': ['City',   'Non-Legendary', 'Non-Mythic', 'Non-Epic'], 'label':'City'},
 							{'traits': ['Cosmic', 'Non-Legendary', 'Non-Mythic', 'Non-Epic'], 'label':'Cosmic'},
 							{'traits': ['Global', 'Non-Legendary', 'Non-Mythic', 'Non-Epic'], 'label':'Global'},
