@@ -792,21 +792,14 @@ def update_history(alliance_info):
 # If Member's roster has grown more than 1% from last sync or hasn't synced in more than a week, consider it stale.
 def is_stale(alliance_info, member_name):
 
-	# Load thresholds, if they're explicitly defined.
-	max_growth = alliance_info.get('settings',{}).get('percent_growth', 1.5)
-	max_age    = alliance_info.get('settings',{}).get('older_than', 7)
-
 	# Get a little closer to our work. 
 	member_info = alliance_info['members'][member_name]
 	
-	# Using the inverse to avoid a divide by zero if roster unavailable.
-	percent_growth = member_info.get('tot_power',0)/member_info.get('tcp',1)
-
 	# Time since last roster sync 
-	last_update = 'last_update' in member_info and (datetime.now() - member_info['last_update']).total_seconds()
+	last_update = 'last_update' in member_info and (datetime.now() - member_info['last_update']).days
 	
-	# If either is true, flag it as stale.
-	return percent_growth < (1-(max_growth/100)) or last_update > 60*60*24*max_age
+	# If no growth in one week, flag as stale.
+	return last_update > 7
 
 
 
