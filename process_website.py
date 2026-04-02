@@ -12,6 +12,9 @@ import json
 
 from datetime import datetime
 
+from concurrent.futures import as_completed
+from requests_futures.sessions import FuturesSession
+
 try:
 	from .log_utils      import *
 	from .parse_contents import *
@@ -26,7 +29,6 @@ except:
 	from  alliance_info  import *
 	from  msf_api        import *
 	from  cached_info    import get_cached, set_cached
-
 
 
 # Find out who we are
@@ -131,26 +133,49 @@ async def update_cached_char_info(AUTH):
 
 # Rebuild fresh cached character info
 @timed(level=3)
-async def update_cached_cost_info(AUTH):
+async def update_cached_cost_info(self, AUTH):
+
+	self.bot.logger.info(f'{ansi.white}COMMAND CALLED:{ansi.rst} {ansi.ltcyan}update_cached_cost_info(){ansi.rst}')
 
 	# Get cached data
 	char_list   = get_cached('char_lookup')
 	gold_costs  = get_cached('gold_costs')
 	iso_classes = get_cached('iso_classes')
 
-	# Initialize variables
-	loop = asyncio.get_event_loop()
+	self.bot.logger.info(f'Parsing level upgrade costs')
 
 	# Get info about the cost to update to each level
-	await loop.run_in_executor(None, get_level_cost_info, AUTH, gold_costs)
-	
+	await asyncio.get_event_loop().run_in_executor(None, get_level_cost_info, AUTH, gold_costs)
+
+	self.bot.logger.info(f'Parsing ISO upgrade costs for {len(char_list)} characters')
+
+	# Update AUTH['session'] with post-processing hooks
+	AUTH['session'].hooks['response'] = parse_gear_and_iso_info
+
+	# Create a Futures Session to handle all requests at once
+	AUTH['session'] = FuturesSession(session=AUTH['session'])
+
+	FUTURES = []
+
 	# Get the cached list of characters
 	for char_name in char_list:
-		await loop.run_in_executor(None, get_gear_and_iso_info, AUTH, char_name, gold_costs, iso_classes)
+
+		# Make the API call
+		future = request_char_details(AUTH, char_name)
+
+		# Make a note of member name and add this to our futures list
+		future.char = char_name
+		FUTURES.append(future)
+
+	# Then process each of the responses as they return complete
+	for future in as_completed(FUTURES):
+		get_gear_and_iso_info(future.result(), future.char, gold_costs, iso_classes)
 
 	# Finally, cache the value of char_lookup
 	set_cached('gold_costs',  gold_costs)
 	set_cached('iso_classes', iso_classes)
+
+	self.bot.logger.info(f"{ansi.dkgray}COMMAND CLOSED:{ansi.rst} {ansi.ltblu}update_cached_cost_info(){ansi.rst}")
 
 
 
@@ -162,33 +187,25 @@ def get_level_cost_info(AUTH, gold_costs):
 	# Go straight to the data if present
 	xp_req = response.json().get('data',{}) if response and response.ok else {}
 
-	# Temp, for visibility
-	if response:	print (f'Parsing level upgrade costs')
-
 	for lvl, xp_tot in enumerate(xp_req):
 		xp_diff = xp_tot - xp_req[lvl-1] if lvl and xp_tot else 0
 		gold_costs.setdefault(None, {})[lvl-1] = int(xp_diff * 6.25)
 
 
 
-def get_gear_and_iso_info(AUTH, char_name, gold_costs, iso_classes):
-	
-	# Make the API call
-	response = request_char_details(AUTH, char_name)
+def parse_gear_and_iso_info(response, *args, **kwargs):
+	response.data = response.json().get('data',{}) if response and response.ok else {}
 
-	# Go straight to the data if present
-	response = response.json().get('data',{}) if response and response.ok else {}
+
+
+def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes):
 
 	# Translate to common name
 	char_name = get_cached('char_lookup').get(char_name)
 
-	# Temp, for visibility
-	if response:	print (f'Parsing:  {char_name}')
-	else:			print (f'Skipping: {char_name}')
-
 	# Look deeper into the response
-	gear_info = response.get('gearTiers', {})
-	iso_info  = response.get('iso8ClassAdoption',{})
+	gear_info = response.data.get('gearTiers', {})
+	iso_info  = response.data.get('iso8ClassAdoption',{})
 
 	# Get a little closer to our work
 	gear_cost =  gold_costs.setdefault(char_name,{})
