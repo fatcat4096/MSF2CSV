@@ -132,16 +132,20 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 	member_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
 
 
-
 	
-@timed(level=3)
-def parse_roster_api(response, processed_chars, other_data):
+# Build processed_chars and other_info and store them in the response directly
+def parse_roster_api(response, *args, **kwargs):
 
 	# Load cached char_lookup
 	char_lookup = get_cached('char_lookup')
 
+	response.chars = {}
+	response.other = {}
+	response.data  = response.json()
+	response.asof  = response.data['meta']['asOf']
+
 	# Iterate through each in roster, building up a member dict with stats for each.
-	for entry in response.json()['data']:
+	for entry in response.data['data']:
 
 		char_name = char_lookup.get(entry['id'])
 		
@@ -150,7 +154,7 @@ def parse_roster_api(response, processed_chars, other_data):
 			print ("missing translation for",entry)
 			continue
 
-		char_info = processed_chars.setdefault(char_name,{})
+		char_info = response.chars.setdefault(char_name,{})
 
 		char_info['lvl']   = entry.get('level',0)
 		char_info['power'] = entry.get('power',0)
@@ -179,7 +183,7 @@ def parse_roster_api(response, processed_chars, other_data):
 						'raider':4,
 						'striker':5}
 
-		other_data[char_name] = iso_classes.get(iso_class,0)
+		response.other[char_name] = iso_classes.get(iso_class,0)
 
 		iso_index = {	'striker':7,
 						'fortifier':8,
