@@ -167,7 +167,7 @@ def get_session(AUTH_OR_TOKEN):
 	if type(AUTH_OR_TOKEN) is dict:
 
 		# create a Session if one hasn't been added yet
-		return AUTH_OR_TOKEN.setdefault('session', get_session(AUTH_OR_TOKEN['access_token'])
+		return AUTH_OR_TOKEN.setdefault('session', get_session(AUTH_OR_TOKEN['access_token']))
 
 	# Create a Requests session 
 	session = requests.Session()
