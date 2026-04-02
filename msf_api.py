@@ -5,15 +5,14 @@ Basic implementation of MSF API
 """
 
 
-from urllib.parse import quote_plus
 import base64
 import requests
 import secrets
 import time
 
-
-try:	from .log_utils import timed
-except:	from  log_utils import timed
+from requests.adapters  import HTTPAdapter
+from urllib3.util.retry import Retry
+from urllib.parse       import quote_plus
 
 
 # Redirect URI for Enroll-a-Bot
@@ -62,6 +61,17 @@ def auth_valid(AUTH):
 
 
 
+#888888b.   .d88888b.   .d8888b. 88888888888      8888888b.  8888888888 .d88888b.  888     888 8888888888 .d8888b. 88888888888 .d8888b.  
+#88   Y88b d88P" "Y88b d88P  Y88b    888          888   Y88b 888       d88P" "Y88b 888     888 888       d88P  Y88b    888    d88P  Y88b 
+#88    888 888     888 Y88b.         888          888    888 888       888     888 888     888 888       Y88b.         888    Y88b.      
+#88   d88P 888     888  "Y888b.      888          888   d88P 8888888   888     888 888     888 8888888    "Y888b.      888     "Y888b.   
+#888888P"  888     888     "Y88b.    888          8888888P"  888       888     888 888     888 888           "Y88b.    888        "Y88b. 
+#88        888     888       "888    888          888 T88b   888       888 Y8b 888 888     888 888             "888    888          "888 
+#88        Y88b. .d88P Y88b  d88P    888          888  T88b  888       Y88b.Y8b88P Y88b. .d88P 888       Y88b  d88P    888    Y88b  d88P 
+#88         "Y88888P"   "Y8888P"     888          888   T88b 8888888888 "Y888888"   "Y88888P"  8888888888 "Y8888P"     888     "Y8888P"  
+                                                                              #8b
+
+
 # Headers used for POST requests
 def post_headers(CLIENT_TOKEN):
 
@@ -70,20 +80,7 @@ def post_headers(CLIENT_TOKEN):
 
 
 
-# Headers used for GET requests
-def get_headers(ACCESS_TOKEN):
-
-	# Extract the ACCESS_TOKEN if provided full AUTH
-	if type(ACCESS_TOKEN) is dict:
-		ACCESS_TOKEN = ACCESS_TOKEN['access_token']
-
-	return {	'x-api-key': '17wMKJLRxy3pYDCKG5ciP7VSU45OVumB2biCzzgw',
-				'Authorization': f'Bearer {ACCESS_TOKEN}' }
-
-
-
 # Request for original AUTH token
-@timed(level=3)
 def request_auth(AUTH_CODE, CLIENT_TOKEN):
 
 	# Attempt up to three times
@@ -110,7 +107,6 @@ def request_auth(AUTH_CODE, CLIENT_TOKEN):
 
 
 # Request for a refresh AUTH using the Refresh token
-@timed(level=3)
 def refresh_auth(AUTH, CLIENT_TOKEN):
 
 	# Attempt up to three times
@@ -153,189 +149,158 @@ def parse_auth(auth_token, AUTH):
 	return AUTH
 
 
+  #8888b.  8888888888 88888888888      8888888b.  8888888888 .d88888b.  888     888 8888888888 .d8888b. 88888888888 .d8888b.  
+#88P  Y88b 888            888          888   Y88b 888       d88P" "Y88b 888     888 888       d88P  Y88b    888    d88P  Y88b 
+#88    888 888            888          888    888 888       888     888 888     888 888       Y88b.         888    Y88b.      
+#88        8888888        888          888   d88P 8888888   888     888 888     888 8888888    "Y888b.      888     "Y888b.   
+#88  88888 888            888          8888888P"  888       888     888 888     888 888           "Y88b.    888        "Y88b. 
+#88    888 888            888          888 T88b   888       888 Y8b 888 888     888 888             "888    888          "888 
+#88b  d88P 888            888          888  T88b  888       Y88b.Y8b88P Y88b. .d88P 888       Y88b  d88P    888    Y88b  d88P 
+ #Y8888P88 8888888888     888          888   T88b 8888888888 "Y888888"   "Y88888P"  8888888888 "Y8888P"     888     "Y8888P" 
+
+
+
+# Return a new or existing Requests Session
+def get_session(AUTH_OR_TOKEN):
+
+	# Is this AUTH with an established session?
+	if type(AUTH_OR_TOKEN) is dict:
+
+		# create a Session if one hasn't been added yet
+		return AUTH_OR_TOKEN.setdefault('session', get_session(AUTH_OR_TOKEN['access_token'])
+
+	# Create a Requests session 
+	session = requests.Session()
+
+	# Re-use the same Auth headers for all requests
+	session.headers = {
+		'x-api-key'     : '17wMKJLRxy3pYDCKG5ciP7VSU45OVumB2biCzzgw',
+		'Authorization' : f'Bearer {AUTH_OR_TOKEN}'
+	}
+
+	# Automate retries and incremental backoff on failure
+	retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+	session.mount('http://',  HTTPAdapter(max_retries=retries))
+	session.mount('https://', HTTPAdapter(max_retries=retries))
+	
+	return session
+	
+	
 
 # Need this for the name of the Player 	
-@timed(level=3)
-def request_player_info(ACCESS_TOKEN):
+def request_player_info(AUTH_OR_TOKEN):
 
-	# Attempt up to three times
-	for x in range(3):
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
 
-		# Send request for Alliance Info
-		response = requests.get(
-			headers = get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/player/v1/card', 
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_player_info() failed, retrying...')
-
-	return response
+	# Send request for Alliance Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/player/v1/card', 
+	)
 
 
 
 # Need this for the Alliance name and stats
-@timed(level=3)
-def request_alliance_info(ACCESS_TOKEN):
+def request_alliance_info(AUTH_OR_TOKEN):
 
-	# Attempt up to three times
-	for x in range(3):
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
 
-		# Send request for Alliance Info
-		response = requests.get(
-			headers = get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/player/v1/alliance/card', 
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_alliance_info() failed, retrying...')
-
-	return response
+	# Send request for Alliance Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/player/v1/alliance/card', 
+	)
 
 
 # Need this for the Alliance members 	
-@timed(level=3)
-def request_alliance_members(ACCESS_TOKEN):
+def request_alliance_members(AUTH_OR_TOKEN):
 
-	# Attempt up to three times
-	for x in range(3):
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
 
-		# Send request for Alliance Info
-		response = requests.get(
-			headers = get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/player/v1/alliance/members',
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_alliance_members() failed, retrying...')
-
-	return response
+	# Send request for Alliance Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/player/v1/alliance/members',
+	)
 
 
 
 # Need this for the Roster information 	
-@timed(level=3)
-def request_member_roster(ACCESS_TOKEN, memberid, asOf=None):
+def request_member_roster(AUTH_OR_TOKEN, memberid, asOf=None):
+
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
 
 	PARAM_SINCE = {'since':asOf} if asOf else {}
 
-	# Attempt up to three times
-	for x in range(3):
-
-		# Send request for new access_token
-		response = requests.get(
-			headers = get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/player/v1/roster/member/{memberid}',	# Individual roster request  
-			params  = {'statsFormat':'csv'} | PARAM_SINCE, 							# Hash for previous API request
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_member_roster() failed, retrying...')
-
-	return response
+	# Send request for new access_token
+	return session.get(
+		url     = f'{API_ENDPOINT}/player/v1/roster/member/{memberid}',	# Individual roster request  
+		params  = {'statsFormat':'csv'} | PARAM_SINCE, 							# Hash for previous API request
+	)
 
 
 
 # Request all character information -- used for Char names, Portrait info
-@timed(level=3)
-def request_char_info(ACCESS_TOKEN, PLAYABLE=True):
+def request_char_info(AUTH_OR_TOKEN, PLAYABLE=True):
 
-	# Attempt up to three times
-	for x in range(3):
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
 
-		# Send request for Character Info
-		response = requests.get(
-			headers =  get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/game/v1/characters',
-			params  = {
-						'itemFormat':'id',
-						'traitFormat':'id',
-						'status':'playable' if PLAYABLE else 'unplayable',
-					  },
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_char_info() failed, retrying...')
-
-	return response
+	# Send request for Character Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/game/v1/characters',
+		params  = {
+					'itemFormat':'id',
+					'traitFormat':'id',
+					'status':'playable' if PLAYABLE else 'unplayable',
+				  },
+	)
 
 
 
 # Request gear tier info -- used for calculating gear tier costs for a character
-@timed(level=3)
-def request_char_details(ACCESS_TOKEN, char_name):
+def request_char_details(AUTH_OR_TOKEN, char_name):
 
-	# Attempt up to three times
-	for x in range(3):
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
 
-		# Send request for Character Info
-		response = requests.get(
-			headers =  get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/game/v1/characters/{char_name}',
-			params  = {
-						'statsFormat':'csv',
-						'charInfo':'none',
-						'costumes':'none',
-						'abilityKits':'none',
-						'pieceInfo':'none',
-						'pieceDirectCost':'part',
-						'subPieceInfo':'none',
-						'charAdoption':'full',
-					  },
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_char_info() failed, retrying...')
-
-	return response
+	# Send request for Character Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/game/v1/characters/{char_name}',
+		params  = {
+					'statsFormat':'csv',
+					'charInfo':'none',
+					'costumes':'none',
+					'abilityKits':'none',
+					'pieceInfo':'none',
+					'pieceDirectCost':'part',
+					'subPieceInfo':'none',
+					'charAdoption':'full',
+				  },
+	)
 
 
 
 # Request XP required for each Player Level -- use to translate to gold cost to level up
-@timed(level=3)
-def request_upgrade_info(ACCESS_TOKEN, fieldId='characterLevelTotalXp'):
+def request_upgrade_info(AUTH_OR_TOKEN, fieldId='characterLevelTotalXp'):
 
-	# Attempt up to three times
-	for x in range(3):
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
 
-		# Send request for Character Info
-		response = requests.get(
-			headers =  get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/game/v1/upgradeData/{fieldId}',
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_char_info() failed, retrying...')
-
-	return response
+	# Send request for Character Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/game/v1/upgradeData/{fieldId}',
+	)
 
 
 
 # Request XP required for each Player Level -- use to translate to gold cost to level up
-@timed(level=3)
-def request_recruit_info(ACCESS_TOKEN, style=None, tcp=None):
+def request_recruit_info(AUTH_OR_TOKEN, style=None, tcp=None):
 	
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
+
 	params = {'perPage':100}
 	
 	if tcp:
@@ -343,45 +308,24 @@ def request_recruit_info(ACCESS_TOKEN, style=None, tcp=None):
 	if style:
 		params['style'] = style
 
-	# Attempt up to three times
-	for x in range(3):
-
-		# Send request for Character Info
-		response = requests.get(
-			headers =  get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/player/v1/applicant/applicants',
-			params  = params,
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_char_info() failed, retrying...')
-
-	return response
+	# Send request for Character Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/player/v1/applicant/applicants',
+		params  = params,
+	)
 
 
 
 # Request XP required for each Player Level -- use to translate to gold cost to level up
-@timed(level=3)
-def request_recruit_roster(ACCESS_TOKEN, applicantId=None):
+def request_recruit_roster(AUTH_OR_TOKEN, applicantId=None):
 	
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
+
 	print (f'{applicantId=}')
 	
-	# Attempt up to three times
-	for x in range(3):
-
-		# Send request for Character Info
-		response = requests.get(
-			headers =  get_headers(ACCESS_TOKEN),
-			url     = f'{API_ENDPOINT}/player/v1/applicant/applicants/{applicantId}',
-		)
-
-		# Exit loop if we got a successful response
-		if response.ok:
-			break
-
-		#print ('API request -- request_char_info() failed, retrying...')
-
-	return response
+	# Send request for Character Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/player/v1/applicant/applicants/{applicantId}',
+	)
+	
