@@ -11,7 +11,7 @@ try:
 	from .log_utils  import timed
 	from .html_cache import make_next_color_id
 	from .gradients  import *
-except:
+except ModuleNotFoundError:
 	from  log_utils  import timed
 	from  html_cache import make_next_color_id
 	from  gradients  import *
@@ -302,6 +302,7 @@ def translate_name(value):
 						"SecretDefender": "Secret<br>Defenders",
 						"Secret Defenders": "Secret<br>Defenders",
 						"SecretWarrior": "Secret<br>Warriors",
+						"ShadowConclave": "Shadow<br>Conclave",
 						"SinisterSix": "Sinister<br>Six",
 						"Sinister Six": "Sinister<br>Six",
 						"SpiderVerse": "Spider-Verse",
@@ -350,6 +351,7 @@ def translate_name(value):
 						"Green Goblin (Classic)":"Green Goblin<br>(Classic)",
 						"Hand Blademaster":"Hand<br>Blademaster",
 						"Hand Sorceress":"Hand<br>Sorceress",
+						"High Evolutionary":"High<br>Evolutionary",
 						"Howard The Duck":"Howard<br>The Duck",
 						"Hydra Armored Guard":"Hydra<br>Arm Guard",
 						"Hydra Grenadier":"Hydra<br>Grenadier",
