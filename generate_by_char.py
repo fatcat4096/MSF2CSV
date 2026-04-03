@@ -10,7 +10,7 @@ try:
 	from .cached_info    import get_cached
 	from .html_shared    import *
 	from .generate_table import *
-except:
+except ModuleNotFoundError:
 	from  log_utils      import *
 	from  alliance_info  import *
 	from  cached_info    import get_cached

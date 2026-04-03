@@ -16,7 +16,7 @@ try:
 	from .log_utils   import *
 	from .file_io     import *
 	from .cached_info import get_cached
-except:
+except ModuleNotFoundError:
 	from  log_utils   import *
 	from  file_io     import *
 	from  cached_info import get_cached

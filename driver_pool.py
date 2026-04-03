@@ -11,8 +11,10 @@ import psutil
 from datetime import datetime
 from selenium import webdriver
 
-try:	from .log_utils import *
-except:	from  log_utils import *
+try:
+	from .log_utils import *
+except ModuleNotFoundError:
+	from  log_utils import *
 
 
 

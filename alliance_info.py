@@ -18,7 +18,7 @@ try:
 	from .cached_info import get_cached
 	from .gradients   import color_scale
 	from .html_shared import get_color, format_power
-except:
+except ModuleNotFoundError:
 	from  log_utils   import *
 	from  file_io     import find_cached_data
 	from  parse_cache import update_parse_cache

@@ -12,8 +12,10 @@ import pickle
 from copy import copy, deepcopy
 
 
-try:	from .file_io   import get_local_path
-except:	from  file_io   import get_local_path
+try:
+	from .file_io   import get_local_path
+except ModuleNotFoundError:
+	from  file_io   import get_local_path
 
 
 # Load up the cached_info global at launch.

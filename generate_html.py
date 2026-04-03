@@ -14,7 +14,7 @@ try:
 	from .generate_css  import *
 	from .html_cache    import *
 	from .html_shared   import *
-except:
+except ModuleNotFoundError:
 	from  log_utils     import *
 	from  alliance_info import *
 	from  generate_css  import *
@@ -28,7 +28,7 @@ try:
 	from .generate_by_char         import *
 	from .generate_table           import *
 	from .generate_summary         import *
-except:
+except ModuleNotFoundError:
 	from  generate_alliance_info   import *
 	from  generate_roster_analysis import *
 	from  generate_by_char         import *

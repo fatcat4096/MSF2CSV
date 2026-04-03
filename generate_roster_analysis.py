@@ -13,7 +13,7 @@ try:
 	from .cached_info   import get_cached
 	from .html_cache    import make_next_table_id
 	from .html_shared   import *
-except:
+except ModuleNotFoundError:
 	from  log_utils     import timed
 	from  alliance_info import filter_by_traits
 	from  cached_info   import get_cached

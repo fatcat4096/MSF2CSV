@@ -6,8 +6,10 @@ Routines used to build and update the parse cache.
 These are used to de-duplicate entries in the historical data structures of alliance_info.
 """
 
-try:	from .log_utils import *
-except:	from  log_utils import *
+try:
+	from .log_utils import *
+except ModuleNotFoundError:
+	from  log_utils import *
 
 # Create a cache of entries to optimize our cached_data.
 @timed(level=3)

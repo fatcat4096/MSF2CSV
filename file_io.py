@@ -20,7 +20,7 @@ from urllib.parse import quote, unquote
 try:
 	from .log_utils   import *
 	from .driver_pool import *
-except:
+except ModuleNotFoundError:
 	from  log_utils   import *
 	from  driver_pool import *
 

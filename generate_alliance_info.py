@@ -12,7 +12,7 @@ try:
 	from .file_io     import remove_tags
 	from .html_cache  import make_next_table_id
 	from .html_shared import *
-except:
+except ModuleNotFoundError:
 	from  log_utils   import timed
 	from  file_io     import remove_tags
 	from  html_cache  import make_next_table_id

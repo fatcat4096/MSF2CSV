@@ -10,7 +10,7 @@ from copy import deepcopy
 try:
 	from .alliance_info import get_player_list
 	from .cached_info   import get_cached
-except:
+except ModuleNotFoundError:
 	from  alliance_info import get_player_list
 	from  cached_info   import get_cached
 

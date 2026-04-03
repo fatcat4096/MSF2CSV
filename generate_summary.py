@@ -12,7 +12,7 @@ try:
 	from .log_utils      import *
 	from .html_shared    import *
 	from .generate_table import *
-except:
+except ModuleNotFoundError:
 	from  log_utils      import *
 	from  html_shared    import *
 	from  generate_table import *
