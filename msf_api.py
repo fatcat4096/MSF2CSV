@@ -321,11 +321,8 @@ def request_recruit_roster(AUTH_OR_TOKEN, applicantId=None):
 	
 	# Extract the session if provided full AUTH
 	session = get_session(AUTH_OR_TOKEN)
-
-	print (f'{applicantId=}')
 	
 	# Send request for Character Info
 	return session.get(
-		url     = f'{API_ENDPOINT}/player/v1/applicant/applicants/{applicantId}',
+		url     = f'{API_ENDPOINT}/player/v1/roster/applicant/{applicantId}',
 	)
-	
