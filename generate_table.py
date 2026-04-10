@@ -261,7 +261,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 				# If we never found a match, just include the formatted Section name as a header.
 				if not char.startswith(char_name+':'):
-					section_name = translate_name(char).upper().replace(" OR ","<br>OR<br>").replace(" AND ","<br>AND<br>").replace(" (","<br>(").replace(", ",",<br>").replace('-','&#8209;')
+					section_name = translate_name(char).upper().replace(" OR ","<br>OR<br>").replace(" AND ","<br>AND<br>").replace(" (","<br>(").replace(" NON-","<br>NON-").replace(", ",",<br>").replace('-','&#8209;')
 					html_file.append(f'     <td colspan="{len(keys)}"><div class="summ">{section_name}</div></td>')
 				
 			else:
@@ -289,15 +289,15 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				bg_color += ' dim_img' if char in dim_image else ''
 
 				# Number of columns under each Character entry.
-				num_cols = len(keys)
+				num_cols = len(keys) + inc_class
 				
 				# Do we have ISO information for this character yet?
 				iso_char = iso_classes.get(char)
 				
 				# Adjust the width of the ISO Class Info based on the width of the char info
 				if inc_class and iso_char:
-					class_cols = 0 if num_cols < 4 else 1 if num_cols == 4 else 2
-					num_cols += inc_class - class_cols
+					class_cols = 0 if num_cols < 5 else 1 if num_cols == 5 else 2
+					num_cols -= class_cols
 
 				html_file.append(f'     <td class="img" colspan="{num_cols}"{onclick}><div class="cont{bg_color}"><div class="{"" if hist_date else "zoom"}"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(char)}</div></div></td>')
 
