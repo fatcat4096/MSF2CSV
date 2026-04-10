@@ -259,7 +259,7 @@ def translate_name(value):
 						"BlackOrder": "Black<br>Order",
 						"Brotherhood": "B'Hood",
 						"ChaosTeam": "Chaos Team",
-						"DaringWarriors": "Daring<br>Warriors",
+						"DaringWarrior": "Daring<br>Warriors",
 						"DarkHunter": "Dark<br>Hunters",
 						"DARK_PROMOTION": "Dark<br>Promotions",
 						"Defender": "Defenders",

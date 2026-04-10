@@ -449,6 +449,41 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "The tyrant of the Negative Zone who uses the Cosmic Control Rod to eliminate all that might threaten him.",
+      "id": "Annihilus",
+      "mission": false,
+      "name": "Annihilus",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Annihilus_38efc4a8.png",
+      "starItems": [
+        "SHARD_ANNIHILUS",
+        "RS_ANNIHILUS_1",
+        "RS_ANNIHILUS_2",
+        "RS_ANNIHILUS_3",
+        "RS_ANNIHILUS_4",
+        "RS_ANNIHILUS_5",
+        "RS_ANNIHILUS_6",
+        "RS_ANNIHILUS_7",
+        "PD_ANNIHILUS_1",
+        "PD_ANNIHILUS_2",
+        "PD_ANNIHILUS_3",
+        "PD_ANNIHILUS_4",
+        "PD_ANNIHILUS_5"
+      ],
+      "status": "playable",
+      "summonIds": [
+        "AnnihilusBug"
+      ],
+      "traits": [
+        "Villain",
+        "Cosmic",
+        "Tech",
+        "Blaster",
+        "Mythic",
+        "GalacticCouncil"
+      ],
+      "unlockStars": 5
+    },
+    {
       "description": "An altered Venom Symbiote turned Eddie Brock into Anti-Venom, a Hero who heals rather than destroys.",
       "eventTraits": [
         "BestSpiderBuddies"
@@ -2921,6 +2956,38 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "The Executioner, son of a storm giant and goddess, is an Asgardian warrior who brings death and destruction to his enemies with both axe and his pair of treasured Earth rifles.",
+      "id": "Executioner",
+      "mission": false,
+      "name": "Executioner",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Executioner_7a80e191.png",
+      "starItems": [
+        "SHARD_EXECUTIONER",
+        "RS_EXECUTIONER_1",
+        "RS_EXECUTIONER_2",
+        "RS_EXECUTIONER_3",
+        "RS_EXECUTIONER_4",
+        "RS_EXECUTIONER_5",
+        "RS_EXECUTIONER_6",
+        "RS_EXECUTIONER_7",
+        "PD_EXECUTIONER_1",
+        "PD_EXECUTIONER_2",
+        "PD_EXECUTIONER_3",
+        "PD_EXECUTIONER_4",
+        "PD_EXECUTIONER_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "Cosmic",
+        "Skill",
+        "Brawler",
+        "Asgard",
+        "ShadowConclave"
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
       "eventTraits": [
         "BestAvengerBuddies"
@@ -4090,6 +4157,37 @@ playable   = {
         "UncannyAvenger"
       ],
       "unlockStars": 3
+    },
+    {
+      "description": "Herbert Edgar Wyndham, The High Evolutionary, is a brilliant but unethical geneticist dedicated to perfecting species by manipulating their health and all that is positive and negative about them.",
+      "id": "HighEvolutionary",
+      "mission": false,
+      "name": "High Evolutionary",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_HighEvolutionary_633185b9.png",
+      "starItems": [
+        "SHARD_HIGHEVOLUTIONARY",
+        "RS_HIGHEVOLUTIONARY_1",
+        "RS_HIGHEVOLUTIONARY_2",
+        "RS_HIGHEVOLUTIONARY_3",
+        "RS_HIGHEVOLUTIONARY_4",
+        "RS_HIGHEVOLUTIONARY_5",
+        "RS_HIGHEVOLUTIONARY_6",
+        "RS_HIGHEVOLUTIONARY_7",
+        "PD_HIGHEVOLUTIONARY_1",
+        "PD_HIGHEVOLUTIONARY_2",
+        "PD_HIGHEVOLUTIONARY_3",
+        "PD_HIGHEVOLUTIONARY_4",
+        "PD_HIGHEVOLUTIONARY_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "Cosmic",
+        "Tech",
+        "Support",
+        "ShadowConclave"
+      ],
+      "unlockStars": 2
     },
     {
       "description": "He's a monkey. Also, he's an assassin. It's pretty much there in the name.",
@@ -6201,6 +6299,37 @@ playable   = {
         "Epic"
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "The leader of the Dark Elves of Svartalfheim, Malekith uses his magic and tricks to stifle enemies and spread debilitating effects amongst his foes.",
+      "id": "Malekith",
+      "mission": false,
+      "name": "Malekith",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Malekith_6cbf0521.png",
+      "starItems": [
+        "SHARD_MALEKITH",
+        "RS_MALEKITH_1",
+        "RS_MALEKITH_2",
+        "RS_MALEKITH_3",
+        "RS_MALEKITH_4",
+        "RS_MALEKITH_5",
+        "RS_MALEKITH_6",
+        "RS_MALEKITH_7",
+        "PD_MALEKITH_1",
+        "PD_MALEKITH_2",
+        "PD_MALEKITH_3",
+        "PD_MALEKITH_4",
+        "PD_MALEKITH_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "Cosmic",
+        "Bio",
+        "Controller",
+        "ShadowConclave"
+      ],
+      "unlockStars": 3
     },
     {
       "description": "An ancient and powerful force of nature, whatever knows fear burns at the touch of... The Man-Thing!",
@@ -11119,7 +11248,8 @@ playable   = {
         "Mystic",
         "Controller",
         "Bifrost",
-        "Asgard"
+        "Asgard",
+        "ShadowConclave"
       ],
       "unlockStars": 2
     },
@@ -11302,7 +11432,9 @@ playable   = {
         "Villain",
         "Cosmic",
         "Mystic",
-        "Protector"
+        "Protector",
+        "BlackOrder",
+        "ShadowConclave"
       ],
       "unlockStars": 2
     },
@@ -12879,15 +13011,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "d69e55a924fcd8e1d867",
-      "chars": "b54b4ae4702758db225c",
-      "drops": "2ba8a4fe8908844fcf8c",
-      "events": "33870892104a354c9075",
-      "locs": "252215436962adbcee21",
-      "nodes": "c35f6a51cdb8d4cee630",
-      "other": "d45d166511eb6a9f6619"
+      "all": "1a3a106983255cdbc9a1",
+      "chars": "613e64a23e24a1ec9510",
+      "drops": "253d46e4ab7c1ac4947f",
+      "events": "86a5454bd40095ff3cb9",
+      "locs": "b0bfe89e60b039b3e9d1",
+      "nodes": "595e3a0eb2bde50db8ba",
+      "other": "7e54e96aaf0e95a0ba74"
     },
-    "perTotal": 361,
+    "perTotal": 365,
     "version": 1
   }
 }
@@ -13743,13 +13875,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "d69e55a924fcd8e1d867",
-      "chars": "b54b4ae4702758db225c",
-      "drops": "2ba8a4fe8908844fcf8c",
-      "events": "33870892104a354c9075",
-      "locs": "252215436962adbcee21",
-      "nodes": "c35f6a51cdb8d4cee630",
-      "other": "d45d166511eb6a9f6619"
+      "all": "1a3a106983255cdbc9a1",
+      "chars": "613e64a23e24a1ec9510",
+      "drops": "253d46e4ab7c1ac4947f",
+      "events": "86a5454bd40095ff3cb9",
+      "locs": "b0bfe89e60b039b3e9d1",
+      "nodes": "595e3a0eb2bde50db8ba",
+      "other": "7e54e96aaf0e95a0ba74"
     },
     "perTotal": 44,
     "version": 1
