@@ -259,6 +259,23 @@ def request_char_info(AUTH_OR_TOKEN, PLAYABLE=True):
 
 
 
+# Request all character instance info -- used for speed stat
+def request_char_instances(AUTH_OR_TOKEN):
+
+	# Extract the session if provided full AUTH
+	session = get_session(AUTH_OR_TOKEN)
+
+	# Send request for Character Info
+	return session.get(
+		url     = f'{API_ENDPOINT}/game/v1/characterInstances',
+		params  = {
+					'statsFormat':'csv',
+					'status':'playable',
+				  },
+	)
+
+
+
 # Request gear tier info -- used for calculating gear tier costs for a character
 def request_char_details(AUTH_OR_TOKEN, char_name):
 

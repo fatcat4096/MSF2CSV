@@ -137,8 +137,14 @@ async def update_cached_cost_info(self, AUTH):
 
 	# Get cached data
 	char_list   = get_cached('char_lookup')
+	char_speeds = get_cached('char_speeds')
 	gold_costs  = get_cached('gold_costs')
 	iso_classes = get_cached('iso_classes')
+
+	self.bot.logger.info(f'Parsing character speeds')
+
+	# Get info about the cost to update to each level
+	await get_char_speed_info(AUTH, char_speeds)
 
 	self.bot.logger.info(f'Parsing level upgrade costs')
 
@@ -161,9 +167,25 @@ async def update_cached_cost_info(self, AUTH):
 		get_gear_and_iso_info(future.result(), FUTURES[future], gold_costs, iso_classes)
 
 	# Finally, cache the value of char_lookup
+	set_cached('char_speeds', char_speeds)
 	set_cached('gold_costs',  gold_costs)
 	set_cached('iso_classes', iso_classes)
 
+
+
+async def get_char_speed_info(AUTH, char_speeds):
+	
+	# Make the API call
+	response = request_char_instances(AUTH)
+
+	# Go straight to the data if present
+	char_info = response.json().get('data',{}) if response and response.ok else {}
+
+	for entry in char_info:
+		char_name  = entry.get('id')
+		char_speed = entry.get('stats').split(',')[7]
+		
+		char_speeds[char_name] = int(char_speed)
 
 
 

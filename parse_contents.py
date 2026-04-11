@@ -212,6 +212,9 @@ async def parse_char_data(CHAR_DATA, char_list, char_lookup, portraits, traits):
 		
 		# Build char_lookup (for name translation)
 		char_lookup[char_id] = char_name
+		
+		# Include reverse lookup
+		char_lookup.setdefault(char_name, char_id)
 
 		# Build portrait lookup -- only accept first definition to avoid being overwritten by Unplayable chars
 		portraits.setdefault(char_name, char['portrait'])

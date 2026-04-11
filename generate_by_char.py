@@ -60,6 +60,10 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 	# Get the list of traits to allow us to include Trait information
 	extracted_traits = get_cached('traits')
 	
+	# Get the character speeds to allow us to include Speed information
+	char_speeds = get_cached('char_speeds')
+	char_lookup = get_cached('char_lookup')
+	
 	# Iterate through the list of character, generating the same detailed information for each character.
 	for char in char_list:
 		
@@ -94,6 +98,10 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 		
 		traits = f'<br><span class="sub">{", ".join(traits)}</span>'
 		
+		# Create a subtitle for the right side with Speed information
+		char_speed = char_speeds.get(char_lookup.get(char))
+		char_speed = f'<br><br><br><span class="sub">Speed: <b>{char_speed}</b></span>' if char_speed else ''
+
 		# Build stp_list to simplify sort_by='stp'.
 		stp_list = get_stp_list(alliance_info, [char], hist_date)
 
@@ -109,7 +117,7 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 			changes_since = f'<br><span class="sub">Changes since:<br>{hist_date}</span>'
 
 			# Generate the Right table with historical stats.
-			html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], f'{table_lbl}{changes_since}', stp_list, html_cache, hist_date, linked_hist=True)
+			html_file += generate_table(alliance_info, table, section, table_format, [char], [member_list], f'{table_lbl}{changes_since}{char_speed}', stp_list, html_cache, hist_date, linked_hist=True)
 			
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'
