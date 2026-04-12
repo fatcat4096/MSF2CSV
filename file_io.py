@@ -85,7 +85,7 @@ REMOVE_TAGS = re.compile(r'<[^>]+>')
 def remove_tags(text):
 
 	# Cleaned text is without HTML tags. Also removing hashtags.
-	cleaned = REMOVE_TAGS.sub('', text.replace('#','')).strip()
+	cleaned = REMOVE_TAGS.sub('', text.replace('#','')).strip() if type(text) is str else None
 
 	# If nothing remains, then < > was decorative, return the original entry.
 	return cleaned or text
