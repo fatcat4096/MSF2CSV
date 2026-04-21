@@ -26,7 +26,7 @@ def load_cached_file(file):
 	data={}
 
 	# Load the requested information if it exists
-	file_path = f'{get_local_path()}cached_data{os.sep}defaults{os.sep}cached_{file}'
+	file_path = f'{get_local_path()}output{os.sep}defaults{os.sep}cached_{file}'
 
 	if os.path.exists(file_path):
 		data = pickle.load(open(file_path,'rb'))
@@ -39,7 +39,7 @@ def load_cached_file(file):
 def write_cached_file(data, file):
 
 	# Ensure the enclosing directory exists.
-	cached_path = f'{get_local_path()}cached_data{os.sep}defaults{os.sep}'
+	cached_path = f'{get_local_path()}output{os.sep}defaults{os.sep}'
 
 	if not os.path.exists(cached_path):
 		os.makedirs(cached_path)	
