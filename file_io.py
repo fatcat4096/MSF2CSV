@@ -227,7 +227,7 @@ def age_of_cached_data(alliance_or_file):
 	
 	# Couldn't find a matching cached_data for this alliance, asking about a file instead?
 	else:
-		cached_file = f'{get_local_path()}cached_data{os.sep}cached_{alliance_or_file}' 
+		cached_file = f'{get_local_path()}output{os.sep}cached_data{os.sep}cached_{alliance_or_file}' 
 
 		# Not a file either, return False.
 		if not os.path.exists(cached_file):
@@ -287,7 +287,7 @@ def find_cached_data(file_or_alliance='sigma infamously strange'):
 		if len(file_list) != 1:
 		
 			# Look in local directory, subdirectory named for alliance, and cached_data directory
-			local_path = f'{get_local_path()}cached_data'
+			local_path = f'{get_local_path()}output{os.sep}cached_data'
 
 			# Find file even if marked retired
 			for data_type in ['cached_data', 'OLD_DATA']:
@@ -330,7 +330,7 @@ def find_cached_data(file_or_alliance='sigma infamously strange'):
 def local_img_cache(url, req_html=False):
 
 	# Where should assets be downloaded to for local caching?
-	asset_cache = f'{get_local_path()}images{os.sep}assets{os.sep}'
+	asset_cache = f'{get_local_path()}core{os.sep}images{os.sep}assets{os.sep}'
 	if not os.path.exists(asset_cache):
 		os.makedirs(asset_cache)
 
@@ -344,7 +344,7 @@ def local_img_cache(url, req_html=False):
 				for chunk in response.iter_content(chunk_size=8192):
 					file.write(chunk)
 
-			print (f'{ansi.ltyel}Caching locally:{ansi.rst} {ansi.gray}{url=:90} => ../images/assets/{ansi.rst}{ansi.white}{Path(url).name}{ansi.rst}')
+			print (f'{ansi.ltyel}Caching locally:{ansi.rst} {ansi.gray}{url=:90} => ./core/images/assets/{ansi.rst}{ansi.white}{Path(url).name}{ansi.rst}')
 
 		# If download fails, delete any partial file and return url instead
 		except requests.exceptions.RequestException as e:
@@ -359,7 +359,7 @@ def local_img_cache(url, req_html=False):
 			# Advise use of URL instead
 			return url
 
-	return url if req_html else f'../images/assets/{Path(url).name}'
+	return url if req_html else f'../../core/images/assets/{Path(url).name}'
 	
 
 

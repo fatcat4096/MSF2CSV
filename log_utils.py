@@ -31,7 +31,7 @@ elif hasattr(__main__, '__file__'):
 	log_file_path = os.path.dirname(os.path.abspath(__main__.__file__))
 
 # Create a directory for the logfiles.
-log_file_path = os.path.realpath(log_file_path) + os.sep + 'trace' + os.sep
+log_file_path = os.path.realpath(log_file_path) + os.sep + 'output' + os.sep + 'trace' + os.sep
 if not os.path.exists(log_file_path):
 	os.makedirs(log_file_path)
 

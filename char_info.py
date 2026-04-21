@@ -446,7 +446,7 @@ playable   = {
         "Brawler",
         "Astral"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "The tyrant of the Negative Zone who uses the Cosmic Control Rod to eliminate all that might threaten him.",
@@ -2985,7 +2985,7 @@ playable   = {
         "Asgard",
         "ShadowConclave"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
@@ -4156,7 +4156,7 @@ playable   = {
         "MightyAvenger",
         "UncannyAvenger"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "Herbert Edgar Wyndham, The High Evolutionary, is a brilliant but unethical geneticist dedicated to perfecting species by manipulating their health and all that is positive and negative about them.",
@@ -5081,7 +5081,7 @@ playable   = {
         "ImmortalXMen",
         "UncannyAvenger"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "Playful and quirky land shark, Jeff the Land Shark might seem adorable but his attacks are as dangerous as a real shark, his abilities will control the battle field and with a new fun effect he will boost Retcon allies damage output.",
@@ -5263,7 +5263,7 @@ playable   = {
         "Controller",
         "AbsoluteAForce"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "The teen hero Kamala Khan uses her Hard Light to barrier her allies and divert enemies' attention by taunting them.",
@@ -13011,13 +13011,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "7c403d6dd43f7cf62861",
-      "chars": "613e64a23e24a1ec9510",
-      "drops": "253d46e4ab7c1ac4947f",
-      "events": "cd9a2daf2a50b3581fa8",
-      "locs": "3269ccf9e4ed8cc978e5",
-      "nodes": "cb911259e304f4535cf8",
-      "other": "bb1d5de1fcebf5971739"
+      "all": "963651275c641372ed61",
+      "chars": "5ae36db60a01ff68050b",
+      "drops": "dfd82f6186c528cdf2bc",
+      "events": "eac564c9d1f434be5d90",
+      "locs": "b52f57b179e966fdcc8d",
+      "nodes": "30c5315a2b66f37cab0a",
+      "other": "fe499d7928717eb22cec"
     },
     "perTotal": 365,
     "version": 1
@@ -13875,13 +13875,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "7c403d6dd43f7cf62861",
-      "chars": "613e64a23e24a1ec9510",
-      "drops": "253d46e4ab7c1ac4947f",
-      "events": "cd9a2daf2a50b3581fa8",
-      "locs": "3269ccf9e4ed8cc978e5",
-      "nodes": "cb911259e304f4535cf8",
-      "other": "bb1d5de1fcebf5971739"
+      "all": "963651275c641372ed61",
+      "chars": "5ae36db60a01ff68050b",
+      "drops": "dfd82f6186c528cdf2bc",
+      "events": "eac564c9d1f434be5d90",
+      "locs": "b52f57b179e966fdcc8d",
+      "nodes": "30c5315a2b66f37cab0a",
+      "other": "fe499d7928717eb22cec"
     },
     "perTotal": 44,
     "version": 1
