@@ -21,9 +21,6 @@ except ModuleNotFoundError:
 	from  file_io       import local_img_cache
 
 
-cached_costs = {}
-
-
 # Generate individual tables for Meta/Other chars for each raid section.
 @timed(level=3)
 def generate_table(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache, hist_date=None, linked_hist=None, team_power_summary=False):
@@ -40,7 +37,6 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		name_alt      = 'nalt'
 		name_alt_dim  = 'naltd'
 		button_hover  = 'blub'
-		
 	else:
 		title_cell    = 'tgra'
 		table_header  = 'hgra'
@@ -52,50 +48,47 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 	# Reset cached MINs before each table
 	MIN = table_format.setdefault('profile', {})['min'] = {}
-	for key in ('lvl','tier','iso','yel','red'):
+	for key in ('lvl', 'tier', 'iso', 'yel', 'red'):
 		MIN[key] = get_table_value(table_format, table, section, key=f'min_{key}', default=0)
 
-	# Sort player list if requested.
+	# Sort player list if requested
 	sort_by = get_table_value(table_format, table, section, key='sort_by', default='')
 
-	# Get the list of Alliance Members we will iterate through as rows.	
+	# Get the list of Alliance Members we will iterate through as rows
 	player_list = get_player_list(alliance_info, sort_by, stp_list, section, char_list)
 
-	# If there are no players in this table, don't generate a table.
+	# If there are no players in this table, don't generate a table
 	using_players = {player for player in sum(strike_teams, []) if player in player_list}
 	if not using_players:
 		return ''
 
-	# See if we need to pare the included characters even further.
+	# See if we need to pare the included characters even further
 	using_chars = char_list[:]
 
 	# Note whether HTML output has been requested
-	req_html = table_format.get('output_format') in ('html','tabbed')
+	req_html = table_format.get('output_format') in ('html', 'tabbed')
 
 	# Is this the OTHER CHARS section? If so, reduce the entries based on min/max others
 	if 'META' not in table_lbl and len(using_chars) > 5 and not team_power_summary:
 		using_chars = sort_and_filter_others(alliance_info, table, section, table_format, using_players, using_chars)
 
-	# If there are no characters in this table, don't generate a table.
+	# If there are no characters in this table, don't generate a table
 	if not using_chars:
 		return ''
 
-	# IF char_limit, exit without output; communicate results via table_format.
+	# IF char_limit, exit without output; communicate results via table_format
 	if get_table_value(table_format, table, section, 'char_limit'):
 		table_format['using_chars'] = len(using_chars)
 		return ''
 
 	# Dim Image if under_min but still included
-	img_list  = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)
+	img_list = remove_min_iso_tier(alliance_info, table_format, table, section, using_players, using_chars)
 	dim_image = {char for char in using_chars if char not in img_list}
 
-	# Generate a table ID to allow sorting. 
-	
-	# If linked_hist is False, this is a standard table on the reports tab.
+	# Generate a table ID to allow sorting
 	if not linked_hist:
-		table_id = make_next_table_id(html_cache) 
-	
-	# If linked_hist, we are building tables for the ByChar page. Let's see if we have an anchor definition.
+		table_id = make_next_table_id(html_cache)
+	# Otherwise, building tables for a /by_char page. Check for an anchor definition
 	else:
 		anchor, table_id, linked_id = lookup_table_ids(html_cache, char_list, hist_date)
 
@@ -103,29 +96,26 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 	show_reqs = get_table_value(table_format, table, section, key='show_reqs')
 
 	if show_reqs and 'META' in table_lbl:
-		table_lbl = table_lbl.replace('META',f'<b>Req: {get_min_reqs(table_format, table, section)}</b>')
+		table_lbl = table_lbl.replace('META', f'<b>Req: {get_min_reqs(table_format, table, section)}</b>')
 
-	# Replace table_lbl with fancy entry if label includes a char name.
+	# Replace table_lbl with fancy entry if label includes a char name
 	for char_name in portraits:
-
-		# If the Section Name starts with a Character, use that toon's image for the background.
-		if table_lbl.startswith(char_name.upper()+':<BR>'):
+		if table_lbl.startswith(char_name.upper() + ':<BR>'):
 			url = local_img_cache(portraits[char_name], req_html)
-			table_lbl = table_lbl.removeprefix(f'{char_name.upper()}:<BR>').upper().replace(" (","<BR>(").replace('-','&#8209;')
-
+			table_lbl = table_lbl.removeprefix(f'{char_name.upper()}:<BR>').upper().replace(" (", "<BR>(").replace('-', '&#8209;')
 			table_lbl = f'<div class="img cont"><img src="{url}" alt="" width="60"></div><div class="cent" style="font-size:12px;">{translate_name(char_name)}</div><div class="summ">{table_lbl}</div>'
 			break
 
 	# Define these once
-	key_labels = {'power':'Pwr','op':'OP','iso':'ISO','stp':'STP'}
+	key_labels = {'power':'Pwr', 'op':'OP', 'iso':'ISO', 'stp':'STP'}
 
 	# Standard order for these columns
-	key_order  = ('power','lvl','tier','iso','yel','red','bas','spc','ult','pas','op','gold')
+	key_order = ('power', 'lvl', 'tier', 'iso', 'yel', 'red', 'bas', 'spc', 'ult', 'pas', 'op', 'gold')
 
-	# Get keys from table_format/table, with defaults if necessary.
-	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power','lvl','tier','iso'], profile=True)
+	# Get keys from table_format/table, with defaults if necessary
+	keys = get_table_value(table_format, table, section, key='inc_keys', default=['power', 'lvl', 'tier', 'iso'], profile=True)
 
-	# Treat 'abil' as 4 separate entries.
+	# Treat 'abil' as 4 separate entries
 	if 'abil' in keys:
 		idx = keys.index('abil')
 		keys = keys[:idx] + ['bas', 'spc', 'ult', 'pas'] + keys[idx+1:]
@@ -135,62 +125,57 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		keys.remove('gold')
 
 	# Calculate gold requirements at last minute and only as required
+	tot_gold = {}
+
 	if 'gold' in keys:
 		gold_costs = get_cached('gold_costs')
 		for char in using_chars:
 			for player in using_players:
 				calculate_gold_cost(alliance_info, player, char, MIN, gold_costs)
 
-		#
-		# Add calculation of tot_gold variable here
-		#
-		tot_gold = {}
+		# Calc tot_gold for the toons requiring upgrade for this player
 		for player in using_players:
-			char_info = alliance_info['members'][player].get('processed_chars',{})
-			tot_gold[player] = sum([char_info.get(char,{}).get('gold',0) for char in using_chars])
+			char_info = alliance_info['members'][player].get('processed_chars', {})
+			tot_gold[player] = sum([char_info.get(char, {}).get('gold', 0) for char in using_chars])
 
 	# Set the key_order based on the keys requested and presented
 	key_order = keys if team_power_summary else [x for x in key_order if x in keys]
 
-	# Find out whether inline history has been requested for this report.
+	# Find out whether inline history has been requested for this report
 	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
 
-	# If inline_hist is requested, we will loop through this code twice for each user.
-	# First pass will generate normal output and second one will generate historical data. 
+	# If inline_hist is requested, we will loop through this code twice for each user
 	date_list = [hist_date, inline_hist] if inline_hist else [hist_date]
 
 	# Are we displaying everyone or just a subset?
 	inc_all_players = using_players == set(player_list)
 
 	# Pre-calculate key ranges for each character
-	for hist_date in date_list:
+	for hist_date_val in date_list:
 
 		# Only profile non-historical data
-		profile_keys = {} if hist_date else {'yel','red','lvl','tier','iso'}
+		profile_keys = {} if hist_date_val else {'yel', 'red', 'lvl', 'tier', 'iso'}
 
 		# Create space to store profiled values
-		PROFILE = table_format['profile'].setdefault('val', {key:{*()} for key in profile_keys})
+		PROFILE = table_format['profile'].setdefault('val', {key: {*()} for key in profile_keys})
 
 		# Which are usable as is, which need to be done separately?
 		profile_during = {key for key in profile_keys if inc_all_players and key in keys}
 		profile_after  = {key for key in profile_keys if key not in profile_during}
 
 		for char_name in using_chars:
-			key_ranges = table_format.setdefault('key_ranges',{}).setdefault(hist_date,{}).setdefault(char_name,{})
-			pre_ranges = alliance_info.setdefault('key_ranges',{}).setdefault(char_name,{})
+			key_ranges = table_format.setdefault('key_ranges', {}).setdefault(hist_date_val, {}).setdefault(char_name, {})
+			pre_ranges = alliance_info.setdefault('key_ranges', {}).setdefault(char_name, {})
 
 			for key in keys:
-				
 				# Have we already cached this range in table_format?
 				if key not in key_ranges:
-
 					# If pre-calculated, cached ranges are available, use them
-					if key in pre_ranges and not hist_date:
+					if key in pre_ranges and not hist_date_val:
 						key_ranges[key] = pre_ranges[key]
-
 					# Otherwise, gotta compile them from scratch
 					else:
-						key_ranges[key] = [find_roster_value(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in player_list]
+						key_ranges[key] = [find_roster_value(alliance_info, player, char_name, key, hist_date_val, {*()} if key == 'avail' else 0) for player in player_list]
 
 				# Just use this info for PROFILE if all users are being shown
 				if key in profile_during:
@@ -198,14 +183,14 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 			# Add the other fields to PROFILE as well
 			for key in profile_after:
-				PROFILE[key] |= {find_roster_value(alliance_info, player, char_name, key, hist_date, {*()} if key=='avail' else 0) for player in using_players}
+				PROFILE[key] |= {find_roster_value(alliance_info, player, char_name, key, hist_date_val, {*()} if key=='avail' else 0) for player in using_players}
 
 	# Include Available, Include Position, and Include ISO Class flags
 	# Get value from table_format/table, with defaults if necessary
 
 	inc_avail = get_table_value(table_format, table, section, key='inc_avail', default=False, profile=True) and 'OTHERS' not in table_lbl
 	inc_rank  = get_table_value(table_format, table, section, key='inc_rank',  default=False, profile=True) and 'OTHERS' not in table_lbl and not team_power_summary
-	inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not (team_power_summary or (hist_date and linked_hist))
+	inc_class = get_table_value(table_format, table, section, key='inc_class', default=False, profile=True) and not (team_power_summary or (hist_date_val and linked_hist))
 	inc_comp  = get_table_value(table_format, table, section, key='summary_comp')
 	spec_ops  = get_table_value(table_format, table, section, key='spec_ops')
 
@@ -299,7 +284,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 					class_cols = 0 if num_cols < 5 else 1 if num_cols == 5 else 2
 					num_cols -= class_cols
 
-				html_file.append(f'     <td class="img" colspan="{num_cols}"{onclick}><div class="cont{bg_color}"><div class="{"" if hist_date else "zoom"}"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(char)}</div></div></td>')
+				html_file.append(f'     <td class="img" colspan="{num_cols}"{onclick}><div class="cont{bg_color}"><div class="{"" if hist_date_val else "zoom"}"><img src="{url}" alt="" width="100"></div><div class="cent">{translate_name(char)}</div></div></td>')
 
 				# If we had room for ISO info, let's add a title and the ISO info now
 				if inc_class and iso_char and class_cols:
@@ -703,6 +688,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 	return '\n'.join(html_file)
 
+
+
+cached_costs = {}
 
 
 # Calculate gold requirements at last minute and only when required
