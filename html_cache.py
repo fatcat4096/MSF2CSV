@@ -2,7 +2,11 @@
 import string
 
 # Return the anchor if one exists, plus the correct ID/linked ID for the tables
-def lookup_table_ids(html_cache, char_list, hist_date):
+def lookup_table_ids(linked_hist, html_cache, char_list, hist_date):
+
+	# Base case, just generate a new table_id to allow sorting:
+	if not linked_hist:
+		return make_next_table_id(html_cache), None, None
 	
 	# Find the anchor to use if building direct links from the report page.
 	anchor = html_cache.get('chars',{}).get(char_list[0],{})		
@@ -28,7 +32,7 @@ def lookup_table_ids(html_cache, char_list, hist_date):
 			linked_id = read_prev_table_id(html_cache)
 			table_id  = make_next_table_id(html_cache)
 
-	return anchor, table_id, linked_id
+	return table_id, anchor, linked_id
 	
 # Creates and returns a new table_id
 def make_next_table_id(html_cache):
