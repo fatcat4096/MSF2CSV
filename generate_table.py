@@ -169,12 +169,8 @@ def get_config(alliance_info, table, section, table_format, char_list, strike_te
 	# Find out whether inline history has been requested for this report
 	inline_hist = get_table_value(table_format, table, section, key='inline_hist')
 
-	print (f'{inline_hist=}')
-
 	# If inline_hist is requested, we will loop through this code twice for each user
 	date_list = [hist_date, inline_hist] if inline_hist else [hist_date]
-
-	print (f'{date_list=}')
 
 	# Pre-calculate key ranges for each character
 	precalculate_ranges(alliance_info, table_format, using_chars, keys, date_list, player_list, using_players)
@@ -707,8 +703,6 @@ def generate_data_rows(html_cache, line_chars, strike_team, alliance_info, confi
 		# Flag if a roster is stale so we can output in grayscale
 		stale_data = alliance_info['members'][player_name].get('is_stale', False)
 
-		print (f'{config['date_list']=}')
-
 		# Hist List has two entries if Inline Hist is included
 		for hist_date in config['date_list']:
 
@@ -818,8 +812,6 @@ def get_summary_comp(alliance_info, player_name, inc_comp):
 def get_name_field(alliance_info, player_name, hist_date, inline_hist):
 	"""Generate the name field for a player."""
 	name_field = alliance_info['members'][player_name].get('display_name',player_name).replace('Commander','Cmdr.')
-
-	print (f'{inline_hist=} {hist_date=}')
 
 	# Add date for second line if Inline Hist
 	if inline_hist and not hist_date:
