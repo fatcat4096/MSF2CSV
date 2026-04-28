@@ -6329,7 +6329,7 @@ playable   = {
         "Controller",
         "ShadowConclave"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "An ancient and powerful force of nature, whatever knows fear burns at the touch of... The Man-Thing!",
@@ -13011,13 +13011,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "963651275c641372ed61",
-      "chars": "5ae36db60a01ff68050b",
-      "drops": "dfd82f6186c528cdf2bc",
-      "events": "eac564c9d1f434be5d90",
-      "locs": "b52f57b179e966fdcc8d",
-      "nodes": "30c5315a2b66f37cab0a",
-      "other": "fe499d7928717eb22cec"
+      "all": "5b520c519d5c57b0426a",
+      "chars": "eeb432b9fa6fd82aae19",
+      "drops": "04c49efe5cb09367d821",
+      "events": "b19168c708d87faa6ccd",
+      "locs": "861174cb3df3845d7e1b",
+      "nodes": "ddcda470e84d483442b0",
+      "other": "910a8ecec737e3333586"
     },
     "perTotal": 365,
     "version": 1
@@ -13875,13 +13875,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "963651275c641372ed61",
-      "chars": "5ae36db60a01ff68050b",
-      "drops": "dfd82f6186c528cdf2bc",
-      "events": "eac564c9d1f434be5d90",
-      "locs": "b52f57b179e966fdcc8d",
-      "nodes": "30c5315a2b66f37cab0a",
-      "other": "fe499d7928717eb22cec"
+      "all": "5b520c519d5c57b0426a",
+      "chars": "eeb432b9fa6fd82aae19",
+      "drops": "04c49efe5cb09367d821",
+      "events": "b19168c708d87faa6ccd",
+      "locs": "861174cb3df3845d7e1b",
+      "nodes": "ddcda470e84d483442b0",
+      "other": "910a8ecec737e3333586"
     },
     "perTotal": 44,
     "version": 1

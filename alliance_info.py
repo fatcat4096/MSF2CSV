@@ -816,7 +816,7 @@ def get_table_value(table_format, table, section: dict={}, key: str='', default=
 	# If still nothing, look in table definition
 	# If nothing there fall back to the default value.
 	if value is None:
-		value = table.get(key,default)
+		value = table.get(key, default)
 
 	# Keep a copy for control frame
 	if profile:
