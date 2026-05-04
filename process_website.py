@@ -31,47 +31,54 @@ except ModuleNotFoundError:
 	from  cached_info    import get_cached, set_cached
 
 
-# Find out who we are
-def get_username_api(AUTH):
-
-	response = request_player_info(AUTH)
-	if not response or not response.ok:
-		return 'Unable to get player information'
-	
-	# Return the username from response
-	return remove_tags(response.json()['data']['name']).strip()
-
-
 
 # Make multiple API requests to build up a base alliance_info (no roster info).
 # Also, if char meta hashtag has changed, save responses and rebuild cached char files
 @timed(level=3)
-async def get_alliance_api(AUTH):
+async def get_alliance_info_api(AUTH):
 
 	# Get the general ALLIANCE information
 	response = request_alliance_info(AUTH)
-	if not response or not response.ok:
-		return response, 'alliance'
 
-	# Extract the alliance_data from response.
-	alliance_data = response.json()['data']
+	# If valid response, extract the alliance_data
+	if response and response.ok:
+		alliance_data = response.json()['data']
+	# Otherwise, indicate where we failed
+	else:
+		AUTH['failed_on'] = 'alliance'
+		return response
 	
 	# Get the list of alliance MEMBERS
 	response = request_alliance_members(AUTH)
-	if not response or not response.ok:
-		return response, 'member'
 
-	# Extract the alliance_members from response.
-	alliance_members = response.json()['data']
-	
+	# If valid response, extract the alliance_members
+	if response and response.ok:
+		alliance_members = response.json()['data']
+	# Otherwise, indicate where we failed
+	else:
+		AUTH['failed_on'] = 'members'
+		return response
+
+	# Parse responses into base alliance_info and make note of alliance name
+	AUTH['alliance_info'] = parse_alliance_api(alliance_data, alliance_members)
+	AUTH['alliance_name_curr'] = AUTH['alliance_info'].get('name')
+
+	# Get the user information
+	response = request_player_info(AUTH)
+
+	# If valid response, extract the username
+	if response and response.ok:
+		AUTH['username'] = remove_tags(response.json()['data']['name']).strip()
+	# Otherwise, indicate where we failed
+	else:
+		AUTH['failed_on'] = 'username'
+		return response
+
 	# If char meta hashtag has changed, download fresh char info
 	if response.json()['meta']['hashes']['chars'] != get_cached('char_meta'):
 		await update_cached_char_info(AUTH)
 
-	# Parse the provided responses into a base alliance_info
-	alliance_info = parse_alliance_api(alliance_data, alliance_members)
-
-	return response, alliance_info
+	return response
 
 
 

@@ -34,8 +34,7 @@ from .parse_contents import merge_roster
 from .parse_contents import parse_roster_api
 from .parse_contents import parse_squads_api
 
-from .process_website import get_alliance_api
-from .process_website import get_username_api
+from .process_website import get_alliance_info_api
 from .process_website import update_cached_char_info
 from .process_website import update_cached_cost_info
 from .process_website import update_is_stale
