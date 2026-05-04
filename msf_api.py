@@ -242,19 +242,14 @@ def request_member_roster(AUTH_OR_TOKEN, memberid, asOf=None):
 
 
 # Need this for the Roster information 	
-def request_member_squads(AUTH_OR_TOKEN):
+def request_member_squads(AUTH_OR_TOKEN, memberid):
 
 	# Extract the session if provided full AUTH
 	session = get_session(AUTH_OR_TOKEN)
 
-	memberid = '20001322056:78cfdea0-a959-474a-9576-f3cf9127dff8:1'
-
-	print (f'{AUTH_OR_TOKEN.get('url')=}')
-
 	# Send request for new access_token
 	return session.get(
 		url     = f'{API_ENDPOINT}/player/v1/squads/member/{memberid}',			# Squads request
-#		url     = f'{API_ENDPOINT}/player/v1/squads',					# Squads request
 	)
 
 
