@@ -106,7 +106,8 @@ playable   = {
         "Support",
         "InfinityWatch",
         "GalacticCouncil",
-        "Legendary"
+        "Legendary",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -141,7 +142,8 @@ playable   = {
         "Mystic",
         "Support",
         "Darkhold",
-        "Nightstalker"
+        "Nightstalker",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -376,7 +378,8 @@ playable   = {
         "Bio",
         "Support",
         "Gamma",
-        "Champion"
+        "Champion",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -444,7 +447,43 @@ playable   = {
         "Global",
         "Mystic",
         "Brawler",
-        "Astral"
+        "Astral",
+        "SPB_05_Alpha"
+      ],
+      "unlockStars": 2
+    },
+    {
+      "description": "Warren Kenneth Worthington III, also known as Angel, rules the battlefield from above, soaring through danger to bless his allies with healing and positive effects.",
+      "id": "Angel",
+      "invisibleTraits": [
+        "Xmen"
+      ],
+      "mission": false,
+      "name": "Angel",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Angel_6310563d.png",
+      "starItems": [
+        "SHARD_ANGEL",
+        "RS_ANGEL_1",
+        "RS_ANGEL_2",
+        "RS_ANGEL_3",
+        "RS_ANGEL_4",
+        "RS_ANGEL_5",
+        "RS_ANGEL_6",
+        "RS_ANGEL_7",
+        "PD_ANGEL_1",
+        "PD_ANGEL_2",
+        "PD_ANGEL_3",
+        "PD_ANGEL_4",
+        "PD_ANGEL_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Mutant",
+        "Support",
+        "ExaltedXMen",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -479,7 +518,8 @@ playable   = {
         "Tech",
         "Blaster",
         "Mythic",
-        "GalacticCouncil"
+        "GalacticCouncil",
+        "SPB_05_Omega"
       ],
       "unlockStars": 5
     },
@@ -692,7 +732,8 @@ playable   = {
         "Mutant",
         "Brawler",
         "HellfireClub",
-        "Accursed"
+        "Accursed",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -729,7 +770,8 @@ playable   = {
         "Controller",
         "Supernatural",
         "DarkHunter",
-        "Accursed"
+        "Accursed",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -770,7 +812,8 @@ playable   = {
         "Uncanny",
         "Astonishing",
         "ImmortalXMen",
-        "UncannyAvenger"
+        "UncannyAvenger",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -1138,7 +1181,8 @@ playable   = {
         "Mystic",
         "Brawler",
         "Vampire",
-        "Nightstalker"
+        "Nightstalker",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -1177,6 +1221,7 @@ playable   = {
         "Blaster",
         "GalacticCouncil",
         "Legendary",
+        "SPB_05_Omega",
         "DARK_PROMOTION"
       ],
       "unlockStars": 4
@@ -1242,7 +1287,8 @@ playable   = {
         "Cosmic",
         "Bio",
         "Controller",
-        "Epic"
+        "Epic",
+        "SPB_05_Omega"
       ],
       "unlockStars": 4
     },
@@ -1349,7 +1395,8 @@ playable   = {
         "Mutant",
         "Blaster",
         "Xforce",
-        "ImmortalXMen"
+        "ImmortalXMen",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -1385,7 +1432,8 @@ playable   = {
         "Mutant",
         "Protector",
         "Xmen",
-        "NewMutant"
+        "NewMutant",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -1938,7 +1986,8 @@ playable   = {
         "Cosmic",
         "Bio",
         "Protector",
-        "BlackOrder"
+        "BlackOrder",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -2045,7 +2094,8 @@ playable   = {
         "Global",
         "Mystic",
         "Controller",
-        "Brimstone"
+        "Brimstone",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -2113,7 +2163,8 @@ playable   = {
         "Brawler",
         "Defender",
         "Shadowland",
-        "DaringWarrior"
+        "DaringWarrior",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -2147,7 +2198,8 @@ playable   = {
         "City",
         "Skill",
         "Protector",
-        "Vigilante"
+        "Vigilante",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -2244,7 +2296,8 @@ playable   = {
         "Global",
         "Mutant",
         "Support",
-        "WinterGuard"
+        "WinterGuard",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -2321,7 +2374,8 @@ playable   = {
         "Xforce",
         "Mercenary",
         "MercsForMoney",
-        "Retcon"
+        "Retcon",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 1
     },
@@ -2486,7 +2540,8 @@ playable   = {
         "Support",
         "Supernatural",
         "SecretDefender",
-        "Astral"
+        "Astral",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -2552,7 +2607,8 @@ playable   = {
         "Mutant",
         "Controller",
         "Xforce",
-        "SecretWarrior"
+        "SecretWarrior",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -2766,7 +2822,8 @@ playable   = {
         "Global",
         "Mystic",
         "Protector",
-        "DaringWarrior"
+        "DaringWarrior",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 1
     },
@@ -2841,7 +2898,8 @@ playable   = {
         "Brawler",
         "Hand",
         "Shadowland",
-        "Vigilante"
+        "Vigilante",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 1
     },
@@ -2879,7 +2937,8 @@ playable   = {
         "Blaster",
         "Supernatural",
         "DarkHunter",
-        "Brimstone"
+        "Brimstone",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -2916,7 +2975,8 @@ playable   = {
         "Global",
         "Mutant",
         "Controller",
-        "HellfireClub"
+        "HellfireClub",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -2951,7 +3011,8 @@ playable   = {
         "Mutant",
         "Support",
         "Xmen",
-        "Astral"
+        "Astral",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -2983,7 +3044,8 @@ playable   = {
         "Skill",
         "Brawler",
         "Asgard",
-        "ShadowConclave"
+        "ShadowConclave",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -3022,7 +3084,8 @@ playable   = {
         "Blaster",
         "PowerArmor",
         "MightyAvenger",
-        "UncannyAvenger"
+        "UncannyAvenger",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -3053,7 +3116,8 @@ playable   = {
         "Global",
         "Tech",
         "Support",
-        "Liberty"
+        "Liberty",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -3201,7 +3265,8 @@ playable   = {
         "Cosmic",
         "Bio",
         "Controller",
-        "FantasticFourMCU"
+        "FantasticFourMCU",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -3314,7 +3379,8 @@ playable   = {
         "Tech",
         "Controller",
         "PymTech",
-        "Thunderbolt"
+        "Thunderbolt",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -3599,7 +3665,8 @@ playable   = {
         "Bio",
         "Support",
         "GotG",
-        "Starjammer"
+        "Starjammer",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -3705,7 +3772,8 @@ playable   = {
         "Mystic",
         "Brawler",
         "NewWarrior",
-        "Retcon"
+        "Retcon",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -3936,7 +4004,8 @@ playable   = {
         "Mutant",
         "Blaster",
         "Xmen",
-        "Starjammer"
+        "Starjammer",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -4045,7 +4114,8 @@ playable   = {
         "Mystic",
         "Controller",
         "Asgard",
-        "Undying"
+        "Undying",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -4081,7 +4151,8 @@ playable   = {
         "Global",
         "Skill",
         "Brawler",
-        "Brimstone"
+        "Brimstone",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -4116,7 +4187,8 @@ playable   = {
         "Cosmic",
         "Mystic",
         "Brawler",
-        "Accursed"
+        "Accursed",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -4154,7 +4226,8 @@ playable   = {
         "Mystic",
         "Protector",
         "MightyAvenger",
-        "UncannyAvenger"
+        "UncannyAvenger",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -4185,7 +4258,8 @@ playable   = {
         "Cosmic",
         "Tech",
         "Support",
-        "ShadowConclave"
+        "ShadowConclave",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -4219,7 +4293,8 @@ playable   = {
         "City",
         "Skill",
         "Blaster",
-        "Vigilante"
+        "Vigilante",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -4256,7 +4331,8 @@ playable   = {
         "Controller",
         "SpiderVerse",
         "SinisterSix",
-        "InsidiousSix"
+        "InsidiousSix",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -4287,7 +4363,8 @@ playable   = {
         "Cosmic",
         "Tech",
         "Blaster",
-        "Starjammer"
+        "Starjammer",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -4402,7 +4479,8 @@ playable   = {
         "Cosmic",
         "Bio",
         "Blaster",
-        "FantasticFourMCU"
+        "FantasticFourMCU",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -4598,7 +4676,8 @@ playable   = {
         "Bio",
         "Protector",
         "Eternal",
-        "Thunderbolt"
+        "Thunderbolt",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -4710,7 +4789,8 @@ playable   = {
         "Protector",
         "FantasticFour",
         "MightyAvenger",
-        "Legendary"
+        "Legendary",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -4749,7 +4829,8 @@ playable   = {
         "Cosmic",
         "Bio",
         "Brawler",
-        "FantasticFourMCU"
+        "FantasticFourMCU",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -4789,7 +4870,8 @@ playable   = {
         "Brawler",
         "Defender",
         "HeroesForHire",
-        "ImmortalWeapon"
+        "ImmortalWeapon",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -4826,7 +4908,8 @@ playable   = {
         "Mystic",
         "Support",
         "Invader",
-        "ImmortalWeapon"
+        "ImmortalWeapon",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -4861,7 +4944,8 @@ playable   = {
         "Tech",
         "Blaster",
         "PowerArmor",
-        "AbsoluteAForce"
+        "AbsoluteAForce",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -5079,7 +5163,8 @@ playable   = {
         "Support",
         "Xmen",
         "ImmortalXMen",
-        "UncannyAvenger"
+        "UncannyAvenger",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -5114,7 +5199,8 @@ playable   = {
         "Global",
         "Bio",
         "Controller",
-        "Retcon"
+        "Retcon",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 4
     },
@@ -5150,7 +5236,8 @@ playable   = {
         "Controller",
         "Defender",
         "AForce",
-        "DaringWarrior"
+        "DaringWarrior",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 1
     },
@@ -5188,7 +5275,9 @@ playable   = {
         "Mutant",
         "Controller",
         "Astonishing",
-        "Legendary"
+        "Legendary",
+        "ExaltedXMen",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -5227,7 +5316,8 @@ playable   = {
         "Mystic",
         "Protector",
         "Brotherhood",
-        "Accursed"
+        "Accursed",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -5261,7 +5351,8 @@ playable   = {
         "Cosmic",
         "Mystic",
         "Controller",
-        "AbsoluteAForce"
+        "AbsoluteAForce",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -5542,7 +5633,8 @@ playable   = {
         "Cosmic",
         "Mystic",
         "Controller",
-        "Symbiote"
+        "Symbiote",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 4
     },
@@ -5841,7 +5933,8 @@ playable   = {
         "Brawler",
         "ImmortalWeapon",
         "Thunderbolt",
-        "Hand"
+        "Hand",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -5910,7 +6003,8 @@ playable   = {
         "Cosmic",
         "Skill",
         "Protector",
-        "Starjammer"
+        "Starjammer",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -5946,7 +6040,8 @@ playable   = {
         "Global",
         "Mystic",
         "Protector",
-        "Brimstone"
+        "Brimstone",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -6156,7 +6251,8 @@ playable   = {
         "Mutant",
         "Controller",
         "Marauders",
-        "HellfireClub"
+        "HellfireClub",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -6187,7 +6283,8 @@ playable   = {
         "Global",
         "Bio",
         "Brawler",
-        "Gamma"
+        "Gamma",
+        "SPB_05_Omega"
       ],
       "unlockStars": 5
     },
@@ -6227,7 +6324,8 @@ playable   = {
         "Mutant",
         "Support",
         "Uncanny",
-        "NewMutant"
+        "NewMutant",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -6296,7 +6394,8 @@ playable   = {
         "Mutant",
         "Blaster",
         "PhoenixForce",
-        "Epic"
+        "Epic",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -6327,7 +6426,8 @@ playable   = {
         "Cosmic",
         "Bio",
         "Controller",
-        "ShadowConclave"
+        "ShadowConclave",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -6358,7 +6458,8 @@ playable   = {
         "Global",
         "Mystic",
         "Protector",
-        "Nightstalker"
+        "Nightstalker",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -6505,7 +6606,8 @@ playable   = {
         "Bio",
         "Brawler",
         "AbsoluteAForce",
-        "Inhuman"
+        "Inhuman",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -6701,7 +6803,8 @@ playable   = {
         "Cosmic",
         "Support",
         "Tech",
-        "Kree"
+        "Kree",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -6816,7 +6919,8 @@ playable   = {
         "Skill",
         "Support",
         "InfinityWatch",
-        "Astral"
+        "Astral",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -6857,7 +6961,8 @@ playable   = {
         "Controller",
         "Inhuman",
         "AbsoluteAForce",
-        "Champion"
+        "Champion",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -6889,7 +6994,8 @@ playable   = {
         "Mystic",
         "Brawler",
         "Shadowland",
-        "Nightstalker"
+        "Nightstalker",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -6995,6 +7101,41 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Chaos given form, Morph transforms into his enemies using their strengths against them by copying their positive effects and striking where it hurts most.",
+      "id": "Morph",
+      "invisibleTraits": [
+        "Xmen"
+      ],
+      "mission": false,
+      "name": "Morph",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Morph_a8e2ad67.png",
+      "starItems": [
+        "SHARD_MORPH",
+        "RS_MORPH_1",
+        "RS_MORPH_2",
+        "RS_MORPH_3",
+        "RS_MORPH_4",
+        "RS_MORPH_5",
+        "RS_MORPH_6",
+        "RS_MORPH_7",
+        "PD_MORPH_1",
+        "PD_MORPH_2",
+        "PD_MORPH_3",
+        "PD_MORPH_4",
+        "PD_MORPH_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Mutant",
+        "Brawler",
+        "ExaltedXMen",
+        "SPB_05_Gamma"
+      ],
+      "unlockStars": 3
+    },
+    {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
       "eventTraits": [
         "Couples"
@@ -7065,7 +7206,8 @@ playable   = {
         "Cosmic",
         "Bio",
         "Protector",
-        "FantasticFourMCU"
+        "FantasticFourMCU",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -7177,7 +7319,8 @@ playable   = {
         "Brawler",
         "Inhuman",
         "YoungAvenger",
-        "Champion"
+        "Champion",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 1
     },
@@ -7213,7 +7356,8 @@ playable   = {
         "Bio",
         "Support",
         "Kree",
-        "AbsoluteAForce"
+        "AbsoluteAForce",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -7456,7 +7600,8 @@ playable   = {
         "Mutant",
         "Blaster",
         "Xforce",
-        "SecretWarrior"
+        "SecretWarrior",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -7660,7 +7805,8 @@ playable   = {
         "City",
         "Tech",
         "Controller",
-        "DaringWarrior"
+        "DaringWarrior",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -7836,7 +7982,8 @@ playable   = {
         "Bio",
         "Protector",
         "Starjammer",
-        "Champion"
+        "Champion",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -7871,7 +8018,8 @@ playable   = {
         "Mystic",
         "Controller",
         "Vampire",
-        "Nightstalker"
+        "Nightstalker",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -8018,7 +8166,8 @@ playable   = {
         "Controller",
         "WeaponX",
         "Legendary",
-        "WinterGuard"
+        "WinterGuard",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -8054,7 +8203,8 @@ playable   = {
         "Mutant",
         "Brawler",
         "PhoenixForce",
-        "Epic"
+        "Epic",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -8148,7 +8298,8 @@ playable   = {
         "Global",
         "Bio",
         "Brawler",
-        "Liberty"
+        "Liberty",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -8182,7 +8333,8 @@ playable   = {
         "Global",
         "Skill",
         "Controller",
-        "Liberty"
+        "Liberty",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -8285,7 +8437,8 @@ playable   = {
         "City",
         "Mystic",
         "Blaster",
-        "SecretWarrior"
+        "SecretWarrior",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -8329,7 +8482,8 @@ playable   = {
         "Controller",
         "Uncanny",
         "PhoenixForce",
-        "Legendary"
+        "Legendary",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -8438,7 +8592,8 @@ playable   = {
         "Controller",
         "Mutant",
         "XFactor",
-        "ImmortalXMen"
+        "ImmortalXMen",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -8542,7 +8697,8 @@ playable   = {
         "Skill",
         "Blaster",
         "Military",
-        "Vigilante"
+        "Vigilante",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -8606,7 +8762,8 @@ playable   = {
         "Controller",
         "Shield",
         "Inhuman",
-        "SecretWarrior"
+        "SecretWarrior",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -8649,6 +8806,7 @@ playable   = {
         "Brawler",
         "GalacticCouncil",
         "Legendary",
+        "SPB_05_Omega",
         "DARK_PROMOTION"
       ],
       "unlockStars": 4
@@ -8728,7 +8886,8 @@ playable   = {
         "Mutant",
         "Blaster",
         "HellfireClub",
-        "ImmortalXMen"
+        "ImmortalXMen",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -8918,7 +9077,8 @@ playable   = {
         "Skill",
         "Protector",
         "Military",
-        "WinterGuard"
+        "WinterGuard",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -9104,7 +9264,8 @@ playable   = {
         "Tech",
         "Blaster",
         "GotG",
-        "Starjammer"
+        "Starjammer",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -9289,7 +9450,8 @@ playable   = {
         "Skill",
         "Protector",
         "SecretAvenger",
-        "Liberty"
+        "Liberty",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -9355,7 +9517,8 @@ playable   = {
         "Cosmic",
         "Mystic",
         "Support",
-        "Accursed"
+        "Accursed",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -9434,7 +9597,8 @@ playable   = {
         "Controller",
         "Supernatural",
         "Darkhold",
-        "MightyAvenger"
+        "MightyAvenger",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -9503,7 +9667,8 @@ playable   = {
         "SpiderVerse",
         "SinisterSix",
         "InsidiousSix",
-        "Infestation"
+        "Infestation",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -9572,7 +9737,8 @@ playable   = {
         "Global",
         "Mutant",
         "Protector",
-        "HellfireClub"
+        "HellfireClub",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -9643,7 +9809,8 @@ playable   = {
         "Hero",
         "Global",
         "Bio",
-        "Blaster"
+        "Blaster",
+        "SPB_05_Omega"
       ],
       "unlockStars": 5
     },
@@ -9710,6 +9877,7 @@ playable   = {
         "Controller",
         "Astral",
         "Legendary",
+        "SPB_05_Alpha",
         "DARK_PROMOTION"
       ],
       "unlockStars": 4
@@ -9851,7 +10019,8 @@ playable   = {
         "Bio",
         "Protector",
         "Gamma",
-        "Retcon"
+        "Retcon",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -10059,7 +10228,8 @@ playable   = {
         "Tech",
         "Blaster",
         "SpiderVerse",
-        "SinisterSix"
+        "SinisterSix",
+        "SPB_05_Beta"
       ],
       "unlockStars": 1
     },
@@ -10163,7 +10333,8 @@ playable   = {
         "Blaster",
         "Mercenary",
         "SpiderVerse",
-        "Vigilante"
+        "Vigilante",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -10263,7 +10434,8 @@ playable   = {
         "Global",
         "Bio",
         "Blaster",
-        "Thunderbolt"
+        "Thunderbolt",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -10294,7 +10466,8 @@ playable   = {
         "Global",
         "Bio",
         "Brawler",
-        "DaringWarrior"
+        "DaringWarrior",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -10667,7 +10840,8 @@ playable   = {
         "Bio",
         "Support",
         "YoungAvenger",
-        "Retcon"
+        "Retcon",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -10736,7 +10910,8 @@ playable   = {
         "Controller",
         "GotG",
         "GalacticCouncil",
-        "Legendary"
+        "Legendary",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -10837,7 +11012,8 @@ playable   = {
         "Global",
         "Mystic",
         "Controller",
-        "ImmortalWeapon"
+        "ImmortalWeapon",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -10879,9 +11055,45 @@ playable   = {
         "Controller",
         "Uncanny",
         "ImmortalXMen",
-        "UncannyAvenger"
+        "UncannyAvenger",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "Chosen by Odin and bestowed a glaive forged in Nidavellir, Storm sets out on her path as one of the Mighty, stripping her enemies of their defenses and leaving them exposed to her elemental onslaught.",
+      "id": "StormMighty",
+      "invisibleTraits": [
+        "Xmen"
+      ],
+      "mission": false,
+      "name": "Storm (Mighty)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_StormMighty_88e12023.png",
+      "starItems": [
+        "SHARD_STORMMIGHTY",
+        "RS_STORMMIGHTY_1",
+        "RS_STORMMIGHTY_2",
+        "RS_STORMMIGHTY_3",
+        "RS_STORMMIGHTY_4",
+        "RS_STORMMIGHTY_5",
+        "RS_STORMMIGHTY_6",
+        "RS_STORMMIGHTY_7",
+        "PD_STORMMIGHTY_1",
+        "PD_STORMMIGHTY_2",
+        "PD_STORMMIGHTY_3",
+        "PD_STORMMIGHTY_4",
+        "PD_STORMMIGHTY_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Mutant",
+        "Blaster",
+        "ExaltedXMen",
+        "SPB_05_Gamma"
+      ],
+      "unlockStars": 1
     },
     {
       "description": "A heartbroken Doctor Strange absorbed countless otherworldly beings in a search for enough power to return his lost love, but found only the destructive might to demolish his foes.",
@@ -10919,7 +11131,8 @@ playable   = {
         "Mystic",
         "Blaster",
         "Darkhold",
-        "Brimstone"
+        "Brimstone",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -11031,7 +11244,8 @@ playable   = {
         "Mutant",
         "Blaster",
         "XTreme",
-        "NewMutant"
+        "NewMutant",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -11069,7 +11283,8 @@ playable   = {
         "SpiderVerse",
         "SinisterSix",
         "InsidiousSix",
-        "SuperiorSix"
+        "SuperiorSix",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -11177,7 +11392,8 @@ playable   = {
         "Mystic",
         "Brawler",
         "ImmortalWeapon",
-        "MightyAvenger"
+        "MightyAvenger",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -11249,7 +11465,8 @@ playable   = {
         "Controller",
         "Bifrost",
         "Asgard",
-        "ShadowConclave"
+        "ShadowConclave",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -11365,7 +11582,8 @@ playable   = {
         "Controller",
         "Mercenary",
         "Underworld",
-        "Thunderbolt"
+        "Thunderbolt",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -11434,7 +11652,8 @@ playable   = {
         "Mystic",
         "Protector",
         "BlackOrder",
-        "ShadowConclave"
+        "ShadowConclave",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -11506,7 +11725,8 @@ playable   = {
         "Global",
         "Mystic",
         "Blaster",
-        "Accursed"
+        "Accursed",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -11582,7 +11802,8 @@ playable   = {
         "Bio",
         "Brawler",
         "FantasticFourMCU",
-        "NewAvenger"
+        "NewAvenger",
+        "SPB_05_Beta"
       ],
       "unlockStars": 1
     },
@@ -11701,7 +11922,8 @@ playable   = {
         "Support",
         "Asgard",
         "GalacticCouncil",
-        "Legendary"
+        "Legendary",
+        "SPB_05_Omega"
       ],
       "unlockStars": 4
     },
@@ -11961,7 +12183,8 @@ playable   = {
         "SpiderVerse",
         "YoungAvenger",
         "WebWarrior",
-        "Champion"
+        "Champion",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -12030,7 +12253,8 @@ playable   = {
         "Global",
         "Mutant",
         "Protector",
-        "WinterGuard"
+        "WinterGuard",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 3
     },
@@ -12209,7 +12433,8 @@ playable   = {
         "Tech",
         "Support",
         "Shield",
-        "Thunderbolt"
+        "Thunderbolt",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 3
     },
@@ -12248,7 +12473,8 @@ playable   = {
         "Tech",
         "Controller",
         "BionicAvenger",
-        "MightyAvenger"
+        "MightyAvenger",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -12324,7 +12550,8 @@ playable   = {
         "Tech",
         "Brawler",
         "SpiderVerse",
-        "SinisterSix"
+        "SinisterSix",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -12360,7 +12587,8 @@ playable   = {
         "Tech",
         "Controller",
         "Xmen",
-        "NewMutant"
+        "NewMutant",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -12397,7 +12625,8 @@ playable   = {
         "Avenger",
         "Military",
         "PowerArmor",
-        "Liberty"
+        "Liberty",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -12436,7 +12665,8 @@ playable   = {
         "Tech",
         "Blaster",
         "PymTech",
-        "AbsoluteAForce"
+        "AbsoluteAForce",
+        "SPB_05_Alpha"
       ],
       "unlockStars": 2
     },
@@ -12536,7 +12766,8 @@ playable   = {
         "Mutant",
         "Brawler",
         "Xmen",
-        "NewMutant"
+        "NewMutant",
+        "SPB_05_Beta"
       ],
       "unlockStars": 3
     },
@@ -12575,7 +12806,9 @@ playable   = {
         "Brawler",
         "Uncanny",
         "WeaponX",
-        "AlphaFlight"
+        "AlphaFlight",
+        "ExaltedXMen",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -12680,7 +12913,8 @@ playable   = {
         "Mutant",
         "Controller",
         "Mythic",
-        "Xmen"
+        "Xmen",
+        "SPB_05_Omega"
       ],
       "unlockStars": 6
     },
@@ -12716,7 +12950,8 @@ playable   = {
         "Skill",
         "Blaster",
         "Military",
-        "WinterGuard"
+        "WinterGuard",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -12822,7 +13057,8 @@ playable   = {
         "Protector",
         "Shield",
         "Inhuman",
-        "SecretWarrior"
+        "SecretWarrior",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -12889,6 +13125,7 @@ playable   = {
         "Brawler",
         "Undying",
         "Epic",
+        "SPB_05_Beta",
         "DARK_PROMOTION"
       ],
       "unlockStars": 2
@@ -12928,6 +13165,7 @@ playable   = {
         "Protector",
         "Undying",
         "Epic",
+        "SPB_05_Beta",
         "DARK_PROMOTION"
       ],
       "unlockStars": 2
@@ -12967,7 +13205,8 @@ playable   = {
         "Tech",
         "Controller",
         "Undying",
-        "Epic"
+        "Epic",
+        "SPB_05_Beta"
       ],
       "unlockStars": 2
     },
@@ -13004,6 +13243,7 @@ playable   = {
         "Support",
         "Undying",
         "Epic",
+        "SPB_05_Beta",
         "DARK_PROMOTION"
       ],
       "unlockStars": 2
@@ -13011,15 +13251,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "5b520c519d5c57b0426a",
-      "chars": "eeb432b9fa6fd82aae19",
-      "drops": "04c49efe5cb09367d821",
-      "events": "b19168c708d87faa6ccd",
-      "locs": "861174cb3df3845d7e1b",
-      "nodes": "ddcda470e84d483442b0",
-      "other": "910a8ecec737e3333586"
+      "all": "e54442b1f44093ce2c79",
+      "chars": "e907d4cc85acabf49a13",
+      "drops": "75c8f7dff5562f515716",
+      "events": "5b97e86b6fde11c71cc0",
+      "locs": "9cf705e4136013141082",
+      "nodes": "95c43891d548d1d25126",
+      "other": "761489d1e3f322b5e305"
     },
-    "perTotal": 365,
+    "perTotal": 368,
     "version": 1
   }
 }
@@ -13115,11 +13355,13 @@ unplayable = {
       "unlockStars": 7
     },
     {
+      "description": "Ruthless, unstoppable, and from an alternate universe far in the future, Maestro is a version of Hulk that uses his awesome intelligence to slay his adversaries and collect trophies from the fallen.",
       "id": "PVE_Boss_Maestro",
       "invisibleTraits": [
         "Boss"
       ],
       "mission": false,
+      "name": "Maestro",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_PVE_Boss_Maestro_9560b33f.png",
       "status": "unplayable",
       "traits": [
@@ -13875,13 +14117,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "5b520c519d5c57b0426a",
-      "chars": "eeb432b9fa6fd82aae19",
-      "drops": "04c49efe5cb09367d821",
-      "events": "b19168c708d87faa6ccd",
-      "locs": "861174cb3df3845d7e1b",
-      "nodes": "ddcda470e84d483442b0",
-      "other": "910a8ecec737e3333586"
+      "all": "e54442b1f44093ce2c79",
+      "chars": "e907d4cc85acabf49a13",
+      "drops": "75c8f7dff5562f515716",
+      "events": "5b97e86b6fde11c71cc0",
+      "locs": "9cf705e4136013141082",
+      "nodes": "95c43891d548d1d25126",
+      "other": "761489d1e3f322b5e305"
     },
     "perTotal": 44,
     "version": 1
