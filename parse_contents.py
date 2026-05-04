@@ -13,13 +13,17 @@ import asyncio
 from datetime    import datetime
 
 try:
-	from .log_utils   import *
-	from .file_io     import *
-	from .cached_info import get_cached
+	from .log_utils       import *
+	from .file_io         import *
+	from .cached_info     import get_cached
+	from .raids_and_lanes import tables
+	from .alliance_info   import filter_by_traits
 except ModuleNotFoundError:
-	from  log_utils   import *
-	from  file_io     import *
-	from  cached_info import get_cached
+	from  log_utils       import *
+	from  file_io         import *
+	from  cached_info     import get_cached
+	from  raids_and_lanes import tables
+	from  alliance_info   import filter_by_traits
 
 
 def parse_alliance_api(alliance_data, alliance_members):
@@ -132,7 +136,7 @@ def merge_roster(alliance_info, member, processed_chars, other_data):
 	member_info['red']   = sum([processed_chars[char]['red'] for char in processed_chars])
 
 
-	
+
 # Build processed_chars and other_info and store them in the response directly
 def parse_roster_api(response, *args, **kwargs):
 
@@ -192,6 +196,38 @@ def parse_roster_api(response, *args, **kwargs):
 						'raider':11}.get(iso_class)
 
 		char_info['iso'] = int(iso_entry[iso_index]) if iso_class and iso_index+1 <= len(iso_entry) else 0
+
+
+
+# Build processed_chars and other_info and store them in the response directly
+def parse_squads_api(response, squad_type, custom_teams):
+
+	# Load cached char_lookup
+	char_lookup = get_cached('char_lookup')
+	char_list   = get_cached('char_list')
+
+	existing_teams = []
+	response.teams = []
+	response.data  = response.json()
+
+	# Pull the preset team definitions from Tables
+	preset_teams = tables['teams']['lanes'][0]
+	for team in preset_teams:
+		# Convert traits to explicit toon names and into a form we can compare
+		team = team.get('meta', filter_by_traits(team.get('traits')))
+		existing_teams.append(set(team))
+
+	# Reformat custom_teams so that we can compare with others
+	custom_teams = [set(x) for x in custom_teams.values()]
+
+	# Iterate through the teams for the specified type
+	for entry in response.data['data']['tabs'][squad_type]:
+		team = [char_lookup.get(x, '') for x in entry]
+
+		# Only add to Import list if not already in our defined teams list
+		if set(team) not in existing_teams + custom_teams:
+			print (f'ADDING: {team=}')
+			response.teams.append(team)
 
 
 

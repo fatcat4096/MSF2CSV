@@ -32,6 +32,7 @@ from .alliance_info import update_history
 
 from .parse_contents import merge_roster
 from .parse_contents import parse_roster_api
+from .parse_contents import parse_squads_api
 
 from .process_website import get_alliance_api
 from .process_website import get_username_api
@@ -53,6 +54,7 @@ from .msf_api import request_alliance_info
 from .msf_api import get_session_and_link
 from .msf_api import get_session
 from .msf_api import request_member_roster
+from .msf_api import request_member_squads
 from .msf_api import request_recruit_info
 from .msf_api import request_recruit_roster
 
