@@ -43,19 +43,146 @@ ACCURSED   = ['Hellverine', 'Juggernaut', 'Mordo', 'Satana', 'The Hood']
 ASTRAL     = ['Ancient One', 'Doctor Strange', 'Emma Frost (X-Men)', 'Moondragon', 'Shadow King']
 BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']
 CHAMPIONS  = ['Brawn', 'Moon Girl', 'Ms. Marvel', 'Nova (Sam Alexander)', 'Spider-Man (Miles)']
+CONCLAVE   = ['Thanos', 'Sylvie', 'High Evolutionary', 'Executioner', 'Malekith']
+DARING     = ['Daredevil', 'Jessica Jones', 'Night Thrasher', 'Speedball', 'Eclipse']
+EXALTED    = ['Angel', 'Jubilee', 'Morph', 'Storm (Mighty)', 'Wolverine']
 F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
 F4MCUTEAM  = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
+GALACTIC   = ['Adam Warlock', 'Blastaar', 'Quasar', 'Star-Lord', 'Thunderstrike']
 IMMORTAL   = ['Iron Fist','Iron Fist (WWII)','Lady Bullseye','Steel Serpent','Sword Master']
 INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture']
 HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
 NIGHTSTALK = ['Agatha Harkness', 'Blade', 'Man-Thing', 'Moon Knight', 'Oath']
 NEWMUTANT  = ['Magik', 'Sunspot', 'Cannonball', 'Warlock', 'Wolfsbane']
+OMEN       = ['Cull Obsidian', 'Ebony Maw', 'Minn-Erva', 'Ronan the Accuser', 'Silver Surfer (Breaker)']
+PFORCE     = ['Phoenix', 'Omega Red (Phoenix Force)', 'Magneto (Phoenix Force)']
+RETCON     = ['Deadpool', 'Gwenpool', 'Jeff the Land Shark', 'She-Hulk', 'Squirrel Girl']
 SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
 TBOLTS     = ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand']
 UNCANNY    = ['Hercules','Falcon','Jean Grey','Beast','Storm']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
 VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
-WINTERGUARD= ['Darkstar', 'Omega Red', 'Red Guardian', 'Ursa Major', 'Yelena Belova']
+WINTER     = ['Darkstar', 'Omega Red', 'Red Guardian', 'Ursa Major', 'Yelena Belova']
+
+
+# Meta Heroes for use in Prof X Saga
+tables['fear'] = { 'name': 'Age of Fear',
+					'traits_req': 'all',
+					'max_others': 0,
+					'lanes':[ [
+							{'traits': ['SPB_05_Alpha'], 'subsections':[{'traits': ['SPB_05_Alpha', 'Thunderbolt'],   'label':'Thunderbolts<br>(Anxiety)'},
+																		{'traits': ['SPB_05_Alpha', 'Vigilante'],     'label':'Vigilantes<br>(Anxiety)'},
+																		{'traits': ['SPB_05_Alpha', 'Astral'],        'label':'Astral<br>(Anxiety)'}, {},
+																		{'traits': ['SPB_05_Alpha', 'Liberty'],       'label':'Nightstalkers<br>(Anxiety)'},
+																		{'traits': ['SPB_05_Alpha', 'Starjammer'],    'label':'Nightstalkers<br>(Anxiety)'},
+																		{'traits': ['SPB_05_Alpha', 'AbsoluteAForce'],'label':'Absolute<br>A-Force<br>(Anxiety)'},{},
+																		{'traits': ['SPB_05_Alpha', 'Nightstalker'],  'label':'Nightstalkers<br>(Anxiety)'},
+																		{'traits': ['SPB_05_Alpha', 'ImmortalXMen'],  'label':'Immortal<br>X-Men<br>(Anxiety)'},
+																		{'traits': ['SPB_05_Alpha', 'MightyAvenger'], 'label':'Mighty<br>Avengers<br>(Anxiety)'}]},
+							{'traits': ['SPB_05_Beta'],  'subsections':[{'meta': F4MCUTEAM, 'label':'Fantastic<br>Four (MCU)<br>(Panic)'},
+																		{'meta': BRIMSTONE, 'label':'Brimstone<br>(Panic)'},
+																		{'meta': NEWMUTANT, 'label':'New<br>Mutants<br>(Panic)'}, {},
+																		{'meta': ACCURSED,  'label':'Accursed<br>(Panic)'},
+																		{'meta': HELLFIRE,  'label':'Hellfire<br>Club<br>(Panic)'},
+																		{'meta': INSIDIOUS, 'label':'Insidious<br>Six<br>(Panic)'},{},
+																		{'meta': SECRETWAR, 'label':'Secret<br>Warriors<br>(Panic)'},
+																		{'meta': UNDYING,   'label':'Undying<br>(Panic)'},
+																		{'meta': IMMORTAL,  'label':'Immortal<br>Weapons<br>(Panic)'}]},
+							{'traits': ['SPB_05_Gamma'], 'subsections':[{'meta': RETCON,   'label':'RetCon<br>(Fear)'},
+																		{'meta': DARING,   'label':'Daring<br>Warriors<br>(Fear)'},
+																		{'meta': ['Knull'],'label':'Knull<br>(Fear)'},{},
+																		{'meta': CHAMPIONS,'label':'Champions<br>(Fear)'},
+																		{'meta': WINTER,   'label':'Winter<br>Guard<br>(Fear)'},{},
+																		{'meta': CONCLAVE, 'label':'Conclave<br>(Fear)'},
+																		{'meta': EXALTED,  'label':'Exalted<br>X-Men<br>(Fear)'}]},
+							{'traits': ['SPB_05_Omega'], 'subsections':[{'meta': GALACTIC, 'label':'Galactic<br>Council<br>(Terror)'},
+																		{'meta': ['Professor Xavier'],'label':'Professor<br>Xavier<br>(Terror)'},{},
+																		{'meta': OMEN,     'label':'Omen<br>(Terror)'},
+																		{'meta': ['Blue Marvel'],'label':'Blue<br>Marvel<br>(Terror)'},{},
+																		{'meta': PFORCE,   'label':'Phoenix<br>Force<br>(Terror)'},
+																		{'meta': ['Annihilus'],'label':'Annihilus<br>(Terror)'},{}]},
+							] ]
+					}
+
+# Meta Heroes for use in Teams
+tables['teams'] = { 'name': 'Teams',
+					'sort_by': 'stp',
+					'inc_keys': ['power','lvl','tier','iso'],
+					'span': True,
+					'max_others': 10,
+					'min_others': True,
+					'lanes':[ [  
+							{'traits': ['AbsoluteAForce'], 'meta': ['Wasp', 'Ironheart', 'Kahhori', 'Medusa', 'Ms. Marvel (Classic)']},
+							{'traits': ['Accursed'], 'meta': ACCURSED},
+							{'traits': ['AForce'], 'meta': ['Ironheart', 'Jessica Jones', 'Nico Minoru', 'Spider-Woman', 'Wasp'], 'min_others':False},
+							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
+							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
+#							{'traits': ['Astonishing']},
+							{'traits': ['Asgardian'], 'meta': ['Odin', 'Beta Ray Bill', 'Mighty Thor', 'Valkyrie', 'Thunderstrike']},
+							{'traits': ['Astral'], 'meta': ASTRAL},
+							{'traits': ['Bifrost']},
+#							{'traits': ['BionicAvenger']},
+							{'traits': ['Brimstone'], 'meta': BRIMSTONE},
+							{'traits': ['Cabal']},
+							{'traits': ['Champions'], 'meta': CHAMPIONS},
+							{'traits': ['DaringWarrior'], 'meta': DARING},
+#							{'traits': ['Darkhold']},
+#							{'traits': ['DarkHunter']},
+#							{'traits': ['Deathseed']},
+#							{'traits': ['Eternal']},
+							{'traits': ['ExaltedXMen'], 'meta': EXALTED},
+							{'traits': ['FantasticFourMCU'], 'meta': F4MCUTEAM},
+							{'traits': ['GalacticCouncil'], 'meta': GALACTIC},
+							{'traits': ['Gamma'], 'meta': ['Red Hulk', 'Hulk', 'She-Hulk', 'Abomination', 'Brawn']},
+							{'traits': ['HellfireClub'], 'meta': HELLFIRE},
+							{'traits': ['HeroesForHire']},
+							{'traits': ['HiveMind']},
+							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
+							{'traits': ['ImmortalWeapon'], 'meta': IMMORTAL},
+							{'traits': ['ImmortalXMen'], 'meta': ['Jean Grey','Beast','Storm','Polaris','Cable']},
+							{'traits': ['Infestation'], 'meta': ['Ant-Man', 'Black Widow', 'Spider-Man (Big Time)', 'Swarm', 'Yellowjacket']},
+#							{'traits': ['InfinityWatch']},
+							{'traits': ['InsidiousSix'], 'meta': INSIDIOUS},
+#							{'traits': ['Invader']},
+							{'traits': ['Knowhere']},
+							{'traits': ['Liberty'], 'meta': ['Captain America (Sam)','War Machine','Falcon (Joaquin)','Patriot','Peggy Carter']},
+#							{'traits': ['MastersOfEvil']},
+							{'traits': ['MercsForMoney']},
+							{'traits': ['MightyAvenger'], 'meta': ['Hercules','Scarlet Witch','Invisible Woman','Vision','Falcon']},
+							{'traits': ['NewAvenger']},
+							{'traits': ['NewMutant'], 'meta': NEWMUTANT},
+#							{'traits': ['NewWarrior']},
+							{'traits': ['Nightstalkers'], 'meta': NIGHTSTALK},
+							{'traits': ['Omen'], 'meta': OMEN},
+							{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
+							{'traits': ['OutOfTime']},
+#							{'traits': ['Pegasus']},
+							{'traits': ['PhoenixForce'], 'meta': PFORCE},
+#							{'traits': ['PymTech']},
+#							{'traits': ['Rebirth']},
+							{'traits': ['Retcon'], 'meta': RETCON},
+#							{'traits': ['SecretDefender']},
+							{'traits': ['SecretWarrior'], 'meta': SECRETWAR},
+							{'traits': ['ShadowConclave'], 'meta': CONCLAVE},
+#							{'traits': ['Shadowland']},
+							{'traits': ['SpiderSociety']},
+							{'traits': ['SuperiorSix'], 'meta': ['Green Goblin (Classic)', 'Doctor Octopus', 'Lizard', 'Kraven the Hunter', 'Spider-Slayer']},
+							{'traits': ['Starjammer'], 'meta': ['Groot','Rocket Raccoon','Havok','Lilandra','Howard The Duck']},
+							{'traits': ['Thunderbolts'], 'meta': TBOLTS},
+#							{'traits': ['Uncanny']},
+							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
+							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
+							{'traits': ['Undying'], 'meta': UNDYING},
+							{'traits': ['Unlimited']},
+							{'traits': ['Vigilante'], 'meta': VIGILANTE}, 
+							{'traits': ['WarDog']},
+#							{'traits': ['WeaponX'], 'meta': ['Omega Red', 'Sabretooth', 'Silver Samurai', 'Wolverine', 'X-23']},
+							{'traits': ['Winter Guard'], 'meta': WINTER},
+							{'traits': ['XTreme']},
+#							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
+#							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power','yel','red'], 'max_others':0},
+							] ]
+					}
 
 # Meta Heroes for use in Thunderstrike Raid
 tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
@@ -81,7 +208,7 @@ tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
 																		{'meta': IMMORTAL,   'label':'Immortal<br>Weapons<br>(Stormbound)'},
 																		{'meta': ['Thunderstrike'], 'label':'Thunderstrike<br>(Stormbound)'},{},
 																		{'meta': NEWMUTANT,  'label':'New Mutants<br>(Stormbound)', 'inc_avail': True},
-																		{'meta': WINTERGUARD,'label':'Winter Guard<br>(Stormbound)'},
+																		{'meta': WINTER     ,'label':'Winter Guard<br>(Stormbound)'},
 																		]},
 							] ]
 					}
@@ -273,86 +400,6 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 							{'traits': ['Cosmic','Non-Legendary'],   'label':'Cosmic'},
 							{'traits': ['City',  'Non-Legendary'],   'label':'City'},
 							{'traits': ['Legendary']},
-							] ]
-					}
-
-# Meta Heroes for use in Teams
-tables['teams'] = { 'name': 'Teams',
-					'sort_by': 'stp',
-					'inc_keys': ['power','lvl','tier','iso'],
-					'span': True,
-					'max_others': 10,
-					'min_others': True,
-					'lanes':[ [  
-							{'traits': ['AbsoluteAForce'], 'meta': ['Wasp', 'Ironheart', 'Kahhori', 'Medusa', 'Ms. Marvel (Classic)']},
-							{'traits': ['Accursed'], 'meta': ACCURSED},
-							{'traits': ['AForce'], 'meta': ['Ironheart', 'Jessica Jones', 'Nico Minoru', 'Spider-Woman', 'Wasp'], 'min_others':False},
-							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
-							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
-#							{'traits': ['Astonishing']},
-							{'traits': ['Asgardian'], 'meta': ['Odin', 'Beta Ray Bill', 'Mighty Thor', 'Valkyrie', 'Thunderstrike']},
-							{'traits': ['Astral'], 'meta': ASTRAL},
-							{'traits': ['Bifrost']},
-#							{'traits': ['BionicAvenger']},
-							{'traits': ['Brimstone'], 'meta': BRIMSTONE},
-							{'traits': ['Cabal']},
-							{'traits': ['Champions'], 'meta': CHAMPIONS},
-							{'traits': ['DaringWarrior'], 'meta': ['Daredevil', 'Jessica Jones', 'Night Thrasher', 'Speedball', 'Eclipse']},
-#							{'traits': ['Darkhold']},
-#							{'traits': ['DarkHunter']},
-#							{'traits': ['Deathseed']},
-#							{'traits': ['Eternal']},
-							{'traits': ['ExaltedXMen'], 'meta': ['Angel', 'Jubilee', 'Morph', 'Storm (Mighty)', 'Wolverine']},
-							{'traits': ['FantasticFourMCU'], 'meta': F4MCUTEAM},
-							{'traits': ['GalacticCouncil']},
-							{'traits': ['Gamma'], 'meta': ['Red Hulk', 'Hulk', 'She-Hulk', 'Abomination', 'Brawn']},
-							{'traits': ['HellfireClub'], 'meta': HELLFIRE},
-							{'traits': ['HeroesForHire']},
-							{'traits': ['HiveMind']},
-							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
-							{'traits': ['ImmortalWeapon'], 'meta': IMMORTAL},
-							{'traits': ['ImmortalXMen'], 'meta': ['Jean Grey','Beast','Storm','Polaris','Cable']},
-							{'traits': ['Infestation'], 'meta': ['Ant-Man', 'Black Widow', 'Spider-Man (Big Time)', 'Swarm', 'Yellowjacket']},
-#							{'traits': ['InfinityWatch']},
-							{'traits': ['InsidiousSix'], 'meta': INSIDIOUS},
-#							{'traits': ['Invader']},
-							{'traits': ['Knowhere']},
-							{'traits': ['Liberty'], 'meta': ['Captain America (Sam)','War Machine','Falcon (Joaquin)','Patriot','Peggy Carter']},
-#							{'traits': ['MastersOfEvil']},
-							{'traits': ['MercsForMoney']},
-							{'traits': ['MightyAvenger'], 'meta': ['Hercules','Scarlet Witch','Invisible Woman','Vision','Falcon']},
-							{'traits': ['NewAvenger']},
-							{'traits': ['NewMutant'], 'meta': NEWMUTANT},
-#							{'traits': ['NewWarrior']},
-							{'traits': ['Nightstalkers'], 'meta': NIGHTSTALK},
-							{'traits': ['Omen'], 'meta': ['Cull Obsidian', 'Ebony Maw', 'Minn-Erva', 'Ronan the Accuser', 'Silver Surfer (Breaker)']},
-							{'traits': ['Orchis'], 'meta': ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']},
-							{'traits': ['OutOfTime']},
-#							{'traits': ['Pegasus']},
-							{'traits': ['PhoenixForce'], 'meta': ['Phoenix', 'Omega Red (Phoenix Force)', 'Magneto (Phoenix Force)']},
-#							{'traits': ['PymTech']},
-#							{'traits': ['Rebirth']},
-							{'traits': ['Retcon'], 'meta': ['Deadpool', 'Gwenpool', 'Jeff the Land Shark', 'She-Hulk', 'Squirrel Girl']},
-#							{'traits': ['SecretDefender']},
-							{'traits': ['SecretWarrior'], 'meta': SECRETWAR},
-							{'traits': ['ShadowConclave'], 'meta': ['Thanos', 'Sylvie', 'High Evolutionary', 'Executioner', 'Malekith']},
-#							{'traits': ['Shadowland']},
-							{'traits': ['SpiderSociety']},
-							{'traits': ['SuperiorSix'], 'meta': ['Green Goblin (Classic)', 'Doctor Octopus', 'Lizard', 'Kraven the Hunter', 'Spider-Slayer']},
-							{'traits': ['Starjammer'], 'meta': ['Groot','Rocket Raccoon','Havok','Lilandra','Howard The Duck']},
-							{'traits': ['Thunderbolts'], 'meta': TBOLTS},
-#							{'traits': ['Uncanny']},
-							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
-							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
-							{'traits': ['Undying'], 'meta': UNDYING},
-							{'traits': ['Unlimited']},
-							{'traits': ['Vigilante'], 'meta': VIGILANTE}, 
-							{'traits': ['WarDog']},
-#							{'traits': ['WeaponX'], 'meta': ['Omega Red', 'Sabretooth', 'Silver Samurai', 'Wolverine', 'X-23']},
-							{'traits': ['Winter Guard'], 'meta': WINTERGUARD},
-							{'traits': ['XTreme']},
-#							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
-#							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power','yel','red'], 'max_others':0},
 							] ]
 					}
 
