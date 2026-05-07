@@ -152,10 +152,12 @@ def get_config(alliance_info, table, section, table_format, char_list, strike_te
 	table_lbl = enhance_table_lbl(table_lbl, show_reqs, MIN, portraits, req_html)
 
 	# Define these once
-	key_labels = {'power':'Pwr', 'op':'OP', 'iso':'ISO', 'stp':'STP'}
+	#key_labels = {'power':'Pwr', 'op':'OP', 'iso':'ISO', 'stp':'STP'}
+	key_labels = {'power':'Pwr', 'iso':'ISO', 'stp':'STP'}
 
 	# Standard order for these columns
-	key_order = ('power', 'lvl', 'tier', 'iso', 'yel', 'red', 'bas', 'spc', 'ult', 'pas', 'op', 'gold')
+	#key_order = ('power', 'lvl', 'tier', 'iso', 'yel', 'red', 'bas', 'spc', 'ult', 'pas', 'op', 'gold')
+	key_order = ('power', 'lvl', 'tier', 'iso', 'yel', 'red', 'bas', 'spc', 'ult', 'pas', 'gold')
 
 	# Get keys from table_format/table, with defaults if necessary
 	keys = get_keys(table_format, table, section, hist_date, linked_hist)

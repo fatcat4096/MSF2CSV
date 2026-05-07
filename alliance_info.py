@@ -473,7 +473,8 @@ def generate_key_ranges(alliance_info):
 
 	# Two passes -- first calculate the key_range, then convert to a dict with a calculated color
 	for char in char_list:
-		for key in ('power','lvl','yel','tier','iso','op'):
+		#for key in ('power','lvl','yel','tier','iso','op'):
+		for key in ('power','lvl','yel','tier','iso'):
 			key_ranges.setdefault(char,{})[key] = {entry.get(char,{}).get(key,0) for entry in processed_chars if entry}
 		
 		key_ranges[char]['red'] = {entry.get(char,{}).get('red',0)+entry.get(char,{}).get('dmd',0) for entry in processed_chars if entry}

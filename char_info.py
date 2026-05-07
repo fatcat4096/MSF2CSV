@@ -1987,6 +1987,7 @@ playable   = {
         "Bio",
         "Protector",
         "BlackOrder",
+        "Omen",
         "SPB_05_Omega"
       ],
       "unlockStars": 2
@@ -2723,9 +2724,6 @@ playable   = {
         "BestVillainBuddies"
       ],
       "id": "EbonyMaw",
-      "invisibleTraits": [
-        "Chargeable"
-      ],
       "mission": false,
       "name": "Ebony Maw",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_EbonyMaw_d5f9a38b.png",
@@ -2751,6 +2749,7 @@ playable   = {
         "Mystic",
         "Support",
         "BlackOrder",
+        "Omen",
         "Legendary"
       ],
       "unlockStars": 2
@@ -6804,6 +6803,7 @@ playable   = {
         "Support",
         "Tech",
         "Kree",
+        "Omen",
         "SPB_05_Omega"
       ],
       "unlockStars": 2
@@ -9334,15 +9334,16 @@ playable   = {
       ],
       "status": "playable",
       "summonIds": [
-        "S_KreeDmg_Speed",
-        "S_KreeControl_Assist"
+        "S_KreeControl_Assist",
+        "S_KreeDmg_Speed"
       ],
       "traits": [
         "Villain",
         "Cosmic",
         "Mystic",
         "Controller",
-        "Kree"
+        "Kree",
+        "Omen"
       ],
       "unlockStars": 2
     },
@@ -10402,6 +10403,39 @@ playable   = {
         "Annihilator"
       ],
       "unlockStars": 2
+    },
+    {
+      "description": "Having made a grave mistake with good intentions, the Silver Surfer was corrupted when he picked up one of Serpent's hammers. Now the Breaker of Worlds, he uses the Power Cosmic to sow fear, chaos, and destroy planets.",
+      "id": "SilverSurferBreaker",
+      "mission": false,
+      "name": "Silver Surfer (Breaker)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SilverSurferBreaker_eebae5b4.png",
+      "starItems": [
+        "SHARD_SILVERSURFERBREAKER",
+        "RS_SILVERSURFERBREAKER_1",
+        "RS_SILVERSURFERBREAKER_2",
+        "RS_SILVERSURFERBREAKER_3",
+        "RS_SILVERSURFERBREAKER_4",
+        "RS_SILVERSURFERBREAKER_5",
+        "RS_SILVERSURFERBREAKER_6",
+        "RS_SILVERSURFERBREAKER_7",
+        "PD_SILVERSURFERBREAKER_1",
+        "PD_SILVERSURFERBREAKER_2",
+        "PD_SILVERSURFERBREAKER_3",
+        "PD_SILVERSURFERBREAKER_4",
+        "PD_SILVERSURFERBREAKER_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "Cosmic",
+        "Mystic",
+        "Brawler",
+        "Omen",
+        "Legendary",
+        "SPB_05_Omega"
+      ],
+      "unlockStars": 1
     },
     {
       "description": "Melissa Gold, a reformed villain, that uses her sonic abilities to flip her enemies positive effects and defend her allies.",
@@ -13251,15 +13285,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "e54442b1f44093ce2c79",
-      "chars": "e907d4cc85acabf49a13",
-      "drops": "75c8f7dff5562f515716",
-      "events": "5b97e86b6fde11c71cc0",
-      "locs": "9cf705e4136013141082",
-      "nodes": "95c43891d548d1d25126",
-      "other": "761489d1e3f322b5e305"
+      "all": "1fcec1147e36264c4230",
+      "chars": "52a9ac2b1eeed6a78a40",
+      "drops": "c22c73f00df0e0847446",
+      "events": "5668c02be13547f04c71",
+      "locs": "4734a961cc7196805f27",
+      "nodes": "e00020e481fbeb396b69",
+      "other": "931fa72b0d80679958c0"
     },
-    "perTotal": 368,
+    "perTotal": 369,
     "version": 1
   }
 }
@@ -14117,13 +14151,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "e54442b1f44093ce2c79",
-      "chars": "e907d4cc85acabf49a13",
-      "drops": "75c8f7dff5562f515716",
-      "events": "5b97e86b6fde11c71cc0",
-      "locs": "9cf705e4136013141082",
-      "nodes": "95c43891d548d1d25126",
-      "other": "761489d1e3f322b5e305"
+      "all": "1fcec1147e36264c4230",
+      "chars": "52a9ac2b1eeed6a78a40",
+      "drops": "c22c73f00df0e0847446",
+      "events": "5668c02be13547f04c71",
+      "locs": "4734a961cc7196805f27",
+      "nodes": "e00020e481fbeb396b69",
+      "other": "931fa72b0d80679958c0"
     },
     "perTotal": 44,
     "version": 1

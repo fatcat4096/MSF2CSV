@@ -169,7 +169,7 @@ def parse_roster_api(response, *args, **kwargs):
 		char_info['dmd']   = active_red-7 if active_red > 7 else 0
 		
 		char_info['tier']  = entry.get('gearTier',0)
-		char_info['op']    = entry.get('overpower',0)
+		#char_info['op']    = entry.get('overpower',0)
 
 		bas = entry.get('basic',0)
 		spc = entry.get('special',0)
