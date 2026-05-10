@@ -306,7 +306,7 @@ def calculate_tot_gold(keys, alliance_info, using_chars, using_players, MIN):
 
 	if 'gold' in keys:
 		gold_costs = get_cached('gold_costs')
-		for char in using_chars:
+		for char_name in using_chars:
 			for player in using_players:
 
 				# Bail if calculation has previously been made

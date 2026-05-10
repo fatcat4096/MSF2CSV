@@ -2750,7 +2750,8 @@ playable   = {
         "Support",
         "BlackOrder",
         "Omen",
-        "Legendary"
+        "Legendary",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -9343,7 +9344,8 @@ playable   = {
         "Mystic",
         "Controller",
         "Kree",
-        "Omen"
+        "Omen",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -13285,13 +13287,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "1fcec1147e36264c4230",
-      "chars": "52a9ac2b1eeed6a78a40",
-      "drops": "c22c73f00df0e0847446",
-      "events": "5668c02be13547f04c71",
-      "locs": "4734a961cc7196805f27",
-      "nodes": "e00020e481fbeb396b69",
-      "other": "931fa72b0d80679958c0"
+      "all": "270c72bc4e1259d6445f",
+      "chars": "7a1a3ed15e960cad93f5",
+      "drops": "f07b4b273ec17015bcab",
+      "events": "77a0009f2b95671ff75d",
+      "locs": "2382d3f92df53c006e22",
+      "nodes": "ec9fe27c5f1f41dca7e7",
+      "other": "84942cc26af14db159cb"
     },
     "perTotal": 369,
     "version": 1
@@ -14151,13 +14153,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "1fcec1147e36264c4230",
-      "chars": "52a9ac2b1eeed6a78a40",
-      "drops": "c22c73f00df0e0847446",
-      "events": "5668c02be13547f04c71",
-      "locs": "4734a961cc7196805f27",
-      "nodes": "e00020e481fbeb396b69",
-      "other": "931fa72b0d80679958c0"
+      "all": "270c72bc4e1259d6445f",
+      "chars": "7a1a3ed15e960cad93f5",
+      "drops": "f07b4b273ec17015bcab",
+      "events": "77a0009f2b95671ff75d",
+      "locs": "2382d3f92df53c006e22",
+      "nodes": "ec9fe27c5f1f41dca7e7",
+      "other": "84942cc26af14db159cb"
     },
     "perTotal": 44,
     "version": 1
