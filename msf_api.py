@@ -225,23 +225,21 @@ def request_alliance_members(AUTH_OR_TOKEN):
 
 
 
-# Need this for the Roster information 	
-def request_member_roster(AUTH_OR_TOKEN, memberid, asOf=None):
+# Need this for the Roster information
+def request_member_roster(AUTH_OR_TOKEN, memberid):
 
 	# Extract the session if provided full AUTH
 	session = get_session(AUTH_OR_TOKEN)
 
-	PARAM_SINCE = {'since':asOf} if asOf else {}
-
 	# Send request for new access_token
 	return session.get(
 		url     = f'{API_ENDPOINT}/player/v1/roster/member/{memberid}',			# Individual roster request  
-		params  = {'statsFormat':'csv'} | PARAM_SINCE, 							# Hash for previous API request
+		params  = {'statsFormat':'csv'}, 										# Hash for previous API request
 	)
 
 
 
-# Need this for the Roster information 	
+# Request all saved teams
 def request_member_squads(AUTH_OR_TOKEN, memberid):
 
 	# Extract the session if provided full AUTH

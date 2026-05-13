@@ -146,7 +146,6 @@ def parse_roster_api(response, *args, **kwargs):
 	response.chars = {}
 	response.other = {}
 	response.data  = response.json()
-	response.asof  = response.data['meta']['asOf']
 
 	# Iterate through each in roster, building up a member dict with stats for each.
 	for entry in response.data['data']:
@@ -226,7 +225,6 @@ def parse_squads_api(response, squad_type, custom_teams):
 
 		# Only add to Import list if not already in our defined teams list
 		if set(team) not in existing_teams + custom_teams:
-			print (f'ADDING: {team=}')
 			response.teams.append(team)
 
 
