@@ -96,11 +96,9 @@ tables['fear'] = { 'name': 'Age of Fear',
 																		{'meta': CONCLAVE, 'label':'Conclave<br>(Fear)'},
 																		{'meta': EXALTED,  'label':'Exalted<br>X-Men<br>(Fear)'}]},
 							{'traits': ['SPB_05_Omega'], 'subsections':[{'meta': GALACTIC, 'label':'Galactic<br>Council<br>(Terror)'},
-																		{'meta': ['Professor Xavier'],'label':'Professor<br>Xavier<br>(Terror)'},{},
+																		{'meta': PFORCE,   'label':'Phoenix<br>Force<br>(Terror)'},{},
 																		{'meta': OMEN,     'label':'Omen<br>(Terror)'},
-																		{'meta': ['Blue Marvel'],'label':'Blue<br>Marvel<br>(Terror)'},{},
-																		{'meta': PFORCE,   'label':'Phoenix<br>Force<br>(Terror)'},
-																		{'meta': ['Annihilus'],'label':'Annihilus<br>(Terror)'},{}]},
+																		{'meta': ['Professor Xavier', 'Blue Marvel', 'Annihilus'],'label':'Epic and<br>Mythic<br>(Terror)'},{}]},
 							] ]
 					}
 
