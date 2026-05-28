@@ -26,12 +26,12 @@
 #
 #	* KEYS -- Controls which columns are displayed for each member's characters.
 #
-#		Default is ['power','tier','iso'] if not specified.
+#		Default is ['power', 'tier', 'iso'] if not specified.
 #
 #   * LANES -- This is a list of Lanes, each lane has a list of sections.
 #
 #		Each section can include a list of traits and list of meta characters.
-#		Traits are ADDITIVE, so ['Xmen','Kree'] includes anyone that has EITHER trait.
+#		Traits are ADDITIVE, so ['Xmen', 'Kree'] includes anyone that has EITHER trait.
 #		Meta characters aren't subject to filters. And if Meta characters are specified
 #		and the trait indicated doesn't exist, trait will simply be used as a label
 
@@ -49,7 +49,7 @@ EXALTED    = ['Angel', 'Jubilee', 'Morph', 'Storm (Mighty)', 'Wolverine']
 F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
 F4MCUTEAM  = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
 GALACTIC   = ['Adam Warlock', 'Blastaar', 'Quasar', 'Star-Lord', 'Thunderstrike']
-IMMORTAL   = ['Iron Fist','Iron Fist (WWII)','Lady Bullseye','Steel Serpent','Sword Master']
+IMMORTAL   = ['Iron Fist', 'Iron Fist (WWII)', 'Lady Bullseye', 'Steel Serpent', 'Sword Master']
 INSIDIOUS  = ['Hobgoblin', 'Scorpion', 'Shocker', 'Superior Spider-Man', 'Vulture']
 HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw']
 NIGHTSTALK = ['Agatha Harkness', 'Blade', 'Man-Thing', 'Moon Knight', 'Oath']
@@ -59,7 +59,7 @@ PFORCE     = ['Phoenix', 'Omega Red (Phoenix Force)', 'Magneto (Phoenix Force)']
 RETCON     = ['Deadpool', 'Gwenpool', 'Jeff the Land Shark', 'She-Hulk', 'Squirrel Girl']
 SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
 TBOLTS     = ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand']
-UNCANNY    = ['Hercules','Falcon','Jean Grey','Beast','Storm']
+UNCANNY    = ['Hercules', 'Falcon', 'Jean Grey', 'Beast', 'Storm']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
 VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
 WINTER     = ['Darkstar', 'Omega Red', 'Red Guardian', 'Ursa Major', 'Yelena Belova']
@@ -105,7 +105,7 @@ tables['fear'] = { 'name': 'Age of Fear',
 # Meta Heroes for use in Teams
 tables['teams'] = { 'name': 'Teams',
 					'sort_by': 'stp',
-					'inc_keys': ['power','lvl','tier','iso'],
+					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'span': True,
 					'max_others': 10,
 					'min_others': True,
@@ -137,16 +137,16 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['HiveMind']},
 							{'traits': ['Illuminati'], 'meta': ['Black Bolt', 'Mister Fantastic', 'Black Panther (Shuri)', 'Captain Britain', 'Hank Pym']},
 							{'traits': ['ImmortalWeapon'], 'meta': IMMORTAL},
-							{'traits': ['ImmortalXMen'], 'meta': ['Jean Grey','Beast','Storm','Polaris','Cable']},
+							{'traits': ['ImmortalXMen'], 'meta': ['Jean Grey', 'Beast', 'Storm', 'Polaris', 'Cable']},
 							{'traits': ['Infestation'], 'meta': ['Ant-Man', 'Black Widow', 'Spider-Man (Big Time)', 'Swarm', 'Yellowjacket']},
 #							{'traits': ['InfinityWatch']},
 							{'traits': ['InsidiousSix'], 'meta': INSIDIOUS},
 #							{'traits': ['Invader']},
 							{'traits': ['Knowhere']},
-							{'traits': ['Liberty'], 'meta': ['Captain America (Sam)','War Machine','Falcon (Joaquin)','Patriot','Peggy Carter']},
+							{'traits': ['Liberty'], 'meta': ['Captain America (Sam)', 'War Machine', 'Falcon (Joaquin)', 'Patriot', 'Peggy Carter']},
 #							{'traits': ['MastersOfEvil']},
 							{'traits': ['MercsForMoney']},
-							{'traits': ['MightyAvenger'], 'meta': ['Hercules','Scarlet Witch','Invisible Woman','Vision','Falcon']},
+							{'traits': ['MightyAvenger'], 'meta': ['Hercules', 'Scarlet Witch', 'Invisible Woman', 'Vision', 'Falcon']},
 							{'traits': ['NewAvenger']},
 							{'traits': ['NewMutant'], 'meta': NEWMUTANT},
 #							{'traits': ['NewWarrior']},
@@ -165,8 +165,9 @@ tables['teams'] = { 'name': 'Teams',
 #							{'traits': ['Shadowland']},
 							{'traits': ['SpiderSociety']},
 							{'traits': ['SuperiorSix'], 'meta': ['Green Goblin (Classic)', 'Doctor Octopus', 'Lizard', 'Kraven the Hunter', 'Spider-Slayer']},
-							{'traits': ['Starjammer'], 'meta': ['Groot','Rocket Raccoon','Havok','Lilandra','Howard The Duck']},
-							{'traits': ['Symbiotes'], 'meta': ['Knull','Carnage','Gwenom','Red Goblin','Void Knight']},
+							{'traits': ['Starjammer'], 'meta': ['Groot', 'Rocket Raccoon', 'Havok', 'Lilandra', 'Howard The Duck']},
+							{'traits': ['SymbioteSix'], 'meta': ['Knull', 'Venom', 'Riot', 'Toxin', 'Quicksilver (Symbiote)']},
+#							{'traits': ['Symbiotes'], 'meta': ['Knull', 'Carnage', 'Gwenom', 'Red Goblin', 'Void Knight']},
 							{'traits': ['Thunderbolts'], 'meta': TBOLTS},
 #							{'traits': ['Uncanny']},
 							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
@@ -179,7 +180,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Winter Guard'], 'meta': WINTER},
 							{'traits': ['XTreme']},
 #							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
-#							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power','yel','red'], 'max_others':0},
+#							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power', 'yel', 'red'], 'max_others':0},
 							] ]
 					}
 
@@ -190,7 +191,7 @@ tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
 					'strike_teams': 'thunderstrike',
 					'inc_dividers': '323',
 					'sort_char_by': 'avail',
-					'inc_keys': ['power','lvl','tier','iso'],
+					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'lanes':[ [
 							{'traits': ['Harbingers'], 'subsections':[	{'meta': VIGILANTE,  'label':'Vigilantes<br>(Harbingers)', 'inc_avail': True},
 																		{'meta': ACCURSED,   'label':'Accursed<br>(Harbingers)'},
@@ -218,7 +219,7 @@ tables['spotlight'] = { 'name': 'Spotlight Raid',
 					'max_others': 5,
 					'strike_teams': 'spotlight',
 					'sort_char_by': 'avail',
-					'inc_keys': ['power','lvl','tier','iso'],
+					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'lanes':[ [
 							{'traits': ['AlphaFlight'],    'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
 							{'traits': ['Champions'],      'meta': CHAMPIONS},
@@ -232,7 +233,7 @@ tables['anni'] = { 'name': 'Annihilation Raid',
 					'max_others': 0,
 					'strike_teams': 'annihilation',
 					'sort_char_by': 'avail',
-					'inc_keys': ['power','lvl','tier','iso'],
+					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'lanes':[ [
 							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
 							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
@@ -249,7 +250,7 @@ tables['annid89'] = { 'name': 'Annihilation Raid (8/9)',
 					'max_others': 0,
 					'strike_teams': 'annihilation',
 					'sort_char_by': 'avail',
-					'inc_keys': ['power','lvl','tier','iso'],
+					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'lanes':[ [
 							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
 							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
@@ -268,18 +269,18 @@ tables['blue'] = { 'name': 'Blue Marvel',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'traits_req': 'all',
-					'summary_keys': ['stp','avail'],
+					'summary_keys': ['stp', 'avail'],
 					'summary_comp': 'Blue Marvel',
 					'lanes':[ [
-							{'min_iso': 14, 'traits': ['Hero','Villain'],         'label':'Any Char<br>(ISO 3-4)', 'traits_req':'any'},
+							{'min_iso': 14, 'traits': ['Hero', 'Villain'],         'label':'Any Char<br>(ISO 3-4)', 'traits_req':'any'},
 							{'min_iso': 14, 'traits': ['Conqueror'],              'label':'Conquerors<br>(ISO 3-4)'},
 							{'min_iso': 15, 'traits': ['Conqueror'],              'label':'Conquerors<br>(ISO 3-5)'},
-							{'min_iso': 14, 'traits': ['Cosmic','Non-Mythic'],    'label':'Cosmic<br>Non-Mythic<br>(ISO 3-4)'},
-							{'min_iso': 15, 'traits': ['Cosmic','Non-Mythic'],    'label':'Cosmic<br>Non-Mythic<br>(ISO 3-5)'},
+							{'min_iso': 14, 'traits': ['Cosmic', 'Non-Mythic'],    'label':'Cosmic<br>Non-Mythic<br>(ISO 3-4)'},
+							{'min_iso': 15, 'traits': ['Cosmic', 'Non-Mythic'],    'label':'Cosmic<br>Non-Mythic<br>(ISO 3-5)'},
 							{'min_iso': 14, 'traits': ['City',  'Non-Mythic'],    'label':'City<br>Non-Mythic<br>(ISO 3-4)'},
 							{'min_iso': 15, 'traits': ['City',  'Non-Mythic'],    'label':'City<br>Non-Mythic<br>(ISO 3-5)'},
-							{'min_iso': 14, 'traits': ['Global','Non-Mythic'],    'label':'Global<br>Non-Mythic<br>(ISO 3-4)'},
-							{'min_iso': 15, 'traits': ['Global','Non-Mythic'],    'label':'Global<br>Non-Mythic<br>(ISO 3-5)'},
+							{'min_iso': 14, 'traits': ['Global', 'Non-Mythic'],    'label':'Global<br>Non-Mythic<br>(ISO 3-4)'},
+							{'min_iso': 15, 'traits': ['Global', 'Non-Mythic'],    'label':'Global<br>Non-Mythic<br>(ISO 3-5)'},
 							] ]
 					}
 
@@ -291,14 +292,14 @@ tables['profx'] = { 'name': 'Prof X Saga',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'traits_req': 'all',
-					'summary_keys': ['stp','avail'],
+					'summary_keys': ['stp', 'avail'],
 					'summary_comp': 'Professor Xavier',
 					'lanes':[ [
 							{'min_tier':20, 'traits': ['City'],             'label':'Gladiator:<br>Heroic &<br>X-Treme<br>(T20 City)'},
-							{'min_tier':20, 'traits': ['Global','Villain'], 'label':'Shadow King:<br>Heroic<br>(T20 Global Villain)'},
-							{'min_tier':20, 'traits': ['Global','Hero'],    'label':'Shadow King:<br>X-Treme<br>(T20 Global Hero)'},
-							{'min_tier':20, 'traits': ['Cosmic','Villain'], 'label':'Dark Xavier:<br>Heroic<br>(T20 Cosmic Villain)'},
-							{'min_tier':20, 'traits': ['Cosmic','Hero'],    'label':'Dark Xavier:<br>X-Treme<br>(T20 Cosmic Hero)'},
+							{'min_tier':20, 'traits': ['Global', 'Villain'], 'label':'Shadow King:<br>Heroic<br>(T20 Global Villain)'},
+							{'min_tier':20, 'traits': ['Global', 'Hero'],    'label':'Shadow King:<br>X-Treme<br>(T20 Global Hero)'},
+							{'min_tier':20, 'traits': ['Cosmic', 'Villain'], 'label':'Dark Xavier:<br>Heroic<br>(T20 Cosmic Villain)'},
+							{'min_tier':20, 'traits': ['Cosmic', 'Hero'],    'label':'Dark Xavier:<br>X-Treme<br>(T20 Cosmic Hero)'},
 							] ]
 					}
 
@@ -311,7 +312,7 @@ tables['dd9'] = { 'name': 'Dark Dimension 9',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'traits_req': 'all',
-					'summary_keys': ['stp','avail'],
+					'summary_keys': ['stp', 'avail'],
 					'summary_comp': 'Annihilus',
 					'lanes':[ [
 							{'traits': ['All'], 'label':'Any<br>GT21'},
@@ -332,7 +333,7 @@ tables['dd8'] = { 'name': 'Dark Dimension 8',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'traits_req': 'all',
-					'summary_keys': ['stp','avail'],
+					'summary_keys': ['stp', 'avail'],
 					'summary_comp': 'Odin',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'City', 'Hero'],      'label':'City Hero'},
@@ -352,7 +353,7 @@ tables['dd7'] = { 'name': 'Dark Dimension 7',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'traits_req': 'all', 
-					'summary_keys': ['stp','avail'],
+					'summary_keys': ['stp', 'avail'],
 					'summary_comp': 'Mephisto',
 					'lanes':[ [
 							{'traits': ['Non-Legendary', 'Non-Mythic', 'City'],   'label':'City'},
@@ -372,11 +373,11 @@ tables['dd6'] = { 'name': 'Dark Dimension 6',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'traits_req': 'all', 
-					'summary_keys': ['stp','avail'],
+					'summary_keys': ['stp', 'avail'],
 					'summary_comp': 'Super Skrull',
 					'lanes':[ [
-							{'traits': ['Global','Non-Legendary'],    'label':'Global'},
-							{'traits': ['Cosmic','Non-Legendary'],    'label':'Cosmic'},
+							{'traits': ['Global', 'Non-Legendary'],    'label':'Global'},
+							{'traits': ['Cosmic', 'Non-Legendary'],    'label':'Cosmic'},
 							{'traits': ['City',  'Non-Legendary'],    'label':'City'},
 							{'traits': ['Legendary', 'Non-Horseman'], 'label':'Legendary<br>Non-Horseman'},
 							{'traits': ['Legendary', 'Apocalypse'],   'label':'Legendary<br>+ Apoc', 'traits_req':'any'},
@@ -392,11 +393,11 @@ tables['dd5'] = { 'name': 'Dark Dimension 5',
 					'sort_char_by': 'avail',
 					'inc_avail': True,
 					'traits_req': 'all', 
-					'summary_keys': ['stp','avail'],
+					'summary_keys': ['stp', 'avail'],
 					'summary_comp': 'Dormammu',
 					'lanes':[ [
-							{'traits': ['Global','Non-Legendary'],   'label':'Global'},
-							{'traits': ['Cosmic','Non-Legendary'],   'label':'Cosmic'},
+							{'traits': ['Global', 'Non-Legendary'],   'label':'Global'},
+							{'traits': ['Cosmic', 'Non-Legendary'],   'label':'Cosmic'},
 							{'traits': ['City',  'Non-Legendary'],   'label':'City'},
 							{'traits': ['Legendary']},
 							] ]
@@ -414,14 +415,14 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 3', 'traits': ['Mutant',  'Non-Mythic'], 'meta': HELLFIRE, 'max_others':5}, 
 							{'header':'Mission 4', 'traits': ['Villain', 'Non-Mythic'], 'meta': INSIDIOUS, 'max_others':5}, 
 							{'header':'Mission 5', 'meta': ['Quasar', 'Blastaar'], 'label':'Quasar and<br>Blastaar'},
-							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': ['Quasar', 'Blastaar','Thunderstrike','Yelena','Omega Red'], 'max_others':5},
+							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': ['Quasar', 'Blastaar', 'Thunderstrike', 'Yelena', 'Omega Red'], 'max_others':5},
 							],[ ### Zone 2 ###
 							{'header':'Mission 1', 'traits': ['Tech', 'Non-Mythic'], 'meta': INSIDIOUS, 'max_others':5},
 							{'header':'Mission 2', 'traits': ['Bio',  'Non-Mythic'], 'meta': TBOLTS,    'max_others':5},
 							{'header':'Mission 3', 'traits': ['Hero', 'Non-Mythic'], 'meta': ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'Quasar', 'Blade'], 'max_others':5},
 							{'header':'Mission 4', 'meta': ACCURSED  + HELLFIRE,  'label':'Accursed or<br>Hellfire Club'},
 							{'header':'Mission 5', 'meta': SECRETWAR + BRIMSTONE, 'label':'Secret Warrior<br>or Brimstone'},
-							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': ['Quasar', 'Blastaar','Thunderstrike','Yelena','Omega Red'], 'max_others':5},
+							{'header':'Mission 6', 'traits': ['ChaosTeam'], 'meta': ['Quasar', 'Blastaar', 'Thunderstrike', 'Yelena', 'Omega Red'], 'max_others':5},
 							],[ ### Zone 3 ###
 							{'header':'Mission 1', 'traits': ['Skill',  'Non-Mythic'], 'meta': VIGILANTE, 'max_others':5},
 							{'header':'Mission 2', 'traits': ['Global', 'Non-Mythic'], 'meta': ['Old Man Logan', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebastian Shaw'],  'max_others':5},
@@ -430,11 +431,11 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Mission 5', 'traits': ['Blue Marvel', 'Phantom Rider', 'PhoenixForce'], 'traits_req':'any', 'label':'Blue Marvel<br>Phant. Rider<br>or P. Force'},
 							{'header':'Mission 6', 'meta': UNDYING + BRIMSTONE, 'label':'Undying or<br>Brimstone'},
 							],[ ### Zone 4 ###
-							{'header':'Sentry', 'label':'Option 1', 'meta': F4MCU3PACK + ['Odin','Mephisto']},
+							{'header':'Sentry', 'label':'Option 1', 'meta': F4MCU3PACK + ['Odin', 'Mephisto']},
 							{'header':'Sentry', 'label':'Option 2', 'meta': BRIMSTONE},
 							{'header':'Sentry', 'label':'Option 3', 'meta': ASTRAL},
 							{'header':'Sentry', 'label':'Option 4', 'meta': VIGILANTE},
-							{'header':'Sentry', 'label':'Option 5', 'meta': ['Professor Xavier', 'Apocalypse','Knull', 'Old Man Logan', 'Havok', ]},
+							{'header':'Sentry', 'label':'Option 5', 'meta': ['Professor Xavier', 'Apocalypse', 'Knull', 'Old Man Logan', 'Havok', ]},
 							{'header':'Sentry', 'label':'Option 6', 'meta': ['Professor Xavier', 'Quasar', 'Phoenix', 'Emma Frost', 'Omega Red (Phoenix Force)']},
 							] ]
 					}
@@ -445,7 +446,7 @@ tables['battleworld'] = { 'name': 'Battleworld',
 tables['all_chars'] = { 'name': 'All Characters',
 					'max_others': 0,
 					'sort_by': 'tcp',
-					'inc_keys': ['power','lvl','tier','iso'],
+					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'lanes':[ [
 							{'traits': ['All'], 'label':'All Chars'},
 							{'traits': ['Bio'], },

@@ -63,7 +63,7 @@ def time_diff(start_time):
 
 
 # Decorator that implements all logging and keeps track of call stats.
-def timed(func_=None, level=4, init=False, handoff=False):
+def timed(func_=None, level=2, init=False, handoff=False):
 	"""
 	Decorator to log test start and end time of a function
 	"""

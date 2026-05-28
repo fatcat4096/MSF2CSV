@@ -7134,7 +7134,7 @@ playable   = {
         "ExaltedXMen",
         "SPB_05_Gamma"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
@@ -13287,13 +13287,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "7b804086694c5da49cad",
-      "chars": "84eb372f09da0f2cb2b6",
-      "drops": "fa44c4a951dce6af765f",
-      "events": "301873d03c5f01e2d76b",
-      "locs": "1b8232e9bb6e41270166",
-      "nodes": "696a8cda87da009979a5",
-      "other": "e35744c40105c8071a8f"
+      "all": "bd70b9fdb3e170a6f2e4",
+      "chars": "ffa583941255a691a35d",
+      "drops": "3ceae0be73765ec66e42",
+      "events": "fbc6ce2ceb2da2097739",
+      "locs": "e15997dcada2d64c51f9",
+      "nodes": "8d0c6583d6baf2a093b2",
+      "other": "4069beced5c61116c99b"
     },
     "perTotal": 369,
     "version": 1
@@ -14153,13 +14153,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "7b804086694c5da49cad",
-      "chars": "84eb372f09da0f2cb2b6",
-      "drops": "fa44c4a951dce6af765f",
-      "events": "301873d03c5f01e2d76b",
-      "locs": "1b8232e9bb6e41270166",
-      "nodes": "696a8cda87da009979a5",
-      "other": "e35744c40105c8071a8f"
+      "all": "bd70b9fdb3e170a6f2e4",
+      "chars": "ffa583941255a691a35d",
+      "drops": "3ceae0be73765ec66e42",
+      "events": "fbc6ce2ceb2da2097739",
+      "locs": "e15997dcada2d64c51f9",
+      "nodes": "8d0c6583d6baf2a093b2",
+      "other": "4069beced5c61116c99b"
     },
     "perTotal": 44,
     "version": 1

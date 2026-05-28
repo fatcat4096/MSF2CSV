@@ -317,6 +317,7 @@ def translate_name(value):
 						"Starjammer": "Starjammers",
 						"SuperiorSix": "Superior<br>Six",
 						"Symbiote": "Symbiotes",
+						"SymbioteSix": "Symbiote<br>Six",
 						"TangledWeb": "Tangled<br>Web",
 						"Uncanny": "Uncanny<br>X-Men",
 						"UncannyAvenger": "Uncanny<br>Avengers",
