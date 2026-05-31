@@ -140,7 +140,7 @@ async def update_cached_char_info(AUTH):
 
 # Rebuild fresh cached character info
 @timed(level=3)
-async def update_cached_cost_info(self, AUTH):
+def update_cached_cost_info(self, AUTH):
 
 	# Get cached data
 	char_list   = get_cached('char_lookup')
@@ -151,12 +151,12 @@ async def update_cached_cost_info(self, AUTH):
 	self.bot.logger.info(f'Parsing character speeds')
 
 	# Get info about the cost to update to each level
-	await get_char_speed_info(AUTH, char_speeds)
+	get_char_speed_info(AUTH, char_speeds)
 
 	self.bot.logger.info(f'Parsing level upgrade costs')
 
 	# Get info about the cost to update to each level
-	await get_level_cost_info(AUTH, gold_costs)
+	get_level_cost_info(AUTH, gold_costs)
 
 	self.bot.logger.info(f'Parsing ISO upgrade costs for {len(char_list)} characters')
 
@@ -180,7 +180,7 @@ async def update_cached_cost_info(self, AUTH):
 
 
 
-async def get_char_speed_info(AUTH, char_speeds):
+def get_char_speed_info(AUTH, char_speeds):
 	
 	# Make the API call
 	response = request_char_instances(AUTH)
@@ -196,7 +196,7 @@ async def get_char_speed_info(AUTH, char_speeds):
 
 
 
-async def get_level_cost_info(AUTH, gold_costs):
+def get_level_cost_info(AUTH, gold_costs):
 	
 	# Make the API call
 	response = request_upgrade_info(AUTH, 'characterLevelTotalXp')

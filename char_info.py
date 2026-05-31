@@ -5634,6 +5634,7 @@ playable   = {
         "Mystic",
         "Controller",
         "Symbiote",
+        "SymbioteSix",
         "SPB_05_Gamma"
       ],
       "unlockStars": 4
@@ -9235,6 +9236,40 @@ playable   = {
       "unlockStars": 1
     },
     {
+      "description": "Forcibly extracted from the Venom symbiote by the Life Foundation, Riot leans into his aggressive nature by manipulating his biomass into bludgeoning weapons, traumatizing enemies, and spreading negative effects across the field.",
+      "id": "Riot",
+      "mission": false,
+      "name": "Riot",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Riot_13f65950.png",
+      "starItems": [
+        "SHARD_RIOT",
+        "RS_RIOT_1",
+        "RS_RIOT_2",
+        "RS_RIOT_3",
+        "RS_RIOT_4",
+        "RS_RIOT_5",
+        "RS_RIOT_6",
+        "RS_RIOT_7",
+        "PD_RIOT_1",
+        "PD_RIOT_2",
+        "PD_RIOT_3",
+        "PD_RIOT_4",
+        "PD_RIOT_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "City",
+        "Bio",
+        "Protector",
+        "SpiderVerse",
+        "Symbiote",
+        "SymbioteSix",
+        "SPB_05_Gamma"
+      ],
+      "unlockStars": 2
+    },
+    {
       "description": "An aggressive scrapper who inflicts terrible damage to foes at range. Prefers to team up with Groot.",
       "eventTraits": [
         "KnowhereHeist"
@@ -11507,6 +11542,40 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Pietro Maximoff, once known as the speedster Quicksilver, was forever changed when a chance encounter left him bonded with an alien symbiote. Now part of a hivemind, he supports his Symbiote allies by bolstering Speed Bar and redistributing damage taken across the team.",
+      "id": "SymbioteQuicksilver",
+      "mission": false,
+      "name": "Quicksilver (Symbiote)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SymbioteQuicksilver_3c19011f.png",
+      "starItems": [
+        "SHARD_SYMBIOTEQUICKSILVER",
+        "RS_SYMBIOTEQUICKSILVER_1",
+        "RS_SYMBIOTEQUICKSILVER_2",
+        "RS_SYMBIOTEQUICKSILVER_3",
+        "RS_SYMBIOTEQUICKSILVER_4",
+        "RS_SYMBIOTEQUICKSILVER_5",
+        "RS_SYMBIOTEQUICKSILVER_6",
+        "RS_SYMBIOTEQUICKSILVER_7",
+        "PD_SYMBIOTEQUICKSILVER_1",
+        "PD_SYMBIOTEQUICKSILVER_2",
+        "PD_SYMBIOTEQUICKSILVER_3",
+        "PD_SYMBIOTEQUICKSILVER_4",
+        "PD_SYMBIOTEQUICKSILVER_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "Global",
+        "Bio",
+        "Brawler",
+        "SpiderVerse",
+        "Symbiote",
+        "SymbioteSix",
+        "SPB_05_Gamma"
+      ],
+      "unlockStars": 1
+    },
+    {
       "description": "Formerly the heroic Silver Surfer, Void Knight attempts to satisfy the hunger of his symbiote by sapping the energy of his enemies, draining them like a black hole until they're no more.",
       "eventTraits": [
         "BestSpiderBuddies"
@@ -12063,6 +12132,40 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Born from the Carnage symbiote, the 1,000th spawn in its line, Toxin uses his enhanced senses and sharp claws to expose enemies, cripple their defenses, and leave lasting damage in his wake.",
+      "id": "Toxin",
+      "mission": false,
+      "name": "Toxin",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Toxin_13ab057e.png",
+      "starItems": [
+        "SHARD_TOXIN",
+        "RS_TOXIN_1",
+        "RS_TOXIN_2",
+        "RS_TOXIN_3",
+        "RS_TOXIN_4",
+        "RS_TOXIN_5",
+        "RS_TOXIN_6",
+        "RS_TOXIN_7",
+        "PD_TOXIN_1",
+        "PD_TOXIN_2",
+        "PD_TOXIN_3",
+        "PD_TOXIN_4",
+        "PD_TOXIN_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "City",
+        "Bio",
+        "Brawler",
+        "Symbiote",
+        "SpiderVerse",
+        "SymbioteSix",
+        "SPB_05_Gamma"
+      ],
+      "unlockStars": 2
+    },
+    {
       "description": "A fierce villain who strips positive effects from his foes with fire and explosives.",
       "eventTraits": [
         "BestVillainBuddies"
@@ -12432,7 +12535,9 @@ playable   = {
         "Controller",
         "SpiderVerse",
         "Symbiote",
-        "HiveMind"
+        "HiveMind",
+        "SymbioteSix",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -13287,15 +13392,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "bd70b9fdb3e170a6f2e4",
-      "chars": "ffa583941255a691a35d",
+      "all": "1c090da17a759420ae93",
+      "chars": "55d95a42f05f8a59a603",
       "drops": "3ceae0be73765ec66e42",
-      "events": "fbc6ce2ceb2da2097739",
-      "locs": "e15997dcada2d64c51f9",
-      "nodes": "8d0c6583d6baf2a093b2",
-      "other": "4069beced5c61116c99b"
+      "events": "6ba09569850fd400aa1d",
+      "locs": "ad69c2fc8f00f450469e",
+      "nodes": "00bba6d5b8bb7b814ade",
+      "other": "b4ce5b4cc011bcb3db95"
     },
-    "perTotal": 369,
+    "perTotal": 372,
     "version": 1
   }
 }
@@ -14153,13 +14258,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "bd70b9fdb3e170a6f2e4",
-      "chars": "ffa583941255a691a35d",
+      "all": "e2453c4780e2a0da87e2",
+      "chars": "55d95a42f05f8a59a603",
       "drops": "3ceae0be73765ec66e42",
-      "events": "fbc6ce2ceb2da2097739",
-      "locs": "e15997dcada2d64c51f9",
-      "nodes": "8d0c6583d6baf2a093b2",
-      "other": "4069beced5c61116c99b"
+      "events": "c1fd3deb6c9496b8ad0d",
+      "locs": "ad69c2fc8f00f450469e",
+      "nodes": "00bba6d5b8bb7b814ade",
+      "other": "b4ce5b4cc011bcb3db95"
     },
     "perTotal": 44,
     "version": 1
