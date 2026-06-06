@@ -170,7 +170,7 @@ def update_cached_cost_info(self, AUTH):
 	FUTURES = {request_char_details(AUTH, char):char for char in char_list}
 
 	# Then process each of the responses as they return complete
-	for future in as_completed(FUTURES):
+	for future in as_completed(FUTURES, timeout=10):
 		get_gear_and_iso_info(future.result(), FUTURES[future], gold_costs, iso_classes)
 
 	# Finally, cache the value of char_lookup
