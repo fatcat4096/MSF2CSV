@@ -11135,7 +11135,8 @@ playable   = {
       "description": "Chosen by Odin and bestowed a glaive forged in Nidavellir, Storm sets out on her path as one of the Mighty, stripping her enemies of their defenses and leaving them exposed to her elemental onslaught.",
       "id": "StormMighty",
       "invisibleTraits": [
-        "Xmen"
+        "Xmen",
+        "Exposed"
       ],
       "mission": false,
       "name": "Storm (Mighty)",
@@ -13392,13 +13393,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "1c090da17a759420ae93",
-      "chars": "55d95a42f05f8a59a603",
-      "drops": "3ceae0be73765ec66e42",
-      "events": "6ba09569850fd400aa1d",
-      "locs": "ad69c2fc8f00f450469e",
-      "nodes": "00bba6d5b8bb7b814ade",
-      "other": "b4ce5b4cc011bcb3db95"
+      "all": "987f4c0e575ef55177ab",
+      "chars": "46afa0c0927407fb75f3",
+      "drops": "80697619015b84c999b8",
+      "events": "2aa479dfcc87fd1aba14",
+      "locs": "0da3f0fc3acf529b8f28",
+      "nodes": "8fb67f7e4bbf886a1848",
+      "other": "7918fb673f0d7f002b6d"
     },
     "perTotal": 372,
     "version": 1
@@ -14258,13 +14259,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "e2453c4780e2a0da87e2",
-      "chars": "55d95a42f05f8a59a603",
-      "drops": "3ceae0be73765ec66e42",
-      "events": "c1fd3deb6c9496b8ad0d",
-      "locs": "ad69c2fc8f00f450469e",
-      "nodes": "00bba6d5b8bb7b814ade",
-      "other": "b4ce5b4cc011bcb3db95"
+      "all": "987f4c0e575ef55177ab",
+      "chars": "46afa0c0927407fb75f3",
+      "drops": "80697619015b84c999b8",
+      "events": "2aa479dfcc87fd1aba14",
+      "locs": "0da3f0fc3acf529b8f28",
+      "nodes": "8fb67f7e4bbf886a1848",
+      "other": "7918fb673f0d7f002b6d"
     },
     "perTotal": 44,
     "version": 1

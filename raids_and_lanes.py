@@ -58,6 +58,7 @@ OMEN       = ['Cull Obsidian', 'Ebony Maw', 'Minn-Erva', 'Ronan the Accuser', 'S
 PFORCE     = ['Phoenix', 'Omega Red (Phoenix Force)', 'Magneto (Phoenix Force)']
 RETCON     = ['Deadpool', 'Gwenpool', 'Jeff the Land Shark', 'She-Hulk', 'Squirrel Girl']
 SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
+SYMSIX     = ['Knull', 'Venom', 'Riot', 'Toxin', 'Quicksilver (Symbiote)']
 TBOLTS     = ['Ghost', 'Hyperion', 'Songbird', 'Taskmaster', 'Victoria Hand']
 UNCANNY    = ['Hercules', 'Falcon', 'Jean Grey', 'Beast', 'Storm']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
@@ -88,16 +89,16 @@ tables['fear'] = { 'name': 'Age of Fear',
 																		{'meta': SECRETWAR, 'label':'Secret<br>Warriors<br>(Panic)'},
 																		{'meta': UNDYING,   'label':'Undying<br>(Panic)'},
 																		{'meta': IMMORTAL,  'label':'Immortal<br>Weapons<br>(Panic)'}]},
-							{'traits': ['SPB_05_Gamma'], 'subsections':[{'meta': RETCON,   'label':'RetCon<br>(Fear)'},
-																		{'meta': DARING,   'label':'Daring<br>Warriors<br>(Fear)'},
-																		{'meta': ['Knull'],'label':'Knull<br>(Fear)'},{},
-																		{'meta': CHAMPIONS,'label':'Champions<br>(Fear)'},
-																		{'meta': WINTER,   'label':'Winter<br>Guard<br>(Fear)'},{},
-																		{'meta': CONCLAVE, 'label':'Conclave<br>(Fear)'},
-																		{'meta': EXALTED,  'label':'Exalted<br>X-Men<br>(Fear)'}]},
-							{'traits': ['SPB_05_Omega'], 'subsections':[{'meta': GALACTIC, 'label':'Galactic<br>Council<br>(Terror)'},
-																		{'meta': PFORCE,   'label':'Phoenix<br>Force<br>(Terror)'},{},
-																		{'meta': OMEN,     'label':'Omen<br>(Terror)'},
+							{'traits': ['SPB_05_Gamma'], 'subsections':[{'meta': RETCON,    'label':'RetCon<br>(Fear)'},
+																		{'meta': DARING,    'label':'Daring<br>Warriors<br>(Fear)'},
+																		{'meta': SYMSIX,    'label':'Symbiote<br>Six<br>(Fear)'},{},
+																		{'meta': CHAMPIONS, 'label':'Champions<br>(Fear)'},
+																		{'meta': WINTER,    'label':'Winter<br>Guard<br>(Fear)'},{},
+																		{'meta': CONCLAVE,  'label':'Conclave<br>(Fear)'},
+																		{'meta': EXALTED,   'label':'Exalted<br>X-Men<br>(Fear)'}]},
+							{'traits': ['SPB_05_Omega'], 'subsections':[{'meta': GALACTIC,  'label':'Galactic<br>Council<br>(Terror)'},
+																		{'meta': PFORCE,    'label':'Phoenix<br>Force<br>(Terror)'},{},
+																		{'meta': OMEN,      'label':'Omen<br>(Terror)'},
 																		{'meta': ['Professor Xavier', 'Blue Marvel', 'Annihilus'],'label':'Epic and<br>Mythic<br>(Terror)'},{}]},
 							] ]
 					}
@@ -166,7 +167,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['SpiderSociety']},
 							{'traits': ['SuperiorSix'], 'meta': ['Green Goblin (Classic)', 'Doctor Octopus', 'Lizard', 'Kraven the Hunter', 'Spider-Slayer']},
 							{'traits': ['Starjammer'], 'meta': ['Groot', 'Rocket Raccoon', 'Havok', 'Lilandra', 'Howard The Duck']},
-							{'traits': ['SymbioteSix'], 'meta': ['Knull', 'Venom', 'Riot', 'Toxin', 'Quicksilver (Symbiote)']},
+							{'traits': ['SymbioteSix'], 'meta': SYMSIX},
 #							{'traits': ['Symbiotes'], 'meta': ['Knull', 'Carnage', 'Gwenom', 'Red Goblin', 'Void Knight']},
 							{'traits': ['Thunderbolts'], 'meta': TBOLTS},
 #							{'traits': ['Uncanny']},
