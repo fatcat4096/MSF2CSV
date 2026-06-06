@@ -56,11 +56,13 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 				continue
 
 			# Last minute sort if proscribed by the table format.
-			if config['sort_by']:
+			if config.get('sort_by'):
 				strike_team = final_strike_team_sort(table_format, table, section, strike_team, config['player_list'])
 
-			# Calculate the number of lines in the data block 
+			# Calculate the number of lines in the data block, skip if none
 			row_count = len([x for x in strike_team if x in config['player_list']]) * len(config['date_list'])
+			if not row_count:
+				continue
 	
 			# Generate heading row for each Strike Team
 			html_file.extend(generate_heading_row(line_chars, row_idx, team_num, row_count, config))
