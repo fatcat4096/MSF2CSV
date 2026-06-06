@@ -8,8 +8,9 @@ Routines to create a ready and waiting reserve of Selenium drivers.
 import os
 import psutil
 
-from datetime import datetime
-from selenium import webdriver
+from datetime   import datetime
+from selenium   import webdriver
+from contextlib import contextmanager
 
 try:
 	from .log_utils import *
@@ -42,8 +43,6 @@ def get_driver(proc_name='', force_new=False):
 	active_pool = driver_pool.setdefault('active',{})
 	avail_pool  = driver_pool.setdefault('avail',{})
 
-	show_driver_pool('before get_driver')
-
 	driver = None
 
 	# If a driver is available already, provide the existing driver
@@ -63,8 +62,6 @@ def get_driver(proc_name='', force_new=False):
 		
 		# Use job start time as key in the active pool
 		active_pool[driver.last_used] = driver
-
-	show_driver_pool('after get_driver')
 
 	return driver
 
@@ -116,8 +113,6 @@ def release_driver(driver, also_release=None):
 	if also_release is None:
 		also_release = []
 
-	show_driver_pool('before release_driver')
-
 	# If returning driver, add to avail_pool - key is creation_date
 	if driver:
 		avail_pool[driver.creation_date] = driver
@@ -129,16 +124,12 @@ def release_driver(driver, also_release=None):
 	for driver in also_release:
 		active_pool.pop(driver.last_used, None)
 	
-	show_driver_pool('after release_driver')
-	
 	return
 
 
 
 # Walk and kill process tree for old, failed, or abandoned web drivers
 def kill_process_tree(pid_list, logger=print):
-
-	show_driver_pool('before kill_process_tree')
 
 	driver_count = proc_count = 0
 
@@ -173,8 +164,6 @@ def kill_process_tree(pid_list, logger=print):
 	if driver_count or proc_count:
 		logger (f'Terminated {ansi.ltyel}{driver_count} web drivers{ansi.rst}, {proc_count} total processes killed')
 
-	show_driver_pool('after kill_process_tree')
-
 	return driver_count
 
 
@@ -182,7 +171,7 @@ def kill_process_tree(pid_list, logger=print):
 def show_driver_pool(task = ''):
 	global driver_pool
 
-	"""# Create the active and avail pools if necessary
+	# Create the active and avail pools if necessary
 	active_pool = driver_pool.setdefault('active',{})
 	avail_pool  = driver_pool.setdefault('avail',{})
 
@@ -192,6 +181,16 @@ def show_driver_pool(task = ''):
 	if active_pool|avail_pool:
 		task = f' after {ansi.ltcyan}{task[6:]}{ansi.rst}' if task.startswith('after') else task
 		task = f'before {ansi.ltcyan}{task[7:]}{ansi.rst}' if task.startswith('before') else task
-		print (f'{'DRIVERS':>10} {task:35}{ansi.white}ACTIVE:{ansi.rst}  {active_used:50} {ansi.white}AVAIL:{ansi.rst}  {avail_used:75}')"""
+		print (f'{'DRIVERS':>10} {task:35}{ansi.white}ACTIVE:{ansi.rst}  {active_used:50} {ansi.white}AVAIL:{ansi.rst}  {avail_used:75}')
+
+
+
+@contextmanager
+def driver_pool_info(task=''):
+	try:
+		show_driver_pool(task)
+		yield
+	finally:
+		show_driver_pool(task)
 
 

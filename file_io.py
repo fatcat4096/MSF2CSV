@@ -394,8 +394,6 @@ def html_to_images(html_files, proc_name='msf2csv', print_path=False, render_wai
 		# If we have any issues, try again until we hit 3 failures
 		while len(failed_drivers) < 3:
 			try:
-				show_driver_pool('before html_to_images')
-				
 				# Start by opening each file with our Selenium driver.
 				driver.get(file if 'http' in file else Path(file).as_uri())
 	
