@@ -6,11 +6,7 @@ Logs into website and updates data from Alliance Information if not
 """
 
 
-import asyncio
-import importlib
 import json
-
-from datetime import datetime
 
 from concurrent.futures import as_completed
 from requests_futures.sessions import FuturesSession
@@ -140,7 +136,7 @@ async def update_cached_char_info(AUTH):
 
 # Rebuild fresh cached character info
 @timed(level=3)
-def update_cached_cost_info(self, AUTH):
+def update_cached_cost_info(AUTH, print=print):
 
 	# Get cached data
 	char_list   = get_cached('char_lookup')
@@ -148,17 +144,17 @@ def update_cached_cost_info(self, AUTH):
 	gold_costs  = get_cached('gold_costs')
 	iso_classes = get_cached('iso_classes')
 
-	self.bot.logger.info(f'Parsing character speeds')
+	print (f'Parsing character speeds')
 
 	# Get info about the cost to update to each level
 	get_char_speed_info(AUTH, char_speeds)
 
-	self.bot.logger.info(f'Parsing level upgrade costs')
+	print (f'Parsing level upgrade costs')
 
 	# Get info about the cost to update to each level
 	get_level_cost_info(AUTH, gold_costs)
 
-	self.bot.logger.info(f'Parsing ISO upgrade costs for {len(char_list)} characters')
+	print (f'Parsing ISO upgrade costs for {len(char_list)} characters')
 
 	# Update AUTH['session'] with post-processing hooks
 	AUTH['session'].hooks['response'] = parse_gear_and_iso_info
@@ -345,7 +341,7 @@ def clean_strike_team(strike_team, MEMBER_LIST, members_used):
 	# Track whether anything has been changed.
 	updated = False
 
-	MEMBER_LOWER = [member.lower for member in MEMBER_LIST]
+	MEMBER_LOWER = [member.lower() for member in MEMBER_LIST]
 
 	for idx,member in enumerate(strike_team):
 
