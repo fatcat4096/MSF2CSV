@@ -23,8 +23,6 @@ from .driver_pool import show_driver_pool
 from .cached_info import get_cached
 from .cached_info import set_cached
 
-from .raids_and_lanes import tables
-
 from .alliance_info import get_table_value
 from .alliance_info import generate_key_ranges
 from .alliance_info import find_cached_and_merge
@@ -48,7 +46,6 @@ from .msf_api import request_auth
 from .msf_api import parse_auth
 from .msf_api import auth_valid
 from .msf_api import refresh_auth
-from .msf_api import construct_token
 from .msf_api import request_alliance_info
 from .msf_api import get_session_and_link
 from .msf_api import get_session

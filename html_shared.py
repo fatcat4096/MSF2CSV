@@ -82,7 +82,7 @@ def get_value_color_ext(min_val, max_val, value, html_cache, stale_data=False, s
 	if min_val > max_val:
 		min_val, max_val = max_val, min_val
 
-		# 0 Stays 0, max_val goes to 1, 1 goes to mex_value
+		# 0 Stays 0, max_val goes to 1, 1 goes to max_value
 		if value:
 			value = (max_val - value) + 1
 

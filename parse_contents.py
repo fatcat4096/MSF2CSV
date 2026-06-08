@@ -7,7 +7,6 @@ Returns in easy to use dicts for inclusion in tables.
 """
 
 
-import re
 import asyncio
 
 from datetime    import datetime
@@ -203,7 +202,6 @@ def parse_squads_api(response, squad_type, custom_teams):
 
 	# Load cached char_lookup
 	char_lookup = get_cached('char_lookup')
-	char_list   = get_cached('char_list')
 
 	existing_teams = []
 	response.teams = []

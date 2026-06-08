@@ -180,8 +180,6 @@ def timed(func_=None, level=2, init=False, handoff=False):
 # Creater a logger object for use in a command.
 def log_init(calling_func, context=None):
 
-	global log_file_path
-	
 	date_time = time.strftime("%y.%m.%d-%H%M%S",time.localtime(time.time()))
 
 	logger = logging.getLogger(calling_func+'-'+date_time)	

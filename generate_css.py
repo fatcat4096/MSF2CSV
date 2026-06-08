@@ -510,7 +510,7 @@ function strip(html){
 function translateNumber(str) {
   if (!str || typeof str !== 'string') return NaN;
   
-  const match = str.match(/^([\d.]+)([KkMmBb])?$/);
+  const match = str.match(/^([0-9.]+)([KkMmBb])?$/);
   if (!match) return NaN;
 
   const value = parseFloat(match[1]);

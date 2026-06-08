@@ -63,9 +63,6 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 						# Get the num_avail for this section
 						avail = {char for char in meta_chars+other_chars if not section.get('under_min',{}).get(member,{}).get(char)}
 
-						# Find Rank for this member's team
-						rank = rank_dict[member]
-
 						# Create a fake entry for this section using the section label as the "Character Name" in processed_chars.
 						alliance_info['members'][member]['processed_chars'][section_label] = {'stp':stp, 'avail':avail, 'rank':rank_dict[member]}
 

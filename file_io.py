@@ -54,8 +54,6 @@ elif hasattr(__main__, '__file__'):
 
 # Provide a consistent base path for output
 def get_local_path():
-	global local_path
-	
 	return os.path.realpath(local_path) + os.sep
 
 
@@ -404,7 +402,6 @@ def html_to_images(html_files, proc_name='msf2csv', print_path=False, render_wai
 
 				# Set the height/width of the window accordingly
 				height = driver.execute_script('return document.documentElement.scrollHeight')
-				width  = driver.execute_script('return document.documentElement.scrollWidth')
 
 				# Look for the farthest right element.
 				tables = driver.find_elements(By.TAG_NAME, "table")

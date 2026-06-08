@@ -67,7 +67,6 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 
 		only_lane      = table_format.get('only_lane',0)
 		only_section   = table_format.get('only_section',0)
-		only_image     = table_format.get('only_image',False)
 		sections_per   = table_format.get('sections_per',0)
 		lane_overlay   = table_format.get('lane_overlay',None)
 		num_per_image  = table_format.get('num_per_image')

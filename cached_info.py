@@ -50,7 +50,6 @@ def write_cached_file(data, file):
 
 # Just return a value from the global
 def get_cached(key, refresh=False):
-	global cached_info
 
 	# Load at first request - 'char_list','char_lookup','portraits','trait_list','traits'
 	if key not in cached_info or refresh:
@@ -62,8 +61,7 @@ def get_cached(key, refresh=False):
 
 # Update the global with a deepcopy of any value passed in and write to disk.
 def set_cached(key,value):
-	global cached_info
-	
+
 	cached_info[key] = deepcopy(value)
 	
 	write_cached_file(value, key)

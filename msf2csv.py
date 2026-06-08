@@ -33,7 +33,7 @@ def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=Non
 
 	# Load roster info from cached data
 	if type(alliance_info) is str:
-		alliance_info = find_cached_data(alliance_name)
+		alliance_info = find_cached_data(alliance_info)
 
 	# If we failed to retrieve alliance info, we've already explained. Just exit.
 	if not alliance_info:
@@ -63,7 +63,7 @@ def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=Non
 				# Otherwise, we need to generate the one page.
 				else:
 					html_files = generate_html(alliance_info, custom_table or tables.get(output), table_format)
-			except Exception as exc:
+			except:
 				dirname = f'{os.path.dirname(__file__)}{os.sep}'
 				Console().print_exception(theme='github-dark', extra_lines=4, suppress=[f'{dirname}log_utils.py', f'{dirname}msf2csv.py'])
 				return {}
@@ -195,7 +195,6 @@ if __name__ == '__main__':
 					'only_side'     : args.only_side,
 					'only_team'     : args.only_team,
 					'only_summary'  : args.only_summary,
-					'only_image'    : args.only_image,
 					'output'        : args.output,
 					'output_format' : output_format,
 					'publish'       : args.publish,

@@ -37,7 +37,6 @@ driver_pool = {}
 # Keep drivers open and allow them to be re-used.
 @timed(level=3)
 def get_driver(proc_name='', force_new=False):
-	global driver_pool
 
 	# Create the active and avail pools if necessary
 	active_pool = driver_pool.setdefault('active',{})
@@ -103,7 +102,6 @@ def create_new_driver(proc_name):
 # Check driver in at the end of use.
 @timed(level=3)
 def release_driver(driver, also_release=None):
-	global driver_pool
 
 	# Create the active and avail pools if necessary
 	active_pool = driver_pool.setdefault('active',{})
@@ -169,7 +167,6 @@ def kill_process_tree(pid_list, logger=print):
 
 
 def show_driver_pool(task = ''):
-	global driver_pool
 
 	# Create the active and avail pools if necessary
 	active_pool = driver_pool.setdefault('active',{})
