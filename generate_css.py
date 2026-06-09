@@ -565,8 +565,8 @@ function sortl(n,table_name,header_lines,rows_to_sort,linked_name) {
 			one from current row and one from the next: */
 
 			// Removes commas and + from the numbers being compared, expand K to 000.
-			x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/💎$/, "0");
-			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replace(/,/g, "").replace(/\+/g, "").replace(/💎$/, "0");
+			x = strip(rows[i].getElementsByTagName("TD")[n].innerHTML).replaceAll(",", "").replaceAll("+", "").replaceAll("💎", "0");
+			y = strip(rows[i+1].getElementsByTagName("TD")[n].innerHTML).replaceAll(",", "").replaceAll("+", "").replaceAll("💎", "0");
 
 			// Deal with x.xM notation
 			if (x.endsWith("B") || x.endsWith("K") || x.endsWith("M")) {
