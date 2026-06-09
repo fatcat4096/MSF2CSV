@@ -10,13 +10,11 @@ import copy
 try:
 	from .log_utils     import timed
 	from .alliance_info import filter_by_traits
-	from .cached_info   import get_cached
 	from .html_cache    import make_next_table_id
 	from .html_shared   import *
 except ModuleNotFoundError:
 	from  log_utils     import timed
 	from  alliance_info import filter_by_traits
-	from  cached_info   import get_cached
 	from  html_cache    import make_next_table_id
 	from  html_shared   import *
 	
@@ -110,6 +108,9 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	# Simplify inclusion of the sort function code
 	sort_func = f'class="blub nam" onclick="sort(%s,\'{table_id}\',2)"'
 
+	# Static text to use for Vertical Dividers
+	VERTICAL_DIVIDER = ' <td width="2" rowspan="2" style="background:#343734;"></td>'
+
 	# Create the headings for the Alliance Info table.
 	html_file.append('<tr class="hblu" style="font-size:14pt;">')
 	html_file.append(f' <td width="200" rowspan="2" {sort_func % 0}>Name</td>')
@@ -120,47 +121,55 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	html_file.append(f' <td rowspan="2" {sort_func % 1} style="min-width:80px">Total<br>Power</td>')
 	html_file.append(f' <td rowspan="2" {sort_func % 2} style="min-width:80px">Strongest<br>Team</td>')
 	html_file.append(f' <td rowspan="2" {sort_func % 3} style="min-width:50px">Total<br>Chars</td>')
-	html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 				# Vertical Divider
+	html_file.append(VERTICAL_DIVIDER)
 	
-	# Alter the size of the header based on the information being included.
+	# Avg Stats - # cols depends upon info included
 	AVG_COLS = [key for key in INC_KEYS if key != 'abil']
-
 	if AVG_COLS:
+		# Header text depends on the number of columns used
 		AVG = 'Avg' if len(AVG_COLS) == 1 else 'Average'
-		html_file.append(f' <td width="{len(AVG_COLS)*50}" colspan="{len(AVG_COLS)}">{AVG}</td>')	# All Avg Stats
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(f' <td width="{len(AVG_COLS)*50}" colspan="{len(AVG_COLS)}">{AVG}</td>')
+		html_file.append(VERTICAL_DIVIDER)
 
+	# Yellow Stars - 4 cols
 	if MAX_YEL:
-		html_file.append(f' <td width="180" colspan="4">Stars</td>')								# Yel - 4 cols
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(' <td width="180" colspan="4">Stars</td>')
+		html_file.append(VERTICAL_DIVIDER)
 
+	# Red Stars - 4 cols
 	if MAX_RED:
-		html_file.append(f' <td width="180" colspan="4">Red Stars</td>')							# Red - 4 cols
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(' <td width="180" colspan="4">Red Stars</td>')
+		html_file.append(VERTICAL_DIVIDER)
 
+	# Diamonds - 3 cols
 	if MAX_DMD:
-		html_file.append(f' <td width="{40*MAX_DMD}" colspan="{MAX_DMD}">Diamonds</td>')			# Diamonds - 3 cols
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(f' <td width="{40*MAX_DMD}" colspan="{MAX_DMD}">Diamonds</td>')
+		html_file.append(VERTICAL_DIVIDER)
 
+	# Levels - # cols depends upon level of players
 	if MAX_LVL:
 		LVL_COLS = get_lvl_cols(MAX_LVL, stats['DETAILS'])
 		html_file.append(f' <td width="{len(LVL_COLS)*55}" colspan="{len(LVL_COLS)}">Levels</td>')
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(VERTICAL_DIVIDER)
 
+	# ISO - 4 cols
 	if MAX_ISO:
-		html_file.append(f' <td width="180" colspan="4">ISO</td>')									# ISO - 4 cols
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(' <td width="180" colspan="4">ISO</td>')
+		html_file.append(VERTICAL_DIVIDER)
 
+	# Tier - 5 cols
 	if MAX_TIER:
-		html_file.append(f' <td width="240" colspan="5">Gear Tier</td>\n')							# Tier - 5 cols
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(' <td width="240" colspan="5">Gear Tier</td>\n')
+		html_file.append(VERTICAL_DIVIDER)
 
+	# Bas/Spc/Ult/Pas - 4 cols
 	if 'abil' in INC_KEYS:
-		html_file.append(f' <td width="180" colspan="4">T4 Abilities</td>')							# Bas/Spc/Ult/Pas
-		html_file.append(f' <td width="2" rowspan="2" style="background:#343734;"></td>') 			# Vertical Divider
+		html_file.append(' <td width="180" colspan="4">T4 Abilities</td>')
+		html_file.append(VERTICAL_DIVIDER)
 
+	# OP - 4 cols
 	#if MAX_OP:
-	#	html_file.append(f' <td width="180" colspan="4">OP</td>')		   							 # OP - 4 cols
+	#	html_file.append(f' <td width="180" colspan="4">OP</td>')
 	#	html_file.append(f'</tr>')
 
 	# Second Row with subheadings.

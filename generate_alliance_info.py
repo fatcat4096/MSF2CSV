@@ -218,7 +218,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		
 		html_file += f'  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url({FRAME_URL});">\n'
 		html_file += f'   <div class="sml_rel"><img height="45" class="sml_rel" src="{IMG_URL}" alt=""/></div>\n'
-		html_file += f'  </div></td>\n'
+		html_file += '  </div></td>\n'
 
 		# Name Field
 		html_file += f'  <td class="urlb"><a class="urlb"{member_url}><span class="bd">{member_name}</span>{name_second}</a></td>\n'
@@ -264,7 +264,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 				time_value = f"{last_update.strftime('%a, %b %d')}<br><i>({time_diff})</i>"
 			html_file += f'  <td class="{time_color} adat">{time_value}</td>\n'
 		else:
-			html_file += f'  <td colspan="2" class="xx adat">ROSTER NOT SHARED<br><i>Set to <b>ALLIANCE ONLY</b></i></td>\n'
+			html_file += '  <td colspan="2" class="xx adat">ROSTER NOT SHARED<br><i>Set to <b>ALLIANCE ONLY</b></i></td>\n'
 		
 		html_file += ' </tr>\n'
 

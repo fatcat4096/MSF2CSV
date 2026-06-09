@@ -98,7 +98,7 @@ async def update_cached_char_info(AUTH):
 	char_meta = response.json()['meta']['hashes']['chars']
 
 	# Combine the json response sent by the API into a single file and dump it to disk
-	CHAR_INFO  = [f'# Defs to allow JSONs to process as dicts\ntrue  = True\nfalse = False\nnull  = None\n']
+	CHAR_INFO  = ['# Defs to allow JSONs to process as dicts\ntrue  = True\nfalse = False\nnull  = None\n']
 	CHAR_INFO.append(f'playable   = {json.dumps(PLAYABLE,   indent=2, sort_keys=True)}')
 	CHAR_INFO.append(f'unplayable = {json.dumps(UNPLAYABLE, indent=2, sort_keys=True)}')
 
@@ -144,12 +144,12 @@ def update_cached_cost_info(AUTH, print=print):
 	gold_costs  = get_cached('gold_costs')
 	iso_classes = get_cached('iso_classes')
 
-	print (f'Parsing character speeds')
+	print ('Parsing character speeds')
 
 	# Get info about the cost to update to each level
 	get_char_speed_info(AUTH, char_speeds)
 
-	print (f'Parsing level upgrade costs')
+	print ('Parsing level upgrade costs')
 
 	# Get info about the cost to update to each level
 	get_level_cost_info(AUTH, gold_costs)

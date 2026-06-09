@@ -302,8 +302,6 @@ def get_keys(table_format, table, section, hist_date, linked_hist):
 # Calculate gold requirements at last minute and only as required
 def calculate_tot_gold(keys, alliance_info, using_chars, using_players, MIN):
 
-	global cached_costs
-
 	tot_gold = {}
 
 	if 'gold' in keys:
@@ -459,11 +457,11 @@ def generate_images_row(html_cache, line_chars, config):
 
 	# Include a column for "# Pos" info if requested.
 	if config['inc_rank']:
-		html_row.append(f'     <td></td>')
+		html_row.append('     <td></td>')
 
 	# Include a column for "# Avail" info if requested.
 	if config['inc_avail']:
-		html_row.append(f'     <td></td>')
+		html_row.append('     <td></td>')
 
 	# If Summary, create the Label for each section header instead of an Image for each toon.
 	for char in line_chars:
@@ -476,16 +474,16 @@ def generate_images_row(html_cache, line_chars, config):
 	# Include an image of the completion reward if provided.
 	if config['team_power_summary'] and config['inc_comp']:
 		url = local_img_cache(config['portraits'].get(config['inc_comp']), config['req_html'])
-		html_row.append(f'     <td class="img">')
+		html_row.append('     <td class="img">')
 		html_row.append(f'      <div class="cont"><img src="{url}" alt="" width="100"></div>')
 		html_row.append(f'      <div class="cent">{translate_name(config['inc_comp'])}</div>')
-		html_row.append(f'     </td>')
+		html_row.append('     </td>')
 
 	# Include a Team Power column if we have more than one character being displayed
 	if len(config['char_list'])>1:
 		# Include a Tot Gold column for last two cols if gold is being displayed.
 		if 'gold' in config['keys']:
-			html_row.append(f'    <td class="img" colspan="2"><div class="cont"><div><img src="../images/src/gold.png" alt="" width="90"></div></div></td>')
+			html_row.append('    <td class="img" colspan="2"><div class="cont"><div><img src="../images/src/gold.png" alt="" width="90"></div></div></td>')
 		else:
 			html_row.append('     <td></td>')
 
@@ -509,7 +507,7 @@ def generate_team_power_image(char, config):
 			html_cells.append(f'      <div class="cont"><img src="{local_img_cache(config['portraits'][char_name], config['req_html'])}" alt="" width="60"></div>')
 			html_cells.append(f'      <div class="cent" style="font-size:12px;">{translate_name(char_name)}</div>')
 			html_cells.append(f'      <div class="summ">{section_name}</div>')
-			html_cells.append(f'     </td>')
+			html_cells.append('     </td>')
 			break
 
 	# Standard text-based title cell
@@ -517,7 +515,7 @@ def generate_team_power_image(char, config):
 		section_name = translate_name(char).upper().replace(" OR ","<br>OR<br>").replace(" AND ","<br>AND<br>").replace(" (","<br>(").replace(" NON-","<br>NON-").replace(", ",",<br>").replace('-','&#8209;')
 		html_cells.append(f'     <td colspan="{len(config['keys'])}">')
 		html_cells.append(f'      <div class="summ">{section_name}</div>')
-		html_cells.append(f'     </td>')
+		html_cells.append('     </td>')
 
 	return html_cells
 
@@ -563,15 +561,15 @@ def generate_character_image(html_cache, char, config):
 	html_cells.append(f'      <div class="cont{bg_color}">')
 	html_cells.append(f'       <div class="{"" if config['hist_date'] else "zoom"}"><img src="{url}" alt="" width="100"></div>')
 	html_cells.append(f'       <div class="cent">{translate_name(char)}</div>')
-	html_cells.append(f'      </div>')
-	html_cells.append(f'     </td>')
+	html_cells.append('      </div>')
+	html_cells.append('     </td>')
 
 	# If we had room for ISO info, let's add a title and the ISO info now
 	if config['inc_class'] and iso_char and class_cols:
 
 		# If we had room for two columns, add a title/header
 		if class_cols == 2:
-			html_cells.append(f'     <td class="isot">J<br>A<br>R<br>V<br>I<br>S</td>')
+			html_cells.append('     <td class="isot">J<br>A<br>R<br>V<br>I<br>S</td>')
 
 		iso_column = []
 
@@ -909,6 +907,6 @@ def generate_iso_class_cell(html_cache, alliance_info, player_name, char_name, s
 		tool_tip = f'<span class="TT">{iso_class.title()}:<br>{iso_conf}%</span>'
 		html_cells.append(f'     <td class="{iso_class[:4]} T {field_color}">{tool_tip}</td>')
 	else:
-		html_cells.append(f'     <td class="xx">-</td>')
+		html_cells.append('     <td class="xx">-</td>')
 
 	return html_cells

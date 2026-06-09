@@ -4163,6 +4163,9 @@ playable   = {
         "KnullChallengers"
       ],
       "id": "Hellverine",
+      "invisibleTraits": [
+        "Exposed"
+      ],
       "mission": false,
       "name": "Hellverine",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Hellverine_ceeca87c.png",
@@ -5325,7 +5328,8 @@ playable   = {
       "description": "In a dimension where the Tesseract fell to Earth and landed in Mohawk Nation, Kahhori absorbed its energy, using it to journey through the stars.",
       "id": "Kahhori",
       "invisibleTraits": [
-        "AForce"
+        "AForce",
+        "Exposed"
       ],
       "mission": false,
       "name": "Kahhori",
@@ -12135,6 +12139,9 @@ playable   = {
     {
       "description": "Born from the Carnage symbiote, the 1,000th spawn in its line, Toxin uses his enhanced senses and sharp claws to expose enemies, cripple their defenses, and leave lasting damage in his wake.",
       "id": "Toxin",
+      "invisibleTraits": [
+        "Exposed"
+      ],
       "mission": false,
       "name": "Toxin",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_Toxin_13ab057e.png",
@@ -13393,13 +13400,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "987f4c0e575ef55177ab",
-      "chars": "46afa0c0927407fb75f3",
+      "all": "c7124e09a39fc2d09724",
+      "chars": "2ee0fc24bf7c5ace904c",
       "drops": "80697619015b84c999b8",
-      "events": "2aa479dfcc87fd1aba14",
-      "locs": "0da3f0fc3acf529b8f28",
-      "nodes": "8fb67f7e4bbf886a1848",
-      "other": "7918fb673f0d7f002b6d"
+      "events": "f7fa8a11da45b18285d4",
+      "locs": "213c4e9e6fd56a42d14b",
+      "nodes": "2d8bfa87f89ab81ed7a5",
+      "other": "f95bb8656e5d009d70a6"
     },
     "perTotal": 372,
     "version": 1
@@ -14259,13 +14266,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "987f4c0e575ef55177ab",
-      "chars": "46afa0c0927407fb75f3",
+      "all": "c7124e09a39fc2d09724",
+      "chars": "2ee0fc24bf7c5ace904c",
       "drops": "80697619015b84c999b8",
-      "events": "2aa479dfcc87fd1aba14",
-      "locs": "0da3f0fc3acf529b8f28",
-      "nodes": "8fb67f7e4bbf886a1848",
-      "other": "7918fb673f0d7f002b6d"
+      "events": "f7fa8a11da45b18285d4",
+      "locs": "213c4e9e6fd56a42d14b",
+      "nodes": "2d8bfa87f89ab81ed7a5",
+      "other": "f95bb8656e5d009d70a6"
     },
     "perTotal": 44,
     "version": 1

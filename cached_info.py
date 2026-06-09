@@ -9,7 +9,7 @@ import os
 import pickle
 
 
-from copy import copy, deepcopy
+from copy import deepcopy
 
 
 try:
