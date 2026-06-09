@@ -5,16 +5,14 @@ Routines used by one or more of the html generation routines in msf2csv.py.
 """
 
 
-import string
-
 try:
 	from .log_utils  import timed
 	from .html_cache import make_next_color_id
-	from .gradients  import *
+	from .gradients  import color_scale, darken, gold_color_scale, grayscale, iso_color_scale
 except ModuleNotFoundError:
 	from  log_utils  import timed
 	from  html_cache import make_next_color_id
-	from  gradients  import *
+	from  gradients  import color_scale, darken, gold_color_scale, grayscale, iso_color_scale
 
 
 # Just hide the messiness.

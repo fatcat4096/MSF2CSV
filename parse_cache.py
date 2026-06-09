@@ -7,9 +7,9 @@ These are used to de-duplicate entries in the historical data structures of alli
 """
 
 try:
-	from .log_utils import *
+	from .log_utils import timed
 except ModuleNotFoundError:
-	from  log_utils import *
+	from  log_utils import timed
 
 # Create a cache of entries to optimize our cached_data.
 @timed(level=3)

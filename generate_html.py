@@ -9,31 +9,29 @@ import copy
 
 # Supporting routines
 try:
-	from .log_utils     import *
-	from .alliance_info import *
-	from .generate_css  import *
-	from .html_cache    import *
-	from .html_shared   import *
+	from .log_utils     import timed
+	from .alliance_info import get_hist_date, get_meta_other_chars, get_player_list, get_stp_list, get_strike_teams, get_table_value
+	from .generate_css  import add_css_header
+	from .html_shared   import get_section_label, get_tab_header, translate_name
 except ModuleNotFoundError:
-	from  log_utils     import *
-	from  alliance_info import *
-	from  generate_css  import *
-	from  html_cache    import *
-	from  html_shared   import *
+	from  log_utils     import timed
+	from  alliance_info import get_hist_date, get_meta_other_chars, get_player_list, get_stp_list, get_strike_teams, get_table_value
+	from  generate_css  import add_css_header
+	from  html_shared   import get_section_label, get_tab_header, translate_name
 
 # Routines to create html files.
 try:
-	from .generate_alliance_info   import *
-	from .generate_roster_analysis import *
-	from .generate_by_char         import *
-	from .generate_table           import *
-	from .generate_summary         import *
+	from .generate_alliance_info   import generate_alliance_tab
+	from .generate_roster_analysis import generate_roster_analysis
+	from .generate_by_char         import generate_by_char_tab
+	from .generate_table           import generate_table
+	from .generate_summary         import generate_summary
 except ModuleNotFoundError:
-	from  generate_alliance_info   import *
-	from  generate_roster_analysis import *
-	from  generate_by_char         import *
-	from  generate_table           import *
-	from  generate_summary         import *
+	from  generate_alliance_info   import generate_alliance_tab
+	from  generate_roster_analysis import generate_roster_analysis
+	from  generate_by_char         import generate_by_char_tab
+	from  generate_table           import generate_table
+	from  generate_summary         import generate_summary
 	
 
 # Build specific tab output for use in generating PNG graphics.

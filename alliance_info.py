@@ -5,26 +5,24 @@ Routines used to work with alliance_info, to pull information out or maintain th
 """
 
 
-import string
 import copy
-import re
 
 from datetime     import date, datetime
 
 try:
-	from .log_utils   import *
+	from .log_utils   import timed
 	from .file_io     import find_cached_data
 	from .parse_cache import update_parse_cache
 	from .cached_info import get_cached
 	from .gradients   import color_scale
-	from .html_shared import get_color, format_power
+	from .html_shared import get_color
 except ModuleNotFoundError:
-	from  log_utils   import *
+	from  log_utils   import timed
 	from  file_io     import find_cached_data
 	from  parse_cache import update_parse_cache
 	from  cached_info import get_cached
 	from  gradients   import color_scale
-	from  html_shared import get_color, format_power
+	from  html_shared import get_color
 
 
 @timed(level=3)

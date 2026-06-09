@@ -12,14 +12,14 @@ import asyncio
 from datetime    import datetime
 
 try:
-	from .log_utils       import *
-	from .file_io         import *
+	from .log_utils       import ansi, timed
+	from .file_io         import local_img_cache, remove_tags
 	from .cached_info     import get_cached
 	from .raids_and_lanes import tables
 	from .alliance_info   import filter_by_traits
 except ModuleNotFoundError:
-	from  log_utils       import *
-	from  file_io         import *
+	from  log_utils       import ansi, timed
+	from  file_io         import local_img_cache, remove_tags
 	from  cached_info     import get_cached
 	from  raids_and_lanes import tables
 	from  alliance_info   import filter_by_traits

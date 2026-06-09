@@ -11,12 +11,12 @@ try:
 	from .log_utils     import timed
 	from .alliance_info import filter_by_traits
 	from .html_cache    import make_next_table_id
-	from .html_shared   import *
+	from .html_shared   import get_tab_header, get_value_color
 except ModuleNotFoundError:
 	from  log_utils     import timed
 	from  alliance_info import filter_by_traits
 	from  html_cache    import make_next_table_id
-	from  html_shared   import *
+	from  html_shared   import get_tab_header, get_value_color
 	
 
 # Generate just the Alliance Tab contents.

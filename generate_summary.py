@@ -9,13 +9,15 @@ import copy
 
 
 try:
-	from .log_utils      import *
-	from .html_shared    import *
-	from .generate_table import *
+	from .log_utils      import timed
+	from .html_shared    import get_section_label
+	from .alliance_info  import get_meta_other_chars, get_player_list, get_stp_list, get_table_value
+	from .generate_table import generate_table
 except ModuleNotFoundError:
-	from  log_utils      import *
-	from  html_shared    import *
-	from  generate_table import *
+	from  log_utils      import timed
+	from  html_shared    import get_section_label
+	from  alliance_info  import get_meta_other_chars, get_player_list, get_stp_list, get_table_value
+	from  generate_table import generate_table
 
 
 @timed(level=3)

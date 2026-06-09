@@ -11,12 +11,12 @@ try:
 	from .log_utils   import timed
 	from .file_io     import remove_tags
 	from .html_cache  import make_next_table_id
-	from .html_shared import *
+	from .html_shared import format_power, get_field_value, get_value_color, get_value_color_ext
 except ModuleNotFoundError:
 	from  log_utils   import timed
 	from  file_io     import remove_tags
 	from  html_cache  import make_next_table_id
-	from  html_shared import *
+	from  html_shared import format_power, get_field_value, get_value_color, get_value_color_ext
 
 
 # Generate just the Alliance Tab contents.

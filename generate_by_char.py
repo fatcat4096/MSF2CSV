@@ -5,17 +5,17 @@ Generate the tab for By Character output.
 """
 
 try:
-	from .log_utils      import *
-	from .alliance_info  import *
+	from .log_utils      import timed
+	from .alliance_info  import get_hist_date, get_meta_other_chars, get_player_list, get_stp_list, is_under_min
 	from .cached_info    import get_cached
-	from .html_shared    import *
-	from .generate_table import *
+	from .html_shared    import translate_name
+	from .generate_table import generate_table
 except ModuleNotFoundError:
-	from  log_utils      import *
-	from  alliance_info  import *
+	from  log_utils      import timed
+	from  alliance_info  import get_hist_date, get_meta_other_chars, get_player_list, get_stp_list, is_under_min
 	from  cached_info    import get_cached
-	from  html_shared    import *
-	from  generate_table import *
+	from  html_shared    import translate_name
+	from  generate_table import generate_table
 
 
 # By_Char data should use same hist_date as provided in inc_hist or inline_hist

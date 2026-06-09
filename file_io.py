@@ -18,11 +18,11 @@ from selenium.webdriver.common.by import By
 from urllib.parse import quote, unquote
 
 try:
-	from .log_utils   import *
-	from .driver_pool import *
+	from .log_utils   import ansi, timed
+	from .driver_pool import get_driver, kill_process_tree, release_driver
 except ModuleNotFoundError:
-	from  log_utils   import *
-	from  driver_pool import *
+	from  log_utils   import ansi, timed
+	from  driver_pool import get_driver, kill_process_tree, release_driver
 
 
 

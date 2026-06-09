@@ -13,9 +13,9 @@ from selenium   import webdriver
 from contextlib import contextmanager
 
 try:
-	from .log_utils import *
+	from .log_utils import ansi, timed
 except ModuleNotFoundError:
-	from  log_utils import *
+	from  log_utils import ansi, timed
 
 
 

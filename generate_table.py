@@ -6,17 +6,17 @@ Generate one table of roster information per requested specifications.
 
 
 try:
-	from .log_utils     import *
-	from .alliance_info import *
-	from .html_cache    import *
-	from .html_shared   import *
+	from .log_utils     import timed
+	from .alliance_info import find_roster_value, get_player_list, get_table_value, insert_dividers, remove_min_iso_tier, sort_and_filter_others
+	from .html_cache    import lookup_table_ids, make_next_anchor_id
+	from .html_shared   import get_field_value, get_value_color, get_value_color_ext, translate_name
 	from .cached_info   import get_cached
 	from .file_io       import local_img_cache
 except ModuleNotFoundError:
-	from  log_utils     import *
-	from  alliance_info import *
-	from  html_cache    import *
-	from  html_shared   import *
+	from  log_utils     import timed
+	from  alliance_info import find_roster_value, get_player_list, get_table_value, insert_dividers, remove_min_iso_tier, sort_and_filter_others
+	from  html_cache    import lookup_table_ids, make_next_anchor_id
+	from  html_shared   import get_field_value, get_value_color, get_value_color_ext, translate_name
 	from  cached_info   import get_cached
 	from  file_io       import local_img_cache
 
