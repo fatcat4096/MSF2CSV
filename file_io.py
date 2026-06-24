@@ -203,12 +203,12 @@ def write_cached_data(alliance_info, file_path='', timestamp='update', filename=
 	
 
 
-# Has it been less than 24 hours since last update of cached_data?
+# Has it been less than 2 hours since last update of cached_data?
 def fresh_enough(alliance_or_file):
 
 	last_refresh = age_of_cached_data(alliance_or_file)
 
-	return last_refresh and last_refresh < 86400
+	return last_refresh and last_refresh < 7200
 		
 
 
