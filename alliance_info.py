@@ -244,7 +244,11 @@ def sort_and_filter_others(alliance_info, table, section, table_format, player_l
 		chars_in_report = {char:sum([not section['under_min'].get(player,{}).get(char,True) for player in players_in_report]) for char in other_chars}
 
 		# When evaluating character popularity, only consider chars that will actually be included.
-		dict_score = {f'{dict_ready.get(char,0):03}{dict_power[char]:010}':char for char in other_chars if chars_in_report[char]}
+		if not table_format['profile']['min'].get('red'):
+			dict_score = {f'{dict_ready.get(char,0):03}{dict_power[char]:010}':char for char in other_chars if chars_in_report[char]}
+		# Only use power if min red stars / diamonds a criteria
+		else:
+			dict_score = {f'{dict_power[char]:010}':char for char in other_chars if chars_in_report[char] and dict_ready.get(char)}
 		other_chars = [dict_score[score] for score in sorted(dict_score, reverse=True)]
 
 		# If max_others is defined, reduce the number of heroes included in Others.
