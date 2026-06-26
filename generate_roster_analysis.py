@@ -61,7 +61,7 @@ def generate_roster_analysis(alliance_info, html_cache, hist_date, table_format=
 
 	# Only include Dividers if using as part of a multi-tab document
 	if using_tabs:
-		html_file += ['<div id="RosterAnalysis" class="tcon">'] + html_file + ['</div>']
+		html_file = ['<div id="RosterAnalysis" class="tcon">'] + html_file + ['</div>\n']
 
 	return '\n'.join(html_file)
 		
@@ -170,10 +170,9 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	# OP - 4 cols
 	#if MAX_OP:
 	#	html_file.append(f' <td width="180" colspan="4">OP</td>')
-	#	html_file.append(f'</tr>')
 
 	# Second Row with subheadings.
-	html_file.append('<tr>')
+	html_file.append('</tr>\n<tr>')
 
 	# Simplify inclusion of the sort function code
 	sort_func = f'class="ltbb" onclick="sort(%s,\'{table_id}\',2)"'
@@ -362,7 +361,7 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 		#	for key in range(4):
 		#		html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
 
-		#html_file.append('</tr>')
+		html_file.append('</tr>')
 
 	html_file.append('</table>')
 

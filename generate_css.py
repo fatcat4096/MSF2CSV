@@ -459,6 +459,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
 	if hist_tab:
 		html_file += '#Hist {background: #343734;}\n'
 
+	html_file += '#RosterAnalysis {background: #343734;}\n'	
 	html_file += '#AllianceInfo {background: #343734;}\n'	
 	html_file += '#ByChar {background: #343734;}\n'	
 

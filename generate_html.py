@@ -6,6 +6,7 @@ Takes the processed alliance / roster data and generate readable output to spec.
 
 
 import copy
+import re
 
 # Supporting routines
 try:
@@ -367,8 +368,12 @@ def generate_tabbed_html(alliance_info, table, table_format):
 	html_file += generate_by_char_tab    (alliance_info, html_cache, hist_date or True,      using_tabs=True)
 
 	# Optimize if large? Remove white space and carriage returns from center section.
-	if table_format.get('opt_if_large') and len(html_file) > 5000000:
-		html_file = ''.join([x.strip() for x in html_file.split('\n')])
+	if table_format.get('optimize') and len(html_file) > 5000000:
+		html_file = ''.join([x.strip() for x in html_file.split('\n')]).replace(' alt=""','')
+
+		# Still too large? Remove tool tips
+		if len(html_file) > 7000000:
+			html_file = re.sub(r'<span class="TT">.*?</span>', '', html_file)
 	
 	# Finish it with the CSS Header at the top and final lines on the end.
 	return add_css_header(table_name, html_cache, html_file, lane_name, len(lanes), hist_tab, using_tabs=True)
@@ -409,23 +414,10 @@ def generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_d
 		lane_name  = get_table_value(table_format, table, key='lane_name', default='Lane')
 		divider_id = ['Hist',lane_name][not hist_date] + str(lanes.index(lane)+1)
 		
-		# Only include Dividers if using as part of a multi-tab document
-		if using_tabs:
-			html_file += f'<div id="{divider_id}" class="tcon">\n'
-
-		# Insert the team_power_summary at the top if requested.
-		# Only use if using_tabs because generate_lanes() is called MULTIPLE TIMES if not in a tabbed environment
-		
-		if inc_summary and using_tabs:
-
-			# Team List == full lane, means we will report on every entry.
-			team_list = [get_section_label(section) for section in lane]
-
-			# Add the table to the top!
-			html_file += generate_summary(alliance_info, table, [lane], table_format, team_list, strike_teams, hist_date or side_hist, html_cache)
-
 		# Process each section individually, filtering only the specified traits into the Active Chars list.
 		for section_idx, section in enumerate(lane):
+
+			html_section = ''
 
 			# Do we have subsections defined?
 			subsections = section.pop('subsections', None)
@@ -434,8 +426,8 @@ def generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_d
 			if subsections:
 
 				# Add an enclosing row to contain all the subsections
-				html_file += ' <tr style="vertical-align:top">'
-				html_file += '  <td>\n'
+				html_section += ' <tr style="vertical-align:top">'
+				html_section += '  <td>\n'
 
 				# Get the full list of chars available in this section and save them to calc num_avail in subsections
 				meta_chars, other_chars = get_meta_other_chars(alliance_info, table, section, table_format)
@@ -450,38 +442,38 @@ def generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_d
 						subsection = copy.deepcopy(section) | subsection
 
 						# Generate the subsection
-						html_file += generate_section(alliance_info, table, subsection, table_format, strike_teams, hist_date, side_hist, html_cache)
+						html_section += generate_section(alliance_info, table, subsection, table_format, strike_teams, hist_date, side_hist, html_cache)
 
 						# If not the final subsection, add a divider row. 
 						if subsection_idx != len(subsections)-1:
-							html_file += '  </td>\n'
-							html_file += '  <td>\n'
+							html_section += '  </td>\n'
+							html_section += '  <td>\n'
 
 					# If subsection empty, explicit newline. End the row and begin a new one.
 					else:
-						html_file += '  </td>\n'
-						html_file += ' </tr>\n'
-						html_file += ' <tr style="vertical-align:top">\n'
-						html_file += '  <td>\n'
+						html_section += '  </td>\n'
+						html_section += ' </tr>\n'
+						html_section += ' <tr style="vertical-align:top">\n'
+						html_section += '  <td>\n'
 
 				# Finish the enclosing row
-				html_file += '  </td>\n'
-				html_file += ' </tr>\n'
+				html_section += '  </td>\n'
+				html_section += ' </tr>\n'
 
 			else:
-				html_file += generate_section(alliance_info, table, section, table_format, strike_teams, hist_date, side_hist, html_cache)
+				html_section += generate_section(alliance_info, table, section, table_format, strike_teams, hist_date, side_hist, html_cache)
 
 			# Let's make it easy on ourselves. Start and end every section the same way.
-			if html_file:
-				html_file = '<table>\n <tr style="vertical-align:top">  <td>\n' + html_file + '  </td>\n </tr>\n</table>\n'
+			if html_section:
+				html_file += '<table>\n <tr style="vertical-align:top">\n  <td>\n' + html_section + '  </td>\n </tr>\n</table>\n'
 
 			# If not the final section, add a divider row. 
 			if not section_idx == len(lane)-1:
 				html_file += '    <p></p>\n'
 
-		# After Lane content is done, close the div for the Tab implementation.
+		# Only include Dividers if using as part of a multi-tab document
 		if using_tabs:
-			html_file += '</div>\n'
+			html_file = f'<div id="{divider_id}" class="tcon">\n{html_file}</div>\n'
 
 	return html_file
 

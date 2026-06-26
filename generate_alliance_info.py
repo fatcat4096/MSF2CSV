@@ -26,7 +26,7 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	html_file = ''
 
 	# Options are Alpha, Role, or TCP
-	sort_by = table_format.get('sort_by')
+	sort_by = table_format.get('sort_by', 'role')
 	
 	# Simple alphabetic sort?
 	if sort_by == 'alpha':
