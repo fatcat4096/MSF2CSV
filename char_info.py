@@ -1187,6 +1187,40 @@ playable   = {
       "unlockStars": 3
     },
     {
+      "description": "Bestowed a mystical sword imbued with pure sunlight, Blade joins the ranks of the Mighty. Using his new mystic powers to heal allies and burn away his foes.",
+      "id": "BladeMighty",
+      "invisibleTraits": [
+        "Avenger"
+      ],
+      "mission": false,
+      "name": "Blade (Mighty)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_BladeMighty_a93a93c7.png",
+      "starItems": [
+        "SHARD_BLADEMIGHTY",
+        "RS_BLADEMIGHTY_1",
+        "RS_BLADEMIGHTY_2",
+        "RS_BLADEMIGHTY_3",
+        "RS_BLADEMIGHTY_4",
+        "RS_BLADEMIGHTY_5",
+        "RS_BLADEMIGHTY_6",
+        "RS_BLADEMIGHTY_7",
+        "PD_BLADEMIGHTY_1",
+        "PD_BLADEMIGHTY_2",
+        "PD_BLADEMIGHTY_3",
+        "PD_BLADEMIGHTY_4",
+        "PD_BLADEMIGHTY_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "City",
+        "Mystic",
+        "Support",
+        "AmazingAvenger"
+      ],
+      "unlockStars": 1
+    },
+    {
       "description": "Known as the Living Bomb-Burst, Blastaar is a brutal warlord from the Negative Zone with a body built to withstand extreme punishment and a savage thirst for conquest and domination.",
       "eventTraits": [
         "ChaosTeam",
@@ -4407,7 +4441,8 @@ playable   = {
         "Bio",
         "Protector",
         "Wave1Avenger",
-        "Gamma"
+        "Gamma",
+        "AmazingAvenger"
       ],
       "unlockStars": 2
     },
@@ -7139,7 +7174,7 @@ playable   = {
         "ExaltedXMen",
         "SPB_05_Gamma"
       ],
-      "unlockStars": 2
+      "unlockStars": 3
     },
     {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
@@ -8858,6 +8893,40 @@ playable   = {
       "unlockStars": 2
     },
     {
+      "description": "Rachel Cole-Alves is a former Marine driven by tragedy. She has taken up the skull insignia to exact deadly vengeance on her enemies.",
+      "id": "RachelColeAlves",
+      "invisibleTraits": [
+        "Avenger"
+      ],
+      "mission": false,
+      "name": "Rachel Cole-Alves",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_RachelColeAlves_2b505892.png",
+      "starItems": [
+        "SHARD_RACHELCOLEALVES",
+        "RS_RACHELCOLEALVES_1",
+        "RS_RACHELCOLEALVES_2",
+        "RS_RACHELCOLEALVES_3",
+        "RS_RACHELCOLEALVES_4",
+        "RS_RACHELCOLEALVES_5",
+        "RS_RACHELCOLEALVES_6",
+        "RS_RACHELCOLEALVES_7",
+        "PD_RACHELCOLEALVES_1",
+        "PD_RACHELCOLEALVES_2",
+        "PD_RACHELCOLEALVES_3",
+        "PD_RACHELCOLEALVES_4",
+        "PD_RACHELCOLEALVES_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "City",
+        "Skill",
+        "Blaster",
+        "AmazingAvenger"
+      ],
+      "unlockStars": 2
+    },
+    {
       "description": "A powerful telepath and time-displaced mutant, Rachel Summers overwhelms her enemies by spreading negative status effects and a passive attack that targets any enemy who is stunned or moving too fast to think clearly.",
       "eventTraits": [
         "Conqueror",
@@ -10553,6 +10622,9 @@ playable   = {
         "BestBuddies"
       ],
       "id": "SpiderMan",
+      "invisibleTraits": [
+        "Avenger"
+      ],
       "mission": false,
       "name": "Spider-Man",
       "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderMan_4fdcec3d.png",
@@ -10578,7 +10650,8 @@ playable   = {
         "Bio",
         "Brawler",
         "SpiderVerse",
-        "WebWarrior"
+        "WebWarrior",
+        "AmazingAvenger"
       ],
       "unlockStars": 2
     },
@@ -10878,6 +10951,41 @@ playable   = {
         "AForce"
       ],
       "unlockStars": 3
+    },
+    {
+      "description": "Julia Carpenter uses her spider-like abilities and psionic webs to outmaneuver her enemies, reducing and flipping their positive effects.",
+      "id": "SpiderWomanJulia",
+      "invisibleTraits": [
+        "Avenger"
+      ],
+      "mission": false,
+      "name": "Spider-Woman (Julia)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_SpiderWomanJulia_d937fcea.png",
+      "starItems": [
+        "SHARD_SPIDERWOMANJULIA",
+        "RS_SPIDERWOMANJULIA_1",
+        "RS_SPIDERWOMANJULIA_2",
+        "RS_SPIDERWOMANJULIA_3",
+        "RS_SPIDERWOMANJULIA_4",
+        "RS_SPIDERWOMANJULIA_5",
+        "RS_SPIDERWOMANJULIA_6",
+        "RS_SPIDERWOMANJULIA_7",
+        "PD_SPIDERWOMANJULIA_1",
+        "PD_SPIDERWOMANJULIA_2",
+        "PD_SPIDERWOMANJULIA_3",
+        "PD_SPIDERWOMANJULIA_4",
+        "PD_SPIDERWOMANJULIA_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Hero",
+        "City",
+        "Bio",
+        "Controller",
+        "SpiderVerse",
+        "AmazingAvenger"
+      ],
+      "unlockStars": 2
     },
     {
       "description": "Squirrel Girl is a Young Avenger who uses her unbeatable squirrel powers to eat nuts and kick butts!",
@@ -13400,15 +13508,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "f3ec3962f931d8cc5961",
-      "chars": "d96d7a9fce953eabb92a",
-      "drops": "70c76a6d93198c0b38f5",
-      "events": "88868382e43b455138a2",
-      "locs": "fd1078c9b51f8667b603",
-      "nodes": "72fb6a11c0a3ece792fc",
-      "other": "24c685f83b36366d2877"
+      "all": "b88a5d38047dc92f778d",
+      "chars": "fddbcb6c99258415d748",
+      "drops": "cd4710e0d91cb0659187",
+      "events": "0b54a28d802cdff6f1ec",
+      "locs": "80e6ea33001c0a91371a",
+      "nodes": "ebb6ab0ee9b8f919230e",
+      "other": "b1a9e00124169cc9442f"
     },
-    "perTotal": 372,
+    "perTotal": 375,
     "version": 1
   }
 }
@@ -14266,13 +14374,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "f3ec3962f931d8cc5961",
-      "chars": "d96d7a9fce953eabb92a",
-      "drops": "70c76a6d93198c0b38f5",
-      "events": "88868382e43b455138a2",
-      "locs": "fd1078c9b51f8667b603",
-      "nodes": "72fb6a11c0a3ece792fc",
-      "other": "24c685f83b36366d2877"
+      "all": "b88a5d38047dc92f778d",
+      "chars": "fddbcb6c99258415d748",
+      "drops": "cd4710e0d91cb0659187",
+      "events": "0b54a28d802cdff6f1ec",
+      "locs": "80e6ea33001c0a91371a",
+      "nodes": "ebb6ab0ee9b8f919230e",
+      "other": "b1a9e00124169cc9442f"
     },
     "perTotal": 44,
     "version": 1

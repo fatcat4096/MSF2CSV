@@ -411,7 +411,7 @@ def translate_name(value):
 						"Spider-Man (Pavitr)":"Spider-Man<br>(Pavitr)",
 						"Spider-Man (Symbiote)":"Spider-Man<br>(Symbiote)",
 						"Spider-Man 2099":"Spider-Man<br>2099",
-						"Spider-Woman (Julia Carpenter)":"Spider-Woman<br>(Julia Carpenter)",
+						"Spider-Woman (Julia)":"Spider-Woman<br>(Julia)",
 						"Star-Lord (Annihilation)":"Star-Lord<br>(Annihilation)",
 						"Star-Lord (T'Challa)":"Star-Lord<br>(T'Challa)",
 						"Storm (Mighty)":"Storm<br>(Mighty)",
