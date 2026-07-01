@@ -179,7 +179,7 @@ def get_session(AUTH_OR_TOKEN):
 	}
 
 	# Automate retries and incremental backoff on failure
-	retries = Retry(total=5, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
+	retries = Retry(total=3, backoff_factor=0.1, status_forcelist=[500, 502, 503, 504])
 	session.mount('http://',  HTTPAdapter(max_retries=retries))
 	session.mount('https://', HTTPAdapter(max_retries=retries))
 	
@@ -207,9 +207,13 @@ def request_alliance_info(AUTH_OR_TOKEN):
 	session = get_session(AUTH_OR_TOKEN)
 
 	# Send request for Alliance Info
-	return session.get(
-		url     = f'{API_ENDPOINT}/player/v1/alliance/card', 
-	)
+	try:
+		return session.get(
+			url     = f'{API_ENDPOINT}/player/v1/alliance/card', 
+		)
+	except requests.exceptions.RetryError as exc:
+		print (f'{ansi.ltred}EXCEPTION:{ansi.rst} {ansi.gray}{type(exc).__name__}: {exc}{ansi.rst}')
+		
 
 
 # Need this for the Alliance members 	
