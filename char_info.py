@@ -77,7 +77,8 @@ playable   = {
       "description": "Guardian of the Soul Stone, Adam Warlock prevents his Infinity Watch allies' positive effects from being cleared or flipped.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Omega"
       ],
       "id": "AdamWarlock",
       "mission": false,
@@ -114,7 +115,8 @@ playable   = {
     {
       "description": "One of the most powerful witches alive, Agatha Harkness is a centuries-old survivor of the Salem Witch Trials who uses her potent spells to debilitate her enemies.",
       "eventTraits": [
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "AgathaHarkness",
       "mission": false,
@@ -150,6 +152,7 @@ playable   = {
     {
       "description": "Disabled veteran Flash Thompson volunteered to be bonded with the Venom symbiote, combining his mastery of weaponry with symbiote savagery to deal massive damage to their enemies.",
       "eventTraits": [
+        "SentryChallengers",
         "BestSpiderBuddies"
       ],
       "id": "AgentVenom",
@@ -350,7 +353,8 @@ playable   = {
       "description": "Brawn exercises his brilliant mind to control his Hulk persona, supporting his Gamma allies to keep them in the fight.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Gamma"
       ],
       "id": "AmadeusCho",
       "mission": false,
@@ -422,6 +426,9 @@ playable   = {
     },
     {
       "description": "For centuries, the Ancient One served as Sorcerer Supreme, protecting the Earth from mystical threats from other dimensions. She uses her mastery of the mystic arts to deal massive damage to her enemies while harnessing seemingly random magic forces to aid her teammates.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "AncientOne",
       "mission": false,
       "name": "Ancient One",
@@ -454,6 +461,11 @@ playable   = {
     },
     {
       "description": "Warren Kenneth Worthington III, also known as Angel, rules the battlefield from above, soaring through danger to bless his allies with healing and positive effects.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Angel",
       "invisibleTraits": [
         "Xmen"
@@ -489,6 +501,10 @@ playable   = {
     },
     {
       "description": "The tyrant of the Negative Zone who uses the Cosmic Control Rod to eliminate all that might threaten him.",
+      "eventTraits": [
+        "SPB_05_Omega",
+        "TowerChallenger"
+      ],
       "id": "Annihilus",
       "mission": false,
       "name": "Annihilus",
@@ -526,6 +542,7 @@ playable   = {
     {
       "description": "An altered Venom Symbiote turned Eddie Brock into Anti-Venom, a Hero who heals rather than destroys.",
       "eventTraits": [
+        "SentryChallengers",
         "BestSpiderBuddies"
       ],
       "id": "AntiVenom",
@@ -600,6 +617,9 @@ playable   = {
     },
     {
       "description": "The first mutant, En Sabah Nur, Apocalypse has arrived! With his incalculable power he destroys enemy defenses and grants Safeguard and Immunity to his allies.",
+      "eventTraits": [
+        "TowerChallenger"
+      ],
       "id": "Apocalypse",
       "invisibleTraits": [
         "Chargeable"
@@ -704,7 +724,8 @@ playable   = {
       "description": "A ruthless teleporter and master of surprise, Azazel strikes from the shadows to deliver multiple blows against his enemies.",
       "eventTraits": [
         "KnullChallengers",
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta"
       ],
       "id": "Azazel",
       "mission": false,
@@ -741,7 +762,8 @@ playable   = {
       "description": "A powerful sorcerer who weakens his enemies with forbidden magic.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Beta"
       ],
       "id": "BaronMordo",
       "mission": false,
@@ -778,7 +800,8 @@ playable   = {
     {
       "description": "Beast is a master of Mutant science who improves any X-Men team by healing and granting positive effects.",
       "eventTraits": [
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Beast",
       "invisibleTraits": [
@@ -1155,6 +1178,9 @@ playable   = {
     },
     {
       "description": "Named \"The Daywalker\" by the vampires he hunts and exterminates, Blade uses his martial arts mastery and half-vampire powers to make sure no one suffers at the hands of the undead ever again.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "Blade",
       "mission": false,
       "name": "Blade",
@@ -1188,6 +1214,9 @@ playable   = {
     },
     {
       "description": "Bestowed a mystical sword imbued with pure sunlight, Blade joins the ranks of the Mighty. Using his new mystic powers to heal allies and burn away his foes.",
+      "eventTraits": [
+        "SPB_05_Gamma"
+      ],
       "id": "BladeMighty",
       "invisibleTraits": [
         "Avenger"
@@ -1216,7 +1245,8 @@ playable   = {
         "City",
         "Mystic",
         "Support",
-        "AmazingAvenger"
+        "AmazingAvenger",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 1
     },
@@ -1226,7 +1256,9 @@ playable   = {
         "ChaosTeam",
         "KnullChallengers",
         "Conqueror",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Omega",
+        "TowerChallenger"
       ],
       "id": "Blastaar",
       "mission": false,
@@ -1296,6 +1328,10 @@ playable   = {
     },
     {
       "description": "A brilliant scientist turned living antimatter reactor, Adam Brashear channles cosmic energy to deliver devastating blows. As one of Earth's most powerful champions, he brings unmatched resilience and can remove powerful effects from enemies in any battle.",
+      "eventTraits": [
+        "SPB_05_Omega",
+        "TowerChallenger"
+      ],
       "id": "BlueMarvel",
       "mission": false,
       "name": "Blue Marvel",
@@ -1397,7 +1433,8 @@ playable   = {
     {
       "description": "A time-traveler from the future who can manipulate turn order and charge up attacks to blast his enemies. ",
       "eventTraits": [
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Cable",
       "invisibleTraits": [
@@ -1438,7 +1475,9 @@ playable   = {
       "description": "When he isn't using his superhuman durability to deflect enemy attacks, Sam Guthrie delivers crushing blows that slow and stun the opposition.",
       "eventTraits": [
         "Stormbound",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "Cannonball",
       "mission": false,
@@ -1649,6 +1688,7 @@ playable   = {
     {
       "description": "An insane brawler that viciously tears through foes with negative effects, attacking more frequently as their health decreases.",
       "eventTraits": [
+        "SentryChallengers",
         "BestSpiderBuddies",
         "BestVillainBuddies"
       ],
@@ -1993,7 +2033,9 @@ playable   = {
     {
       "description": "Cull Obsidian is a Protector who guards the Black Order and retaliates against those who would defy Thanos.",
       "eventTraits": [
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Omega",
+        "TowerChallenger"
       ],
       "id": "CullObsidian",
       "mission": false,
@@ -2102,7 +2144,8 @@ playable   = {
       "eventTraits": [
         "KnullChallengers",
         "Conqueror",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "DaimonHellstrom",
       "mission": false,
@@ -2171,6 +2214,9 @@ playable   = {
     },
     {
       "description": "A tough bruiser who delivers bonus attacks, chain attacks, and counterattacks.",
+      "eventTraits": [
+        "SPB_05_Gamma"
+      ],
       "id": "Daredevil",
       "mission": false,
       "name": "Daredevil",
@@ -2206,7 +2252,8 @@ playable   = {
     {
       "description": "Reborn after almost dying fighting The Hand, Daredevil's new look comes with a new attitude. The Vigilante team's Protector, he heals his allies while taunting their enemies, all while wearing the colors of his late father, \"Battlin\" Jack Murdock.",
       "eventTraits": [
-        "Harbingers"
+        "Harbingers",
+        "SPB_05_Alpha"
       ],
       "id": "DaredevilModern",
       "mission": false,
@@ -2304,7 +2351,9 @@ playable   = {
       "description": "Laynia Petrovna uses her mutant powers over the Darkforce, to saturate her enemies in dark energy and siphon whats left of them to restore herself and her allies.",
       "eventTraits": [
         "Stormbound",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "Darkstar",
       "mission": false,
@@ -2378,8 +2427,10 @@ playable   = {
       "description": "A magical unicorn who specializes in stab-shooting vulnerable targets.",
       "eventTraits": [
         "ChaosTeam",
+        "SentryChallengers",
         "AnnihilationWave",
-        "BestBuddies"
+        "BestBuddies",
+        "SPB_05_Gamma"
       ],
       "id": "Deadpool",
       "mission": false,
@@ -2541,6 +2592,9 @@ playable   = {
     },
     {
       "description": "Sorcerer Supreme and versatile healer with the ability to remove effects from friends and foes.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "DoctorStrange",
       "invisibleTraits": [
         "Defender",
@@ -2614,7 +2668,8 @@ playable   = {
     {
       "description": "Domino is X-Force's Controller whose Mutant luck lets her allies Dodge and deal deadlier Critical hits.",
       "eventTraits": [
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Domino",
       "mission": false,
@@ -2755,7 +2810,9 @@ playable   = {
     {
       "description": "The Black Order's Support, Ebony Maw aids Thanos by granting positive effects to allies.",
       "eventTraits": [
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Omega",
+        "TowerChallenger"
       ],
       "id": "EbonyMaw",
       "mission": false,
@@ -2829,7 +2886,9 @@ playable   = {
     {
       "description": "Maria Marquez was an intrepid archaeologist who had dedicated her life to finding a lost temple to the Mayan Moon goddess, Ixchel. When she finally found it, the goddess chose her as an avatar. Now, as Eclipse, she defends her heritage and protects her people from those who would desecrate and exploit their sacred past.",
       "eventTraits": [
-        "MSFOriginal"
+        "MSFOriginal",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "Eclipse",
       "mission": false,
@@ -2902,7 +2961,8 @@ playable   = {
     {
       "description": "A stealthy assassin capable of dealing immense damage to a single target.",
       "eventTraits": [
-        "Harbingers"
+        "Harbingers",
+        "SPB_05_Alpha"
       ],
       "id": "Elektra",
       "mission": false,
@@ -2942,7 +3002,8 @@ playable   = {
       "eventTraits": [
         "KnullChallengers",
         "Conqueror",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "ElsaBloodstone",
       "mission": false,
@@ -2979,7 +3040,9 @@ playable   = {
     {
       "description": "The Hellfire Club's White Queen, Emma Frost dominates foes by bolstering her Mutant Villain allies.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "EmmaFrost",
       "invisibleTraits": [
@@ -3017,7 +3080,9 @@ playable   = {
     {
       "description": "After surviving a terrible attack on the Mutant nation of Genosha, the former White Queen Emma Frost joined forces with her former enemies the X-Men to protect and mentor future Children of the Atom.",
       "eventTraits": [
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Alpha",
+        "TowerChallenger"
       ],
       "id": "EmmaFrostXMen",
       "mission": false,
@@ -3052,6 +3117,11 @@ playable   = {
     },
     {
       "description": "The Executioner, son of a storm giant and goddess, is an Asgardian warrior who brings death and destruction to his enemies with both axe and his pair of treasured Earth rifles.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Executioner",
       "mission": false,
       "name": "Executioner",
@@ -3086,7 +3156,8 @@ playable   = {
     {
       "description": "A soldier who excels at War and deals massive damage to enemies who have multiple positive effects.",
       "eventTraits": [
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Falcon",
       "invisibleTraits": [
@@ -3125,6 +3196,9 @@ playable   = {
     },
     {
       "description": "Lieutenant Joaquin Torres impressed Sam Wilson by helping him on a key mission, showing his ingenuity, bravery and technical skill. After Wilson adopted the mantle of Captain America, Joaquin donned the Falcon EXO-7 suit, becoming Cap's closest ally.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "FalconJoaquin",
       "mission": false,
       "name": "Falcon (Joaquin)",
@@ -3269,7 +3343,9 @@ playable   = {
       "description": "The son of Reed Richards and Sue Storm, Franklin uses his abilities to speed up his allies, locks the battlefield to suppress enemy strategies, and hinders his enemies with negative status buffs that shut down their ability to influence the fight.",
       "eventTraits": [
         "Harbingers",
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "FranklinRichards",
       "invisibleTraits": [
@@ -3384,7 +3460,8 @@ playable   = {
       "eventTraits": [
         "Harbingers",
         "KnullChallengers",
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Ghost",
       "mission": false,
@@ -3567,6 +3644,7 @@ playable   = {
     {
       "description": "Following the death of his child, Gorr became The God Butcher, slaying countless gods with All-Black, the Necrosword. He controls the battle with powerful attacks that can clear Charged and Battlefield Effects.",
       "eventTraits": [
+        "SentryChallengers",
         "BestVillainBuddies"
       ],
       "id": "Gorr",
@@ -3673,6 +3751,9 @@ playable   = {
     },
     {
       "description": "A resilient healer who defends allies and has a chance to revive. Protective of Rocket Raccoon.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "Groot",
       "mission": false,
       "name": "Groot",
@@ -3738,6 +3819,7 @@ playable   = {
     {
       "description": "Fueled by alien power, Gwen Stacy bonded with the Venom symbiote to become Gwenom, who uses deadly precision to lash out at her foes.",
       "eventTraits": [
+        "SentryChallengers",
         "BestSpiderBuddies"
       ],
       "id": "Gwenom",
@@ -3778,7 +3860,9 @@ playable   = {
       "description": "Hey, Commander, Gwendolyn Poole here! First of all? Huge fan! Second, you can count on me to charge up my New Warrior buddies and unleash mayhem on the battlefield!",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "SentryChallengers",
+        "AnnihilationWave",
+        "SPB_05_Gamma"
       ],
       "id": "Gwenpool",
       "mission": false,
@@ -4010,7 +4094,9 @@ playable   = {
     {
       "description": "Alex Summers was separated from his family at a young age. After reuniting with his brother Cyclops and their father, the space-pirate Corsair, Alex decided to use his mutant powers to take up the family business, leading the Starjammers as Havok!",
       "eventTraits": [
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Alpha",
+        "TowerChallenger"
       ],
       "id": "Havok",
       "mission": false,
@@ -4081,7 +4167,7 @@ playable   = {
         "Shield",
         "Wave1Avenger"
       ],
-      "unlockStars": 1
+      "unlockStars": 2
     },
     {
       "description": "The all-seeing guardian of the Bifrost, Heimdall removes Stealth from foes so Asgardians may strike.",
@@ -4117,7 +4203,8 @@ playable   = {
     {
       "description": "The Goddess of Death, Hela spreads negative effects to foes while aided by her Undead Asgardian.",
       "eventTraits": [
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Hela",
       "mission": false,
@@ -4158,7 +4245,8 @@ playable   = {
       "eventTraits": [
         "KnullChallengers",
         "Conqueror",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "Hellcat",
       "mission": false,
@@ -4194,7 +4282,8 @@ playable   = {
       "description": "After being killed by Sabretooth and revived by the demon Bagra-ghul, Daken harnesses the power of the Spirit of Vengeance, exposing his enemies with his piercing attacks.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Beta"
       ],
       "id": "Hellverine",
       "invisibleTraits": [
@@ -4232,7 +4321,8 @@ playable   = {
     {
       "description": "With the strength of a demigod and the heart of a hero, Hercules charges into the fight using his immense power to control the battlefield.",
       "eventTraits": [
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Hercules",
       "invisibleTraits": [
@@ -4270,6 +4360,11 @@ playable   = {
     },
     {
       "description": "Herbert Edgar Wyndham, The High Evolutionary, is a brilliant but unethical geneticist dedicated to perfecting species by manipulating their health and all that is positive and negative about them.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "HighEvolutionary",
       "mission": false,
       "name": "High Evolutionary",
@@ -4303,7 +4398,8 @@ playable   = {
     {
       "description": "He's a monkey. Also, he's an assassin. It's pretty much there in the name.",
       "eventTraits": [
-        "Harbingers"
+        "Harbingers",
+        "SPB_05_Alpha"
       ],
       "id": "HitMonkey",
       "mission": false,
@@ -4339,7 +4435,8 @@ playable   = {
       "description": "After discovering and stealing Green Goblin's gear, Roderick Kingsley takes the mantle of Hobgoblin! Control the battlefield with his explosive pumpkin bombs.",
       "eventTraits": [
         "Conqueror",
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Hobgoblin",
       "mission": false,
@@ -4375,6 +4472,9 @@ playable   = {
     },
     {
       "description": "Trapped in a world he never made, Howard the Duck uses his keen feathered instincts and mastery of Quack Fu to defend his new home dimension from enemies most fowl!",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "HowardTheDuck",
       "mission": false,
       "name": "Howard The Duck",
@@ -4408,7 +4508,9 @@ playable   = {
     {
       "description": "An incredibly tough taunter who gets stronger when damaged.",
       "eventTraits": [
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "Hulk",
       "invisibleTraits": [
@@ -4442,7 +4544,8 @@ playable   = {
         "Protector",
         "Wave1Avenger",
         "Gamma",
-        "AmazingAvenger"
+        "AmazingAvenger",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -4487,7 +4590,8 @@ playable   = {
       "description": "A hotheaded Blaster, the Human Torch burns his enemies and boosts his allies' offense.",
       "eventTraits": [
         "Harbingers",
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta"
       ],
       "id": "HumanTorch",
       "invisibleTraits": [
@@ -4686,7 +4790,8 @@ playable   = {
       "description": "Mark Milton uses his abilities as an Eternal to heal himself and manipulate Taunt on the battlefield.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Alpha"
       ],
       "id": "Hyperion",
       "mission": false,
@@ -4795,7 +4900,8 @@ playable   = {
       "eventTraits": [
         "KnowhereHeist",
         "Couples",
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "InvisibleWoman",
       "invisibleTraits": [
@@ -4837,7 +4943,9 @@ playable   = {
       "eventTraits": [
         "Couples",
         "Harbingers",
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "InvisibleWomanMCU",
       "invisibleTraits": [
@@ -4876,7 +4984,8 @@ playable   = {
       "description": "A versatile martial artist with healing abilities and a powerful single target attack.",
       "eventTraits": [
         "KnullChallengers",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "IronFist",
       "invisibleTraits": [
@@ -4917,7 +5026,8 @@ playable   = {
       "description": "Orson Randall uses his Chi to heal allies and empower his guns to fight the AXIS in WWII.",
       "eventTraits": [
         "KnullChallengers",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "IronFistOrson",
       "mission": false,
@@ -4953,6 +5063,9 @@ playable   = {
     },
     {
       "description": "Ironheart is a teen super-genius who hinders enemies while enhancing Power Armor and Tech allies.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "Ironheart",
       "invisibleTraits": [
         "AForce"
@@ -5058,7 +5171,7 @@ playable   = {
         "Illuminati",
         "Legendary"
       ],
-      "unlockStars": 2
+      "unlockStars": 1
     },
     {
       "description": "Determined to save the Earth and those he loves, Tony Stark pulls out all the stops, granting positive Status Effects to his allies and dealing blows to those that would harm them.",
@@ -5168,7 +5281,8 @@ playable   = {
       "description": "An original member of the X-Men with unparalleled telepathic and telekinetic abilities, Jean Grey is a formidable ally with the power to protect her allies and Disrupt her enemies.",
       "eventTraits": [
         "Couples",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "JeanGrey",
       "invisibleTraits": [
@@ -5210,7 +5324,10 @@ playable   = {
       "description": "Playful and quirky land shark, Jeff the Land Shark might seem adorable but his attacks are as dangerous as a real shark, his abilities will control the battle field and with a new fun effect he will boost Retcon allies damage output.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "SentryChallengers",
+        "AnnihilationWave",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "JeffTheLandShark",
       "mission": false,
@@ -5245,7 +5362,8 @@ playable   = {
     {
       "description": "A resilient fighter who removes positive effects from enemies and clears negative effects from allies.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "SPB_05_Gamma"
       ],
       "id": "JessicaJones",
       "mission": false,
@@ -5282,7 +5400,10 @@ playable   = {
     {
       "description": "Half mallrat, half fireworks factory, Jubilee uses her explosive plasmoid powers to blind dweebs while her allies totally strike.",
       "eventTraits": [
-        "BestMutantBuddies"
+        "SentryChallengers",
+        "BestMutantBuddies",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "Jubilee",
       "invisibleTraits": [
@@ -5323,7 +5444,8 @@ playable   = {
       "description": "An unstoppable tank who taunts his foes and charges for devastating damage.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Beta"
       ],
       "id": "Juggernaut",
       "invisibleTraits": [
@@ -5361,6 +5483,10 @@ playable   = {
     },
     {
       "description": "In a dimension where the Tesseract fell to Earth and landed in Mohawk Nation, Kahhori absorbed its energy, using it to journey through the stars.",
+      "eventTraits": [
+        "SPB_05_Alpha",
+        "TowerChallenger"
+      ],
       "id": "Kahhori",
       "invisibleTraits": [
         "AForce",
@@ -5644,6 +5770,11 @@ playable   = {
     },
     {
       "description": "The Lord of the Abyss and God of the symbiotes, Knull yearns to use his awesome power to plunge the universe into darkness.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Knull",
       "mission": false,
       "name": "Knull",
@@ -5944,7 +6075,8 @@ playable   = {
       "description": "After unintentionally being saved by Bullseye from the Yakuza, Maki Matsumoto saw her destiny. Taking the name, Lady Bullseye, she is the deadliest assassin the Hand has to offer.",
       "eventTraits": [
         "KnullChallengers",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "LadyBullseye",
       "mission": false,
@@ -6015,6 +6147,10 @@ playable   = {
     },
     {
       "description": "Majestrix of the Shi'ar Empire, Empress Lilandra Neramani rules her people fairly, protecting her allies on the space-faring Starjammers so they can defend her Empire from tyranny.",
+      "eventTraits": [
+        "SPB_05_Alpha",
+        "TowerChallenger"
+      ],
       "id": "Lilandra",
       "mission": false,
       "name": "Lilandra",
@@ -6053,7 +6189,8 @@ playable   = {
       "eventTraits": [
         "KnullChallengers",
         "Conqueror",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "LivingMummy",
       "mission": false,
@@ -6263,7 +6400,8 @@ playable   = {
     {
       "description": "A lovelorn clone of Jean Grey, Madelyne Pryor uses her superior psychic powers and sorcery to rain fury down on her opponents.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta"
       ],
       "id": "MadelynePryor",
       "mission": false,
@@ -6298,6 +6436,9 @@ playable   = {
     },
     {
       "description": "Ruthless, unstoppable, and from an alternate universe far in the future, Maestro is a version of Hulk that uses his awesome intelligence to slay his adversaries and collect trophies from the fallen.",
+      "eventTraits": [
+        "SPB_05_Omega"
+      ],
       "id": "Maestro",
       "mission": false,
       "name": "Maestro",
@@ -6332,7 +6473,8 @@ playable   = {
       "description": "Magik uses dark sorcery to charge up her allies and her mutant teleportation power to get the drop on enemies. As the demonic Darkchylde, she can inflict heavy damage.",
       "eventTraits": [
         "Stormbound",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Magik",
       "invisibleTraits": [
@@ -6406,7 +6548,8 @@ playable   = {
       "description": "Seeking a new host, a variant reality Phoenix Force possesses Magneto! Now Master of Magnetism AND Fire he blasts through enemies leaving Silence and Trauma in his wake.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Omega"
       ],
       "id": "MagnetoPhoenixForce",
       "mission": false,
@@ -6441,6 +6584,11 @@ playable   = {
     },
     {
       "description": "The leader of the Dark Elves of Svartalfheim, Malekith uses his magic and tricks to stifle enemies and spread debilitating effects amongst his foes.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Malekith",
       "mission": false,
       "name": "Malekith",
@@ -6473,6 +6621,9 @@ playable   = {
     },
     {
       "description": "An ancient and powerful force of nature, whatever knows fear burns at the touch of... The Man-Thing!",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "ManThing",
       "mission": false,
       "name": "Man-Thing",
@@ -6615,7 +6766,8 @@ playable   = {
     {
       "description": "Queen of the Inhumans, Medusa uses her impossibly strong prehensile hair to protect any granted gifts by the Terrigen Mists.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "SPB_05_Alpha"
       ],
       "id": "Medusa",
       "invisibleTraits": [
@@ -6818,6 +6970,10 @@ playable   = {
     },
     {
       "description": "A brilliant Kree geneticist that uses her mastery of biology to weaken foes and replenish her allies.",
+      "eventTraits": [
+        "SPB_05_Omega",
+        "TowerChallenger"
+      ],
       "id": "Minerva",
       "mission": false,
       "name": "Minn-Erva",
@@ -6929,7 +7085,8 @@ playable   = {
     {
       "description": "Moondragon and her partner Phyla-Vell are key members of the Infinity Watch, with Moondragon providing psychic healing support.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "SPB_05_Alpha"
       ],
       "id": "Moondragon",
       "invisibleTraits": [
@@ -6969,7 +7126,9 @@ playable   = {
       "description": "Lunella Lafayette, super-genius kid turned superhero, teams up with Devil Dinosaur! Together they make a dynamic duo that disrupts enemy plans while slowing down the battlefield.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "MoonGirl",
       "invisibleTraits": [
@@ -7009,6 +7168,9 @@ playable   = {
     },
     {
       "description": "Returned to life by the god Khonshu, Moon Knight battles criminals and his own shattered psyche using random status effects.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "MoonKnight",
       "mission": false,
       "name": "Moon Knight",
@@ -7143,6 +7305,11 @@ playable   = {
     },
     {
       "description": "Chaos given form, Morph transforms into his enemies using their strengths against them by copying their positive effects and striking where it hurts most.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Morph",
       "invisibleTraits": [
         "Xmen"
@@ -7174,7 +7341,7 @@ playable   = {
         "ExaltedXMen",
         "SPB_05_Gamma"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
@@ -7216,7 +7383,9 @@ playable   = {
       "eventTraits": [
         "Couples",
         "Harbingers",
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "MrFantasticMCU",
       "invisibleTraits": [
@@ -7328,7 +7497,8 @@ playable   = {
       "eventTraits": [
         "ChaosTeam",
         "AnnihilationWave",
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Gamma"
       ],
       "id": "MsMarvel",
       "invisibleTraits": [
@@ -7367,6 +7537,10 @@ playable   = {
     },
     {
       "description": "Before assuming the mantle of Captain Marvel, Carol Danvers donned this now classic black and yellow look to fight alongside the Avengers and X-Men.",
+      "eventTraits": [
+        "SPB_05_Alpha",
+        "TowerChallenger"
+      ],
       "id": "MsMarvelClassic",
       "invisibleTraits": [
         "Chargeable",
@@ -7613,7 +7787,8 @@ playable   = {
     {
       "description": "Negasonic Teenage Warhead is a Mutant Blaster whose explosive hits are so hard, they knock positive effects off her target.",
       "eventTraits": [
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Negasonic",
       "mission": false,
@@ -7821,6 +7996,9 @@ playable   = {
     },
     {
       "description": "Dwayne Taylor is a fierce vigilante who shreds through enemies with the precision of a pro skater, grinding the line between justice and chaos with high-tech gear and relentless determination.",
+      "eventTraits": [
+        "SPB_05_Gamma"
+      ],
       "id": "NightThrasher",
       "mission": false,
       "name": "Night Thrasher",
@@ -7992,7 +8170,9 @@ playable   = {
       "description": "Taking up his missing father's mantle, Samuel Alexander channels the Nova Force to break down enemy defenses and fortify his team against incoming attacks.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "NovaSamAlexander",
       "invisibleTraits": [
@@ -8030,6 +8210,10 @@ playable   = {
     },
     {
       "description": "Karen Page was an investigative reporter before a vampire turned her into one of the undead. Now, with the help of the other Nightstalkers, she uses her vampiric abilities to protect the innocent!",
+      "eventTraits": [
+        "SPB_05_Alpha",
+        "TowerChallenger"
+      ],
       "id": "Oath",
       "invisibleTraits": [
         "Exposed"
@@ -8175,7 +8359,8 @@ playable   = {
       "eventTraits": [
         "Stormbound",
         "AnnihilationWave",
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Gamma"
       ],
       "id": "OmegaRed",
       "invisibleTraits": [
@@ -8216,7 +8401,8 @@ playable   = {
       "description": "Breaking through the cracked walls of reality, a Phoenix Force from another world arrives on Nexus Earth, possessing a new host - Omega Red! His insatiable appetite for life combined with unspeakable cosmic power caused him to immediately become an avatar of death, the Dark Phoenix!",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Omega"
       ],
       "id": "OmegaRedPhoenix",
       "mission": false,
@@ -8314,6 +8500,9 @@ playable   = {
     },
     {
       "description": "The grandson of super-soldier Isaiah Bradley, Eli Bradley picked family's legacy of defending the helpless by joining the Young Avengers as the star-spangled Patriot.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "Patriot",
       "mission": false,
       "name": "Patriot",
@@ -8347,7 +8536,8 @@ playable   = {
     {
       "description": "A brilliant codebreaker and key member of the Strategic Scientific Reserve, Peggy Carter helped the Allies defeat the Axis powers and would go on to found S.H.I.E.L.D., protecting humanity for decades to come.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "SPB_05_Alpha"
       ],
       "id": "PeggyCarter",
       "mission": false,
@@ -8453,6 +8643,10 @@ playable   = {
     },
     {
       "description": "Charging into battle alongside his trusty steed Banshee, Phantom Rider uses his quick wits and quicker draw to outgun enemies and lay down protections for his team.",
+      "eventTraits": [
+        "SPB_05_Beta",
+        "TowerChallenger"
+      ],
       "id": "PhantomRider",
       "mission": false,
       "name": "Phantom Rider",
@@ -8488,7 +8682,8 @@ playable   = {
       "eventTraits": [
         "ChaosTeam",
         "AnnihilationWave",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Omega"
       ],
       "id": "Phoenix",
       "invisibleTraits": [
@@ -8602,7 +8797,8 @@ playable   = {
     {
       "description": "The daughter of Magneto, Polaris uses her magnetic Mutant powers to bolster ally barriers and prevents the enemy from recovering from their wounds.",
       "eventTraits": [
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Polaris",
       "invisibleTraits": [
@@ -8710,7 +8906,8 @@ playable   = {
     {
       "description": "A vicious blaster who deals high piercing damage to multiple targets.",
       "eventTraits": [
-        "Harbingers"
+        "Harbingers",
+        "SPB_05_Alpha"
       ],
       "id": "Punisher",
       "mission": false,
@@ -8776,6 +8973,9 @@ playable   = {
     },
     {
       "description": "A S.H.I.E.L.D. agent who disrupts the enemy team by weakening groups of foes and removing their advantages.",
+      "eventTraits": [
+        "SPB_05_Beta"
+      ],
       "id": "Quake",
       "mission": false,
       "name": "Quake",
@@ -8815,7 +9015,9 @@ playable   = {
         "ChaosTeam",
         "KnullChallengers",
         "Conqueror",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Omega",
+        "TowerChallenger"
       ],
       "id": "Quasar",
       "invisibleTraits": [
@@ -8894,6 +9096,9 @@ playable   = {
     },
     {
       "description": "Rachel Cole-Alves is a former Marine driven by tragedy. She has taken up the skull insignia to exact deadly vengeance on her enemies.",
+      "eventTraits": [
+        "SPB_05_Gamma"
+      ],
       "id": "RachelColeAlves",
       "invisibleTraits": [
         "Avenger"
@@ -8922,7 +9127,8 @@ playable   = {
         "City",
         "Skill",
         "Blaster",
-        "AmazingAvenger"
+        "AmazingAvenger",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -8930,7 +9136,9 @@ playable   = {
       "description": "A powerful telepath and time-displaced mutant, Rachel Summers overwhelms her enemies by spreading negative status effects and a passive attack that targets any enemy who is stunned or moving too fast to think clearly.",
       "eventTraits": [
         "Conqueror",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "RachelSummers",
       "invisibleTraits": [
@@ -9080,6 +9288,7 @@ playable   = {
     {
       "description": "Bonded with the Carnage symbiote, Norman Osborn became the deadly Red Goblin, a blood-thirsty villain who happily puts allies in harm's way so he can land massive hits.",
       "eventTraits": [
+        "SentryChallengers",
         "BestSpiderBuddies",
         "BestVillainBuddies"
       ],
@@ -9124,7 +9333,8 @@ playable   = {
       "description": "Russian warrior of the Cold War, Red Guardian uses his boldness and military tactics to steal positive effects from enemies and grant them to his allies.",
       "eventTraits": [
         "Stormbound",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Gamma"
       ],
       "id": "RedGuardian",
       "mission": false,
@@ -9310,6 +9520,11 @@ playable   = {
     },
     {
       "description": "Forcibly extracted from the Venom symbiote by the Life Foundation, Riot leans into his aggressive nature by manipulating his biomass into bludgeoning weapons, traumatizing enemies, and spreading negative effects across the field.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Riot",
       "mission": false,
       "name": "Riot",
@@ -9345,7 +9560,8 @@ playable   = {
     {
       "description": "An aggressive scrapper who inflicts terrible damage to foes at range. Prefers to team up with Groot.",
       "eventTraits": [
-        "KnowhereHeist"
+        "KnowhereHeist",
+        "SPB_05_Alpha"
       ],
       "id": "RocketRaccoon",
       "mission": false,
@@ -9422,6 +9638,10 @@ playable   = {
     },
     {
       "description": "A Kree fanatic who summons Kree minions while denying the abilities of his foes with brutal strikes.",
+      "eventTraits": [
+        "SPB_05_Omega",
+        "TowerChallenger"
+      ],
       "id": "Ronan",
       "mission": false,
       "name": "Ronan the Accuser",
@@ -9530,7 +9750,8 @@ playable   = {
     {
       "description": "Taking up the mantle of Captain America, Sam Wilson uses his legendary shield to protect and inspire others, granting bonuses to Avenger and Skill allies.",
       "eventTraits": [
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "SamWilson",
       "invisibleTraits": [
@@ -9601,7 +9822,8 @@ playable   = {
       "description": "Satana, a half-human, half-demon, uses her hell-spawned powers to steal the health of her targets, redistributing it to herself and her allies.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Beta"
       ],
       "id": "Satana",
       "mission": false,
@@ -9673,7 +9895,8 @@ playable   = {
       "description": "A mystical controller that prolongs negative effects and redistributes health across her teammates.",
       "eventTraits": [
         "Couples",
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "ScarletWitch",
       "invisibleTraits": [
@@ -9748,7 +9971,8 @@ playable   = {
     {
       "description": "Mac Gargan was a PI who became the villainous Scorpion after an experiment gave him super strength and a cybernetic tail, driving him insane. Reduce positive effects when mix with his acid and apply bleeds using his tail.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta"
       ],
       "id": "Scorpion",
       "mission": false,
@@ -9785,6 +10009,9 @@ playable   = {
     },
     {
       "description": "The vicious Scream is a Symbiote Controller who clears positive effects from her foes.",
+      "eventTraits": [
+        "SentryChallengers"
+      ],
       "id": "Scream",
       "mission": false,
       "name": "Scream",
@@ -9821,7 +10048,8 @@ playable   = {
     {
       "description": "A power-absorbing tyrant with a taste for control, Sebastian Shaw converts his charges into stunning strength, hitting his foes with a force that leaves them helpless.",
       "eventTraits": [
-        "Conqueror"
+        "Conqueror",
+        "SPB_05_Beta"
       ],
       "id": "SebastianShaw",
       "mission": false,
@@ -9893,6 +10121,10 @@ playable   = {
     },
     {
       "description": "Empowered by the serum of a million exploding suns, Robert Reynolds fights as the Sentry, a near-unstoppable force torn between heroic light and the destructive Void within.",
+      "eventTraits": [
+        "SPB_05_Omega",
+        "TowerChallenger"
+      ],
       "id": "Sentry",
       "mission": false,
       "name": "Sentry",
@@ -9961,6 +10193,9 @@ playable   = {
     },
     {
       "description": "A vicious crime lord and powerful psychic conqueror of the Astral Plane, Amahl Farouk aka the Shadow King was the first evil Mutant a young Charles Xavier ever encountered, and Farouk's dark schemes have haunted Charles and his students ever since.",
+      "eventTraits": [
+        "SPB_05_Alpha"
+      ],
       "id": "ShadowKing",
       "mission": false,
       "name": "Shadow King",
@@ -10099,7 +10334,9 @@ playable   = {
       "description": "Delivering gamma-powered justice, She-Hulk applies negative effects to her foes with every smash.",
       "eventTraits": [
         "ChaosTeam",
-        "AnnihilationWave"
+        "SentryChallengers",
+        "AnnihilationWave",
+        "SPB_05_Gamma"
       ],
       "id": "SheHulk",
       "invisibleTraits": [
@@ -10308,7 +10545,8 @@ playable   = {
       "description": "Shocker uses his Tech sonic bursts to damage entire teams and strengthen his Sinister Six allies.",
       "eventTraits": [
         "Conqueror",
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Shocker",
       "mission": false,
@@ -10415,7 +10653,8 @@ playable   = {
       "description": "The leader of The Wild Pack, a team of mercenaries that track criminals across the globe, Silver Sable uses her father's training and weapons expertise to control the enemy team's statuses and help her allies fight with furious speed.",
       "eventTraits": [
         "Harbingers",
-        "BestSpiderBuddies"
+        "BestSpiderBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "SilverSable",
       "mission": false,
@@ -10516,6 +10755,11 @@ playable   = {
     },
     {
       "description": "Having made a grave mistake with good intentions, the Silver Surfer was corrupted when he picked up one of Serpent's hammers. Now the Breaker of Worlds, he uses the Power Cosmic to sow fear, chaos, and destroy planets.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Omega",
+        "TowerChallenger"
+      ],
       "id": "SilverSurferBreaker",
       "mission": false,
       "name": "Silver Surfer (Breaker)",
@@ -10551,7 +10795,8 @@ playable   = {
       "description": "Melissa Gold, a reformed villain, that uses her sonic abilities to flip her enemies positive effects and defend her allies.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Alpha"
       ],
       "id": "Songbird",
       "mission": false,
@@ -10585,6 +10830,9 @@ playable   = {
     },
     {
       "description": "Robert Baldwin is a kinetic energy-powered hero who bounces into battle with agility and explosive bursts, using his boundless energy to devastate foes.",
+      "eventTraits": [
+        "SPB_05_Gamma"
+      ],
       "id": "Speedball",
       "mission": false,
       "name": "Speedball",
@@ -10619,7 +10867,9 @@ playable   = {
       "description": "A quick attacker that weakens opponents and evades incoming attacks.",
       "eventTraits": [
         "WebSlinger",
-        "BestBuddies"
+        "BestBuddies",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "SpiderMan",
       "invisibleTraits": [
@@ -10651,7 +10901,8 @@ playable   = {
         "Brawler",
         "SpiderVerse",
         "WebWarrior",
-        "AmazingAvenger"
+        "AmazingAvenger",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -10954,6 +11205,9 @@ playable   = {
     },
     {
       "description": "Julia Carpenter uses her spider-like abilities and psionic webs to outmaneuver her enemies, reducing and flipping their positive effects.",
+      "eventTraits": [
+        "SPB_05_Gamma"
+      ],
       "id": "SpiderWomanJulia",
       "invisibleTraits": [
         "Avenger"
@@ -10983,7 +11237,8 @@ playable   = {
         "Bio",
         "Controller",
         "SpiderVerse",
-        "AmazingAvenger"
+        "AmazingAvenger",
+        "SPB_05_Gamma"
       ],
       "unlockStars": 2
     },
@@ -10991,8 +11246,10 @@ playable   = {
       "description": "Squirrel Girl is a Young Avenger who uses her unbeatable squirrel powers to eat nuts and kick butts!",
       "eventTraits": [
         "ChaosTeam",
+        "SentryChallengers",
         "AnnihilationWave",
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Gamma"
       ],
       "id": "SquirrelGirl",
       "invisibleTraits": [
@@ -11064,7 +11321,8 @@ playable   = {
       "eventTraits": [
         "KnowhereHeist",
         "ChaosTeam",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Omega"
       ],
       "id": "StarLord",
       "mission": false,
@@ -11168,7 +11426,8 @@ playable   = {
       "description": "Steel Serpent, also known as Davos, is a formidable martial artist from K'un-Lun, driven by an unrelenting quest to claim Shou-Lao's power. Regardless of the challenges or the time it demands, he is determined to seize the title of Iron Fist.",
       "eventTraits": [
         "KnullChallengers",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "SteelSerpent",
       "mission": false,
@@ -11204,7 +11463,8 @@ playable   = {
       "description": "A powerful weather controller that charges up devastating attacks to lead her mutant allies to victory.",
       "eventTraits": [
         "Couples",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Storm",
       "invisibleTraits": [
@@ -11245,6 +11505,11 @@ playable   = {
     },
     {
       "description": "Chosen by Odin and bestowed a glaive forged in Nidavellir, Storm sets out on her path as one of the Mighty, stripping her enemies of their defenses and leaving them exposed to her elemental onslaught.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "StormMighty",
       "invisibleTraits": [
         "Xmen",
@@ -11284,7 +11549,8 @@ playable   = {
       "eventTraits": [
         "KnullChallengers",
         "Conqueror",
-        "Stormbound"
+        "Stormbound",
+        "SPB_05_Beta"
       ],
       "id": "StrangeSupreme",
       "invisibleTraits": [
@@ -11396,7 +11662,8 @@ playable   = {
       "description": "The hot-headed Sunspot possesses the ability to absorb and redirect the sun's power, letting him deal massive damage and grant ability energy to his X-Men allies.",
       "eventTraits": [
         "Stormbound",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Sunspot",
       "invisibleTraits": [
@@ -11437,7 +11704,8 @@ playable   = {
       "description": "Otto Octavius takes over Spider-Man's body and becomes a more brutal and efficient hero, believing himself to be \"superior.\" Use his new tech to heal and apply positive status effects on allies.",
       "eventTraits": [
         "Conqueror",
-        "BestSpiderBuddies"
+        "BestSpiderBuddies",
+        "SPB_05_Beta"
       ],
       "id": "SuperiorSpiderMan",
       "mission": false,
@@ -11548,7 +11816,8 @@ playable   = {
       "eventTraits": [
         "KnullChallengers",
         "Stormbound",
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Beta"
       ],
       "id": "SwordMaster",
       "mission": false,
@@ -11622,6 +11891,11 @@ playable   = {
     },
     {
       "description": "Fighting the TVA alongside Loki, Sylvie's mind-control abilities turn her enemies against each other while her swift daggers cut them into ribbons.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Sylvie",
       "mission": false,
       "name": "Sylvie",
@@ -11656,6 +11930,11 @@ playable   = {
     },
     {
       "description": "Pietro Maximoff, once known as the speedster Quicksilver, was forever changed when a chance encounter left him bonded with an alien symbiote. Now part of a hivemind, he supports his Symbiote allies by bolstering Speed Bar and redistributing damage taken across the team.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "SymbioteQuicksilver",
       "mission": false,
       "name": "Quicksilver (Symbiote)",
@@ -11691,6 +11970,7 @@ playable   = {
     {
       "description": "Formerly the heroic Silver Surfer, Void Knight attempts to satisfy the hunger of his symbiote by sapping the energy of his enemies, draining them like a black hole until they're no more.",
       "eventTraits": [
+        "SentryChallengers",
         "BestSpiderBuddies"
       ],
       "id": "SymbioteSilverSurfer",
@@ -11730,6 +12010,7 @@ playable   = {
     {
       "description": "Permanently bonded with the Venom symbiote, Spider-Man brutally takes down foes while powering up his Symbiote allies.",
       "eventTraits": [
+        "SentryChallengers",
         "BestSpiderBuddies"
       ],
       "id": "SymbioteSpiderMan",
@@ -11770,7 +12051,8 @@ playable   = {
       "eventTraits": [
         "Harbingers",
         "KnullChallengers",
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Taskmaster",
       "mission": false,
@@ -11839,7 +12121,10 @@ playable   = {
     {
       "description": "A Titan Eternal who delivers crushing blows that drain his foes and taunt his enemies.",
       "eventTraits": [
-        "BestVillainBuddies"
+        "SentryChallengers",
+        "BestVillainBuddies",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "Thanos",
       "invisibleTraits": [
@@ -11916,7 +12201,8 @@ playable   = {
       "description": "Parker Robbins dons a demonic cloak and boots, becoming The Hood, whose magical bullets prevent his heroic enemies from using their abilities and gaining positive status effects.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Beta"
       ],
       "id": "TheHood",
       "mission": false,
@@ -11988,7 +12274,8 @@ playable   = {
       "eventTraits": [
         "Harbingers",
         "Conqueror",
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Thing",
       "invisibleTraits": [
@@ -12108,7 +12395,9 @@ playable   = {
         "ChaosTeam",
         "KnullChallengers",
         "Stormbound",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Omega",
+        "TowerChallenger"
       ],
       "id": "Thunderstrike",
       "invisibleTraits": [
@@ -12246,6 +12535,11 @@ playable   = {
     },
     {
       "description": "Born from the Carnage symbiote, the 1,000th spawn in its line, Toxin uses his enhanced senses and sharp claws to expose enemies, cripple their defenses, and leave lasting damage in his wake.",
+      "eventTraits": [
+        "SentryChallengers",
+        "SPB_05_Gamma",
+        "TowerChallenger"
+      ],
       "id": "Toxin",
       "invisibleTraits": [
         "Exposed"
@@ -12405,7 +12699,8 @@ playable   = {
         "Couples",
         "ChaosTeam",
         "AnnihilationWave",
-        "BestSpiderBuddies"
+        "BestSpiderBuddies",
+        "SPB_05_Gamma"
       ],
       "id": "UltSpiderMan",
       "invisibleTraits": [
@@ -12481,7 +12776,8 @@ playable   = {
       "description": "Mikhail Ursus's mutant power turned him into an immense bear man. He uses his immense strength and durability to protect mother nature from those who would do it harm.",
       "eventTraits": [
         "Stormbound",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Gamma"
       ],
       "id": "UrsaMajor",
       "mission": false,
@@ -12619,7 +12915,10 @@ playable   = {
     {
       "description": "A symbiotic monstrosity that tears into opponents and spreads harmful effects.",
       "eventTraits": [
-        "BestSpiderBuddies"
+        "SentryChallengers",
+        "BestSpiderBuddies",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "Venom",
       "mission": false,
@@ -12661,7 +12960,8 @@ playable   = {
       "description": "The sharp-minded and pragmatic strategist behind Project A.E.G.I.S., Victoria Hand is a powerful healer that clears negative effects.",
       "eventTraits": [
         "Harbingers",
-        "KnullChallengers"
+        "KnullChallengers",
+        "SPB_05_Alpha"
       ],
       "id": "VictoriaHand",
       "mission": false,
@@ -12699,7 +12999,8 @@ playable   = {
       "description": "A synthetic being that avoids enemy attacks and disables his foes.",
       "eventTraits": [
         "Couples",
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "Vision",
       "invisibleTraits": [
@@ -12776,7 +13077,8 @@ playable   = {
       "description": "Vulture preys on enemies with negative status effects while dealing extra damage to City Heroes.",
       "eventTraits": [
         "Conqueror",
-        "BestVillainBuddies"
+        "BestVillainBuddies",
+        "SPB_05_Beta"
       ],
       "id": "Vulture",
       "mission": false,
@@ -12816,7 +13118,9 @@ playable   = {
       "description": "A techno-organic lifeform befriended by the New Mutants, Warlock uses his shapeshifting abilities to siphon positive effects from enemies to allies.",
       "eventTraits": [
         "Stormbound",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "Warlock",
       "mission": false,
@@ -12852,7 +13156,8 @@ playable   = {
     {
       "description": "An armored soldier who uses an arsenal of weapons to bombard his foes. More powerful in Alliance Wars.",
       "eventTraits": [
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "SPB_05_Alpha"
       ],
       "id": "WarMachine",
       "mission": false,
@@ -12890,7 +13195,8 @@ playable   = {
     {
       "description": "A highly elusive blaster capable of stunning and chaining to multiple opponents.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "SPB_05_Alpha"
       ],
       "id": "Wasp",
       "invisibleTraits": [
@@ -12995,7 +13301,9 @@ playable   = {
       "description": "Rahne Sinclair, always on the prowl for the perfect strike, leverages her keen senses and lycanthropic strength to deal long-lasting damage to enemies.",
       "eventTraits": [
         "Stormbound",
-        "BestMutantBuddies"
+        "BestMutantBuddies",
+        "SPB_05_Beta",
+        "TowerChallenger"
       ],
       "id": "Wolfsbane",
       "mission": false,
@@ -13031,7 +13339,10 @@ playable   = {
     {
       "description": "A mutant armed with adamantium claws that ignore armor and tear through his opponents.",
       "eventTraits": [
-        "BestBuddies"
+        "SentryChallengers",
+        "BestBuddies",
+        "SPB_05_Gamma",
+        "TowerChallenger"
       ],
       "id": "Wolverine",
       "invisibleTraits": [
@@ -13141,6 +13452,10 @@ playable   = {
     },
     {
       "description": "The founder of the X-Men and staunch advocate for Mutant rights, Professor Charles Xavier uses his incredible telepathic powers and powerful Cerebro helmet to find new mutants and fight for their freedom across any dimension.",
+      "eventTraits": [
+        "SPB_05_Omega",
+        "TowerChallenger"
+      ],
       "id": "Xavier",
       "mission": false,
       "name": "Professor Xavier",
@@ -13179,7 +13494,8 @@ playable   = {
       "description": "Yelena Belova's training in Russia's \"Red Room\" allows her to strike with deadly precision, dealing bonus Crit damage to her enemies.",
       "eventTraits": [
         "Stormbound",
-        "AnnihilationWave"
+        "AnnihilationWave",
+        "SPB_05_Gamma"
       ],
       "id": "Yelena",
       "mission": false,
@@ -13287,6 +13603,9 @@ playable   = {
     },
     {
       "description": "An Inhuman agent of S.H.I.E.L.D., Yo-Yo speeds to her allies' defense before returning where she started.",
+      "eventTraits": [
+        "SPB_05_Beta"
+      ],
       "id": "YoYo",
       "mission": false,
       "name": "Yo-Yo",
@@ -13355,6 +13674,9 @@ playable   = {
     },
     {
       "description": "After being infected with a mysterious zombifying virus, Tony Stark became a shadow of his former self who sates his hunger for flesh by inflicting Bleed on his enemies.",
+      "eventTraits": [
+        "SPB_05_Beta"
+      ],
       "id": "ZombieIronMan",
       "mission": false,
       "name": "Iron Man (Zombie)",
@@ -13389,6 +13711,9 @@ playable   = {
     },
     {
       "description": "Still empowered by the Crimson Gem of Cyttorak while infected with the zombie virus, Cain Marko became an unstoppable, undead Juggernaut capable of dealing massive damage to his enemies.",
+      "eventTraits": [
+        "SPB_05_Beta"
+      ],
       "id": "ZombieJuggernaut",
       "invisibleTraits": [
         "Chargeable"
@@ -13430,7 +13755,8 @@ playable   = {
     {
       "description": "Once a founding member of S.T.R.I.K.E., Kestrel came into contact with an interdimensional plague. Now infected, she is an undead weapon who unleashes her hunger and portal tech to corrupt the battlefield and terrorize enemies.",
       "eventTraits": [
-        "MSFOriginal"
+        "MSFOriginal",
+        "SPB_05_Beta"
       ],
       "id": "ZombieKestrel",
       "invisibleTraits": [
@@ -13469,6 +13795,9 @@ playable   = {
     },
     {
       "description": "A conduit for chaos magic even beyond death, the infected Scarlet Witch manipulates Status Effects on her enemies, making her a terrifying sight for anyone not already a part of her zombie horde.",
+      "eventTraits": [
+        "SPB_05_Beta"
+      ],
       "id": "ZombieScarletWitch",
       "mission": false,
       "name": "Scarlet Witch (Zombie)",
@@ -13508,13 +13837,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "b88a5d38047dc92f778d",
-      "chars": "fddbcb6c99258415d748",
-      "drops": "cd4710e0d91cb0659187",
-      "events": "0b54a28d802cdff6f1ec",
-      "locs": "80e6ea33001c0a91371a",
-      "nodes": "ebb6ab0ee9b8f919230e",
-      "other": "b1a9e00124169cc9442f"
+      "all": "40ed6339abf1b6e12be4",
+      "chars": "2dddc5ef0135b7c885bc",
+      "drops": "e4e7cd27d157d8ce1156",
+      "events": "6170d0827cf0f084619f",
+      "locs": "8959798c0f295f31b414",
+      "nodes": "4d684a16b79da7b1a350",
+      "other": "2f85f85054b4489da646"
     },
     "perTotal": 375,
     "version": 1
@@ -14374,13 +14703,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "b88a5d38047dc92f778d",
-      "chars": "fddbcb6c99258415d748",
-      "drops": "cd4710e0d91cb0659187",
-      "events": "0b54a28d802cdff6f1ec",
-      "locs": "80e6ea33001c0a91371a",
-      "nodes": "ebb6ab0ee9b8f919230e",
-      "other": "b1a9e00124169cc9442f"
+      "all": "40ed6339abf1b6e12be4",
+      "chars": "2dddc5ef0135b7c885bc",
+      "drops": "e4e7cd27d157d8ce1156",
+      "events": "6170d0827cf0f084619f",
+      "locs": "8959798c0f295f31b414",
+      "nodes": "4d684a16b79da7b1a350",
+      "other": "2f85f85054b4489da646"
     },
     "perTotal": 44,
     "version": 1
