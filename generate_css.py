@@ -418,13 +418,89 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   transform   : translate(0%, -1000%);  
   font-size   : 16px;
   font-weight : 700;
-  text-shadow : 2px 2px 2px black,
-                -2px 2px 2px black,
-                2px -2px 2px black,
-                -2px -2px 2px black, 
-                0 0 0.8em black, 
-                0 0 0.2em black; 
+  text-shadow : 0.75px 0.75px 0.75px black,
+                -0.75px 0.75px 0.75px black,
+                0.75px -0.75px 0.75px black,
+                -0.75px -0.75px 0.75px black, 
+                3px 3px 3px var(--char-color),
+                -3px 3px 3px var(--char-color),
+                3px -3px 3px var(--char-color),
+                -3px -3px 3px var(--char-color), 
+                0px 3px 3px var(--char-color),
+                0px -3px 3px var(--char-color), 
+                3px 0px 3px var(--char-color),
+                -3px 0px 3px var(--char-color), 
+                0 0 0.8em var(--char-color), 
+                0 0 0.2em var(--char-color); 
 }
+.uprt {
+  display     : flex;
+  justify-content: right;
+  height      : 2px;
+  width       : 100%;
+  transform   : translate(-8%, -7600%);  
+  font-size   : 12px;
+  font-weight : 700;
+  text-shadow : 0.75px 0.75px 0.75px black,
+                -0.75px 0.75px 0.75px black,
+                0.75px -0.75px 0.75px black,
+                -0.75px -0.75px 0.75px black, 
+                2px 2px 2px var(--char-color),
+                -2px 2px 2px var(--char-color),
+                2px -2px 2px var(--char-color),
+                -2px -2px 2px var(--char-color), 
+                0px 2px 2px var(--char-color),
+                0px -2px 2px var(--char-color), 
+                2px 0px 2px var(--char-color),
+                -2px 0px 2px var(--char-color), 
+                0 0 0.8em var(--char-color), 
+                0 0 0.2em var(--char-color); 
+}
+.uplt {
+  display     : flex;
+  justify-content: left;
+  height      : 2px;
+  width       : 100%;
+  transform   : translate(8%, -7400%);  
+  font-size   : 12px;
+  font-weight : 700;
+}
+.origin {
+  text-shadow : 0.75px 0.75px 0.75px black,
+                -0.75px 0.75px 0.75px black,
+                0.75px -0.75px 0.75px black,
+                -0.75px -0.75px 0.75px black, 
+                2px 2px 2px var(--origin-color),
+                -2px 2px 2px var(--origin-color),
+                2px -2px 2px var(--origin-color),
+                -2px -2px 2px var(--origin-color), 
+                0px 2px 2px var(--origin-color),
+                0px -2px 2px var(--origin-color), 
+                2px 0px 2px var(--origin-color),
+                -2px 0px 2px var(--origin-color), 
+                0 0 0.8em var(--origin-color), 
+                0 0 0.2em var(--origin-color); 
+}
+
+.color-frame {
+  border-radius: 10px;
+  outline-offset: -1px;
+  outline: 3px solid var(--char-color);
+  box-shadow: inset 0 0 0 4px var(--dark-color);
+  background-image: radial-gradient(circle, var(--char-color) 5%, black 77.5%, var(--back-color) 93%);
+}
+
+.awake {
+  font-weight: bold;
+  color: black;
+  text-shadow: 
+    -1px -1px 1px white, 
+    -1px 1px 1px white, 
+    1px -1px 1px white, 
+    1px 1px 1px white, 
+    3px 3px 3px rgba(20, 20, 20, 0.9)	;
+}
+
 .cont {
   position    : relative;
   text-align  : center;

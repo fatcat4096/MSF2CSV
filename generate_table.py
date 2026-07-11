@@ -12,6 +12,7 @@ try:
 	from .html_shared   import get_field_value, get_value_color, get_value_color_ext, translate_name
 	from .cached_info   import get_cached
 	from .file_io       import local_img_cache
+	from  .gradients    import darken
 except ModuleNotFoundError:
 	from  log_utils     import timed
 	from  alliance_info import find_roster_value, get_player_list, get_table_value, insert_dividers, remove_min_iso_tier, sort_and_filter_others
@@ -19,6 +20,7 @@ except ModuleNotFoundError:
 	from  html_shared   import get_field_value, get_value_color, get_value_color_ext, translate_name
 	from  cached_info   import get_cached
 	from  file_io       import local_img_cache
+	from  gradients     import darken
 
 
 # Gold cost cache, rebuilt each run in real time
@@ -34,6 +36,9 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 		return ''
 
 	using_chars = config['using_chars']
+
+	# Take note of which characters are actually displayed in the table
+	table_format.setdefault('char_list', []).extend(using_chars)
 
 	# Generate the HTML for the table
 	row_idx = 1
@@ -107,6 +112,13 @@ def get_config(alliance_info, table, section, table_format, char_list, strike_te
 
 	portraits   = get_cached('portraits')
 	iso_classes = get_cached('iso_classes')
+
+	# Get the character speeds to allow us to include Speed information
+	char_speeds = get_cached('char_speeds')
+	char_lookup = get_cached('char_lookup')
+
+	# Get the list of traits to allow us to include Trait information
+	traits = get_cached('traits')
 
 	# Determine color scheme using table label
 	color_scheme = get_color_scheme(table_lbl)
@@ -524,6 +536,7 @@ def generate_character_image(html_cache, char, config):
 	"""Generate image for character."""
 	html_cells = []
 
+	# Get the localized URL of the image to include
 	url = local_img_cache(config['portraits'][char], config['req_html'])
 
 	# No default value to start
@@ -540,8 +553,8 @@ def generate_character_image(html_cache, char, config):
 		anchor = make_next_anchor_id(html_cache, char, config['table_id'])
 		onclick = f' onclick="toTable(this,\'{anchor.get("to")}\')"' 
 
-	# Control background color of Character image if Spec Ops report
-	bg_color = ' '+spec_ops_bg(config['section'], char, config['player_list'], html_cache) if config['spec_ops'] else ''
+	# Control background color of Character image
+	bg_color = spec_ops_bg(config['section'], char, config['player_list'], html_cache) if config['spec_ops'] else 'color-frame'
 
 	# Dim image if under_min
 	bg_color += ' dim_img' if char in config['dim_image'] else ''
@@ -557,12 +570,28 @@ def generate_character_image(html_cache, char, config):
 		class_cols = 0 if num_cols < 5 else 1 if num_cols == 5 else 2
 		num_cols -= class_cols
 
+	# Create a subtitle for the upper left with Origin information
+	origin_color = {'Bio':'#008000','Tech':'#0000FF','Mystic':'#800080','Skill':'#FF0000','Mutant':'#FFA500'}
+	origin = [key for key in origin_color if config['traits'][key].get(char)]
+	origin_info = '&nbsp;&nbsp;'.join([f'<span style="--origin-color:{origin_color[key]}" class="origin">{key}</span>' for key in origin])
+
+	# Create a subtitle for the upper right with Speed information
+	char_speed = config['char_speeds'].get(config['char_lookup'].get(char))
+	char_speed = f'⚡{char_speed}' if char_speed else ''
+
+	# Control background colors based on origin information
+	char_color = origin_color[origin[0]]
+	dark_color = darken(char_color) if len(origin) == 1 else origin_color[origin[1]]
+	back_color = '#000' if len(origin) == 1 else dark_color
+
 	html_cells.append(f'     <td class="img" colspan="{num_cols}"{onclick}>')
-	html_cells.append(f'      <div class="cont{bg_color}">')
+	html_cells.append(f'      <div style="--char-color:{char_color};--dark-color:{dark_color};--back-color:{back_color}" class="cont {bg_color}">')
 	html_cells.append(f'       <div class="{"" if config['hist_date'] else "zoom"}"><img src="{url}" alt="" width="100"></div>')
 	html_cells.append(f'       <div class="cent">{translate_name(char)}</div>')
-	html_cells.append('      </div>')
-	html_cells.append('     </td>')
+	html_cells.append(f'       <div class="uplt">{origin_info}</div>')
+	html_cells.append(f'       <div class="uprt">{char_speed}</div>')
+	html_cells.append(f'      </div>')
+	html_cells.append(f'     </td>')
 
 	# If we had room for ISO info, let's add a title and the ISO info now
 	if config['inc_class'] and iso_char and class_cols:
@@ -861,9 +890,15 @@ def generate_char_data_cells(html_cache, alliance_info, player_name, char_name, 
 		if key_val == 0 and hist_date:
 			style = ''
 		else:
-			# Note: We are using the T class to get black text on fields in the Hist tab.
 			field_color = get_value_color(key_ranges[key], key_val, html_cache, stale_data, key, under_min and key != 'gold', hist_date)
-			style = f' class="{field_color}{" T" if need_tt or hist_date is not None else ""}"'
+
+			# We are using the T class to get black text on fields in the Hist tab.
+			tooltip = ' T' if need_tt or hist_date is not None else ''
+
+			# Add glow if Awakened ability
+			awakened = f' awake' if ((key in ('bas','spc','ult') and key_val == 8) or (key == 'pas' and key_val == 6)) and not hist_date else ''
+
+			style = f' class="{field_color}{tooltip}{awakened}"'
 
 		# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 		field_value = format_field_value(key, key_val, hist_date)
