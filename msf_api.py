@@ -302,13 +302,12 @@ def request_char_details(AUTH_OR_TOKEN, char_name):
 		url     = f'{API_ENDPOINT}/game/v1/characters/{char_name}',
 		params  = {
 					'statsFormat':'csv',
-					'charInfo':'none',
 					'costumes':'none',
-					'abilityKits':'none',
 					'pieceInfo':'none',
 					'pieceDirectCost':'part',
 					'subPieceInfo':'none',
 					'charAdoption':'full',
+					'starItems':'none',
 				  },
 	)
 
