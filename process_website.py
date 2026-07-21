@@ -144,6 +144,7 @@ def update_cached_cost_info(AUTH, print=print):
 	char_speeds = get_cached('char_speeds')
 	gold_costs  = get_cached('gold_costs')
 	iso_classes = get_cached('iso_classes')
+	extra_info  = get_cached('extra_info')
 
 	print ('Parsing character speeds')
 
@@ -155,7 +156,7 @@ def update_cached_cost_info(AUTH, print=print):
 	# Get info about the cost to update to each level
 	get_level_cost_info(AUTH, gold_costs)
 
-	print (f'Parsing ISO upgrade costs for {len(char_list)} characters')
+	print (f'Parsing Gear, ISO, and Ability info for {len(char_list)} characters')
 
 	# Update AUTH['session'] with post-processing hooks
 	AUTH['session'].hooks['response'] = parse_gear_and_iso_info
@@ -167,13 +168,14 @@ def update_cached_cost_info(AUTH, print=print):
 	FUTURES = {request_char_details(AUTH, char):char for char in char_list}
 
 	# Then process each of the responses as they return complete
-	for future in as_completed(FUTURES, timeout=10):
-		get_gear_and_iso_info(future.result(), FUTURES[future], gold_costs, iso_classes)
+	for future in as_completed(FUTURES, timeout=15):
+		get_gear_and_iso_info(future.result(), FUTURES[future], gold_costs, iso_classes, extra_info)
 
 	# Finally, cache the value of char_lookup
 	set_cached('char_speeds', char_speeds)
 	set_cached('gold_costs',  gold_costs)
 	set_cached('iso_classes', iso_classes)
+	set_cached('extra_info',  extra_info)
 
 
 
@@ -212,7 +214,7 @@ def parse_gear_and_iso_info(response, *args, **kwargs):
 
 
 
-def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes):
+def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes, extra_info):
 
 	# Translate to common name
 	char_name = get_cached('char_lookup').get(char_name)
@@ -220,10 +222,14 @@ def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes):
 	# Look deeper into the response
 	gear_info = response.data.get('gearTiers', {})
 	iso_info  = response.data.get('iso8ClassAdoption',{})
+	desc_info = response.data.get('description','Character info is not available.')
+	abil_info = response.data.get('abilityKit', {})
+	adoption  = response.data.get('abilityAdoption', {})
 
 	# Get a little closer to our work
-	gear_cost =  gold_costs.setdefault(char_name,{})
+	gear_cost = gold_costs.setdefault(char_name,{})
 	iso_class = iso_classes.setdefault(char_name,{})
+	ext_info  = extra_info.setdefault(char_name,{})
 
 	# Process gear tier cost info if provided
 	for tier in gear_info:
@@ -242,7 +248,25 @@ def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes):
 	# Process iso class adoption rates if available
 	iso_class.update(iso_info)
 
-	
+	# Add character and ability info into extra info
+	ext_info['desc'] = desc_info
+
+	abil_map = {'basic':'bas', 'special':'spc', 'ultimate':'ult', 'passive':'pas'}
+	abilities = ext_info.setdefault('abil',{})
+
+	for abil in abil_map:
+
+		# Bail if no ability info available (minion ult?)
+		abil_detail = abil_info.get(abil)
+		if not abil_detail:
+			continue
+
+		# Add ability info into our cached data
+		ability = abilities.setdefault(abil_map[abil], {})
+		ability['adoption'] = adoption.get(abil, 0)
+		ability.update(abil_detail)
+
+
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
 def update_strike_teams(alliance_info):
