@@ -431,7 +431,13 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
                 3px 0px 3px var(--char-color),
                 -3px 0px 3px var(--char-color), 
                 0 0 0.8em var(--char-color), 
-                0 0 0.2em var(--char-color); 
+                0 0 0.2em var(--char-color);
+}
+.abil {
+  border-radius: 8px;
+  outline: 4px solid #3b82f6;
+  color: white;
+  --char-color: black;
 }
 .uprt {
   display     : flex;
@@ -481,7 +487,6 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
                 0 0 0.8em var(--origin-color), 
                 0 0 0.2em var(--origin-color); 
 }
-
 .color-frame {
   border-radius: 10px;
   outline-offset: -1px;
@@ -489,7 +494,6 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   box-shadow: inset 0 0 0 4px var(--dark-color);
   background-image: radial-gradient(circle, var(--char-color) 5%, black 77.5%, var(--back-color) 93%);
 }
-
 .awake {
   font-weight: bold;
   color: black;
@@ -500,7 +504,6 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
     1px 1px 1px white, 
     3px 3px 3px rgba(20, 20, 20, 0.9)	;
 }
-
 .cont {
   position    : relative;
   text-align  : center;
