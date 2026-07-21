@@ -9,12 +9,12 @@ from datetime     import datetime, timedelta
 
 try:
 	from .log_utils   import timed
-	from .file_io     import remove_tags
+	from .file_io     import remove_tags, local_img_cache
 	from .html_cache  import make_next_table_id
 	from .html_shared import format_power, get_field_value, get_value_color, get_value_color_ext
 except ModuleNotFoundError:
 	from  log_utils   import timed
-	from  file_io     import remove_tags
+	from  file_io     import remove_tags, local_img_cache
 	from  html_cache  import make_next_table_id
 	from  html_shared import format_power, get_field_value, get_value_color, get_value_color_ext
 
@@ -58,6 +58,9 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	if using_tabs:
 		html_file += '<div id="AllianceInfo" class="tcon">\n'
 
+	# Are we requesting HTML or using cached images?
+	REQ_HTML = table_format.get('output_format') in ('html', 'tabbed')
+
 	# Generate a table ID to allow sorting. 
 	table_id = make_next_table_id(html_cache) 
 	html_file += f'<table id="{table_id}" style="background:#222";>\n'
@@ -65,15 +68,15 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 	html_file += '<tr>\n</tr>\n'
 
 	html_file += '<tr style="font-size:18px;color:white;">\n'
-	html_file += ' <td colspan="2" rowspan="2"><img src="https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png" alt=""></td>\n'
+	html_file += f' <td colspan="2" rowspan="2"><img src="{local_img_cache('https://assets.marvelstrikeforce.com/www/img/logos/logo-en.png', REQ_HTML)}" alt=""></td>\n'
 	html_file += ' <td colspan="9" class="alliance_name">%s</td>\n' % (remove_tags(alliance_info.get('name','').upper()))
 	
 	# Frame and Image for Alliance
 	EMBLEM_URL = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('image','EMBLEM_6_dd63d11b')}.png"
 	FRAME_URL  = f"https://assets.marvelstrikeforce.com/imgs/ALLIANCEICON_{alliance_info.get('frame','FRAME_15_174f8048')}.png"
 
-	html_file += f' <td colspan="2" rowspan="2"><div class="lrg_img" style="background-image:url({EMBLEM_URL});">\n'
-	html_file += f'  <div class="lrg_rel"><img class="lrg_rel" src="{FRAME_URL}" alt=""/></div>\n'
+	html_file += f' <td colspan="2" rowspan="2"><div class="lrg_img" style="background-image:url({local_img_cache(EMBLEM_URL, REQ_HTML)});">\n'
+	html_file += f'  <div class="lrg_rel"><img class="lrg_rel" src="{local_img_cache(FRAME_URL, REQ_HTML)}" alt=""/></div>\n'
 	html_file += ' </div></td>\n'
 	
 	html_file += '</tr>\n'
@@ -215,9 +218,9 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		IMG_URL = IMG_URL if 'https' in IMG_URL else f'https://assets.marvelstrikeforce.com/imgs/Portrait_{IMG_URL}'
 		
 		FRAME_URL = f"https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_{member_stats.get('frame','0_ab6f69b8')}.png"
-		
-		html_file += f'  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url({FRAME_URL});">\n'
-		html_file += f'   <div class="sml_rel"><img height="45" class="sml_rel" src="{IMG_URL}" alt=""/></div>\n'
+
+		html_file += f'  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url({local_img_cache(FRAME_URL, REQ_HTML)});">\n'
+		html_file += f'   <div class="sml_rel"><img height="45" class="sml_rel" src="{local_img_cache(IMG_URL, REQ_HTML)}" alt=""/></div>\n'
 		html_file += '  </div></td>\n'
 
 		# Name Field
