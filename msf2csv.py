@@ -43,7 +43,7 @@ def render_report(alliance_info, table_format, proc_name='msf2csv', log_file=Non
 	output        = table_format.get('output')
 	custom_table  = table_format.get('custom_table')
 	output_format = table_format.get('output_format','tabbed')
-	valid_output  = list(tables)+['roster_analysis','alliance_info','by_char']
+	valid_output  = list(tables)+['roster_analysis','alliance_info','by_char','abil']
 	
 	# Generate CSV?
 	if output == 'csv':

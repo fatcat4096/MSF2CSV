@@ -24,13 +24,13 @@ except ModuleNotFoundError:
 try:
 	from .generate_alliance_info   import generate_alliance_tab
 	from .generate_roster_analysis import generate_roster_analysis
-	from .generate_by_char         import generate_by_char_tab
+	from .generate_by_char         import generate_by_char_tab, generate_abil_panel
 	from .generate_table           import generate_table
 	from .generate_summary         import generate_summary
 except ModuleNotFoundError:
 	from  generate_alliance_info   import generate_alliance_tab
 	from  generate_roster_analysis import generate_roster_analysis
-	from  generate_by_char         import generate_by_char_tab
+	from  generate_by_char         import generate_by_char_tab, generate_abil_panel
 	from  generate_table           import generate_table
 	from  generate_summary         import generate_summary
 	
@@ -296,9 +296,14 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 		elif output == 'by_char':
 			html_file += generate_by_char_tab(alliance_info, html_cache, hist_date, table_format)
 
+		# ...or Abil, generate ability information for each character included in the main report
+		elif output == 'abil':
+			html_file += generate_abil_panel(table_format=table_format)
+
 		table_name = {	'roster_analysis':'Roster Analysis',
 						'alliance_info'  :'Alliance Info',
-						'by_char'        :'Info by Char'}[output]
+						'by_char'        :'Info by Char',
+						'abil'           :'Ability Info'}[output]
 
 		# Finish by adding the CSS Header and scripts to support sorting
 		html_file = add_css_header(table_name, html_cache, html_file)
