@@ -39,6 +39,7 @@ def generate_table(alliance_info, table, section, table_format, char_list, strik
 
 	# Take note of which characters are actually displayed in the table
 	table_format.setdefault('char_list', []).extend(using_chars)
+	table_format['char_list'] = list(dict.fromkeys(table_format['char_list']))
 
 	# Generate the HTML for the table
 	row_idx = 1
@@ -609,7 +610,7 @@ def generate_character_image(html_cache, char, config):
 			iso_color = get_value_color(iso_char.values(), iso_char[iso], html_cache, stat='class')
 
 			# Include the sub-cell definition
-			iso_column.append(f'<div class="{iso_color}{bg_color} isoc">{round(iso_char[iso])}%<br><span class="{iso[:4]}">{"&nbsp;"*4}</span></div>')
+			iso_column.append(f'<div class="{iso_color} isoc">{round(iso_char[iso])}%<br><span class="{iso[:4]}">{"&nbsp;"*4}</span></div>')
 
 		html_cells.append(f"     <td>{''.join(iso_column)}</td>")
 
