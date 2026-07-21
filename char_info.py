@@ -2143,6 +2143,7 @@ playable   = {
       "description": "Daimon Hellstrom, a half-human, half-demon, wielding his Netheranium Trident to channel Soulfire to burn away his enemies buffs and strip away their defenses.",
       "eventTraits": [
         "KnullChallengers",
+        "SentryChallengers",
         "Conqueror",
         "Stormbound",
         "SPB_05_Beta"
@@ -2215,6 +2216,7 @@ playable   = {
     {
       "description": "A tough bruiser who delivers bonus attacks, chain attacks, and counterattacks.",
       "eventTraits": [
+        "SentryChallengers",
         "SPB_05_Gamma"
       ],
       "id": "Daredevil",
@@ -2887,6 +2889,7 @@ playable   = {
       "description": "Maria Marquez was an intrepid archaeologist who had dedicated her life to finding a lost temple to the Mayan Moon goddess, Ixchel. When she finally found it, the goddess chose her as an avatar. Now, as Eclipse, she defends her heritage and protects her people from those who would desecrate and exploit their sacred past.",
       "eventTraits": [
         "MSFOriginal",
+        "SentryChallengers",
         "SPB_05_Gamma",
         "TowerChallenger"
       ],
@@ -3001,6 +3004,7 @@ playable   = {
       "description": "Elsa Bloodstone is a monster-hunting aristocrat who powers up a Supernatural team.",
       "eventTraits": [
         "KnullChallengers",
+        "SentryChallengers",
         "Conqueror",
         "Stormbound",
         "SPB_05_Beta"
@@ -4244,6 +4248,7 @@ playable   = {
       "description": "Patricia Walker realizes her dream of becoming a super hero, using her Hellcat suit and claws to slice her enemies to ribbons.",
       "eventTraits": [
         "KnullChallengers",
+        "SentryChallengers",
         "Conqueror",
         "Stormbound",
         "SPB_05_Beta"
@@ -5363,6 +5368,7 @@ playable   = {
       "description": "A resilient fighter who removes positive effects from enemies and clears negative effects from allies.",
       "eventTraits": [
         "Couples",
+        "SentryChallengers",
         "SPB_05_Gamma"
       ],
       "id": "JessicaJones",
@@ -6188,6 +6194,7 @@ playable   = {
       "description": "The immortal N'Kantu rises from his long incarceration to act as a bulwark against the evil that cursed him.",
       "eventTraits": [
         "KnullChallengers",
+        "SentryChallengers",
         "Conqueror",
         "Stormbound",
         "SPB_05_Beta"
@@ -7997,6 +8004,7 @@ playable   = {
     {
       "description": "Dwayne Taylor is a fierce vigilante who shreds through enemies with the precision of a pro skater, grinding the line between justice and chaos with high-tech gear and relentless determination.",
       "eventTraits": [
+        "SentryChallengers",
         "SPB_05_Gamma"
       ],
       "id": "NightThrasher",
@@ -10831,6 +10839,7 @@ playable   = {
     {
       "description": "Robert Baldwin is a kinetic energy-powered hero who bounces into battle with agility and explosive bursts, using his boundless energy to devastate foes.",
       "eventTraits": [
+        "SentryChallengers",
         "SPB_05_Gamma"
       ],
       "id": "Speedball",
@@ -11548,6 +11557,7 @@ playable   = {
       "description": "A heartbroken Doctor Strange absorbed countless otherworldly beings in a search for enough power to return his lost love, but found only the destructive might to demolish his foes.",
       "eventTraits": [
         "KnullChallengers",
+        "SentryChallengers",
         "Conqueror",
         "Stormbound",
         "SPB_05_Beta"
@@ -13837,13 +13847,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "40ed6339abf1b6e12be4",
-      "chars": "2dddc5ef0135b7c885bc",
-      "drops": "e4e7cd27d157d8ce1156",
-      "events": "6170d0827cf0f084619f",
-      "locs": "8959798c0f295f31b414",
-      "nodes": "4d684a16b79da7b1a350",
-      "other": "2f85f85054b4489da646"
+      "all": "e2c24f6de553eeaae081",
+      "chars": "1b8c1460613ca4963e81",
+      "drops": "7d1c11d56d8c652a9960",
+      "events": "82142c76c2de9cd1d1b6",
+      "locs": "f2f65ad16d0766e6eda9",
+      "nodes": "7b4042109a202ee192ff",
+      "other": "33588f7597d1922a88a6"
     },
     "perTotal": 375,
     "version": 1
@@ -14703,13 +14713,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "40ed6339abf1b6e12be4",
-      "chars": "2dddc5ef0135b7c885bc",
-      "drops": "e4e7cd27d157d8ce1156",
-      "events": "6170d0827cf0f084619f",
-      "locs": "8959798c0f295f31b414",
-      "nodes": "4d684a16b79da7b1a350",
-      "other": "2f85f85054b4489da646"
+      "all": "e2c24f6de553eeaae081",
+      "chars": "1b8c1460613ca4963e81",
+      "drops": "7d1c11d56d8c652a9960",
+      "events": "82142c76c2de9cd1d1b6",
+      "locs": "f2f65ad16d0766e6eda9",
+      "nodes": "7b4042109a202ee192ff",
+      "other": "33588f7597d1922a88a6"
     },
     "perTotal": 44,
     "version": 1

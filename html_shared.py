@@ -302,6 +302,7 @@ def translate_name(value):
 						"SecretDefender": "Secret<br>Defenders",
 						"Secret Defenders": "Secret<br>Defenders",
 						"SecretWarrior": "Secret<br>Warriors",
+						"SentryChallengers": "Sentry<br>Challengers",
 						"ShadowConclave": "Shadow<br>Conclave",
 						"SinisterSix": "Sinister<br>Six",
 						"Sinister Six": "Sinister<br>Six",
