@@ -41,10 +41,12 @@ tables = {}
 
 ACCURSED   = ['Hellverine', 'Juggernaut', 'Mordo', 'Satana', 'The Hood']
 ASTRAL     = ['Ancient One', 'Doctor Strange', 'Emma Frost (X-Men)', 'Moondragon', 'Shadow King']
+AMAZING    = ['Blade (Mighty)', 'Hulk', 'Rachel Cole-Alves', 'Spider-Man', 'Spider-Woman (Julia)']
 BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 'Strange (Heartless)']
 CHAMPIONS  = ['Brawn', 'Moon Girl', 'Ms. Marvel', 'Nova (Sam Alexander)', 'Spider-Man (Miles)']
 CONCLAVE   = ['Thanos', 'Sylvie', 'High Evolutionary', 'Executioner', 'Malekith']
 DARING     = ['Daredevil', 'Jessica Jones', 'Night Thrasher', 'Speedball', 'Eclipse']
+ETERNALS   = ['Gilgamesh', 'Ikaris', 'Kingo', 'Sersi', 'Thena']
 EXALTED    = ['Angel', 'Jubilee', 'Morph', 'Storm (Mighty)', 'Wolverine']
 F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
 F4MCUTEAM  = ['Franklin Richards', 'Human Torch', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)', 'The Thing']
@@ -64,7 +66,6 @@ UNCANNY    = ['Hercules', 'Falcon', 'Jean Grey', 'Beast', 'Storm']
 UNDYING    = ['Hela', 'Iron Man (Zombie)', 'Juggernaut (Zombie)', 'Kestrel (Zombie)', 'Scarlet Witch (Zombie)']
 VIGILANTE  = ['Daredevil (Modern)', 'Elektra', 'Hit-Monkey', 'Punisher', 'Silver Sable']
 WINTER     = ['Darkstar', 'Omega Red', 'Red Guardian', 'Ursa Major', 'Yelena Belova']
-
 
 # Meta Heroes for use in Prof X Saga
 tables['fear'] = { 'name': 'Age of Fear',
@@ -115,7 +116,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Accursed'], 'meta': ACCURSED},
 							{'traits': ['AForce'], 'meta': ['Ironheart', 'Jessica Jones', 'Nico Minoru', 'Spider-Woman', 'Wasp'], 'min_others':False},
 							{'traits': ['AlphaFlight'], 'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
-							{'traits': ['AmazingAvengers'], 'meta': ['Blade (Mighty)', 'Hulk', 'Rachel Cole-Alves', 'Spider-Man', 'Spider-Woman (Julia)']},
+							{'traits': ['AmazingAvengers'], 'meta': AMAZING},
 							{'traits': ['Annihilator'], 'meta': ['Ultimus', 'Silver Surfer', 'Gladiator', 'Gorr', 'Thanos (Endgame)']},
 #							{'traits': ['Astonishing']},
 							{'traits': ['Asgardian'], 'meta': ['Odin', 'Beta Ray Bill', 'Mighty Thor', 'Valkyrie', 'Thunderstrike']},
@@ -171,6 +172,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['SymbioteSix'], 'meta': SYMSIX},
 #							{'traits': ['Symbiotes'], 'meta': ['Knull', 'Carnage', 'Gwenom', 'Red Goblin', 'Void Knight']},
 							{'traits': ['Thunderbolts'], 'meta': TBOLTS},
+							{'traits': ['TimelessEternals'], 'meta': ETERNALS},
 #							{'traits': ['Uncanny']},
 							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
 							{'traits': ['Under-<br>world'], 'meta': ['Kingpin', 'Mister Negative', 'Nobu', 'Taskmaster', 'Green Goblin']},
@@ -179,7 +181,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Vigilante'], 'meta': VIGILANTE}, 
 							{'traits': ['WarDog']},
 #							{'traits': ['WeaponX'], 'meta': ['Omega Red', 'Sabretooth', 'Silver Samurai', 'Wolverine', 'X-23']},
-							{'traits': ['Winter Guard'], 'meta': WINTER},
+							{'traits': ['WinterGuard'], 'meta': WINTER},
 							{'traits': ['XTreme']},
 #							{'traits': ['Young<br>Avengers'], 'meta': ['America Chavez', 'Echo', 'Kate Bishop', 'Ms. Marvel', 'Squirrel Girl']},	
 #							{'traits': ['DARK_PROMOTION'], 'inc_keys': ['power', 'yel', 'red'], 'max_others':0},
@@ -213,6 +215,22 @@ tables['thunderstrike'] = { 'name': 'Thunderstrike Raid',
 																		{'meta': WINTER     ,'label':'Winter Guard<br>(Stormbound)'},
 																		]},
 							] ]
+					}
+
+# Meta Heroes for use in Trepidation Raid
+tables['trep'] = { 'name': 'Trepidation Raid',
+					'min_iso': 13,
+					'max_others': 0,
+					'strike_teams': 'trepidation',
+					'sort_char_by': 'avail',
+					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
+					'lanes':[ [
+							{'traits': ['Non-Mythic','Villain'], 'meta': HELLFIRE,  'label':'Hellfire<br>(Villains)'}, 
+							{'traits': ['Non-Mythic','City'],    'meta': INSIDIOUS, 'label':'Insidious<br>(City)'},
+							{'traits': ['Non-Mythic','Mystic'],  'meta': IMMORTAL,  'label':'Immortal<br>(Mystic)'},
+							{'traits': ['Non-Mythic','Hero'],    'meta': CHAMPIONS, 'label':'Champions<br>(Hero)'}, 
+							{'traits': ['Non-Mythic','Hero'],    'meta': AMAZING,   'label':'Amazing<br>(Hero)'},
+							] ],
 					}
 
 # Meta Heroes for use in Spotlight Raid

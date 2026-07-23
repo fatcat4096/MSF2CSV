@@ -319,6 +319,7 @@ def translate_name(value):
 						"Symbiote": "Symbiotes",
 						"SymbioteSix": "Symbiote<br>Six",
 						"TangledWeb": "Tangled<br>Web",
+						"TimelessEternals": "Timeless<br>Eternals",
 						"TowerChallenger": "Tower<br>Challenger",
 						"Uncanny": "Uncanny<br>X-Men",
 						"UncannyAvenger": "Uncanny<br>Avengers",
