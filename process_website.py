@@ -15,14 +15,14 @@ from requests_futures.sessions import FuturesSession
 try:
 	from .log_utils      import ansi, timed
 	from .parse_contents import parse_alliance_api, parse_char_data
-	from .file_io        import remove_tags, write_cached_data, write_file
+	from .file_io        import remove_tags, write_cached_data, write_file, local_img_cache
 	from .alliance_info  import is_stale
 	from .msf_api        import request_alliance_info, request_alliance_members, request_char_details, request_char_info, request_char_instances, request_player_info, request_upgrade_info
 	from .cached_info    import get_cached, set_cached
 except ModuleNotFoundError:
 	from  log_utils      import ansi, timed
 	from  parse_contents import parse_alliance_api, parse_char_data
-	from  file_io        import remove_tags, write_cached_data, write_file
+	from  file_io        import remove_tags, write_cached_data, write_file, local_img_cache
 	from  alliance_info  import is_stale
 	from  msf_api        import request_alliance_info, request_alliance_members, request_char_details, request_char_info, request_char_instances, request_player_info, request_upgrade_info
 	from  cached_info    import get_cached, set_cached
@@ -168,8 +168,11 @@ def update_cached_cost_info(AUTH, print=print):
 	FUTURES = {request_char_details(AUTH, char):char for char in char_list}
 
 	# Then process each of the responses as they return complete
-	for future in as_completed(FUTURES, timeout=15):
-		get_gear_and_iso_info(future.result(), FUTURES[future], gold_costs, iso_classes, extra_info)
+	try:
+		for future in as_completed(FUTURES, timeout=15):
+			get_gear_and_iso_info(future.result(), FUTURES[future], gold_costs, iso_classes, extra_info)
+	except Exception as e:
+		print(f'{ansi.ltred}ERROR!{ansi.rst} Caught {type(e).__name__}: {e} during get_gear_and_iso_info() in update_cached_cost_info()')
 
 	# Finally, cache the value of char_lookup
 	set_cached('char_speeds', char_speeds)
@@ -222,7 +225,6 @@ def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes, extra_in
 	# Look deeper into the response
 	gear_info = response.data.get('gearTiers', {})
 	iso_info  = response.data.get('iso8ClassAdoption',{})
-	desc_info = response.data.get('description','Character info is not available.')
 	abil_info = response.data.get('abilityKit', {})
 	adoption  = response.data.get('abilityAdoption', {})
 
@@ -233,6 +235,9 @@ def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes, extra_in
 
 	# Process gear tier cost info if provided
 	for tier in gear_info:
+
+		# Calculate the max_tier
+		max_tier = max(int(tier) for tier in gear_info)
 
 		# Initialize tier cost
 		gear_cost[int(tier)] = 0
@@ -245,11 +250,19 @@ def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes, extra_in
 				if subpiece.get('item').get('id') == 'SC':
 					gear_cost[int(tier)] += subpiece.get('quantity')
 
+				# Extract Unique info if found
+				if int(tier) == max_tier-1 and subpiece.get('item').get('uniqueType'):
+					ext_info['unique'] = {'name':subpiece.get('item').get('name'), 'icon':subpiece.get('item').get('icon')}
+
+					# Cache the icon locally, if not already avail
+					local_img_cache(subpiece.get('item').get('icon'))
+
 	# Process iso class adoption rates if available
 	iso_class.update(iso_info)
 
 	# Add character and ability info into extra info
-	ext_info['desc'] = desc_info
+	ext_info['desc']   = response.data.get('description','Character info is not available.')
+	ext_info['unlock'] = response.data.get('unlockStars',0)
 
 	abil_map = {'basic':'bas', 'special':'spc', 'ultimate':'ult', 'passive':'pas'}
 	abilities = ext_info.setdefault('abil',{})
@@ -266,6 +279,10 @@ def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes, extra_in
 		ability['adoption'] = adoption.get(abil, 0)
 		ability.update(abil_detail)
 
+		# Cache the icon locally, if not already avail
+		if abil_detail.get('icon'):
+			local_img_cache(abil_detail['icon'])
+
 
 
 # If locally defined strike_teams are valid for this cached_data, use them instead
@@ -274,7 +291,7 @@ def update_strike_teams(alliance_info):
 	updated = False
 
 	# Fix missing people in each defined strike team.
-	for raid_type in ('spotlight','annihilation','thunderstrike'):
+	for raid_type in ('spotlight','annihilation','thunderstrike','trepidation'):
 
 		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
 		if raid_type in alliance_info.get('strike_teams', []) and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
@@ -301,9 +318,9 @@ def migrate_strike_teams(alliance_info):
 	# Update the alliance_info structure as well, just in case it's all we've got.
 	if 'strike_teams' in alliance_info:
 
-		# Chaos defined, but no Annihilation yet?
-		if 'chaos' in alliance_info['strike_teams'] and 'annihilation' not in alliance_info['strike_teams']:
-			alliance_info['strike_teams']['annihilation'] = alliance_info['strike_teams']['chaos']
+		# Annihilation defined, but no Trepidation yet?
+		if 'annihilation' in alliance_info['strike_teams'] and 'trepidation' not in alliance_info['strike_teams']:
+			alliance_info['strike_teams']['trepidation'] = alliance_info['strike_teams']['annihilation']
 			updated = True
 
 		# Annihilation defined, but no Thunderstrike yet?

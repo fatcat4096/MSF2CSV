@@ -305,7 +305,6 @@ def request_char_details(AUTH_OR_TOKEN, char_name):
 					'costumes':'none',
 					'pieceInfo':'none',
 					'pieceDirectCost':'part',
-					'subPieceInfo':'none',
 					'charAdoption':'full',
 					'starItems':'none',
 				  },
