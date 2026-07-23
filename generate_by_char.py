@@ -109,7 +109,7 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 		html_file = f'<table>\n <tr>\n  <td>\n{html_file}\n  </td>\n </tr>\n</table>\n'
 
 		# Add the Abil Panel if I'm speshul
-		if 0 and 'FatCat' in member_list:
+		if table_format.get('abil_info'):
 
 			# Put everything that's come before into a single row of a new table
 			html_file = f' <tr>\n  <td colspan="4">\n{html_file}\n  </td>\n </tr>\n'
@@ -185,8 +185,17 @@ def generate_abil_panel(char='', table_format={}):
 		html_row.append(f'     <div><span style="font-size:1.5rem;">{abil_info.get('name').upper()}</span>{cost}</div>')
 		html_row.append('     </td>')
 		if desc:
-			desc = desc.replace('\n','<br>').replace('</color>','</span>').replace('color=#86e619','span style="color:#86e619;"').replace('color=#fff568','span style="color:#fff568;"')
-		html_row.append(f'     <td style="width:80%;text-align:left;">{desc}</td>')
+
+			# Format bulleted points
+			desc = '<br>'.join([f'<ul><li>{_[3:]}</li></ul>' if _.startswith(' > ') else _ for _ in desc.split('\n')])
+
+			# Fix vertical spacing
+			desc = desc.replace('<br><ul>','<ul>').replace('</ul><ul>','').replace('</ul><br>','</ul>').replace('</ul><br>','</ul>')
+
+			# Fix color tags
+			desc = desc.replace('</color>','</span>').replace('color=#86e619','span style="color:#86e619;"').replace('color=#fff568','span style="color:#fff568;"')
+			
+		html_row.append(f'     <td style="width:80%;text-align:left;font-size:1.2rem;">{desc}</td>')
 		html_row.append('    </tr>')
 
 		html_file = f'<table style="border-spacing:10px;">\n{'\n'.join(html_row)}\n</table>'

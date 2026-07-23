@@ -541,6 +541,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
 	html_file += '#RosterAnalysis {background: #343734;}\n'	
 	html_file += '#AllianceInfo {background: #343734;}\n'	
 	html_file += '#ByChar {background: #343734;}\n'	
+	html_file += 'ul { margin-top: 0px; }\n'
 
 	# Finish off the Header.
 	html_file += '</style>\n'
