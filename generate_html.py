@@ -470,7 +470,7 @@ def generate_lanes(alliance_info, table, lanes, table_format, html_cache, hist_d
 
 			# Let's make it easy on ourselves. Start and end every section the same way.
 			if html_section:
-				html_file += '<table>\n <tr style="vertical-align:top">\n  <td>\n' + html_section + '  </td>\n </tr>\n</table>\n'
+				html_file += '<table style="flex-grid">\n <tr style="vertical-align:top">\n  <td>\n' + html_section + '  </td>\n </tr>\n</table>\n'
 
 			# If not the final section, add a divider row. 
 			if not section_idx == len(lane)-1:

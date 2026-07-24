@@ -495,14 +495,15 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background-image: radial-gradient(circle, var(--char-color) 5%, black 77.5%, var(--back-color) 93%);
 }
 .awake {
-  font-weight: bold;
+  background: #73f7f7;
   color: black;
-  text-shadow: 
-    -1px -1px 1px white, 
-    -1px 1px 1px white, 
-    1px -1px 1px white, 
-    1px 1px 1px white, 
-    3px 3px 3px rgba(20, 20, 20, 0.9)	;
+}
+.flex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  background-repeat: repeat;
+  gap: 10px; /* Space between cells */
+  width: 100%;
 }
 .cont {
   position    : relative;

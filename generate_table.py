@@ -896,10 +896,10 @@ def generate_char_data_cells(html_cache, alliance_info, player_name, char_name, 
 			# We are using the T class to get black text on fields in the Hist tab.
 			tooltip = ' T' if need_tt or hist_date is not None else ''
 
-			# Add glow if Awakened ability
-			awakened = f' awake' if ((key in ('bas','spc','ult') and key_val == 8) or (key == 'pas' and key_val == 6)) and not hist_date else ''
+			# Force light blue if Awakened ability
+			field_color = 'awake' if ((key in ('bas','spc','ult') and key_val == 8) or (key == 'pas' and key_val == 6)) and not hist_date else field_color
 
-			style = f' class="{field_color}{tooltip}{awakened}"'
+			style = f' class="{field_color}{tooltip}"'
 
 		# Determine what value should be displayed in data field. Add + if historical data, use '-' if empty value.
 		field_value = format_field_value(key, key_val, hist_date)
