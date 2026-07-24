@@ -46,6 +46,7 @@ BRIMSTONE  = ['Daimon Hellstrom', 'Elsa Bloodstone', 'Hellcat', 'Living Mummy', 
 CHAMPIONS  = ['Brawn', 'Moon Girl', 'Ms. Marvel', 'Nova (Sam Alexander)', 'Spider-Man (Miles)']
 CONCLAVE   = ['Thanos', 'Sylvie', 'High Evolutionary', 'Executioner', 'Malekith']
 DARING     = ['Daredevil', 'Jessica Jones', 'Night Thrasher', 'Speedball', 'Eclipse']
+DREAD      = ['Bullseye', 'Electro', 'Mister Negative', 'Rhino', 'Scorpion (Breaker)']
 ETERNALS   = ['Gilgamesh', 'Ikaris', 'Kingo', 'Sersi', 'Thena']
 EXALTED    = ['Angel', 'Jubilee', 'Morph', 'Storm (Mighty)', 'Wolverine']
 F4MCU3PACK = ['Franklin Richards', 'Invisible Woman (MCU)', 'Mister Fantastic (MCU)']
@@ -127,6 +128,7 @@ tables['teams'] = { 'name': 'Teams',
 							{'traits': ['Cabal']},
 							{'traits': ['Champions'], 'meta': CHAMPIONS},
 							{'traits': ['DaringWarrior'], 'meta': DARING},
+							{'traits': ['Dread'], 'meta': DREAD},
 #							{'traits': ['Darkhold']},
 #							{'traits': ['DarkHunter']},
 #							{'traits': ['Deathseed']},

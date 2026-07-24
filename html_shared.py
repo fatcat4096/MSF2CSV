@@ -124,8 +124,10 @@ def get_color(min_val, max_val, value, stat='power', hist_date=None):
 		return get_scaled_value(1, 13, 25, (25-value))
 	elif stat == 'avail':
 		return get_scaled_value(0, 5, 15, value)
-	elif stat in ('bas','spc','ult','pas'):
-		return get_scaled_value(0, max(0, max_val-1), max_val, value)
+	elif stat in ('bas','spc','ult'):
+		return get_scaled_value(0, 5, 7, value)
+	elif stat in ('pas'):
+		return get_scaled_value(0, 4, 5, value)
 
 	# Everything else, generic handling.
 	return get_scaled_value(min_val, (max_val + min_val) / 2, max_val, value)
@@ -407,6 +409,7 @@ def translate_name(value):
 						"S.H.I.E.L.D. Trooper":"S.H.I.E.L.D.<br>Trooper",
 						"Scarlet Witch (Zombie)":"Scarlet Witch<br>(Zombie)",
 						"Scientist Supreme":"Scientist<br>Supreme",
+						"Scorpion (Breaker)":"Scorpion<br>(Breaker)",
 						"Sebastian Shaw":"Sebastian<br>Shaw",
 						"Spider-Man (Big Time)":"Spider-Man<br>(Big Time)",
 						"Spider-Man (Miles)":"Spider-Man<br>(Miles)",

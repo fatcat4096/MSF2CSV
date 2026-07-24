@@ -1426,7 +1426,9 @@ playable   = {
         "City",
         "Skill",
         "Blaster",
-        "Mercenary"
+        "Mercenary",
+        "Dread",
+        "SPB_05_Omega"
       ],
       "unlockStars": 1
     },
@@ -2957,7 +2959,9 @@ playable   = {
         "Bio",
         "Blaster",
         "SpiderVerse",
-        "SinisterSix"
+        "SinisterSix",
+        "Dread",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -7348,7 +7352,7 @@ playable   = {
         "ExaltedXMen",
         "SPB_05_Gamma"
       ],
-      "unlockStars": 2
+      "unlockStars": 3
     },
     {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
@@ -7464,7 +7468,9 @@ playable   = {
         "Mystic",
         "Controller",
         "SpiderVerse",
-        "Underworld"
+        "Underworld",
+        "Dread",
+        "SPB_05_Omega"
       ],
       "unlockStars": 2
     },
@@ -9522,7 +9528,9 @@ playable   = {
         "Bio",
         "Protector",
         "SpiderVerse",
-        "SinisterSix"
+        "SinisterSix",
+        "Dread",
+        "SPB_05_Omega"
       ],
       "unlockStars": 1
     },
@@ -10014,6 +10022,40 @@ playable   = {
         "SPB_05_Beta"
       ],
       "unlockStars": 3
+    },
+    {
+      "description": "Infuriated with being underestimated, Scorpion seizes one of Serpent's hammers to become the Breaker of Nature. Spreading Contagion and unleashing chaos that consumes the city, he finally earns the fear and respect he craves.",
+      "id": "ScorpionBreaker",
+      "mission": false,
+      "name": "Scorpion (Breaker)",
+      "portrait": "https://assets.marvelstrikeforce.com/imgs/Portrait_ScorpionBreaker_c48eccdb.png",
+      "starItems": [
+        "SHARD_SCORPIONBREAKER",
+        "RS_SCORPIONBREAKER_1",
+        "RS_SCORPIONBREAKER_2",
+        "RS_SCORPIONBREAKER_3",
+        "RS_SCORPIONBREAKER_4",
+        "RS_SCORPIONBREAKER_5",
+        "RS_SCORPIONBREAKER_6",
+        "RS_SCORPIONBREAKER_7",
+        "PD_SCORPIONBREAKER_1",
+        "PD_SCORPIONBREAKER_2",
+        "PD_SCORPIONBREAKER_3",
+        "PD_SCORPIONBREAKER_4",
+        "PD_SCORPIONBREAKER_5"
+      ],
+      "status": "playable",
+      "traits": [
+        "Villain",
+        "City",
+        "Mystic",
+        "Support",
+        "SpiderVerse",
+        "Dread",
+        "Legendary",
+        "SPB_05_Omega"
+      ],
+      "unlockStars": 1
     },
     {
       "description": "The vicious Scream is a Symbiote Controller who clears positive effects from her foes.",
@@ -13847,15 +13889,15 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "2b3e60aac13e3dfec5a8",
-      "chars": "1b8c1460613ca4963e81",
-      "drops": "7a22f265a494d94dd4c9",
-      "events": "50edc9f19542dbff5093",
-      "locs": "268e430c2f1b084e7185",
+      "all": "e197776b8fd5fb611919",
+      "chars": "fa2903cef936a05840f0",
+      "drops": "23da11a82dbe08b15d6d",
+      "events": "6c6b9b9aa0d57cece643",
+      "locs": "b4cec82b6bafe074dfdb",
       "nodes": "6c3bf7a0cfe0f7f819b6",
-      "other": "f21ab6a7c939a1b4b748"
+      "other": "38a9d7a8d1c22a16a892"
     },
-    "perTotal": 375,
+    "perTotal": 376,
     "version": 1
   }
 }
@@ -14713,13 +14755,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "2b3e60aac13e3dfec5a8",
-      "chars": "1b8c1460613ca4963e81",
-      "drops": "7a22f265a494d94dd4c9",
-      "events": "50edc9f19542dbff5093",
-      "locs": "268e430c2f1b084e7185",
+      "all": "e197776b8fd5fb611919",
+      "chars": "fa2903cef936a05840f0",
+      "drops": "23da11a82dbe08b15d6d",
+      "events": "6c6b9b9aa0d57cece643",
+      "locs": "b4cec82b6bafe074dfdb",
       "nodes": "6c3bf7a0cfe0f7f819b6",
-      "other": "f21ab6a7c939a1b4b748"
+      "other": "38a9d7a8d1c22a16a892"
     },
     "perTotal": 44,
     "version": 1
