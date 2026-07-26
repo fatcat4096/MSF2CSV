@@ -4477,7 +4477,7 @@ playable   = {
         "InsidiousSix",
         "SPB_05_Beta"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "Trapped in a world he never made, Howard the Duck uses his keen feathered instincts and mastery of Quack Fu to defend his new home dimension from enemies most fowl!",
@@ -10021,7 +10021,7 @@ playable   = {
         "Infestation",
         "SPB_05_Beta"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "Infuriated with being underestimated, Scorpion seizes one of Serpent's hammers to become the Breaker of Nature. Spreading Contagion and unleashing chaos that consumes the city, he finally earns the fear and respect he craves.",
@@ -11790,7 +11790,7 @@ playable   = {
         "SuperiorSix",
         "SPB_05_Beta"
       ],
-      "unlockStars": 3
+      "unlockStars": 2
     },
     {
       "description": "With the combined powers of Earth's Fantastic Four, Super Skrull packs a punch and camouflages seamlessly into his team, becoming more heroic - or villainous - depending on who is around.",
@@ -13889,13 +13889,13 @@ playable   = {
   ],
   "meta": {
     "hashes": {
-      "all": "e197776b8fd5fb611919",
-      "chars": "fa2903cef936a05840f0",
+      "all": "d81ab60b1a693e44a4d2",
+      "chars": "398e83b76e26ca76e81e",
       "drops": "23da11a82dbe08b15d6d",
-      "events": "6c6b9b9aa0d57cece643",
-      "locs": "b4cec82b6bafe074dfdb",
-      "nodes": "6c3bf7a0cfe0f7f819b6",
-      "other": "38a9d7a8d1c22a16a892"
+      "events": "8047557e76a924e27b05",
+      "locs": "4e6d3c168a34b210dc8e",
+      "nodes": "a6a408637d257f574b27",
+      "other": "706ef7f52d1cec4e431f"
     },
     "perTotal": 376,
     "version": 1
@@ -14755,13 +14755,13 @@ unplayable = {
   ],
   "meta": {
     "hashes": {
-      "all": "e197776b8fd5fb611919",
-      "chars": "fa2903cef936a05840f0",
+      "all": "c32f2096269ee4c81929",
+      "chars": "398e83b76e26ca76e81e",
       "drops": "23da11a82dbe08b15d6d",
-      "events": "6c6b9b9aa0d57cece643",
-      "locs": "b4cec82b6bafe074dfdb",
-      "nodes": "6c3bf7a0cfe0f7f819b6",
-      "other": "38a9d7a8d1c22a16a892"
+      "events": "6ea32bc4cf32b68f57de",
+      "locs": "4e6d3c168a34b210dc8e",
+      "nodes": "a6a408637d257f574b27",
+      "other": "706ef7f52d1cec4e431f"
     },
     "perTotal": 44,
     "version": 1

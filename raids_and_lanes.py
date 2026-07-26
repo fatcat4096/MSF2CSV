@@ -228,10 +228,10 @@ tables['trep'] = { 'name': 'Trepidation Raid',
 					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'lanes':[ [
 							{'traits': ['Non-Mythic','Villain'], 'meta': HELLFIRE,  'label':'Hellfire<br>(Villains)'}, 
-							{'traits': ['Non-Mythic','City'],    'meta': INSIDIOUS, 'label':'Insidious<br>(City)'},
-							{'traits': ['Non-Mythic','Mystic'],  'meta': IMMORTAL,  'label':'Immortal<br>(Mystic)'},
+							{'traits': ['Non-Mythic','City'],    'meta': INSIDIOUS, 'label':'Insidious<br>Six<br>(City)'},
+							{'traits': ['Non-Mythic','Mystic'],  'meta': IMMORTAL,  'label':'Immortal<br>Weapons<br>(Mystic)'},
 							{'traits': ['Non-Mythic','Hero'],    'meta': CHAMPIONS, 'label':'Champions<br>(Hero)'}, 
-							{'traits': ['Non-Mythic','Hero'],    'meta': AMAZING,   'label':'Amazing<br>(Hero)'},
+							{'traits': ['Non-Mythic','Hero'],    'meta': AMAZING,   'label':'Amazing<br>Avengers<br>(Hero)'},
 							] ],
 					}
 
