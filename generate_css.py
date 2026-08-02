@@ -47,6 +47,8 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   font-size   : 12pt;
   line-height : 150%;
   color       : #DB4;
+  min-width   : 28px;
+  min-height  : 32px;
 }
 /* ISO Class Column */
 .isoc {
@@ -54,6 +56,8 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   font-weight : 400;
   color       : black;
   line-height : 98%;
+  min-width   : 28px;
+  min-height  : 32px;
 }
 /* Title Black */
 .tblk {
@@ -396,6 +400,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
 .summ {
   min-height  : 55px;
   min-width   : 90px;
+  max-width   : 100px;
   display     : flex;
   justify-content: center;
   align-items : center;
@@ -432,6 +437,30 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
                 -3px 0px 3px var(--char-color), 
                 0 0 0.8em var(--char-color), 
                 0 0 0.2em var(--char-color);
+}
+.below {
+  display     : flex;
+  justify-content: center;
+  align-items : center;
+  height      : 2px;
+  width       : 100%;
+  transform   : translate(0%, 100%);  
+  font-size   : 14px;
+  font-weight : 700;
+  text-shadow : 0.75px 0.75px 1px   black,
+                -0.75px 0.75px 1px  black,
+                0.75px -0.75px 1px  black,
+                -0.75px -0.75px 1px black, 
+                2px 2px 2px   red,
+                -2px 2px 2px  red,
+                2px -2px 2px  red,
+                -2px -2px 2px red, 
+                0px 2px 2px   red,
+                0px -2px 2px  red, 
+                2px 0px 2px   red,
+                -2px 0px 2px  red, 
+                0 0 0.8em     black, 
+                0 0 0.2em     black;
 }
 .abil {
   border-radius: 8px;
@@ -511,6 +540,8 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   color       : white;
   width       : 100%;
 }
+
+
 .not-selectable {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
