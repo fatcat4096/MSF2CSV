@@ -96,7 +96,6 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	MIN_ISO  = stats.get('MIN_ISO')
 	MAX_TIER = stats.get('MAX_TIER')
 	MAX_LVL  = stats.get('MAX_LVL')
-	#MAX_OP   = stats.get('MAX_OP')
 
 	# Get list of fields to include
 	INC_KEYS = table_format.get('inc_keys')
@@ -167,10 +166,6 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 		html_file.append(' <td width="180" colspan="4">T4 Abilities</td>')
 		html_file.append(VERTICAL_DIVIDER)
 
-	# OP - 4 cols
-	#if MAX_OP:
-	#	html_file.append(f' <td width="180" colspan="4">OP</td>')
-
 	# Second Row with subheadings.
 	html_file.append('</tr>\n<tr>')
 
@@ -182,7 +177,6 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 	# Averages
 	if AVG_COLS:
 		for idx, key in enumerate(AVG_COLS):
-			#LABEL = {'iso':'ISO','op':'OP'}.get(key, key.title())
 			LABEL = {'iso':'ISO'}.get(key, key.title())
 			html_file.append(f' <td {sort_func % (BASE_COLS+idx)}>{LABEL}</td>')
 		BASE_COLS += len(AVG_COLS) + 1
@@ -252,13 +246,6 @@ def generate_analysis_header(table_format, stats, stat_type, html_cache):
 		html_file.append(f' <td {sort_func % (BASE_COLS+3)}>Pas</td>')
 		BASE_COLS += 5
 
-	# Overpower Levels
-	#if MAX_OP:
-	#	for idx in range(4):
-	#		LABEL = f'{idx + MAX_OP-3}' + ('+' if idx!=3 and not ACTUALS else '')
-	#		html_file.append(f' <td {sort_func % (BASE_COLS+idx)}>{LABEL}</td>')
-	#	BASE_COLS +=5
-
 	html_file.append('</tr>')
 	
 	return html_file
@@ -278,7 +265,6 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 	MAX_ISO  = stats.get('MAX_ISO')
 	MAX_TIER = stats.get('MAX_TIER')
 	MAX_LVL  = stats.get('MAX_LVL')
-	#MAX_OP   = stats.get('MAX_OP')
 
 	html_file = []
 
@@ -355,11 +341,6 @@ def generate_analysis_body(alliance_info, table_format, stats, hist_date, html_c
 			for stat in ['bas','spc','ult','pas']:
 				html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, stat, 7)
 			html_file.append(' <td></td>') 										# Vertical Divider
-
-		# OP Ranges
-		#if MAX_OP:
-		#	for key in range(4):
-		#		html_file += get_member_stat(member_stats, stats_range, html_cache, stale_data, hist_date, 'op', key + MAX_OP-3)
 
 		html_file.append('</tr>')
 
@@ -459,11 +440,6 @@ def get_roster_stats(alliance_info, table_format, stat_type, hist_date=None):
 			if stats.get('MAX_LVL'):
 				for key in get_lvl_cols(stats.get('MAX_LVL'), stats['DETAILS']):
 					get_stat_diff(stats, hist_stats, member, 'lvl', key)
-
-			# OP Ranges
-			#if stats.get('MAX_OP'):
-			#	for key in range(4):
-			#		get_stat_diff(stats, hist_stats, member, 'op', key + stats.get('MAX_OP')-3)
 
 			# T4 Abilities
 			if 'abil' in INC_KEYS:
@@ -656,8 +632,6 @@ def analyze_rosters(alliance_info, table_format, stat_type, rosters_to_analyze):
 		stats['MAX_DMD']  = 3 if stats['MAX_DMD'] in (1,2) else stats['MAX_DMD']
 	if 'tier' in INC_KEYS:
 		stats['MAX_TIER'] = max(max(stats_range.get('tier', [0])), 5)
-	#if 'op' in INC_KEYS:
-	#	stats['MAX_OP']   = max(max(stats_range.get('op', [0])), 4)
 
 	return stats
 

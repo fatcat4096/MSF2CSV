@@ -58,6 +58,7 @@ HELLFIRE   = ['Azazel', 'Emma Frost', 'Madelyne Pryor', 'Rachel Summers', 'Sebas
 NIGHTSTALK = ['Agatha Harkness', 'Blade', 'Man-Thing', 'Moon Knight', 'Oath']
 NEWMUTANT  = ['Magik', 'Sunspot', 'Cannonball', 'Warlock', 'Wolfsbane']
 OMEN       = ['Cull Obsidian', 'Ebony Maw', 'Minn-Erva', 'Ronan the Accuser', 'Silver Surfer (Breaker)']
+ORCHIS     = ['Scientist Supreme', 'Lady Deathstrike', 'Sentinel', 'Omega Sentinel', 'Nimrod']
 PFORCE     = ['Phoenix', 'Omega Red (Phoenix Force)', 'Magneto (Phoenix Force)']
 RETCON     = ['Deadpool', 'Gwenpool', 'Jeff the Land Shark', 'She-Hulk', 'Squirrel Girl']
 SECRETWAR  = ['Domino', 'Negasonic', 'Phantom Rider', 'Quake', 'Yo-Yo']
@@ -227,59 +228,15 @@ tables['trep'] = { 'name': 'Trepidation Raid',
 					'sort_char_by': 'avail',
 					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
 					'lanes':[ [
-							{'traits': ['Non-Mythic','Villain'], 'meta': HELLFIRE,  'label':'Hellfire<br>(Villains)'}, 
-							{'traits': ['Non-Mythic','City'],    'meta': INSIDIOUS, 'label':'Insidious<br>Six<br>(City)'},
-							{'traits': ['Non-Mythic','Mystic'],  'meta': IMMORTAL,  'label':'Immortal<br>Weapons<br>(Mystic)'},
-							{'traits': ['Non-Mythic','Hero'],    'meta': CHAMPIONS, 'label':'Champions<br>(Hero)'}, 
-							{'traits': ['Non-Mythic','Hero'],    'meta': AMAZING,   'label':'Amazing<br>Avengers<br>(Hero)'},
-							] ],
-					}
-
-# Meta Heroes for use in Spotlight Raid
-tables['spotlight'] = { 'name': 'Spotlight Raid',
-					'min_iso': 13,
-					'max_others': 5,
-					'strike_teams': 'spotlight',
-					'sort_char_by': 'avail',
-					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
-					'lanes':[ [
-							{'traits': ['AlphaFlight'],    'meta': ['Wolverine', 'Sunfire', 'Sasquatch', 'Guardian', 'Northstar']},
-							{'traits': ['Champions'],      'meta': CHAMPIONS},
-							{'traits': ['UncannyAvenger'], 'meta': UNCANNY},
-							] ]
-					}
-
-# Meta Heroes for use in Annihilation Raid (D9)
-tables['anni'] = { 'name': 'Annihilation Raid',
-					'min_iso': 13,
-					'max_others': 0,
-					'strike_teams': 'annihilation',
-					'sort_char_by': 'avail',
-					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
-					'lanes':[ [
-							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
-							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
-							{'traits': ['Global'], 'meta': UNCANNY,   'label':'Global<br>(Uncanny)'},
-							{'traits': ['Tech'],   'meta': INSIDIOUS, 'label':'Tech<br>(Insidious)'}, 
-							{'traits': ['Mystic'], 'meta': IMMORTAL,  'label':'Mystic<br>(Imm. Weaps)'},
-							{'traits': ['Bio'],    'meta': CHAMPIONS, 'label':'Bio<br>(Champions)'}, 
-							] ],
-					}
-
-# Meta Heroes for use in Annihilation Raid (D8)
-tables['annid89'] = { 'name': 'Annihilation Raid (8/9)',
-					'min_iso': 13,
-					'max_others': 0,
-					'strike_teams': 'annihilation',
-					'sort_char_by': 'avail',
-					'inc_keys': ['power', 'lvl', 'tier', 'iso'],
-					'lanes':[ [
-							{'traits': ['Skill'],  'meta': VIGILANTE, 'label':'Skill<br>(Vigilantes)'}, 
-							{'traits': ['Mutant'], 'meta': HELLFIRE,  'label':'Mutant<br>(Hellfire)'},
-							{'traits': ['Global'], 'meta': UNCANNY,   'label':'Global<br>(Uncanny)'},
-							{'traits': ['Tech'],   'meta': INSIDIOUS, 'label':'Tech<br>(Insidious)'}, 
-							{'traits': ['Mystic'], 'meta': IMMORTAL,  'label':'Mystic<br>(Imm. Weaps)'},
-							{'traits': ['Bio'],    'meta': CHAMPIONS + TBOLTS,    'label':'Bio<br>(Champions<br>or T-Bolts)'}, 
+							{'traits': ['Non-Mythic','Villain'], 'meta': ORCHIS,    'label':'Non-Mythic<br>Villains', 'max_others':5}, 
+							{'traits': ['Non-Mythic','Villain'], 'meta': HELLFIRE,  'label':'Hellfire'},
+							{'traits': ['Non-Mythic','City'],    'meta': VIGILANTE, 'label':'Non-Mythic<br>City', 'max_others':5},
+							{'traits': ['Non-Mythic','City'],    'meta': INSIDIOUS, 'label':'Insidious<br>Six'},
+							{'traits': ['Non-Mythic','Mystic'],  'meta': NIGHTSTALK,'label':'Non-Mythic<br>Mystic', 'max_others':5},
+							{'traits': ['Non-Mythic','Mystic'],  'meta': IMMORTAL,  'label':'Immortal<br>Weapons'},
+							{'traits': ['Non-Mythic','Hero'],    'meta': F4MCU3PACK + ['Blue Marvel','Jeff the Land Shark'], 'label':'Non-Mythic<br>Hero', 'max_others':5}, 
+							{'traits': ['Non-Mythic','Hero'],    'meta': CHAMPIONS, 'label':'Champions<br>'}, 
+							{'traits': ['Non-Mythic','Hero'],    'meta': AMAZING,   'label':'Amazing<br>Avengers'},
 							] ],
 					}
 
