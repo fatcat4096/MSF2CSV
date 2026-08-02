@@ -298,7 +298,7 @@ def generate_html(alliance_info, table, table_format, html_cache=None, only_body
 
 		# ...or Abil, generate ability information for each character included in the main report
 		elif output == 'abil':
-			html_file += generate_abil_panel(table_format=table_format)
+			html_file += generate_abil_panel(alliance_info, html_cache, table_format=table_format)
 
 		table_name = {	'roster_analysis':'Roster Analysis',
 						'alliance_info'  :'Alliance Info',
