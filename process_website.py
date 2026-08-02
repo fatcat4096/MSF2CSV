@@ -140,7 +140,8 @@ async def update_cached_char_info(AUTH):
 def update_cached_cost_info(AUTH, print=print):
 
 	# Get cached data
-	char_list   = get_cached('char_lookup')
+	char_list   = get_cached('char_list')
+	char_lookup = get_cached('char_lookup')
 	char_speeds = get_cached('char_speeds')
 	gold_costs  = get_cached('gold_costs')
 	iso_classes = get_cached('iso_classes')
@@ -165,7 +166,7 @@ def update_cached_cost_info(AUTH, print=print):
 	AUTH['session'] = FuturesSession(session=AUTH['session'], max_workers=16)
 
 	# Get the cached list of characters
-	FUTURES = {request_char_details(AUTH, char):char for char in char_list}
+	FUTURES = {request_char_details(AUTH, char_lookup.get(char)):char for char in char_list}
 
 	# Then process each of the responses as they return complete
 	try:
@@ -219,9 +220,6 @@ def parse_gear_and_iso_info(response, *args, **kwargs):
 
 def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes, extra_info):
 
-	# Translate to common name
-	char_name = get_cached('char_lookup').get(char_name)
-
 	# Look deeper into the response
 	gear_info = response.data.get('gearTiers', {})
 	iso_info  = response.data.get('iso8ClassAdoption',{})
@@ -252,7 +250,7 @@ def get_gear_and_iso_info(response, char_name, gold_costs, iso_classes, extra_in
 
 				# Extract Unique info if found
 				if int(tier) == max_tier-1 and subpiece.get('item').get('uniqueType'):
-					ext_info['unique'] = {'name':subpiece.get('item').get('name'), 'icon':subpiece.get('item').get('icon')}
+					ext_info['unique'] = {'name':subpiece.get('item').get('name').split(maxsplit=1)[1], 'icon':subpiece.get('item').get('icon')}
 
 					# Cache the icon locally, if not already avail
 					local_img_cache(subpiece.get('item').get('icon'))
@@ -291,7 +289,7 @@ def update_strike_teams(alliance_info):
 	updated = False
 
 	# Fix missing people in each defined strike team.
-	for raid_type in ('spotlight','annihilation','thunderstrike','trepidation'):
+	for raid_type in ('thunderstrike','trepidation'):
 
 		# If strike_teams.py is not valid, check for strike_teams cached in the alliance_info
 		if raid_type in alliance_info.get('strike_teams', []) and valid_strike_team(alliance_info['strike_teams'][raid_type], alliance_info):
@@ -329,7 +327,7 @@ def migrate_strike_teams(alliance_info):
 			updated = True
 	
 		# Look for outdated strike_team definitions
-		for raid_type in ('chaos','orchis','incur','gamma'):
+		for raid_type in ('chaos','orchis','incur','gamma','spotlight','annihilation'):
 			if raid_type in alliance_info['strike_teams']:
 				del alliance_info['strike_teams'][raid_type]
 				updated = True
