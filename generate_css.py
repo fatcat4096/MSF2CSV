@@ -193,6 +193,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #B0E0E6;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 /* Name Blue Dim */
 .nblud {
@@ -200,6 +201,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #729195;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 /* Name Alt (LtB) */
 .nalt {
@@ -207,6 +209,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #00BFFF;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 /* Name Alt Dim */
 .naltd {
@@ -214,6 +217,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #007ca5;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 /* Name Gray */
 .ngra {
@@ -221,6 +225,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #DCDCDC;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 /* Name Gray Dim */
 .ngrad {
@@ -228,6 +233,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #8f8f8f;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 /* Name Gray Alt (LtG) */
 .ngalt {
@@ -235,6 +241,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #A9A9A9;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 /* Name Gray Alt Dim */
 .ngaltd {
@@ -242,6 +249,7 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   background  : #6d6d6d;
   white-space : nowrap;
   color       : black;
+  line-height : 1;
 }
 .sub {
   font-size   : 12pt;
