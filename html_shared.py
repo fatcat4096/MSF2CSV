@@ -6,13 +6,15 @@ Routines used by one or more of the html generation routines in msf2csv.py.
 
 
 try:
-	from .log_utils  import timed
-	from .html_cache import make_next_color_id
-	from .gradients  import color_scale, darken, gold_color_scale, grayscale, iso_color_scale
+	from .log_utils   import timed
+	from .html_cache  import make_next_color_id
+	from .gradients   import color_scale, darken, gold_color_scale, grayscale, iso_color_scale
+	from .cached_info import get_cached
 except ModuleNotFoundError:
-	from  log_utils  import timed
-	from  html_cache import make_next_color_id
-	from  gradients  import color_scale, darken, gold_color_scale, grayscale, iso_color_scale
+	from  log_utils   import timed
+	from  html_cache  import make_next_color_id
+	from  gradients   import color_scale, darken, gold_color_scale, grayscale, iso_color_scale
+	from  cached_info import get_cached
 
 
 # Just hide the messiness.
@@ -228,6 +230,28 @@ def get_section_label(section):
 
 	# Otherwise, just join the translated traits.
 	return ', '.join([translate_name(trait) for trait in section['traits']]).replace('-<br>','').replace('<br>',' ')
+
+
+
+def get_trait_label(char):
+
+	# Get the list of traits to allow us to include Trait information
+	extracted_traits = get_cached('traits')
+
+	# Create a sub-heading for the Table Label
+	traits = [translate_name(key).replace('<br>',' ') for key in extracted_traits if extracted_traits[key].get(char)]
+	
+	# Just hide certain traits -- no one cares
+	for trait in ['Chaos Team', 'Mercenary', 'Military', 'MSF Original', 'Dark Promotions', 'Spider-Verse', 'Annihilation Wave', 'Tower Challenger', 'Sentry Challengers', 'Conqueror', 'Harbingers', 'Stormbound', 'Anxiety', 'Fear', 'Panic', 'Terror', 'Best Buddies', 'Best Avenger Buddies', 'Best Mutant Buddies', 'Best Spider Buddies', 'Best Villain Buddies']:
+		if trait in traits:
+			traits.remove(trait)
+
+	# Filter rendundant traits
+	for trait in ['Avengers', 'A-Force', 'Defenders', 'Fantastic Four', 'X-Men']:
+		if trait in traits and len([x for x in traits if trait in x]) > 1:
+			traits.remove(trait)
+	
+	return f'<br><span class="sub">{", ".join(traits)}</span>'
 
 
 

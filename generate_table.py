@@ -109,10 +109,11 @@ def final_strike_team_sort(table_format, table, section, strike_team, player_lis
 
 
 # Pre-calculate all the information used to actually generate the table
-def get_config(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache, hist_date, linked_hist, team_power_summary):
+def get_config(alliance_info, table, section, table_format, char_list, strike_teams, table_lbl, stp_list, html_cache, hist_date, linked_hist, team_power_summary, force=False):
 
 	portraits   = get_cached('portraits')
 	iso_classes = get_cached('iso_classes')
+	extra_info  = get_cached('extra_info')
 
 	# Get the character speeds to allow us to include Speed information
 	char_speeds = get_cached('char_speeds')
@@ -135,14 +136,14 @@ def get_config(alliance_info, table, section, table_format, char_list, strike_te
 
 	# If there are no players in this table, don't generate a table
 	using_players = {player for player in sum(strike_teams, []) if player in player_list}
-	if not using_players:
+	if not (force or using_players):
 		return
 
 	# See if we need to pare the included characters even further
 	using_chars = get_using_chars(alliance_info, table, section, table_format, using_players, char_list, team_power_summary)
 
 	# If there are no characters in this table, don't generate a table
-	if not using_chars:
+	if not (force or using_chars):
 		return
 
 	# If char_limit, exit without output; communicate results via table_format
@@ -167,11 +168,9 @@ def get_config(alliance_info, table, section, table_format, char_list, strike_te
 	table_lbl = enhance_table_lbl(table_lbl, show_reqs, MIN, portraits, req_html)
 
 	# Define these once
-	#key_labels = {'power':'Pwr', 'op':'OP', 'iso':'ISO', 'stp':'STP'}
 	key_labels = {'power':'Pwr', 'iso':'ISO', 'stp':'STP'}
 
 	# Standard order for these columns
-	#key_order = ('power', 'lvl', 'tier', 'iso', 'yel', 'red', 'bas', 'spc', 'ult', 'pas', 'op', 'gold')
 	key_order = ('power', 'lvl', 'tier', 'iso', 'yel', 'red', 'bas', 'spc', 'ult', 'pas', 'gold')
 
 	# Get keys from table_format/table, with defaults if necessary
@@ -496,7 +495,7 @@ def generate_images_row(html_cache, line_chars, config):
 	if len(config['char_list'])>1:
 		# Include a Tot Gold column for last two cols if gold is being displayed.
 		if 'gold' in config['keys']:
-			html_row.append('    <td class="img" colspan="2"><div class="cont"><div><img src="../images/src/gold.png" alt="" width="90"></div></div></td>')
+			html_row.append('    <td class="img" colspan="2"><div class="cont"><div><img src="../../core/images/src/gold.png" alt="" width="90"></div></div></td>')
 		else:
 			html_row.append('     <td></td>')
 
@@ -563,13 +562,22 @@ def generate_character_image(html_cache, char, config):
 	# Number of columns under each Character entry
 	num_cols = len(config['keys']) + config['inc_class']
 
+	# Get the internal character name for this character
+	char_name = config['char_lookup'].get(char)
+
 	# Do we have ISO information for this character yet?
-	iso_char = config['iso_classes'].get(char)
+	iso_char = config['iso_classes'].get(char_name)
 
 	# Adjust the width of the ISO Class Info based on the width of the char info
 	if config['inc_class'] and iso_char:
 		class_cols = 0 if num_cols < 5 else 1 if num_cols == 5 else 2
 		num_cols -= class_cols
+
+	# Do we have unique info and room to include it?
+	unique = config['extra_info'].get(char_name, {}).get('unique') if num_cols > 7 and config['hist_date'] else None
+
+	# Adjust the columns if unique info will be included
+	num_cols -= 3 if unique else 0
 
 	# Create a subtitle for the upper left with Origin information
 	origin_color = {'Bio':'#008000','Tech':'#0000FF','Mystic':'#800080','Skill':'#FF0000','Mutant':'#FFA500'}
@@ -577,7 +585,7 @@ def generate_character_image(html_cache, char, config):
 	origin_info = '&nbsp;&nbsp;'.join([f'<span style="--origin-color:{origin_color[key]}" class="origin">{key}</span>' for key in origin])
 
 	# Create a subtitle for the upper right with Speed information
-	char_speed = config['char_speeds'].get(config['char_lookup'].get(char))
+	char_speed = config['char_speeds'].get(char_name)
 	char_speed = f'⚡{char_speed}' if char_speed else ''
 
 	# Control background colors based on origin information
@@ -585,7 +593,7 @@ def generate_character_image(html_cache, char, config):
 	dark_color = darken(char_color) if len(origin) == 1 else origin_color[origin[1]]
 	back_color = '#000' if len(origin) == 1 else dark_color
 
-	html_cells.append(f'     <td class="img" colspan="{num_cols}"{onclick}>')
+	html_cells.append(f'     <td class="img" style="width:80%; max-width:850px;" colspan="{num_cols}"{onclick}>')
 	html_cells.append(f'      <div style="--char-color:{char_color};--dark-color:{dark_color};--back-color:{back_color}" class="cont {bg_color}">')
 	html_cells.append(f'       <div class="{"" if config['hist_date'] else "zoom"}"><img src="{url}" alt="" width="100"></div>')
 	html_cells.append(f'       <div class="cent">{translate_name(char)}</div>')
@@ -613,6 +621,16 @@ def generate_character_image(html_cache, char, config):
 			iso_column.append(f'<div class="{iso_color} isoc">{round(iso_char[iso])}%<br><span class="{iso[:4]}">{"&nbsp;"*4}</span></div>')
 
 		html_cells.append(f"     <td>{''.join(iso_column)}</td>")
+
+	# If we have Unique Info and have room for the Unique, include it here
+	if unique:
+		url = local_img_cache(unique['icon'], config['req_html'])
+		html_cells.append(f'     <td class="img unique" colspan="3">UNIQUE:<br>')
+		html_cells.append(f'      <div class="cont">')
+		html_cells.append(f'       <div><img src="{url}" alt="" width="75"></div>')
+		html_cells.append(f'       <div class="below">{unique['name']}</div>')
+		html_cells.append(f'      </div>')
+		html_cells.append(f'     </td>')		
 
 	return html_cells
 

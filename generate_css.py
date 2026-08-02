@@ -446,6 +446,9 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
                 0 0 0.8em var(--char-color), 
                 0 0 0.2em var(--char-color);
 }
+.unique {
+  font-size: 0.8rem;
+}
 .below {
   display     : flex;
   justify-content: center;
@@ -471,10 +474,10 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
                 0 0 0.2em     black;
 }
 .abil {
-  border-radius: 8px;
-  outline: 4px solid #3b82f6;
-  color: white;
-  --char-color: black;
+  border-radius : 8px;
+  outline       : 4px solid #3b82f6;
+  color         : white;
+  --char-color  : black;
 }
 .uprt {
   display     : flex;
@@ -548,7 +551,12 @@ def add_css_header(table_name, html_cache, ORIG_HTML, lane_name='Lane', num_lane
   color       : white;
   width       : 100%;
 }
-
+.desc {
+  width       : 80%;
+  text-align  : left;
+  font-size   : 1.2rem;
+  min-width   : 700px;
+}
 
 .not-selectable {
   -webkit-touch-callout: none;
