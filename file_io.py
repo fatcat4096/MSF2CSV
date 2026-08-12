@@ -13,7 +13,7 @@ import glob
 import requests
 import __main__
 
-from pathlib  import Path
+from pathlib import Path
 from selenium.webdriver.common.by import By
 from urllib.parse import quote, unquote
 
