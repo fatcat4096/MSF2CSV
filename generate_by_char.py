@@ -50,7 +50,7 @@ def generate_by_char_tab(alliance_info, html_cache, hist_date=True, table_format
 	table_format['inc_class'] = table_format.get('inc_class', True)
 	
 	#if not sort_by specified
-	table_format['sort_by'] = 'stp'
+	table_format['sort_by'] = table_format.get('sort_by', 'power')
 
 	meta_chars, other_chars = get_meta_other_chars(alliance_info, table, {'meta':[char_list]}, table_format)
 

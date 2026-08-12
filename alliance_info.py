@@ -55,15 +55,16 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, section
 	# Sort by avail if requested, use stp as secondary criteria.
 	elif sort_by == 'avail' and section:
 
-		# Factor in STP when sorting by availability.
-		local_stp = {}
-
-		for player in player_list:
-			inc_char = set([char for char in section.get('under_min',{}).get(player,{}) if not section.get('under_min',{}).get(player,{}).get(char)] + char_list)
-			pow_list = sorted([find_roster_value(alliance_info, player, char_name, 'power') for char_name in inc_char])
-			local_stp[player] = sum(pow_list[-5:])
+		# Factor in STP when sorting by availability
+		stp_list = get_local_stp(alliance_info, section, char_list)
 
 		return sorted(player_list, key=lambda x: -len([char for char in section.get('under_min',{}).get(x,{}) if not section.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
+
+	elif len(char_list)==1 and sort_by in ('power','lvl','iso','tier','yel','red','abil'):
+		# Factor in STP as a tiebreaker
+		stp_list = get_local_stp(alliance_info, section, char_list)
+
+		return sorted(player_list, key=lambda x: f'{find_roster_value(alliance_info, x, char_list[0], sort_by):>012}{stp_list.get(x,0):>012}', reverse=True)
 
 	# If we weren't provided a list of STPs, fall back to using TCP.
 	elif sort_by in ('tcp','stp','avail'):
@@ -71,6 +72,27 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, section
 	
 	# Otherwise, just do a default alpha sort.
 	return sorted(player_list, key=str.lower)
+
+
+
+# Get STP for just characters available in this section
+def get_local_stp(alliance_info, section, char_list):
+
+	local_stp = {}
+
+	# Get the list of Alliance Members 
+	player_list = alliance_info.get('members', [])
+
+	for player in player_list:
+		inc_char = set([char for char in section.get('under_min',{}).get(player,{}) if not section.get('under_min',{}).get(player,{}).get(char)] + char_list)
+
+		# Build a list of all character powers.
+		all_char_pwr = sorted([find_roster_value(alliance_info, player, char_name, 'power') for char_name in inc_char])
+
+		# And sum up the Top 5 power entries for STP.
+		local_stp[player] = sum(all_char_pwr[-5:])
+
+	return local_stp
 
 
 
@@ -86,13 +108,13 @@ def get_stp_list(alliance_info, char_list, hist_date=None):
 	for date_to_use in {None}.union({hist_date}):
 
 		# Iterate through player_list building up STP for each player on the dates in question
-		for player_name in player_list:
+		for player in player_list:
 
 			# Build a list of all character powers.
-			all_char_pwr = sorted([find_roster_value(alliance_info, player_name, char_name, 'power', date_to_use) for char_name in char_list])
+			all_char_pwr = sorted([find_roster_value(alliance_info, player, char_name, 'power', date_to_use) for char_name in char_list])
 
 			# And sum up the Top 5 power entries for STP.
-			stp_list.setdefault(date_to_use,{})[player_name] = sum(all_char_pwr[-5:])
+			stp_list.setdefault(date_to_use,{})[player] = sum(all_char_pwr[-5:])
 
 	return stp_list
 
