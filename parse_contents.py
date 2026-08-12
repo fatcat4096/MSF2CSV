@@ -9,7 +9,8 @@ Returns in easy to use dicts for inclusion in tables.
 
 import asyncio
 
-from datetime    import datetime
+from datetime import datetime
+from pathlib  import Path
 
 try:
 	from .log_utils       import ansi, timed
@@ -34,9 +35,6 @@ def parse_alliance_api(alliance_data, alliance_members):
 
 	# Used for display in reports -- this is the clean version for reports.
 	alliance['display_name'] = remove_tags(alliance_data['name'])
-
-	# Used to discriminate if multiple alliances have same base filename					# Need a complete rewrite, possibly along with the above.
-	#alliance['color'] = ''.join([x[6:] for x in driver.alliance_html.split('"') if x.startswith('color:')])
 
 	# Parse the Alliance image and frame
 	alliance['image']      = alliance_data['icon'].split('ALLIANCEICON_')[-1][:-4]
@@ -95,8 +93,9 @@ def parse_info_api(alliance_members, alliance, captains, members):
 		member['url']   = alliance_member['id']
 		
 		# Process other info from the Member Card
-		member['image'] = member_card['icon'].split('Portrait_')[-1][:-4]
-		member['frame'] = member_card['frame'].split('ICON_FRAME_')[-1][:-4]
+		member['image'] = Path(member_card['icon']).name
+		member['frame'] = Path(member_card['frame']).name
+		
 		member['level'] = member_card.get('level',{}).get('completedTier',0)
 		member['tcp']   = member_card.get('tcp')
 		member['stp']   = member_card.get('stp')

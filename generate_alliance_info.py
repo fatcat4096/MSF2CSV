@@ -213,11 +213,11 @@ def generate_alliance_tab(alliance_info, html_cache, hist_date, using_tabs=False
 		html_file += f' <tr style="background:{member_color}; font-size:22px; line-height:100%; vertical-align:middle;">\n'
 
 		# Frame and Image
+		IMG_URL = member_stats['image'] if '.png' in member_stats.get('image','') else f'{member_stats['image']}.png' if 'https' in member_stats.get('image','') else f'Portrait_{member_stats.get('image','ShieldDmg_Defense_3dea00f7')}.png'
+		IMG_URL = f'https://assets.marvelstrikeforce.com/imgs/{IMG_URL}'
 		
-		IMG_URL = member_stats.get('image','ShieldDmg_Defense_3dea00f7')+'.png'
-		IMG_URL = IMG_URL if 'https' in IMG_URL else f'https://assets.marvelstrikeforce.com/imgs/Portrait_{IMG_URL}'
-		
-		FRAME_URL = f"https://assets.marvelstrikeforce.com/imgs/ICON_FRAME_{member_stats.get('frame','0_ab6f69b8')}.png"
+		FRAME_IMG = member_stats['frame'] if '.png' in member_stats.get('frame','') else f'ICON_FRAME_{member_stats.get('frame','0_ab6f69b8')}.png'
+		FRAME_URL =  f"https://assets.marvelstrikeforce.com/imgs/{FRAME_IMG}"
 
 		html_file += f'  <td class="hblu"><div class="sml_img" style="background-size:45px;background-image:url({local_img_cache(FRAME_URL, REQ_HTML)});">\n'
 		html_file += f'   <div class="sml_rel"><img height="45" class="sml_rel" src="{local_img_cache(IMG_URL, REQ_HTML)}" alt=""/></div>\n'
