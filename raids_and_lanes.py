@@ -392,8 +392,6 @@ tables['battleworld'] = { 'name': 'Battleworld',
 							{'header':'Maestro', 'label':'F4 Odin Meph',    'meta': F4MCU3PACK + ['Odin', 'Mephisto']},
 							{'header':'Maestro', 'label':'Insidious Six',   'meta': INSIDIOUS},
 							{'header':'Maestro', 'label':'Symbiote Six',    'meta': SYMSIX},
-							{'header':'Maestro', 'label':'Brimstone',       'meta': BRIMSTONE},
-							{'header':'Maestro', 'label':'Winter Guard',    'meta': WINTER},
 							] ]
 					}
 
