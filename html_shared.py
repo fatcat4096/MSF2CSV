@@ -293,6 +293,7 @@ def translate_name(value):
 						"FantasticFour": "Fantastic<br>Four",
 						"FantasticFourMCU": "Fantastic<br>Four (MCU)",
 						"GalacticCouncil": "Galactic<br>Council",
+						"Golden_Age": "Golden Age",
 						"HeroesForHire": "H4H",
 						"HellfireClub": "Hellfire<br>Club",
 						"HiveMind": "Hive-Mind",

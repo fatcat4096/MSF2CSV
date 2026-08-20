@@ -1129,7 +1129,8 @@ playable   = {
     {
       "description": "A stealthy saboteur who steals enemy advantages and delivers disabling attacks.",
       "eventTraits": [
-        "BestAvengerBuddies"
+        "BestAvengerBuddies",
+        "Golden_Age"
       ],
       "id": "BlackWidow",
       "invisibleTraits": [
@@ -1501,7 +1502,8 @@ playable   = {
       "description": "A resilient leader who provides energy to his team while blocking enemy attacks.",
       "eventTraits": [
         "Couples",
-        "BestBuddies"
+        "BestBuddies",
+        "Golden_Age"
       ],
       "id": "CaptainAmerica",
       "invisibleTraits": [
@@ -4591,7 +4593,8 @@ playable   = {
       "eventTraits": [
         "Harbingers",
         "Conqueror",
-        "SPB_05_Beta"
+        "SPB_05_Beta",
+        "Golden_Age"
       ],
       "id": "HumanTorch",
       "invisibleTraits": [
@@ -4903,7 +4906,8 @@ playable   = {
         "KnowhereHeist",
         "Couples",
         "BestAvengerBuddies",
-        "SPB_05_Alpha"
+        "SPB_05_Alpha",
+        "Golden_Age"
       ],
       "id": "InvisibleWoman",
       "invisibleTraits": [
@@ -7360,7 +7364,8 @@ playable   = {
     {
       "description": "Mister Fantastic is a Controller who uses his hyper-genius to remove positive effects from foes.",
       "eventTraits": [
-        "Couples"
+        "Couples",
+        "Golden_Age"
       ],
       "id": "MrFantastic",
       "mission": false,
@@ -8509,7 +8514,8 @@ playable   = {
     {
       "description": "The grandson of super-soldier Isaiah Bradley, Eli Bradley picked family's legacy of defending the helpless by joining the Young Avengers as the star-spangled Patriot.",
       "eventTraits": [
-        "SPB_05_Alpha"
+        "SPB_05_Alpha",
+        "Golden_Age"
       ],
       "id": "Patriot",
       "mission": false,
@@ -12321,7 +12327,8 @@ playable   = {
         "Harbingers",
         "Conqueror",
         "BestAvengerBuddies",
-        "SPB_05_Beta"
+        "SPB_05_Beta",
+        "Golden_Age"
       ],
       "id": "Thing",
       "invisibleTraits": [
@@ -13300,6 +13307,9 @@ playable   = {
     },
     {
       "description": "An elite Hydra agent who assaults his chosen target with deadly attacks that prevent healing.",
+      "eventTraits": [
+        "Golden_Age"
+      ],
       "id": "WinterSoldier",
       "mission": false,
       "name": "Winter Soldier",
@@ -13861,14 +13871,15 @@ playable   = {
     }
   ],
   "meta": {
+    "baseImgUrl": "https://assets.marvelstrikeforce.com/imgs/",
     "hashes": {
-      "all": "95441922c72152f6d9bd",
-      "chars": "e3d8ef2426aa43f93172",
-      "drops": "dcf74d5deee4260f2354",
-      "events": "37770342b5b2a5120c50",
-      "locs": "9cd3dfc6a325c914bb19",
-      "nodes": "84977db587b5ed2f63d8",
-      "other": "9f87181162f20bf3706f"
+      "all": "e41dc8c724d4d0956e3a",
+      "chars": "0dce5eaf12a527fbc304",
+      "drops": "8cf41f7943a79e931ec2",
+      "events": "5ed86b1c1a5abb1643b8",
+      "locs": "efb4ce4f6f242cfb048c",
+      "nodes": "31997c5658a13969e00a",
+      "other": "374cb14183dc0ee7d2e0"
     },
     "perTotal": 379,
     "version": 1
@@ -14727,14 +14738,15 @@ unplayable = {
     }
   ],
   "meta": {
+    "baseImgUrl": "https://assets.marvelstrikeforce.com/imgs/",
     "hashes": {
-      "all": "95441922c72152f6d9bd",
-      "chars": "e3d8ef2426aa43f93172",
-      "drops": "dcf74d5deee4260f2354",
-      "events": "37770342b5b2a5120c50",
-      "locs": "9cd3dfc6a325c914bb19",
-      "nodes": "84977db587b5ed2f63d8",
-      "other": "9f87181162f20bf3706f"
+      "all": "e41dc8c724d4d0956e3a",
+      "chars": "0dce5eaf12a527fbc304",
+      "drops": "8cf41f7943a79e931ec2",
+      "events": "5ed86b1c1a5abb1643b8",
+      "locs": "efb4ce4f6f242cfb048c",
+      "nodes": "31997c5658a13969e00a",
+      "other": "374cb14183dc0ee7d2e0"
     },
     "perTotal": 44,
     "version": 1
