@@ -557,7 +557,7 @@ def generate_section(alliance_info, table, section, table_format, strike_teams, 
 			# Need to do a new sort for strike_teams if sort_by is STP.
 			sort_by = get_table_value(table_format, table, key='sort_by')
 			if sort_by == 'stp':
-				strike_temp = [get_player_list(alliance_info, sort_by, stp_list)]
+				strike_temp = [get_player_list(alliance_info, sort_by, stp_list, section)]
 			else:
 				strike_temp = strike_teams[:]
 				

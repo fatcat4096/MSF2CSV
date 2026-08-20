@@ -34,6 +34,8 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 	# Generate a separate table for each lane. 
 	for lane in lanes:
 
+		all_sections = {}
+
 		# Pre-process the information for the lane, calculating STPs, num_avail, and rank.
 		for section in lane:
 			section_label = get_section_label(section)
@@ -53,7 +55,7 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 				stp_list = get_stp_list(alliance_info, meta_chars+other_chars, hist_date)
 
 				# Make a dict with each players rank
-				rank_dict = {member:idx+1 for idx, member in enumerate(get_player_list(alliance_info, 'stp', stp_list))}
+				rank_dict = {member:idx+1 for idx, member in enumerate(get_player_list(alliance_info, 'stp', stp_list, section))}
 				
 				# Get the rank and available counts for this team. 
 				for member in alliance_info['members']:
@@ -68,13 +70,13 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 						# Create a fake entry for this section using the section label as the "Character Name" in processed_chars.
 						alliance_info['members'][member]['processed_chars'][section_label] = {'stp':stp, 'avail':avail, 'rank':rank_dict[member]}
 
-		# Just create an empty section entry.
-		section = {}
-		
+						# Keep a composite of all the under_min info
+						all_sections.setdefault('under_min',{}).setdefault(member,{}).update(section.get('under_min',{}).get(member,{}))
+
 		table_lbl = table['name'].upper().replace(' ','<br>',table['name'].partition('Raid')[0].count(' '))
 
 		# Find any defined keys specified for given format. Default to including STP and rank
-		table_format['inc_keys'] = get_table_value(table_format, table, section, key='summary_keys', default=['stp','rank'])
+		table_format['inc_keys'] = get_table_value(table_format, table, {}, key='summary_keys', default=['stp','rank'])
 
 		# Sort by TCP by default. If 'avail' is included, assume this is the sort_by
 		table_format['sort_by'] = ['tcp','avail']['avail' in table_format['inc_keys']]
@@ -83,7 +85,7 @@ def generate_summary(alliance_info, table, lanes, table_format, team_list, strik
 		html_file += '<table>\n <tr>\n  <td>\n'
 
 		# Generate a table.
-		html_file += generate_table(alliance_info, table, section, table_format, team_list, strike_teams, table_lbl, stp_list, html_cache, team_power_summary=True)
+		html_file += generate_table(alliance_info, table, all_sections, table_format, team_list, strike_teams, table_lbl, {}, html_cache, team_power_summary=True)
 
 		# End every section the same way.
 		html_file += '  </td>\n </tr>\n</table>\n'

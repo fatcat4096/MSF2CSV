@@ -756,10 +756,6 @@ def generate_data_rows(html_cache, line_chars, strike_team, alliance_info, confi
 		# Hist List has two entries if Inline Hist is included
 		for hist_date in config['date_list']:
 
-			# Find min/max for meta/strongest team power in the Alliance
-			# This will be used for color calculation for the Team Power column.
-			stp_range = [config['stp_list'][hist_date][player_name] for player_name in config['player_list']]
-
 			# Standard Name field content. 
 			name_field = get_name_field(alliance_info, player_name, hist_date, config['inline_hist'])
 
@@ -816,7 +812,8 @@ def generate_data_rows(html_cache, line_chars, strike_team, alliance_info, confi
 
 			# Include STP and/or TOT GOLD only if there's more than one character displayed
 			elif len(config['char_list'])>1:
-				player_stp = config['stp_list'].get(hist_date, {}).get(player_name,0)
+				stp_range = [config['stp_list'][hist_date][player_name] for player_name in config['player_list']]
+				player_stp = config['stp_list'][hist_date].get(player_name,0)
 				field_value = get_field_value(player_stp, hist_date)
 				field_color = get_value_color(stp_range, player_stp, html_cache, stale_data)
 				html_rows.append(f'     <td class="bd {field_color}">{field_value}</td>')

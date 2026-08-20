@@ -52,23 +52,17 @@ def get_player_list(alliance_info, sort_by: str='', stp_list: dict=None, section
 	if sort_by == 'stp' and stp_list:
 		return sorted(player_list, key=lambda x: -stp_list[hist_date][x])
 
-	# Sort by avail if requested, use stp as secondary criteria.
+	# Sort by avail if requested, use tcp as secondary criteria.
 	elif sort_by == 'avail' and section:
+		return sorted(player_list, key=lambda x: f'{sum(not value for value in section.get('under_min',{}).get(x,{}).values()):03}{alliance_info['members'][x].get('tcp',0):>012}', reverse=True)
 
-		# Factor in STP when sorting by availability
-		stp_list = get_local_stp(alliance_info, section, char_list)
-
-		return sorted(player_list, key=lambda x: -len([char for char in section.get('under_min',{}).get(x,{}) if not section.get('under_min',{}).get(x,{}).get(char)])*10**10 - local_stp.get(x,0))
-
+	# Sort by other key if requested, use stp as secondary criteria.
 	elif len(char_list)==1 and sort_by in ('power','lvl','iso','tier','yel','red','abil'):
-		# Factor in STP as a tiebreaker
-		stp_list = get_local_stp(alliance_info, section, char_list)
-
-		return sorted(player_list, key=lambda x: f'{find_roster_value(alliance_info, x, char_list[0], sort_by):>012}{stp_list.get(x,0):>012}', reverse=True)
+		return sorted(player_list, key=lambda x: f'{find_roster_value(alliance_info, x, char_list[0], sort_by):>012}{get_local_stp(alliance_info, section, char_list).get(x,0):>012}', reverse=True)
 
 	# If we weren't provided a list of STPs, fall back to using TCP.
-	elif sort_by in ('tcp','stp','avail'):
-		return sorted(player_list, key=lambda x: -alliance_info['members'][x].get('tcp',0))
+	elif sort_by in ('tcp','stp'):
+		return sorted(player_list, key=lambda x: f'{alliance_info['members'][x].get('tcp',0):>012}', reverse=True)
 	
 	# Otherwise, just do a default alpha sort.
 	return sorted(player_list, key=str.lower)
