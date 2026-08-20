@@ -8,13 +8,11 @@ from datetime import date
 
 try:
 	from .log_utils      import timed
-	#from .alliance_info  import get_hist_date, get_meta_other_chars, get_player_list, get_stp_list, is_under_min
 	from .cached_info    import get_cached
 	from .html_shared    import translate_name, get_trait_label
 	from .generate_table import get_config, generate_images_row
 except ModuleNotFoundError:
 	from  log_utils      import timed
-	#from  alliance_info  import get_hist_date, get_meta_other_chars, get_player_list, get_stp_list, is_under_min
 	from  cached_info    import get_cached
 	from  html_shared    import translate_name, get_trait_label
 	from  generate_table import get_config, generate_images_row
